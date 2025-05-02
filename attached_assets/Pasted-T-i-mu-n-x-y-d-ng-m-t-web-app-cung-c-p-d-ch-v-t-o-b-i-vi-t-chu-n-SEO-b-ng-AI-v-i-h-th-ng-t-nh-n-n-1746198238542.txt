@@ -1,0 +1,128 @@
+Tôi muốn xây dựng một web app cung cấp dịch vụ tạo bài viết chuẩn SEO bằng AI, với hệ thống tính năng như sau:
+---
+
+### 1. Landing Page (Trang chủ):
+- Thiết kế dạng landing page giới thiệu dịch vụ tạo bài viết SEO đa nền tảng.
+- Trình bày rõ các gói dịch vụ:
+  - Gói tín dụng dùng để tạo bài viết bằng AI.
+  - 3 gói lưu trữ bài viết theo dung lượng hoặc số lượng.
+- Gắn các CTA (Call to Action) như: Đăng ký, Mua gói, Dùng thử tạo bài viết.
+
+---
+
+### 2. Tính năng Đăng ký / Đăng nhập
+- Hỗ trợ đăng ký tài khoản, đăng nhập bằng email và mật khẩu.
+- Lưu người dùng vào cơ sở dữ liệu.
+- Có xác thực mật khẩu, kiểm tra hợp lệ.
+- Hỗ trợ bảo mật đăng nhập (JWT hoặc session token).
+- Có thể thêm Google/Facebook login sau này.
+
+---
+
+### 3. Bảng điều khiển người dùng (Dashboard)
+Giao diện `/dashboard` hiển thị sidebar có các mục:
+
+#### a. Trang Bảng điều khiển (Overview)
+- Thống kê số bài viết đã tạo, số tín dụng còn lại, trạng thái gói lưu trữ.
+
+#### b. Trang "Tạo nội dung"
+- Cho phép tạo bài viết chuẩn SEO.
+- Tích hợp webhook từ n8n để gửi yêu cầu đến hệ thống AI tạo nội dung.
+- Giao diện nhập prompt, chọn chủ đề, từ khóa, độ dài.
+- Kết quả bài viết hiển thị sau khi n8n phản hồi.
+
+#### c. Trang "Tín dụng"
+- Hiển thị số tín dụng hiện tại.
+- Lịch sử mua tín dụng.
+- Tính năng mua thêm bằng thanh toán (Stripe, Momo, VNPAY).
+
+#### d. Trang "Gói đăng ký"
+- Cho phép mua và quản lý các gói lưu trữ bài viết.
+- Hiển thị ngày hết hạn, dung lượng đã dùng.
+
+#### e. Trang "Cài đặt"
+- Thay đổi thông tin tài khoản, mật khẩu.
+- Cấu hình ngôn ngữ (Tiếng Việt hoặc Tiếng Anh).
+
+#### f. Trang "Kết nối tài khoản" (`/dashboard/connections`)
+- Kết nối WordPress:
+  - Người dùng nhập địa chỉ site, username và Application Password.
+  - App lưu thông tin để sử dụng WP REST API.
+- Kết nối Facebook / TikTok / X:
+  - Sử dụng OAuth2.
+  - Hiển thị trạng thái đã kết nối hay chưa.
+  - Có thể ngắt kết nối.
+- Lưu thông tin kết nối vào DB liên kết với user hiện tại.
+
+---
+
+### 4. Trang Quản trị (Admin Panel)
+Đường dẫn `/admin`, chỉ dành cho tài khoản admin:
+
+- Quản lý người dùng, tài khoản, tín dụng.
+- Quản lý gói dịch vụ, theo dõi thanh toán.
+- Thống kê tổng quan số người dùng, số bài viết đã tạo, doanh thu.
+- Cấu hình hệ thống, webhook, bảo mật, thông tin app.
+
+---
+
+### 5. Đa ngôn ngữ
+- Hỗ trợ Tiếng Việt và Tiếng Anh.
+- Mặc định hiển thị Tiếng Việt.
+- Sử dụng i18n (ví dụ: next-i18next hoặc react-i18next).
+- Giao diện có tùy chọn chuyển đổi ngôn ngữ.
+
+---
+
+### 6. Tài khoản quản trị mặc định
+- Khi khởi tạo, hệ thống tạo tài khoản admin:
+  - Username: `admin`
+  - Password: `admin@1238`
+- Mật khẩu được mã hóa bằng bcrypt.
+
+---
+
+### 7. Phân quyền người dùng
+- 2 vai trò:
+  - `admin`: toàn quyền, truy cập tất cả chức năng.
+  - `user`: chỉ truy cập dashboard cá nhân.
+- Mỗi route có middleware kiểm tra quyền truy cập phù hợp.
+
+---
+
+### 8. Bảo mật cơ bản
+- Bảo vệ API bằng token.
+- Bảo vệ các form POST bằng CSRF token.
+- Giới hạn tốc độ (rate limit) cho đăng nhập và webhook.
+- Sẵn sàng tích hợp reCAPTCHA trong các form.
+
+---
+
+### 9. Kiến trúc linh hoạt
+- Cấu trúc code dễ mở rộng để:
+  - Phát triển API public/private trong tương lai.
+  - Tích hợp thêm nền tảng mạng xã hội hoặc hệ thống AI khác.
+
+### 10. Triển khai trên server Linux:
+- Tôi muốn triển khai ứng dụng này trên VPS hoặc server Linux riêng.
+- Yêu cầu Lovable export mã nguồn đầy đủ, có:
+  - Tài liệu hướng dẫn setup (`README.md`)
+  - File cấu hình môi trường (`.env.example`)
+  - Cấu hình Docker hoặc PM2 (`ecosystem.config.js`)
+  - Hướng dẫn build và deploy (Docker build hoặc `npm run build && pm2 start`)
+- Database dùng PostgreSQL.
+- ORM sử dụng Prisma.
+- Auth nên dùng Supabase hoặc Auth.js (có thể dùng NextAuth nếu phù hợp).
+- Frontend có thể dùng Next.js (React) + TailwindCSS.
+
+### 11. Hướng mở rộng:
+- Dự phòng tính năng API public/private trong tương lai.
+- Cấu trúc mã rõ ràng để có thể mở rộng theo module hoặc microservice.
+- Hệ thống lưu log và phân quyền theo vai trò.
+
+---
+Vui lòng tạo mã nguồn theo các yêu cầu trên. Mục tiêu của tôi là có thể:
+1. Chạy app này trên server Linux ngay sau khi build.
+2. Cấu hình được webhook n8n để dùng GPT tạo bài viết.
+3. Cho phép người dùng tạo bài và đăng lên WordPress hoặc mạng xã hội.
+4. Yêu cầu toàn bộ app sử dụng ngôn ngữ hiện đại, clean code, chia component rõ ràng, dễ mở rộng. 
