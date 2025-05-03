@@ -300,7 +300,7 @@ export default function Dashboard() {
                       <p className="text-xs text-secondary-500">
                         {isLoadingStats 
                           ? t("common.loading")
-                          : stats?.connections.facebook
+                          : stats?.connections?.facebook
                             ? t("dashboard.connections.social.connected")
                             : t("common.notConnected")
                         }
@@ -319,11 +319,11 @@ export default function Dashboard() {
                   <div className="ml-4">
                     <h3 className="text-sm font-medium text-secondary-900">TikTok</h3>
                     <div className="mt-1 flex items-center">
-                      <div className={`h-2 w-2 rounded-full ${isLoadingStats || stats?.connections.tiktok ? 'bg-green-500' : 'bg-secondary-300'} mr-2`}></div>
+                      <div className={`h-2 w-2 rounded-full ${isLoadingStats || stats?.connections?.tiktok ? 'bg-green-500' : 'bg-secondary-300'} mr-2`}></div>
                       <p className="text-xs text-secondary-500">
                         {isLoadingStats 
                           ? t("common.loading")
-                          : stats?.connections.tiktok
+                          : stats?.connections?.tiktok
                             ? t("dashboard.connections.social.connected")
                             : t("common.notConnected")
                         }
