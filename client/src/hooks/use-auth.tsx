@@ -44,14 +44,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginMutation = useMutation<User, Error, LoginData>({
     mutationFn: async (credentials: LoginData) => {
-      const res = await apiRequest("POST", "/api/login", credentials);
-      const data = await res.json();
-      if (!data.success) {
-        throw new Error(data.error || "Login failed");
+      console.log("Login attempt with:", credentials);
+      try {
+        // Sử dụng fetch trực tiếp để xem lỗi rõ hơn
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(credentials),
+          credentials: "include",
+        });
+        
+        const data = await res.json();
+        console.log("Login response:", data);
+        
+        if (!data.success) {
+          throw new Error(data.error || "Đăng nhập thất bại");
+        }
+        
+        return data.data;
+      } catch (error: any) {
+        console.error("Login error:", error);
+        throw new Error(error.message || "Đăng nhập thất bại");
       }
-      return data.data;
     },
     onSuccess: (userData: User) => {
+      console.log("Login successful, user data:", userData);
       queryClient.setQueryData(["/api/user"], userData);
       toast({
         title: "Đăng nhập thành công",
@@ -59,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     },
     onError: (error: Error) => {
+      console.error("Login error in callback:", error);
       toast({
         title: "Đăng nhập thất bại",
         description: error.message,
