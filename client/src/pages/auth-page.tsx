@@ -23,11 +23,11 @@ import Head from "@/components/head";
 
 // Login form schema
 const loginSchema = z.object({
-  username: z.string().email({
-    message: "Please enter a valid email address",
+  username: z.string().min(1, {
+    message: "Please enter your username or email",
   }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters",
+  password: z.string().min(1, {
+    message: "Password is required",
   }),
   rememberMe: z.boolean().optional(),
 });
@@ -172,9 +172,9 @@ export default function AuthPage() {
                           name="username"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-slate-200">{t("auth.login.email")}</FormLabel>
+                              <FormLabel className="text-slate-200">Username hoặc Email</FormLabel>
                               <FormControl>
-                                <Input type="email" className="bg-slate-700/50 border-slate-600" {...field} />
+                                <Input type="text" className="bg-slate-700/50 border-slate-600" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
