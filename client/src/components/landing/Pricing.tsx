@@ -146,8 +146,8 @@ export function Pricing() {
                 onClick={() => setActiveTab('credit')}
                 className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   activeTab === 'credit' 
-                    ? 'bg-primary text-white shadow-md' 
-                    : 'text-secondary-foreground/70 hover:text-primary'
+                    ? 'bg-primary text-primary-foreground shadow-md' 
+                    : 'text-gray-700 hover:text-primary'
                 }`}
               >
                 {t("landing.pricing.creditPlans")}
@@ -157,8 +157,8 @@ export function Pricing() {
                 onClick={() => setActiveTab('storage')}
                 className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   activeTab === 'storage' 
-                    ? 'bg-primary text-white shadow-md' 
-                    : 'text-secondary-foreground/70 hover:text-primary'
+                    ? 'bg-primary text-primary-foreground shadow-md' 
+                    : 'text-gray-700 hover:text-primary'
                 }`}
               >
                 {t("landing.pricing.storagePlans")}
@@ -177,7 +177,7 @@ export function Pricing() {
                 }`}
               >
                 {pkg.isPopular && (
-                  <div className="absolute -top-5 inset-x-0 mx-auto w-max bg-accent text-white text-xs font-bold py-1.5 px-4 rounded-full shadow-md">
+                  <div className="absolute -top-5 inset-x-0 mx-auto w-max bg-accent text-primary-foreground text-xs font-bold py-1.5 px-4 rounded-full shadow-md">
                     {t("landing.pricing.popular")}
                   </div>
                 )}
@@ -227,10 +227,10 @@ export function Pricing() {
                     <Button
                       className={`w-full rounded-xl py-6 shadow-md transition-all duration-300 ${
                         pkg.isPopular
-                          ? 'bg-accent text-white hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/20'
+                          ? 'bg-accent text-primary-foreground hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/20'
                           : pkg.color === 'blue'
-                            ? 'bg-primary text-white hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20'
-                            : 'bg-purple-500 text-white hover:bg-purple-600 hover:shadow-lg hover:shadow-purple-500/20'
+                            ? 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20'
+                            : 'bg-purple-500 text-primary-foreground hover:bg-purple-600 hover:shadow-lg hover:shadow-purple-500/20'
                       }`}
                     >
                       {activeTab === 'credit' 
