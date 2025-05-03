@@ -112,245 +112,290 @@ export default function AuthPage() {
         <title>{activeTab === "login" ? t("auth.login.title") : t("auth.register.title")} - {t("common.appName")}</title>
       </Head>
       
-      <div className="min-h-screen bg-secondary-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="flex justify-center">
-            <svg
-              className="h-12 w-auto text-primary-600"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12 2L2 7L12 12L22 7L12 2Z"
-                fill="currentColor"
-              />
-              <path
-                d="M2 17L12 22L22 17"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M2 12L12 17L22 12"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-secondary-900 font-heading">
-            {activeTab === "login" ? t("auth.login.title") : t("auth.register.title")}
-          </h2>
-          <p className="mt-2 text-center text-sm text-secondary-600">
-            {t("common.or")}{" "}
-            <button
-              onClick={() => setActiveTab(activeTab === "login" ? "register" : "login")}
-              className="font-medium text-primary-600 hover:text-primary-500 focus:outline-none"
-            >
-              {activeTab === "login" ? t("auth.login.switchToRegister") : t("auth.register.switchToLogin")}
-            </button>
-          </p>
-        </div>
+      <div className="min-h-screen flex flex-col md:flex-row">
+        {/* Left column - Form */}
+        <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 xl:px-20 bg-slate-900">
+          <div className="mx-auto w-full max-w-sm lg:w-96">
+            <div className="flex justify-center">
+              <svg
+                className="h-12 w-auto text-primary"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 2L2 7L12 12L22 7L12 2Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M2 17L12 22L22 17"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M2 12L12 17L22 12"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-white font-heading bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              {activeTab === "login" ? t("auth.login.title") : t("auth.register.title")}
+            </h2>
+            <p className="mt-2 text-center text-sm text-slate-400">
+              {t("common.or")}{" "}
+              <button
+                onClick={() => setActiveTab(activeTab === "login" ? "register" : "login")}
+                className="font-medium text-primary hover:text-primary/80 focus:outline-none"
+              >
+                {activeTab === "login" ? t("auth.login.switchToRegister") : t("auth.register.switchToLogin")}
+              </button>
+            </p>
+            
+            <div className="mt-8">
+              <div className="bg-slate-800/50 backdrop-blur-sm py-8 px-6 shadow-lg rounded-xl border border-slate-700/50">
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                  <TabsList className="grid w-full grid-cols-2 mb-6">
+                    <TabsTrigger value="login">{t("nav.login")}</TabsTrigger>
+                    <TabsTrigger value="register">{t("nav.register")}</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="login" className="mt-0">
+                    <Form {...loginForm}>
+                      <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-6">
+                        <FormField
+                          control={loginForm.control}
+                          name="username"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-slate-200">{t("auth.login.email")}</FormLabel>
+                              <FormControl>
+                                <Input type="email" className="bg-slate-700/50 border-slate-600" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="login">{t("nav.login")}</TabsTrigger>
-                <TabsTrigger value="register">{t("nav.register")}</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="login" className="mt-0">
-                <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-6">
-                    <FormField
-                      control={loginForm.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("auth.login.email")}</FormLabel>
-                          <FormControl>
-                            <Input type="email" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        <FormField
+                          control={loginForm.control}
+                          name="password"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-slate-200">{t("auth.login.password")}</FormLabel>
+                              <FormControl>
+                                <Input type="password" className="bg-slate-700/50 border-slate-600" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                    <FormField
-                      control={loginForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("auth.login.password")}</FormLabel>
-                          <FormControl>
-                            <Input type="password" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                        <div className="flex items-center justify-between">
+                          <FormField
+                            control={loginForm.control}
+                            name="rememberMe"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                    className="border-slate-500 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                  />
+                                </FormControl>
+                                <FormLabel className="text-sm font-normal text-slate-300">
+                                  {t("auth.login.rememberMe")}
+                                </FormLabel>
+                              </FormItem>
+                            )}
+                          />
 
-                    <div className="flex items-center justify-between">
-                      <FormField
-                        control={loginForm.control}
-                        name="rememberMe"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                            <FormLabel className="text-sm font-normal">
-                              {t("auth.login.rememberMe")}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-
-                      <div className="text-sm">
-                        <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
-                          {t("auth.login.forgotPassword")}
-                        </a>
-                      </div>
-                    </div>
-
-                    <Button
-                      type="submit"
-                      className="w-full"
-                      disabled={loginMutation.isPending}
-                    >
-                      {loginMutation.isPending ? t("common.loading") : t("auth.login.submit")}
-                    </Button>
-                  </form>
-                </Form>
-              </TabsContent>
-              
-              <TabsContent value="register" className="mt-0">
-                <Form {...registerForm}>
-                  <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-6">
-                    <FormField
-                      control={registerForm.control}
-                      name="fullName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("auth.register.name")}</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("auth.register.email")}</FormLabel>
-                          <FormControl>
-                            <Input type="email" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("auth.register.password")}</FormLabel>
-                          <FormControl>
-                            <Input type="password" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="confirmPassword"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("auth.register.confirmPassword")}</FormLabel>
-                          <FormControl>
-                            <Input type="password" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={registerForm.control}
-                      name="terms"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-2 space-y-0">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="text-sm font-normal">
-                              {t("auth.register.termsAgree")}{" "}
-                              <a href="#" className="text-primary-600 hover:text-primary-500">
-                                {t("auth.register.terms")}
-                              </a>{" "}
-                              {t("auth.register.and")}{" "}
-                              <a href="#" className="text-primary-600 hover:text-primary-500">
-                                {t("auth.register.privacy")}
-                              </a>
-                            </FormLabel>
+                          <div className="text-sm">
+                            <a href="#" className="font-medium text-primary hover:text-primary/80">
+                              {t("auth.login.forgotPassword")}
+                            </a>
                           </div>
-                        </FormItem>
-                      )}
-                    />
+                        </div>
 
-                    <Button
-                      type="submit"
-                      className="w-full bg-accent-500 hover:bg-accent-600"
-                      disabled={registerMutation.isPending}
-                    >
-                      {registerMutation.isPending ? t("common.loading") : t("auth.register.submit")}
+                        <Button
+                          type="submit"
+                          className="w-full bg-primary hover:bg-primary/90"
+                          disabled={loginMutation.isPending}
+                        >
+                          {loginMutation.isPending ? t("common.loading") : t("auth.login.submit")}
+                        </Button>
+                      </form>
+                    </Form>
+                  </TabsContent>
+                  
+                  <TabsContent value="register" className="mt-0">
+                    <Form {...registerForm}>
+                      <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-6">
+                        <FormField
+                          control={registerForm.control}
+                          name="fullName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-slate-200">{t("auth.register.name")}</FormLabel>
+                              <FormControl>
+                                <Input className="bg-slate-700/50 border-slate-600" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={registerForm.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-slate-200">{t("auth.register.email")}</FormLabel>
+                              <FormControl>
+                                <Input type="email" className="bg-slate-700/50 border-slate-600" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={registerForm.control}
+                          name="password"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-slate-200">{t("auth.register.password")}</FormLabel>
+                              <FormControl>
+                                <Input type="password" className="bg-slate-700/50 border-slate-600" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={registerForm.control}
+                          name="confirmPassword"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-slate-200">{t("auth.register.confirmPassword")}</FormLabel>
+                              <FormControl>
+                                <Input type="password" className="bg-slate-700/50 border-slate-600" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={registerForm.control}
+                          name="terms"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-2 space-y-0">
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                  className="border-slate-500 data-[state=checked]:bg-primary data-[state=checked]:border-primary mt-1"
+                                />
+                              </FormControl>
+                              <div className="space-y-1 leading-none">
+                                <FormLabel className="text-sm font-normal text-slate-300">
+                                  {t("auth.register.termsAgree")}{" "}
+                                  <a href="#" className="text-primary hover:text-primary/80">
+                                    {t("auth.register.terms")}
+                                  </a>{" "}
+                                  {t("auth.register.and")}{" "}
+                                  <a href="#" className="text-primary hover:text-primary/80">
+                                    {t("auth.register.privacy")}
+                                  </a>
+                                </FormLabel>
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+
+                        <Button
+                          type="submit"
+                          className="w-full bg-primary hover:bg-primary/90"
+                          disabled={registerMutation.isPending}
+                        >
+                          {registerMutation.isPending ? t("common.loading") : t("auth.register.submit")}
+                        </Button>
+                      </form>
+                    </Form>
+                  </TabsContent>
+                </Tabs>
+
+                <div className="mt-6">
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-slate-700"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="px-2 bg-slate-800 text-slate-400">
+                        {t("auth.login.orContinueWith")}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 grid grid-cols-2 gap-3">
+                    <Button variant="outline" className="w-full bg-transparent text-slate-200 border-slate-700 hover:bg-slate-700/50">
+                      <FaGoogle className="mr-2 h-4 w-4" />
+                      Google
                     </Button>
-                  </form>
-                </Form>
-              </TabsContent>
-            </Tabs>
 
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-secondary-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-secondary-500">
-                    {t("auth.login.orContinueWith")}
-                  </span>
+                    <Button variant="outline" className="w-full bg-transparent text-slate-200 border-slate-700 hover:bg-slate-700/50">
+                      <FaFacebook className="mr-2 h-4 w-4" />
+                      Facebook
+                    </Button>
+                  </div>
                 </div>
               </div>
-
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <Button variant="outline" className="w-full">
-                  <FaGoogle className="mr-2 h-4 w-4" />
-                  Google
-                </Button>
-
-                <Button variant="outline" className="w-full">
-                  <FaFacebook className="mr-2 h-4 w-4" />
-                  Facebook
-                </Button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Right column - Hero */}
+        <div className="flex-1 hidden lg:block relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70 flex items-center justify-center">
+            <div className="max-w-2xl mx-auto text-center">
+              <h2 className="text-4xl font-bold text-white tracking-tight sm:text-5xl mb-6">
+                {t("common.appName")}
+              </h2>
+              <p className="text-xl text-white/90 mb-8 max-w-lg mx-auto">
+                Tạo nội dung SEO chất lượng với công nghệ AI tiên tiến
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+                  <div className="bg-white/20 rounded-full p-2 flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-white">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-white text-md font-medium">Tạo nội dung chuẩn SEO chỉ trong vài phút</p>
+                </div>
+                <div className="flex items-center space-x-3 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+                  <div className="bg-white/20 rounded-full p-2 flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-white">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-white text-md font-medium">Tích hợp đa nền tảng: WordPress, social media</p>
+                </div>
+                <div className="flex items-center space-x-3 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
+                  <div className="bg-white/20 rounded-full p-2 flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-white">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-white text-md font-medium">Hệ thống credits linh hoạt, chi phí tối ưu</p>
+                </div>
               </div>
             </div>
           </div>
