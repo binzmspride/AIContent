@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, pgEnum, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, bigint, boolean, timestamp, pgEnum, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
@@ -30,7 +30,7 @@ export const plans = pgTable('plans', {
   description: text('description'),
   type: planTypeEnum('type').notNull(),
   price: integer('price').notNull(),
-  value: integer('value').notNull(), // Credits or storage amount
+  value: bigint('value', { mode: 'number' }).notNull(), // Credits or storage amount
   duration: integer('duration'), // In days, null means one-time purchase
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),

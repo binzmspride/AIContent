@@ -89,7 +89,7 @@ export default function AdminPayments() {
           <CardHeader>
             <CardTitle>{t("admin.payments.allTransactions")}</CardTitle>
             <CardDescription>
-              {t("admin.payments.totalCount", { count: transactionsData?.total || 0 })}
+              {t("admin.payments.totalCount")} {transactionsData?.total || 0}
             </CardDescription>
           </CardHeader>
           <CardContent>

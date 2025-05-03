@@ -45,22 +45,22 @@ export function Sidebar() {
     },
     {
       href: "/dashboard/credits",
-      label: t("dashboard.credits"),
+      label: t("dashboard.creditsMenu"),
       icon: <Coins className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/plans",
-      label: t("dashboard.plans"),
+      label: t("dashboard.plansMenu"),
       icon: <Package className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/connections",
-      label: t("dashboard.connections"),
+      label: t("dashboard.connectionsMenu"),
       icon: <Link2 className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/settings",
-      label: t("dashboard.settings"),
+      label: t("dashboard.settingsMenu"),
       icon: <Settings className="h-5 w-5 mr-3" />,
     },
   ];

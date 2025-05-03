@@ -8,12 +8,31 @@ import {
 } from "@/components/ui/accordion";
 
 export function Faq() {
-  const { t } = useLanguage();
-
-  const faqItems = t("landing.faq.questions").map((_, index) => ({
-    question: t(`landing.faq.questions.${index}.question`),
-    answer: t(`landing.faq.questions.${index}.answer`),
-  }));
+  const { t, language } = useLanguage();
+  
+  // Define static faq items based on the locale files' structure
+  const faqItems = [
+    {
+      question: t("landing.faq.questions.0.question"),
+      answer: t("landing.faq.questions.0.answer"),
+    },
+    {
+      question: t("landing.faq.questions.1.question"),
+      answer: t("landing.faq.questions.1.answer"),
+    },
+    {
+      question: t("landing.faq.questions.2.question"),
+      answer: t("landing.faq.questions.2.answer"),
+    },
+    {
+      question: t("landing.faq.questions.3.question"),
+      answer: t("landing.faq.questions.3.answer"),
+    },
+    {
+      question: t("landing.faq.questions.4.question"),
+      answer: t("landing.faq.questions.4.answer"),
+    },
+  ];
 
   return (
     <div id="faq" className="py-16 bg-white">
