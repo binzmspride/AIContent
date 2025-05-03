@@ -6,8 +6,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
-        heading: ["Inter", "sans-serif"],
+        sans: ["Poppins", "Inter", "sans-serif"],
+        heading: ["Montserrat", "Inter", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
       },
       borderRadius: {
         lg: "var(--radius)",
