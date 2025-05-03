@@ -179,16 +179,16 @@ export default function Dashboard() {
                 <div className="ml-4">
                   <h2 className="text-sm font-medium text-secondary-500">{t("dashboard.stats.articlesCreated")}</h2>
                   <p className="text-2xl font-semibold text-secondary-900">
-                    {isLoadingStats ? "-" : stats?.articlesCreated.total || 0}
+                    {isLoadingStats ? "-" : stats?.articlesCreated?.total || 0}
                   </p>
                 </div>
               </div>
               <div className="mt-4">
-                {!isLoadingStats && stats?.articlesCreated.monthlyChange ? (
+                {!isLoadingStats && stats?.articlesCreated && stats.articlesCreated.monthlyChange ? (
                   <div className="text-sm text-secondary-500">
                     <span className="text-green-600 flex items-center">
                       <ArrowUpRight className="mr-1 h-3 w-3" />
-                      {(stats.articlesCreated.monthlyChange * 100).toFixed(0)}%
+                      {(stats.articlesCreated?.monthlyChange * 100).toFixed(0)}%
                     </span>
                     {t("common.comparedToPreviousMonth")}
                   </div>
@@ -211,7 +211,7 @@ export default function Dashboard() {
                   <p className="text-2xl font-semibold text-secondary-900">
                     {isLoadingStats 
                       ? "-" 
-                      : `${formatStorage(stats?.storageUsed.current || 0)} / ${formatStorage(stats?.storageUsed.total || 0)}`
+                      : `${formatStorage(stats?.storageUsed?.current || 0)} / ${formatStorage(stats?.storageUsed?.total || 0)}`
                     }
                   </p>
                 </div>
@@ -220,7 +220,7 @@ export default function Dashboard() {
                 <div className="relative pt-1">
                   <div className="overflow-hidden h-2 text-xs flex rounded bg-purple-200">
                     <div 
-                      style={{ width: `${isLoadingStats ? 0 : stats?.storageUsed.percentage || 0}%` }} 
+                      style={{ width: `${isLoadingStats ? 0 : stats?.storageUsed?.percentage || 0}%` }} 
                       className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-purple-500"
                     ></div>
                   </div>
@@ -273,11 +273,11 @@ export default function Dashboard() {
                   <div className="ml-4">
                     <h3 className="text-sm font-medium text-secondary-900">WordPress</h3>
                     <div className="mt-1 flex items-center">
-                      <div className={`h-2 w-2 rounded-full ${isLoadingStats || stats?.connections.wordpress ? 'bg-green-500' : 'bg-secondary-300'} mr-2`}></div>
+                      <div className={`h-2 w-2 rounded-full ${isLoadingStats || stats?.connections?.wordpress ? 'bg-green-500' : 'bg-secondary-300'} mr-2`}></div>
                       <p className="text-xs text-secondary-500">
                         {isLoadingStats 
                           ? t("common.loading")
-                          : stats?.connections.wordpress 
+                          : stats?.connections?.wordpress 
                             ? t("dashboard.connections.wordpress.connected") 
                             : t("common.notConnected")
                         }
@@ -296,7 +296,7 @@ export default function Dashboard() {
                   <div className="ml-4">
                     <h3 className="text-sm font-medium text-secondary-900">Facebook</h3>
                     <div className="mt-1 flex items-center">
-                      <div className={`h-2 w-2 rounded-full ${isLoadingStats || stats?.connections.facebook ? 'bg-green-500' : 'bg-secondary-300'} mr-2`}></div>
+                      <div className={`h-2 w-2 rounded-full ${isLoadingStats || stats?.connections?.facebook ? 'bg-green-500' : 'bg-secondary-300'} mr-2`}></div>
                       <p className="text-xs text-secondary-500">
                         {isLoadingStats 
                           ? t("common.loading")
