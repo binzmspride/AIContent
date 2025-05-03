@@ -65,11 +65,26 @@ class DatabaseStorage implements IStorage {
     return user || null;
   }
   
-  async getUserByUsername(username: string): Promise<schema.User | null> {
-    const user = await db.query.users.findFirst({
-      where: eq(schema.users.username, username)
-    });
-    return user || null;
+  async getUserByUsername(usernameOrEmail: string): Promise<schema.User | null> {
+    try {
+      // Check if the input is an email (contains @)
+      if (usernameOrEmail.includes('@')) {
+        // Search by email
+        const user = await db.query.users.findFirst({
+          where: eq(schema.users.email, usernameOrEmail)
+        });
+        return user || null;
+      } else {
+        // Search by username
+        const user = await db.query.users.findFirst({
+          where: eq(schema.users.username, usernameOrEmail)
+        });
+        return user || null;
+      }
+    } catch (error) {
+      console.error("Error retrieving user:", error);
+      return null;
+    }
   }
   
   async createUser(user: schema.InsertUser): Promise<schema.User> {
