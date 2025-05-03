@@ -43,23 +43,23 @@ export function Footer() {
                 {t("common.appName")}
               </span>
             </div>
-            <p className="mt-4 text-secondary-300">
+            <p className="mt-4 text-slate-200">
               {t("landing.footer.description")}
             </p>
             <div className="mt-6 flex space-x-4">
-              <a href="#" className="text-secondary-300 hover:text-white transition-colors">
+              <a href="#" className="text-slate-300 hover:text-white transition-colors">
                 <FacebookIcon className="h-5 w-5" />
                 <span className="sr-only">Facebook</span>
               </a>
-              <a href="#" className="text-secondary-300 hover:text-white transition-colors">
+              <a href="#" className="text-slate-300 hover:text-white transition-colors">
                 <TwitterIcon className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
               </a>
-              <a href="#" className="text-secondary-300 hover:text-white transition-colors">
+              <a href="#" className="text-slate-300 hover:text-white transition-colors">
                 <InstagramIcon className="h-5 w-5" />
                 <span className="sr-only">Instagram</span>
               </a>
-              <a href="#" className="text-secondary-300 hover:text-white transition-colors">
+              <a href="#" className="text-slate-300 hover:text-white transition-colors">
                 <LinkedinIcon className="h-5 w-5" />
                 <span className="sr-only">LinkedIn</span>
               </a>
@@ -67,13 +67,13 @@ export function Footer() {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold">{t("landing.footer.links.product")}</h3>
+            <h3 className="text-lg font-semibold text-white">{t("landing.footer.links.product")}</h3>
             <ul className="mt-4 space-y-2">
               {productLinks.map((link, index) => (
                 <li key={index}>
                   <a 
                     href={link.href} 
-                    className="text-secondary-300 hover:text-white transition-colors"
+                    className="text-slate-300 hover:text-white transition-colors"
                   >
                     {link.label}
                   </a>
@@ -83,13 +83,13 @@ export function Footer() {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold">{t("landing.footer.links.company")}</h3>
+            <h3 className="text-lg font-semibold text-white">{t("landing.footer.links.company")}</h3>
             <ul className="mt-4 space-y-2">
               {companyLinks.map((link, index) => (
                 <li key={index}>
                   <a 
                     href={link.href} 
-                    className="text-secondary-300 hover:text-white transition-colors"
+                    className="text-slate-300 hover:text-white transition-colors"
                   >
                     {link.label}
                   </a>
@@ -99,7 +99,7 @@ export function Footer() {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold">{t("landing.footer.links.support")}</h3>
+            <h3 className="text-lg font-semibold text-white">{t("landing.footer.links.support")}</h3>
             <ul className="mt-4 space-y-2">
               {supportLinks.map((link, index) => (
                 <li key={index}>
