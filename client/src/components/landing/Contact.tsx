@@ -75,14 +75,14 @@ export function Contact() {
   };
 
   return (
-    <div id="contact" className="py-16 bg-secondary-50">
+    <div id="contact" className="py-16 bg-slate-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-secondary-900 font-heading">
+            <h2 className="text-3xl font-extrabold text-white font-heading">
               {t("landing.contact.title")}
             </h2>
-            <p className="mt-4 text-xl text-secondary-500">
+            <p className="mt-4 text-xl text-slate-300">
               {t("landing.contact.subtitle")}
             </p>
           </div>
