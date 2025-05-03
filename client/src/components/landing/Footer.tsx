@@ -105,7 +105,7 @@ export function Footer() {
                 <li key={index}>
                   <a 
                     href={link.href} 
-                    className="text-secondary-300 hover:text-white transition-colors"
+                    className="text-slate-300 hover:text-white transition-colors"
                   >
                     {link.label}
                   </a>
@@ -115,7 +115,7 @@ export function Footer() {
           </div>
         </div>
         
-        <div className="mt-12 pt-8 border-t border-secondary-700 text-center text-secondary-400">
+        <div className="mt-12 pt-8 border-t border-secondary-700 text-center text-slate-300">
           <p>{t("landing.footer.copyright")}</p>
         </div>
       </div>
