@@ -33,38 +33,36 @@ export function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/">
-                <a className="flex items-center">
-                  <svg
-                    className="h-8 w-auto text-primary-600"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12 2L2 7L12 12L22 7L12 2Z"
-                      fill="currentColor"
-                    />
-                    <path
-                      d="M2 17L12 22L22 17"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M2 12L12 17L22 12"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span className="ml-2 text-xl font-bold text-primary-600 font-heading">
-                    {t("common.appName")}
-                  </span>
-                </a>
-              </Link>
+              <Link href="/" className="flex items-center">
+              <svg
+                className="h-8 w-auto text-primary-600"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 2L2 7L12 12L22 7L12 2Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M2 17L12 22L22 17"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M2 12L12 17L22 12"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span className="ml-2 text-xl font-bold text-primary-600 font-heading">
+                {t("common.appName")}
+              </span>
+            </Link>
             </div>
             
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -96,10 +94,8 @@ export function Navbar() {
               </Link>
             ) : (
               <>
-                <Link href="/auth">
-                  <a className="text-secondary-600 hover:text-primary-600 px-3 py-2 text-sm font-medium">
-                    {t("nav.login")}
-                  </a>
+                <Link href="/auth" className="text-secondary-600 hover:text-primary-600 px-3 py-2 text-sm font-medium">
+                  {t("nav.login")}
                 </Link>
                 <Link href="/auth">
                   <Button className="bg-primary-600 hover:bg-primary-700">

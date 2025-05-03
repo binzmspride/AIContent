@@ -104,6 +104,121 @@
   }
 
   .bg-gradient-primary {
-    @apply bg-gradient-to-r from-primary-600 to-primary-800;
+    @apply bg-gradient-to-r from-primary to-primary/80;
+  }
+
+  /* Thêm các lớp màu cho text */
+  .text-primary-400 {
+    @apply text-primary/40;
+  }
+  .text-primary-500 {
+    @apply text-primary/50;
+  }
+  .text-primary-600 {
+    @apply text-primary/60;
+  }
+  .text-primary-700 {
+    @apply text-primary/70;
+  }
+  .text-primary-800 {
+    @apply text-primary/80;
+  }
+  .text-primary-900 {
+    @apply text-primary/90;
+  }
+
+  /* Thêm các lớp màu cho background */
+  .bg-primary-50 {
+    @apply bg-primary/5;
+  }
+  .bg-primary-100 {
+    @apply bg-primary/10;
+  }
+  .bg-primary-200 {
+    @apply bg-primary/20;
+  }
+  .bg-primary-300 {
+    @apply bg-primary/30;
+  }
+  .bg-primary-400 {
+    @apply bg-primary/40;
+  }
+  .bg-primary-500 {
+    @apply bg-primary/50;
+  }
+  .bg-primary-600 {
+    @apply bg-primary/60;
+  }
+  .bg-primary-700 {
+    @apply bg-primary/70;
+  }
+  .bg-primary-800 {
+    @apply bg-primary/80;
+  }
+  .bg-primary-900 {
+    @apply bg-primary/90;
+  }
+
+  /* Thêm các lớp màu cho secondary */
+  .text-secondary-50 {
+    @apply text-secondary/5;
+  }
+  .text-secondary-100 {
+    @apply text-secondary/10;
+  }
+  .text-secondary-200 {
+    @apply text-secondary/20;
+  }
+  .text-secondary-300 {
+    @apply text-secondary/30;
+  }
+  .text-secondary-400 {
+    @apply text-secondary/40;
+  }
+  .text-secondary-500 {
+    @apply text-secondary/50;
+  }
+  .text-secondary-600 {
+    @apply text-secondary/60;
+  }
+  .text-secondary-700 {
+    @apply text-secondary/70;
+  }
+  .text-secondary-800 {
+    @apply text-secondary/80;
+  }
+  .text-secondary-900 {
+    @apply text-secondary/90;
+  }
+
+  .bg-secondary-50 {
+    @apply bg-secondary/5;
+  }
+  .bg-secondary-100 {
+    @apply bg-secondary/10;
+  }
+  .bg-secondary-200 {
+    @apply bg-secondary/20;
+  }
+  .bg-secondary-300 {
+    @apply bg-secondary/30;
+  }
+  .bg-secondary-400 {
+    @apply bg-secondary/40;
+  }
+  .bg-secondary-500 {
+    @apply bg-secondary/50;
+  }
+  .bg-secondary-600 {
+    @apply bg-secondary/60;
+  }
+  .bg-secondary-700 {
+    @apply bg-secondary/70;
+  }
+  .bg-secondary-800 {
+    @apply bg-secondary/80;
+  }
+  .bg-secondary-900 {
+    @apply bg-secondary/90;
   }
 }
