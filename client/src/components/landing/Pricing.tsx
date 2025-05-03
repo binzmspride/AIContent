@@ -119,7 +119,7 @@ export function Pricing() {
   };
 
   return (
-    <div id="pricing" className="py-20 bg-gradient-to-b from-white to-secondary/5 relative">
+    <div id="pricing" className="py-20 bg-gradient-to-b from-white to-slate-100 relative">
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-24 left-0 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
@@ -185,11 +185,11 @@ export function Pricing() {
                 <div className="p-8">
                   <div className="flex justify-between items-center mb-6">
                     <div>
-                      <h3 className="text-xl font-bold text-secondary-foreground">
+                      <h3 className={`text-xl font-bold ${pkg.isPopular ? 'text-secondary-foreground' : 'text-secondary-foreground'}`}>
                         {pkg.name}
                       </h3>
                       <div className="flex items-baseline mt-2">
-                        <span className="text-3xl font-extrabold text-secondary-foreground">
+                        <span className={`text-3xl font-extrabold ${pkg.isPopular ? 'text-secondary-foreground' : 'text-secondary-foreground'}`}>
                           {formatCurrency(pkg.price)}
                         </span>
                         {pkg.period && (
@@ -245,7 +245,7 @@ export function Pricing() {
           </div>
           
           <div className="mt-16 text-center">
-            <p className="text-secondary-foreground/60 max-w-3xl mx-auto">
+            <p className="text-gray-700 max-w-3xl mx-auto">
               {t("landing.pricing.guarantee")} 
               <a href="#contact" className="text-primary font-medium underline ml-1">
                 {t("landing.pricing.contactUs")}
