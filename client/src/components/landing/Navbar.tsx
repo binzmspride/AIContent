@@ -28,7 +28,7 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-50 border-b border-slate-200/50">
+    <nav className="bg-slate-800 backdrop-blur-md shadow-md sticky top-0 z-50 border-b border-slate-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
@@ -70,7 +70,7 @@ export function Navbar() {
                 <a
                   key={item.href}
                   href={item.href}
-                  className="border-transparent text-secondary-foreground/70 hover:text-primary hover:bg-primary/5 inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                  className="border-transparent text-slate-300 hover:text-white hover:bg-white/10 inline-flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
                 >
                   {item.label}
                 </a>
@@ -81,7 +81,7 @@ export function Navbar() {
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
             <button 
               onClick={toggleLanguage}
-              className="text-secondary-foreground/70 hover:text-primary p-1 rounded-md transition-colors"
+              className="text-slate-300 hover:text-white p-1 rounded-md transition-colors"
             >
               {language === "vi" ? "EN" : "VN"}
             </button>
@@ -94,7 +94,7 @@ export function Navbar() {
               </Link>
             ) : (
               <>
-                <Link href="/auth" className="text-secondary-foreground hover:text-primary px-4 py-2 text-sm font-medium transition-colors">
+                <Link href="/auth" className="text-slate-300 hover:text-white px-4 py-2 text-sm font-medium transition-colors">
                   {t("nav.login")}
                 </Link>
                 <Link href="/auth">
@@ -109,7 +109,7 @@ export function Navbar() {
           <div className="sm:hidden flex items-center">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="border-none text-primary">
+                <Button variant="outline" size="icon" className="border-none text-white">
                   <Menu className="h-6 w-6" />
                   <span className="sr-only">Open menu</span>
                 </Button>
