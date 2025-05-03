@@ -146,7 +146,7 @@ export function Pricing() {
                 onClick={() => setActiveTab('credit')}
                 className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   activeTab === 'credit' 
-                    ? 'bg-primary text-primary-foreground shadow-md' 
+                    ? 'bg-primary text-white shadow-md' 
                     : 'text-gray-700 hover:text-primary'
                 }`}
               >
@@ -157,7 +157,7 @@ export function Pricing() {
                 onClick={() => setActiveTab('storage')}
                 className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   activeTab === 'storage' 
-                    ? 'bg-primary text-primary-foreground shadow-md' 
+                    ? 'bg-primary text-white shadow-md' 
                     : 'text-gray-700 hover:text-primary'
                 }`}
               >
@@ -177,7 +177,7 @@ export function Pricing() {
                 }`}
               >
                 {pkg.isPopular && (
-                  <div className="absolute -top-5 inset-x-0 mx-auto w-max bg-accent text-primary-foreground text-xs font-bold py-1.5 px-4 rounded-full shadow-md">
+                  <div className="absolute -top-5 inset-x-0 mx-auto w-max bg-accent text-white text-xs font-bold py-1.5 px-4 rounded-full shadow-md">
                     {t("landing.pricing.popular")}
                   </div>
                 )}
@@ -185,15 +185,15 @@ export function Pricing() {
                 <div className="p-8">
                   <div className="flex justify-between items-center mb-6">
                     <div>
-                      <h3 className={`text-xl font-bold ${pkg.isPopular ? 'text-secondary-foreground' : 'text-secondary-foreground'}`}>
+                      <h3 className="text-xl font-bold text-gray-800">
                         {pkg.name}
                       </h3>
                       <div className="flex items-baseline mt-2">
-                        <span className={`text-3xl font-extrabold ${pkg.isPopular ? 'text-secondary-foreground' : 'text-secondary-foreground'}`}>
+                        <span className="text-3xl font-extrabold text-gray-800">
                           {formatCurrency(pkg.price)}
                         </span>
                         {pkg.period && (
-                          <span className="ml-1 text-sm text-secondary-foreground/60">
+                          <span className="ml-1 text-sm text-gray-600">
                             /{pkg.period}
                           </span>
                         )}
@@ -218,7 +218,7 @@ export function Pricing() {
                         <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5 mr-3">
                           <Check className="h-3 w-3 text-green-600" />
                         </div>
-                        <span className="text-secondary-foreground/80">{feature}</span>
+                        <span className="text-gray-700">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -227,10 +227,10 @@ export function Pricing() {
                     <Button
                       className={`w-full rounded-xl py-6 shadow-md transition-all duration-300 ${
                         pkg.isPopular
-                          ? 'bg-accent text-primary-foreground hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/20'
+                          ? 'bg-accent text-white hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/20'
                           : pkg.color === 'blue'
-                            ? 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20'
-                            : 'bg-purple-500 text-primary-foreground hover:bg-purple-600 hover:shadow-lg hover:shadow-purple-500/20'
+                            ? 'bg-primary text-white hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20'
+                            : 'bg-purple-500 text-white hover:bg-purple-600 hover:shadow-lg hover:shadow-purple-500/20'
                       }`}
                     >
                       {activeTab === 'credit' 
