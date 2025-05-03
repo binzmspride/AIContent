@@ -1,28 +1,41 @@
 import { useLanguage } from "@/hooks/use-language";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, Zap, Server, Crown, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Link } from "wouter";
+
+type PackageInfo = {
+  name: string;
+  price: number;
+  icon: React.ReactNode;
+  features: string[];
+  isPopular: boolean;
+  color: string;
+  period?: string;
+};
 
 export function Pricing() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'credit' | 'storage'>('credit');
 
-  const creditPackages = [
+  const creditPackages: PackageInfo[] = [
     {
       name: t("dashboard.credits.packages.basic"),
       price: 500000,
+      icon: <Zap className="h-6 w-6 text-blue-400" />,
       features: [
         `50 ${t("landing.pricing.features.credits")}`,
         `~1000 ${t("landing.pricing.features.wordsPerCredit")}`,
         `${t("landing.pricing.features.seoOptimization")}`,
         `${t("landing.pricing.features.support")} (email)`
       ],
-      isPopular: false
+      isPopular: false,
+      color: "blue"
     },
     {
       name: t("dashboard.credits.packages.advanced"),
       price: 900000,
+      icon: <Sparkles className="h-6 w-6 text-accent" />,
       features: [
         `100 ${t("landing.pricing.features.credits")}`,
         `~1500 ${t("landing.pricing.features.wordsPerCredit")}`,
@@ -30,11 +43,13 @@ export function Pricing() {
         `${t("landing.pricing.features.support")} (priority)`,
         `10% ${t("landing.pricing.features.saving")}`
       ],
-      isPopular: true
+      isPopular: true,
+      color: "accent"
     },
     {
       name: t("dashboard.credits.packages.professional"),
       price: 2000000,
+      icon: <Crown className="h-6 w-6 text-purple-500" />,
       features: [
         `250 ${t("landing.pricing.features.credits")}`,
         `~2000 ${t("landing.pricing.features.wordsPerCredit")}`,
@@ -42,27 +57,31 @@ export function Pricing() {
         `${t("landing.pricing.features.support")} (24/7)`,
         `20% ${t("landing.pricing.features.saving")}`
       ],
-      isPopular: false
+      isPopular: false,
+      color: "purple"
     }
   ];
 
-  const storagePackages = [
+  const storagePackages: PackageInfo[] = [
     {
       name: "Gói Lưu Trữ Basic",
       price: 200000,
       period: "month",
+      icon: <Server className="h-6 w-6 text-blue-400" />,
       features: [
         `50 ${t("landing.pricing.features.maxArticles")}`,
         `5GB ${t("landing.pricing.features.storage")}`,
         `${t("landing.pricing.features.backup")} (weekly)`,
         `1 ${t("landing.pricing.features.wpConnections")}`
       ],
-      isPopular: false
+      isPopular: false,
+      color: "blue"
     },
     {
       name: "Gói Lưu Trữ Business",
       price: 500000,
       period: "month",
+      icon: <Server className="h-6 w-6 text-violet-500" />,
       features: [
         `200 ${t("landing.pricing.features.maxArticles")}`,
         `20GB ${t("landing.pricing.features.storage")}`,
@@ -70,12 +89,14 @@ export function Pricing() {
         `3 ${t("landing.pricing.features.wpConnections")}`,
         `${t("landing.pricing.features.socialConnect")}`
       ],
-      isPopular: false
+      isPopular: true,
+      color: "violet"
     },
     {
       name: "Gói Lưu Trữ Enterprise",
       price: 1000000,
       period: "month",
+      icon: <Server className="h-6 w-6 text-purple-500" />,
       features: [
         `${t("landing.pricing.features.maxArticles")} (unlimited)`,
         `50GB ${t("landing.pricing.features.storage")}`,
@@ -84,7 +105,8 @@ export function Pricing() {
         `${t("landing.pricing.features.socialConnect")} (all)`,
         `${t("landing.pricing.features.apiAccess")}`
       ],
-      isPopular: false
+      isPopular: false,
+      color: "purple"
     }
   ];
 
@@ -97,118 +119,139 @@ export function Pricing() {
   };
 
   return (
-    <div id="pricing" className="py-16 bg-secondary-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div id="pricing" className="py-20 bg-gradient-to-b from-white to-secondary/5 relative">
+      {/* Decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-24 left-0 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+        <div className="absolute top-1/4 right-0 w-96 h-96 bg-accent-foreground rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+        <div className="absolute bottom-0 left-1/3 w-72 h-72 bg-primary rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-secondary-900 font-heading">
+          <h2 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent font-heading mb-3">
             {t("landing.pricing.title")}
           </h2>
-          <p className="mt-4 max-w-2xl text-xl text-secondary-500 mx-auto">
+          <div className="h-1 w-20 bg-accent mx-auto mb-6 rounded-full"></div>
+          <p className="max-w-2xl text-xl text-secondary-foreground/70 mx-auto">
             {t("landing.pricing.subtitle")}
           </p>
         </div>
 
-        <div className="mt-10">
-          <div className="flex justify-center space-x-4 mb-10">
-            <Button
-              variant={activeTab === 'credit' ? 'default' : 'outline'}
-              onClick={() => setActiveTab('credit')}
-              className="px-8"
-            >
-              {t("landing.pricing.creditPlans")}
-            </Button>
-            <Button
-              variant={activeTab === 'storage' ? 'default' : 'outline'}
-              onClick={() => setActiveTab('storage')}
-              className="px-8"
-            >
-              {t("landing.pricing.storagePlans")}
-            </Button>
+        <div className="mt-12">
+          <div className="flex justify-center mb-12">
+            <div className="bg-white p-1 rounded-full shadow-md inline-flex">
+              <Button
+                variant="ghost"
+                onClick={() => setActiveTab('credit')}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                  activeTab === 'credit' 
+                    ? 'bg-primary text-white shadow-md' 
+                    : 'text-secondary-foreground/70 hover:text-primary'
+                }`}
+              >
+                {t("landing.pricing.creditPlans")}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setActiveTab('storage')}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                  activeTab === 'storage' 
+                    ? 'bg-primary text-white shadow-md' 
+                    : 'text-secondary-foreground/70 hover:text-primary'
+                }`}
+              >
+                {t("landing.pricing.storagePlans")}
+              </Button>
+            </div>
           </div>
 
-          {activeTab === 'credit' ? (
-            <>
-              <h3 className="text-xl font-semibold text-secondary-900 text-center mb-8">
-                {t("landing.pricing.creditPlans")}
-              </h3>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                {creditPackages.map((pkg, index) => (
-                  <div
-                    key={index}
-                    className={`bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition duration-200 border ${
-                      pkg.isPopular ? 'border-2 border-accent-500 transform scale-105' : 'border-secondary-200'
-                    }`}
-                  >
-                    <div className={`${pkg.isPopular ? 'bg-accent-500' : 'bg-primary-600'} text-white px-6 py-4 relative`}>
-                      {pkg.isPopular && (
-                        <div className="absolute -top-4 right-0 left-0 mx-auto w-max bg-accent-600 text-white text-xs font-bold py-1 px-3 rounded-full">
-                          {t("landing.pricing.popular")}
-                        </div>
-                      )}
-                      <h4 className="text-lg font-semibold">{pkg.name}</h4>
-                      <div className="mt-1 text-2xl font-bold">{formatCurrency(pkg.price)}</div>
-                    </div>
-                    <div className="p-6">
-                      <ul className="space-y-3">
-                        {pkg.features.map((feature, i) => (
-                          <li key={i} className="flex items-start">
-                            <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <Link href="/auth">
-                        <Button
-                          className={`mt-6 w-full ${
-                            pkg.isPopular ? 'bg-accent-500 hover:bg-accent-600' : 'bg-primary-600 hover:bg-primary-700'
-                          }`}
-                        >
-                          {t("landing.pricing.buyNow")}
-                        </Button>
-                      </Link>
-                    </div>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3 mt-8">
+            {(activeTab === 'credit' ? creditPackages : storagePackages).map((pkg: PackageInfo, index) => (
+              <div
+                key={index}
+                className={`bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${
+                  pkg.isPopular 
+                    ? 'ring-2 ring-accent border-0 md:scale-105 relative z-10' 
+                    : 'border border-slate-200/60'
+                }`}
+              >
+                {pkg.isPopular && (
+                  <div className="absolute -top-5 inset-x-0 mx-auto w-max bg-accent text-white text-xs font-bold py-1.5 px-4 rounded-full shadow-md">
+                    {t("landing.pricing.popular")}
                   </div>
-                ))}
-              </div>
-            </>
-          ) : (
-            <>
-              <h3 className="text-xl font-semibold text-secondary-900 text-center mb-8">
-                {t("landing.pricing.storagePlans")}
-              </h3>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                {storagePackages.map((pkg, index) => (
-                  <div
-                    key={index}
-                    className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition duration-200 border border-secondary-200"
-                  >
-                    <div className="bg-secondary-700 text-white px-6 py-4">
-                      <h4 className="text-lg font-semibold">{pkg.name}</h4>
-                      <div className="mt-1 text-2xl font-bold">
-                        {formatCurrency(pkg.price)}
-                        <span className="text-sm font-normal">/{pkg.period}</span>
+                )}
+                
+                <div className="p-8">
+                  <div className="flex justify-between items-center mb-6">
+                    <div>
+                      <h3 className="text-xl font-bold text-secondary-foreground">
+                        {pkg.name}
+                      </h3>
+                      <div className="flex items-baseline mt-2">
+                        <span className="text-3xl font-extrabold text-secondary-foreground">
+                          {formatCurrency(pkg.price)}
+                        </span>
+                        {pkg.period && (
+                          <span className="ml-1 text-sm text-secondary-foreground/60">
+                            /{pkg.period}
+                          </span>
+                        )}
                       </div>
                     </div>
-                    <div className="p-6">
-                      <ul className="space-y-3">
-                        {pkg.features.map((feature, i) => (
-                          <li key={i} className="flex items-start">
-                            <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <Link href="/auth">
-                        <Button className="mt-6 w-full bg-secondary-700 hover:bg-secondary-800">
-                          {t("landing.pricing.subscribe")}
-                        </Button>
-                      </Link>
+                    <div className={`p-3 rounded-xl ${
+                      pkg.color === 'accent' 
+                        ? 'bg-accent/10' 
+                        : pkg.color === 'blue' 
+                          ? 'bg-blue-50'
+                          : 'bg-purple-50'
+                    }`}>
+                      {pkg.icon}
                     </div>
                   </div>
-                ))}
+
+                  <div className="border-t border-slate-200 my-6"></div>
+                  
+                  <ul className="space-y-4 mb-8">
+                    {pkg.features.map((feature, i) => (
+                      <li key={i} className="flex items-start">
+                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5 mr-3">
+                          <Check className="h-3 w-3 text-green-600" />
+                        </div>
+                        <span className="text-secondary-foreground/80">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <Link href="/auth">
+                    <Button
+                      className={`w-full rounded-xl py-6 shadow-md transition-all duration-300 ${
+                        pkg.isPopular
+                          ? 'bg-accent text-white hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/20'
+                          : pkg.color === 'blue'
+                            ? 'bg-primary text-white hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20'
+                            : 'bg-purple-500 text-white hover:bg-purple-600 hover:shadow-lg hover:shadow-purple-500/20'
+                      }`}
+                    >
+                      {activeTab === 'credit' 
+                        ? t("landing.pricing.buyNow")
+                        : t("landing.pricing.subscribe")
+                      }
+                    </Button>
+                  </Link>
+                </div>
               </div>
-            </>
-          )}
+            ))}
+          </div>
+          
+          <div className="mt-16 text-center">
+            <p className="text-secondary-foreground/60 max-w-3xl mx-auto">
+              {t("landing.pricing.guarantee")} 
+              <a href="#contact" className="text-primary font-medium underline ml-1">
+                {t("landing.pricing.contactUs")}
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </div>
