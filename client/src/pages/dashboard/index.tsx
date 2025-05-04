@@ -152,8 +152,8 @@ export default function Dashboard() {
                   <Coins className="h-6 w-6" />
                 </div>
                 <div className="ml-4">
-                  <h2 className="text-sm font-medium text-secondary-500">{t("dashboard.stats.creditsLeft")}</h2>
-                  <p className="text-2xl font-semibold text-secondary-900">
+                  <h2 className="text-sm font-medium text-white">{t("dashboard.stats.creditsLeft")}</h2>
+                  <p className="text-2xl font-semibold text-white">
                     {isLoadingStats ? "-" : user?.credits || 0}
                   </p>
                 </div>
@@ -175,8 +175,8 @@ export default function Dashboard() {
                   <FileText className="h-6 w-6" />
                 </div>
                 <div className="ml-4">
-                  <h2 className="text-sm font-medium text-secondary-500">{t("dashboard.stats.articlesCreated")}</h2>
-                  <p className="text-2xl font-semibold text-secondary-900">
+                  <h2 className="text-sm font-medium text-white">{t("dashboard.stats.articlesCreated")}</h2>
+                  <p className="text-2xl font-semibold text-white">
                     {isLoadingStats ? "-" : stats?.articlesCreated?.total || 0}
                   </p>
                 </div>
@@ -205,8 +205,8 @@ export default function Dashboard() {
                   <Database className="h-6 w-6" />
                 </div>
                 <div className="ml-4">
-                  <h2 className="text-sm font-medium text-secondary-500">{t("dashboard.stats.storageUsed")}</h2>
-                  <p className="text-2xl font-semibold text-secondary-900">
+                  <h2 className="text-sm font-medium text-white">{t("dashboard.stats.storageUsed")}</h2>
+                  <p className="text-2xl font-semibold text-white">
                     {isLoadingStats 
                       ? "-" 
                       : `${formatStorage(stats?.storageUsed?.current || 0)} / ${formatStorage(stats?.storageUsed?.total || 0)}`
@@ -231,7 +231,7 @@ export default function Dashboard() {
         {/* Recent Articles */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-secondary-900">{t("dashboard.stats.recentArticles")}</h2>
+            <h2 className="text-xl font-semibold text-white">{t("dashboard.stats.recentArticles")}</h2>
             <Link href="/dashboard/my-articles">
               <Button variant="outline" size="sm">
                 {t("common.viewAll")}
@@ -250,7 +250,7 @@ export default function Dashboard() {
         {/* Connection Status */}
         <div>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-secondary-900">{t("dashboard.stats.connections")}</h2>
+            <h2 className="text-xl font-semibold text-white">{t("dashboard.stats.connections")}</h2>
             <Link href="/dashboard/connections">
               <Button variant="outline" size="sm">
                 {t("dashboard.stats.manageConnections")}
@@ -269,10 +269,10 @@ export default function Dashboard() {
                     </svg>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-sm font-medium text-secondary-900">WordPress</h3>
+                    <h3 className="text-sm font-medium text-white">WordPress</h3>
                     <div className="mt-1 flex items-center">
                       <div className={`h-2 w-2 rounded-full ${isLoadingStats || stats?.connections?.wordpress ? 'bg-green-500' : 'bg-secondary-300'} mr-2`}></div>
-                      <p className="text-xs text-secondary-500">
+                      <p className="text-xs text-white">
                         {isLoadingStats 
                           ? t("common.loading")
                           : stats?.connections?.wordpress 
@@ -292,10 +292,10 @@ export default function Dashboard() {
                     </svg>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-sm font-medium text-secondary-900">Facebook</h3>
+                    <h3 className="text-sm font-medium text-white">Facebook</h3>
                     <div className="mt-1 flex items-center">
                       <div className={`h-2 w-2 rounded-full ${isLoadingStats || stats?.connections?.facebook ? 'bg-green-500' : 'bg-secondary-300'} mr-2`}></div>
-                      <p className="text-xs text-secondary-500">
+                      <p className="text-xs text-white">
                         {isLoadingStats 
                           ? t("common.loading")
                           : stats?.connections?.facebook
@@ -315,10 +315,10 @@ export default function Dashboard() {
                     </svg>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-sm font-medium text-secondary-900">TikTok</h3>
+                    <h3 className="text-sm font-medium text-white">TikTok</h3>
                     <div className="mt-1 flex items-center">
                       <div className={`h-2 w-2 rounded-full ${isLoadingStats || stats?.connections?.tiktok ? 'bg-green-500' : 'bg-secondary-300'} mr-2`}></div>
-                      <p className="text-xs text-secondary-500">
+                      <p className="text-xs text-white">
                         {isLoadingStats 
                           ? t("common.loading")
                           : stats?.connections?.tiktok
