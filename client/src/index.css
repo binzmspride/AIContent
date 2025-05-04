@@ -38,18 +38,18 @@
 
     --radius: 0.5rem;
 
-    /* Sidebar - Tông xanh đậm */
-    --sidebar-background: 210 100% 18%;
+    /* Sidebar - Tông xanh SÁNG hơn để dễ đọc */
+    --sidebar-background: 210 90% 30%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 210 100% 38%;
+    --sidebar-primary: 210 100% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 100% 28%;
+    --sidebar-accent: 210 100% 45%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 210 100% 15%;
-    --sidebar-ring: 210 100% 38%;
+    --sidebar-border: 210 90% 25%;
+    --sidebar-ring: 210 100% 45%;
 
     /* Biểu đồ */
-    --chart-1: 210 100% 38%;
+    --chart-1: 210 100% 45%;
     --chart-2: 25 95% 53%;
     --chart-3: 142 76% 36%;
     --chart-4: 271 91% 65%;
@@ -57,46 +57,46 @@
   }
 
   .dark {
-    --background: 224 71% 4%;
-    --foreground: 210 20% 98%;
+    --background: 210 50% 15%;
+    --foreground: 0 0% 95%;
 
-    --card: 224 71% 4%;
-    --card-foreground: 210 20% 98%;
+    --card: 210 50% 20%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 224 71% 4%;
-    --popover-foreground: 210 20% 98%;
+    --popover: 210 50% 15%;
+    --popover-foreground: 0 0% 95%;
 
     /* Màu chính - Xanh dương sáng hơn */
-    --primary: 210 100% 52%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 210 100% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Màu phụ - Xám đậm */
-    --secondary: 215 28% 17%;
-    --secondary-foreground: 210 20% 98%;
+    /* Màu phụ - Xám sáng hơn */
+    --secondary: 210 50% 25%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 215 28% 17%;
-    --muted-foreground: 217 20% 65%;
+    --muted: 210 50% 25%;
+    --muted-foreground: 210 20% 80%;
 
     /* Màu nhấn - Cam sáng */
     --accent: 25 95% 56%;
-    --accent-foreground: 210 40% 98%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 20% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 210 100% 52%;
+    --border: 210 50% 30%;
+    --input: 210 50% 30%;
+    --ring: 210 100% 60%;
 
-    /* Sidebar - Tông xanh đậm */
-    --sidebar-background: 210 100% 12%;
-    --sidebar-foreground: 210 20% 98%;
-    --sidebar-primary: 210 100% 52%;
-    --sidebar-primary-foreground: 210 20% 98%;
-    --sidebar-accent: 210 100% 25%;
-    --sidebar-accent-foreground: 210 20% 98%;
-    --sidebar-border: 210 100% 10%;
-    --sidebar-ring: 210 100% 52%;
+    /* Sidebar - Tông xanh dương sáng hơn */
+    --sidebar-background: 210 90% 25%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 210 100% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 100% 40%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 210 90% 20%;
+    --sidebar-ring: 210 100% 60%;
   }
 }
 

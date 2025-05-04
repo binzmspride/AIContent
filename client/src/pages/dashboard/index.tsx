@@ -159,11 +159,9 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="mt-4">
-                <Link href="/dashboard/credits">
-                  <a className="text-sm text-primary-600 hover:text-primary-700 flex items-center">
-                    {t("dashboard.stats.buyMoreCredits")}
-                    <ArrowUpRight className="ml-1 h-3 w-3" />
-                  </a>
+                <Link href="/dashboard/credits" className="text-sm text-primary-600 hover:text-primary-700 flex items-center">
+                  {t("dashboard.stats.buyMoreCredits")}
+                  <ArrowUpRight className="ml-1 h-3 w-3" />
                 </Link>
               </div>
             </CardContent>
