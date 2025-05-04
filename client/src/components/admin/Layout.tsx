@@ -49,9 +49,32 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       icon: <FileText className="h-5 w-5" />,
     },
     {
+      href: "/admin/plans",
+      label: t("admin.plans"),
+      icon: <CreditCard className="h-5 w-5" />,
+    },
+    {
       href: "/admin/payments",
       label: t("admin.payments"),
       icon: <CreditCard className="h-5 w-5" />,
+    },
+    {
+      href: "/admin/integrations",
+      label: t("admin.integrations"),
+      icon: <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14 12C14 14.2091 12.2091 16 10 16C7.79086 16 6 14.2091 6 12C6 9.79086 7.79086 8 10 8C12.2091 8 14 9.79086 14 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M13.6567 12.8333L17.5 18.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M3 7.5L6.5 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M18 4L15 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>,
+    },
+    {
+      href: "/admin/history",
+      label: t("admin.history"),
+      icon: <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 8V12L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>,
     },
     {
       href: "/admin/settings",

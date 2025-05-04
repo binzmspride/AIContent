@@ -20,7 +20,10 @@ import Settings from "@/pages/dashboard/settings";
 import AdminDashboard from "@/pages/admin";
 import AdminUsers from "@/pages/admin/users";
 import AdminArticles from "@/pages/admin/articles";
+import AdminPlans from "@/pages/admin/plans";
 import AdminPayments from "@/pages/admin/payments";
+import AdminIntegrations from "@/pages/admin/integrations";
+import AdminHistory from "@/pages/admin/history";
 import AdminSettings from "@/pages/admin/settings";
 
 function Router() {
@@ -40,11 +43,14 @@ function Router() {
       <ProtectedRoute path="/dashboard/settings" component={Settings} />
       
       {/* Admin routes */}
-      <ProtectedRoute path="/admin" component={AdminDashboard} />
-      <ProtectedRoute path="/admin/users" component={AdminUsers} />
-      <ProtectedRoute path="/admin/articles" component={AdminArticles} />
-      <ProtectedRoute path="/admin/payments" component={AdminPayments} />
-      <ProtectedRoute path="/admin/settings" component={AdminSettings} />
+      <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} />
+      <ProtectedRoute path="/admin/users" component={AdminUsers} adminOnly={true} />
+      <ProtectedRoute path="/admin/articles" component={AdminArticles} adminOnly={true} />
+      <ProtectedRoute path="/admin/plans" component={AdminPlans} adminOnly={true} />
+      <ProtectedRoute path="/admin/payments" component={AdminPayments} adminOnly={true} />
+      <ProtectedRoute path="/admin/integrations" component={AdminIntegrations} adminOnly={true} />
+      <ProtectedRoute path="/admin/history" component={AdminHistory} adminOnly={true} />
+      <ProtectedRoute path="/admin/settings" component={AdminSettings} adminOnly={true} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
