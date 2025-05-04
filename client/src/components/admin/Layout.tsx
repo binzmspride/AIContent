@@ -69,11 +69,11 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       {/* Sidebar for desktop */}
       <aside
         className={cn(
-          "bg-secondary-900 text-white h-screen transition-all duration-300 ease-in-out hidden md:block",
+          "bg-sidebar text-white h-screen transition-all duration-300 ease-in-out hidden md:block",
           isSidebarOpen ? "w-64" : "w-20"
         )}
       >
-        <div className="p-4 flex items-center justify-between border-b border-secondary-700">
+        <div className="p-4 flex items-center justify-between border-b border-sidebar-border">
           <div className={cn("flex items-center", !isSidebarOpen && "justify-center w-full")}>
             <img 
               src="/logo.svg" 
@@ -91,7 +91,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
             variant="ghost"
             size="icon"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-white hover:bg-secondary-800"
+            className="text-white hover:bg-sidebar-accent"
           >
             <ChevronLeft className={cn("h-5 w-5 transition-transform", !isSidebarOpen && "rotate-180")} />
           </Button>
@@ -107,8 +107,8 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     "flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors",
                     isSidebarOpen ? "" : "justify-center",
                     location === link.href
-                      ? "bg-primary-600 text-white"
-                      : "text-secondary-300 hover:text-white hover:bg-secondary-800"
+                      ? "bg-sidebar-accent text-white"
+                      : "text-white hover:text-white hover:bg-sidebar-accent/70"
                   )}
                 >
                   {link.icon}
@@ -123,7 +123,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                 className={cn(
                   "flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors",
                   isSidebarOpen ? "" : "justify-center",
-                  "text-secondary-300 hover:text-white hover:bg-secondary-800"
+                  "text-white hover:text-white hover:bg-sidebar-accent/70"
                 )}
               >
                 <LayoutDashboard className="h-5 w-5" />
@@ -134,7 +134,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         </nav>
 
         <div className={cn(
-          "absolute bottom-0 left-0 right-0 p-4 border-t border-secondary-700",
+          "absolute bottom-0 left-0 right-0 p-4 border-t border-sidebar-border",
           !isSidebarOpen && "flex justify-center"
         )}>
           {isSidebarOpen ? (
@@ -149,7 +149,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                 <p className="text-sm font-medium text-white">{user?.fullName || user?.username}</p>
                 <button
                   onClick={handleLogout}
-                  className="text-xs text-secondary-400 hover:text-secondary-300 flex items-center mt-1"
+                  className="text-xs text-white/80 hover:text-white flex items-center mt-1"
                 >
                   <LogOut className="h-3 w-3 mr-1" />
                   {t("nav.logout")}
@@ -159,7 +159,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
           ) : (
             <button
               onClick={handleLogout}
-              className="text-secondary-400 hover:text-secondary-300"
+              className="text-white/80 hover:text-white"
             >
               <LogOut className="h-5 w-5" />
             </button>
@@ -176,8 +176,8 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-64 p-0">
-            <div className="bg-secondary-900 text-white h-full flex flex-col">
-              <div className="p-4 border-b border-secondary-700">
+            <div className="bg-sidebar text-white h-full flex flex-col">
+              <div className="p-4 border-b border-sidebar-border">
                 <div className="flex items-center">
                   <img 
                     src="/logo.svg" 
@@ -200,8 +200,8 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                         className={cn(
                           "flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors",
                           location === link.href
-                            ? "bg-primary-600 text-white"
-                            : "text-secondary-300 hover:text-white hover:bg-secondary-800"
+                            ? "bg-sidebar-accent text-white"
+                            : "text-white hover:text-white hover:bg-sidebar-accent/70"
                         )}
                       >
                         {link.icon}
@@ -213,7 +213,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                   <li>
                     <Link 
                       href="/dashboard"
-                      className="flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors text-secondary-300 hover:text-white hover:bg-secondary-800"
+                      className="flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors text-white hover:text-white hover:bg-sidebar-accent/70"
                     >
                       <LayoutDashboard className="h-5 w-5" />
                       <span className="ml-3">User Dashboard</span>
@@ -222,7 +222,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                 </ul>
               </nav>
 
-              <div className="p-4 border-t border-secondary-700">
+              <div className="p-4 border-t border-sidebar-border">
                 <div className="flex items-center">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={`https://ui-avatars.com/api/?name=${user?.fullName || user?.username}&background=random`} />
@@ -234,7 +234,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                     <p className="text-sm font-medium text-white">{user?.fullName || user?.username}</p>
                     <button
                       onClick={handleLogout}
-                      className="text-xs text-secondary-400 hover:text-secondary-300 flex items-center mt-1"
+                      className="text-xs text-white/80 hover:text-white flex items-center mt-1"
                     >
                       <LogOut className="h-3 w-3 mr-1" />
                       {t("nav.logout")}
