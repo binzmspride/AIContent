@@ -50,14 +50,16 @@ export default function Plans() {
   const [isPurchaseDialogOpen, setIsPurchaseDialogOpen] = useState(false);
 
   // Fetch storage plans
-  const { data: storagePlans, isLoading: isLoadingStoragePlans } = useQuery<Plan[]>({
+  const { data: storagePlansResponse, isLoading: isLoadingStoragePlans } = useQuery<{ success: boolean, data: Plan[] }>({
     queryKey: ["/api/plans", { type: "storage" }],
   });
+  const storagePlans = storagePlansResponse?.data;
 
   // Fetch user plans
-  const { data: userPlans, isLoading: isLoadingUserPlans } = useQuery<UserPlansResponse>({
+  const { data: userPlansResponse, isLoading: isLoadingUserPlans } = useQuery<{ success: boolean, data: UserPlansResponse }>({
     queryKey: ["/api/dashboard/user-plans"],
   });
+  const userPlans = userPlansResponse?.data;
 
   // Purchase plan mutation
   const purchasePlanMutation = useMutation({
