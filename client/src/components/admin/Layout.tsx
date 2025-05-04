@@ -27,7 +27,7 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ children, title }: AdminLayoutProps) {
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const { user, logoutMutation } = useAuth();
   const [location] = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -101,35 +101,33 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
           <ul className="space-y-2">
             {sidebarLinks.map((link) => (
               <li key={link.href}>
-                <Link href={link.href}>
-                  <a
-                    className={cn(
-                      "flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors",
-                      isSidebarOpen ? "" : "justify-center",
-                      location === link.href
-                        ? "bg-primary-600 text-white"
-                        : "text-secondary-300 hover:text-white hover:bg-secondary-800"
-                    )}
-                  >
-                    {link.icon}
-                    {isSidebarOpen && <span className="ml-3">{link.label}</span>}
-                  </a>
+                <Link 
+                  href={link.href}
+                  className={cn(
+                    "flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors",
+                    isSidebarOpen ? "" : "justify-center",
+                    location === link.href
+                      ? "bg-primary-600 text-white"
+                      : "text-secondary-300 hover:text-white hover:bg-secondary-800"
+                  )}
+                >
+                  {link.icon}
+                  {isSidebarOpen && <span className="ml-3">{link.label}</span>}
                 </Link>
               </li>
             ))}
             
             <li>
-              <Link href="/dashboard">
-                <a
-                  className={cn(
-                    "flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors",
-                    isSidebarOpen ? "" : "justify-center",
-                    "text-secondary-300 hover:text-white hover:bg-secondary-800"
-                  )}
-                >
-                  <LayoutDashboard className="h-5 w-5" />
-                  {isSidebarOpen && <span className="ml-3">User Dashboard</span>}
-                </a>
+              <Link 
+                href="/dashboard"
+                className={cn(
+                  "flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors",
+                  isSidebarOpen ? "" : "justify-center",
+                  "text-secondary-300 hover:text-white hover:bg-secondary-800"
+                )}
+              >
+                <LayoutDashboard className="h-5 w-5" />
+                {isSidebarOpen && <span className="ml-3">User Dashboard</span>}
               </Link>
             </li>
           </ul>
@@ -197,30 +195,28 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                 <ul className="space-y-2">
                   {sidebarLinks.map((link) => (
                     <li key={link.href}>
-                      <Link href={link.href}>
-                        <a
-                          className={cn(
-                            "flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors",
-                            location === link.href
-                              ? "bg-primary-600 text-white"
-                              : "text-secondary-300 hover:text-white hover:bg-secondary-800"
-                          )}
-                        >
-                          {link.icon}
-                          <span className="ml-3">{link.label}</span>
-                        </a>
+                      <Link 
+                        href={link.href}
+                        className={cn(
+                          "flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors",
+                          location === link.href
+                            ? "bg-primary-600 text-white"
+                            : "text-secondary-300 hover:text-white hover:bg-secondary-800"
+                        )}
+                      >
+                        {link.icon}
+                        <span className="ml-3">{link.label}</span>
                       </Link>
                     </li>
                   ))}
                   
                   <li>
-                    <Link href="/dashboard">
-                      <a
-                        className="flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors text-secondary-300 hover:text-white hover:bg-secondary-800"
-                      >
-                        <LayoutDashboard className="h-5 w-5" />
-                        <span className="ml-3">User Dashboard</span>
-                      </a>
+                    <Link 
+                      href="/dashboard"
+                      className="flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors text-secondary-300 hover:text-white hover:bg-secondary-800"
+                    >
+                      <LayoutDashboard className="h-5 w-5" />
+                      <span className="ml-3">User Dashboard</span>
                     </Link>
                   </li>
                 </ul>

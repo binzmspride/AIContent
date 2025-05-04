@@ -82,29 +82,29 @@ export function Sidebar() {
         <ul className="space-y-1 px-2">
           {links.map((link) => (
             <li key={link.href}>
-              <Link href={link.href}>
-                <a
-                  className={cn(
-                    "flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors",
-                    location === link.href
-                      ? "bg-sidebar-accent text-sidebar-foreground"
-                      : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
-                  )}
-                >
-                  {link.icon}
-                  {link.label}
-                </a>
+              <Link 
+                href={link.href}
+                className={cn(
+                  "flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors",
+                  location === link.href
+                    ? "bg-sidebar-accent text-sidebar-foreground"
+                    : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                )}
+              >
+                {link.icon}
+                {link.label}
               </Link>
             </li>
           ))}
           
           {user?.role === "admin" && (
             <li>
-              <Link href="/admin">
-                <a className="flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50">
-                  <LayoutDashboard className="h-5 w-5 mr-3" />
-                  Admin Panel
-                </a>
+              <Link 
+                href="/admin"
+                className="flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+              >
+                <LayoutDashboard className="h-5 w-5 mr-3" />
+                Admin Panel
               </Link>
             </li>
           )}
