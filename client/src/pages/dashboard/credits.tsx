@@ -68,14 +68,20 @@ export default function Credits() {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Fetch credit plans
-  const { data: plans, isLoading: isLoadingPlans } = useQuery<Plan[]>({
+  const { data: plansResponse, isLoading: isLoadingPlans } = useQuery<{success: boolean, data: Plan[]}>({
     queryKey: ["/api/plans", { type: "credit" }],
   });
+  
+  // Extract plans from the response
+  const plans = plansResponse?.data || [];
 
   // Fetch credit history
-  const { data: creditHistory, isLoading: isLoadingHistory } = useQuery<CreditHistoryResponse>({
+  const { data: creditHistoryResponse, isLoading: isLoadingHistory } = useQuery<{success: boolean, data: CreditHistoryResponse}>({
     queryKey: ["/api/dashboard/credits/history", { page: currentPage, limit: 10 }],
   });
+  
+  // Extract credit history from the response
+  const creditHistory = creditHistoryResponse?.data;
 
   // Purchase credit mutation
   const purchaseCreditMutation = useMutation({
