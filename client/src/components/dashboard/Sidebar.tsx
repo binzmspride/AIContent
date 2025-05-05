@@ -97,16 +97,15 @@ export function Sidebar() {
             </li>
           ))}
           
-          {/* Always show admin panel - for demo purposes */}
-            <li>
-              <Link 
-                href="/admin"
-                className="flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
-              >
-                <LayoutDashboard className="h-5 w-5 mr-3" />
-                Admin Panel
-              </Link>
-            </li>
+          <li>
+            <Link 
+              href="/admin"
+              className="flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+            >
+              <LayoutDashboard className="h-5 w-5 mr-3" />
+              Admin Panel
+            </Link>
+          </li>
         </ul>
       </nav>
       
