@@ -5,6 +5,8 @@ import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { pool } from "@db";
 import { ApiResponse } from "@shared/types";
+import { randomBytes, scrypt } from "crypto";
+import { promisify } from "util";
 
 const PostgresSessionStore = connectPg(session);
 
@@ -12,8 +14,11 @@ export interface IStorage {
   // User management
   getUser(id: number): Promise<schema.User | null>;
   getUserByUsername(username: string): Promise<schema.User | null>;
+  getUserByVerificationToken(token: string): Promise<schema.User | null>;
+  getUserByResetPasswordToken(token: string): Promise<schema.User | null>;
   createUser(user: schema.InsertUser): Promise<schema.User>;
   updateUser(id: number, data: Partial<schema.User>): Promise<schema.User | null>;
+  updateUserPassword(id: number, newPassword: string): Promise<schema.User | null>;
   listUsers(page: number, limit: number): Promise<{ users: schema.User[], total: number }>;
   
   // Article management
@@ -87,6 +92,30 @@ class DatabaseStorage implements IStorage {
     }
   }
   
+  async getUserByVerificationToken(token: string): Promise<schema.User | null> {
+    try {
+      const user = await db.query.users.findFirst({
+        where: eq(schema.users.verificationToken, token)
+      });
+      return user || null;
+    } catch (error) {
+      console.error("Error retrieving user by verification token:", error);
+      return null;
+    }
+  }
+  
+  async getUserByResetPasswordToken(token: string): Promise<schema.User | null> {
+    try {
+      const user = await db.query.users.findFirst({
+        where: eq(schema.users.resetPasswordToken, token)
+      });
+      return user || null;
+    } catch (error) {
+      console.error("Error retrieving user by reset password token:", error);
+      return null;
+    }
+  }
+  
   async createUser(user: schema.InsertUser): Promise<schema.User> {
     const [newUser] = await db.insert(schema.users)
       .values(user)
@@ -100,6 +129,30 @@ class DatabaseStorage implements IStorage {
       .where(eq(schema.users.id, id))
       .returning();
     return updatedUser || null;
+  }
+  
+  async updateUserPassword(id: number, newPassword: string): Promise<schema.User | null> {
+    try {
+      // Hash password first
+      const scryptAsync = promisify(scrypt);
+      const salt = randomBytes(16).toString("hex");
+      const buf = (await scryptAsync(newPassword, salt, 64)) as Buffer;
+      const hashedPassword = `${buf.toString("hex")}.${salt}`;
+
+      // Update user with new password
+      const [updatedUser] = await db.update(schema.users)
+        .set({ 
+          password: hashedPassword, 
+          updatedAt: new Date() 
+        })
+        .where(eq(schema.users.id, id))
+        .returning();
+      
+      return updatedUser || null;
+    } catch (error) {
+      console.error("Error updating user password:", error);
+      return null;
+    }
   }
   
   async listUsers(page: number = 1, limit: number = 10): Promise<{ users: schema.User[], total: number }> {

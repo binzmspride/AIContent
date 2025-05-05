@@ -19,6 +19,11 @@ export const users = pgTable('users', {
   role: roleEnum('role').notNull().default('user'),
   credits: integer('credits').notNull().default(0),
   language: text('language').notNull().default('vi'),
+  isVerified: boolean('is_verified').notNull().default(false),
+  verificationToken: text('verification_token'),
+  verificationTokenExpiry: timestamp('verification_token_expiry'),
+  resetPasswordToken: text('reset_password_token'),
+  resetPasswordTokenExpiry: timestamp('reset_password_token_expiry'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
