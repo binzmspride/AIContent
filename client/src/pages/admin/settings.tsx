@@ -600,6 +600,15 @@ export default function AdminSettings() {
 
           {/* Settings content */}
           <div className="space-y-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="hidden">
+                <TabsTrigger value="general">General</TabsTrigger>
+                <TabsTrigger value="ai">AI</TabsTrigger>
+                <TabsTrigger value="email">Email</TabsTrigger>
+                <TabsTrigger value="api">API</TabsTrigger>
+                <TabsTrigger value="webhook">Webhook</TabsTrigger>
+                <TabsTrigger value="system">System</TabsTrigger>
+              </TabsList>
             {/* General Settings */}
             <TabsContent value="general" className="mt-0 space-y-6">
               <Card>
@@ -1390,6 +1399,7 @@ export default function AdminSettings() {
                 </CardFooter>
               </Card>
             </TabsContent>
+            </Tabs>
           </div>
         </div>
       </AdminLayout>
