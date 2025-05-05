@@ -9,13 +9,13 @@ export default function PerformancePage() {
   return (
     <>
       <Head>
-        <title>{t("admin.performance.title")} - {t("common.appName")}</title>
+        <title>{t("admin.performanceMetrics.title")} - {t("common.appName")}</title>
       </Head>
       
-      <AdminLayout title={t("admin.performance.title")}>
+      <AdminLayout title={t("admin.performanceMetrics.title")}>
         <div className="space-y-6">
           <p className="text-muted-foreground">
-            {t("admin.performance.description")}
+            {t("admin.performanceMetrics.description")}
           </p>
           
           <PerformanceInsights />

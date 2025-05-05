@@ -114,7 +114,7 @@ export default function PerformanceInsights() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t("admin.performance.requests")}
+              {t("admin.performanceMetrics.requests")}
             </CardTitle>
             <svg className="h-4 w-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -138,7 +138,7 @@ export default function PerformanceInsights() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t("admin.performance.cpuMemory")}
+              {t("admin.performanceMetrics.cpuMemory")}
             </CardTitle>
             <svg className="h-4 w-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
@@ -165,7 +165,7 @@ export default function PerformanceInsights() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t("admin.performance.diskUsage")}
+              {t("admin.performanceMetrics.diskUsage")}
             </CardTitle>
             <svg className="h-4 w-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
@@ -193,7 +193,7 @@ export default function PerformanceInsights() {
         <TabsContent value="response" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t("admin.performance.responseTimeHistory")}</CardTitle>
+              <CardTitle>{t("admin.performanceMetrics.responseTimeHistory")}</CardTitle>
             </CardHeader>
             <CardContent className="h-80">
               {isLoadingPerformance ? (
@@ -238,7 +238,7 @@ export default function PerformanceInsights() {
         <TabsContent value="requests" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t("admin.performance.requestsHistory")}</CardTitle>
+              <CardTitle>{t("admin.performanceMetrics.requestsHistory")}</CardTitle>
             </CardHeader>
             <CardContent className="h-80">
               {isLoadingPerformance ? (
@@ -282,7 +282,7 @@ export default function PerformanceInsights() {
         <TabsContent value="resources" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t("admin.performance.resourceUsage")}</CardTitle>
+              <CardTitle>{t("admin.performanceMetrics.resourceUsage")}</CardTitle>
             </CardHeader>
             <CardContent className="h-80">
               {isLoadingPerformance ? (
@@ -328,16 +328,16 @@ export default function PerformanceInsights() {
       {/* Endpoint Performance */}
       <Card>
         <CardHeader>
-          <CardTitle>{t("admin.performance.endpointPerformance")}</CardTitle>
+          <CardTitle>{t("admin.performanceMetrics.endpointPerformance")}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t("admin.performance.endpoint")}</TableHead>
-                <TableHead>{t("admin.performance.requestCount")}</TableHead>
-                <TableHead>{t("admin.performance.avgResponseTime")}</TableHead>
-                <TableHead>{t("admin.performance.errorRate")}</TableHead>
+                <TableHead>{t("admin.performanceMetrics.endpoint")}</TableHead>
+                <TableHead>{t("admin.performanceMetrics.requestCount")}</TableHead>
+                <TableHead>{t("admin.performanceMetrics.avgResponseTime")}</TableHead>
+                <TableHead>{t("admin.performanceMetrics.errorRate")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
