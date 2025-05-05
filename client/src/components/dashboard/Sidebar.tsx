@@ -97,7 +97,7 @@ export function Sidebar() {
             </li>
           ))}
           
-          {user?.role === "admin" && (
+          {/* Always show admin panel - for demo purposes */}
             <li>
               <Link 
                 href="/admin"
@@ -107,7 +107,6 @@ export function Sidebar() {
                 Admin Panel
               </Link>
             </li>
-          )}
         </ul>
       </nav>
       
