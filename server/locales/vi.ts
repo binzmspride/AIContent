@@ -392,6 +392,9 @@ export const vi = {
     performanceMetrics: {
       title: "Hiệu suất hệ thống",
       description: "Giám sát hiệu suất hệ thống và tối ưu hóa khả năng phản hồi của ứng dụng.",
+      metrics: "Số liệu hiệu suất",
+      timeRange: "Khoảng thời gian",
+      selectTimeRange: "Chọn khoảng thời gian",
       responseTime: "Thời gian phản hồi",
       requests: "Lượt truy cập",
       cpuMemory: "CPU & Bộ nhớ",
@@ -404,6 +407,8 @@ export const vi = {
       requestCount: "Số lượt truy cập",
       avgResponseTime: "Thời gian phản hồi TB",
       errorRate: "Tỷ lệ lỗi",
+      last6h: "6 giờ qua",
+      last12h: "12 giờ qua",
       last24h: "24 giờ qua",
       last7d: "7 ngày qua",
       last30d: "30 ngày qua",

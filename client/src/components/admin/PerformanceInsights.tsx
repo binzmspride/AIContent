@@ -100,6 +100,29 @@ export default function PerformanceInsights() {
   
   return (
     <div className="space-y-6">
+      {/* Time Range Selector */}
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-medium">{t("admin.performanceMetrics.metrics")}</h3>
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-muted-foreground">{t("admin.performanceMetrics.timeRange")}:</span>
+          <Select 
+            value={timeRange} 
+            onValueChange={(value) => setTimeRange(value)}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder={t("admin.performanceMetrics.selectTimeRange")} />
+            </SelectTrigger>
+            <SelectContent>
+              {timeRangeOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      
       {/* Performance Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
