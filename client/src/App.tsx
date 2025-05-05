@@ -22,7 +22,7 @@ import AdminUsers from "@/pages/admin/users";
 import AdminArticles from "@/pages/admin/articles";
 import AdminPlans from "@/pages/admin/plans";
 import AdminPayments from "@/pages/admin/payments";
-import AdminIntegrations from "@/pages/admin/integrations";
+import AdminIntegrations from "@/pages/admin/integrations-fixed";
 import AdminHistory from "@/pages/admin/history";
 import AdminSettings from "@/pages/admin/settings";
 
