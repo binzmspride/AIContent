@@ -375,7 +375,11 @@ export const en = {
     dashboard: "Dashboard",
     users: "Users",
     articles: "Articles",
+    plans: "Plans",
     payments: "Payments",
+    performance: "Performance",
+    integrations: "Integrations",
+    history: "History",
     settings: "System Settings",
     stats: {
       totalUsers: "Total Users",

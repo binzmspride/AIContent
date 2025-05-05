@@ -3,6 +3,8 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import * as schema from "@shared/schema";
+import { db } from "@db";
+import { sql } from "drizzle-orm";
 import { ApiResponse, GenerateContentRequest, GenerateContentResponse } from "@shared/types";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -615,6 +617,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error fetching admin stats:', error);
       res.status(500).json({ success: false, error: 'Failed to fetch admin stats' });
+    }
+  });
+  
+  // Get performance metrics for the admin dashboard
+  app.get('/api/admin/performance', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+      
+      const timeRange = req.query.timeRange || '24h';
+      
+      // In a real application, this would fetch actual data from monitoring systems
+      // For now, we'll return mock data for demonstration purposes
+      
+      // Generate historical data points
+      const now = new Date();
+      const historyPoints = 24; // 24 hours of data
+      
+      const responseTimeHistory = Array.from({ length: historyPoints }, (_, i) => {
+        const timestamp = new Date(now.getTime() - (historyPoints - 1 - i) * 3600000).toISOString();
+        return {
+          timestamp,
+          average: 120 + Math.random() * 80,
+          p95: 180 + Math.random() * 100,
+          p99: 220 + Math.random() * 120,
+        };
+      });
+      
+      const requestsHistory = Array.from({ length: historyPoints }, (_, i) => {
+        const timestamp = new Date(now.getTime() - (historyPoints - 1 - i) * 3600000).toISOString();
+        return {
+          timestamp,
+          total: 1000 + Math.floor(Math.random() * 500),
+          errors: Math.floor(Math.random() * 50),
+        };
+      });
+      
+      const resourceUsageHistory = Array.from({ length: historyPoints }, (_, i) => {
+        const timestamp = new Date(now.getTime() - (historyPoints - 1 - i) * 3600000).toISOString();
+        return {
+          timestamp,
+          cpu: 30 + Math.random() * 30,
+          memory: 40 + Math.random() * 25,
+          disk: 60 + Math.random() * 15,
+        };
+      });
+      
+      // Generate endpoint performance data
+      const endpointPerformance = [
+        { endpoint: "/api/articles", count: 5230, averageTime: 132, errorRate: 1.2 },
+        { endpoint: "/api/user", count: 8450, averageTime: 88, errorRate: 0.8 },
+        { endpoint: "/api/generate-content", count: 1820, averageTime: 2350, errorRate: 5.2 },
+        { endpoint: "/api/admin/stats", count: 645, averageTime: 165, errorRate: 3.1 },
+        { endpoint: "/api/plans", count: 1230, averageTime: 112, errorRate: 1.5 },
+      ];
+      
+      res.json({
+        success: true,
+        data: {
+          // Current stats
+          averageResponseTime: 145,
+          p95ResponseTime: 220,
+          p99ResponseTime: 280,
+          
+          totalRequests: 24560,
+          requestsPerMinute: 42,
+          errorRate: 2.5,
+          
+          cpuUsage: 45,
+          memoryUsage: 62,
+          diskUsage: 72,
+          
+          // Historical data
+          responseTimeHistory,
+          requestsHistory,
+          resourceUsageHistory,
+          
+          // Endpoint performance
+          endpointPerformance,
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching performance metrics:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch performance metrics' });
     }
   });
 

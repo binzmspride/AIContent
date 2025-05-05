@@ -375,7 +375,11 @@ export const vi = {
     dashboard: "Bảng điều khiển",
     users: "Người dùng",
     articles: "Bài viết",
+    plans: "Gói dịch vụ",
     payments: "Thanh toán",
+    performance: "Hiệu suất",
+    integrations: "Tích hợp",
+    history: "Lịch sử",
     settings: "Cài đặt hệ thống",
     stats: {
       totalUsers: "Tổng số người dùng",
