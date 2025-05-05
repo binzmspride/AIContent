@@ -29,7 +29,7 @@ type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 export default function ForgotPasswordPage() {
   const { t } = useLanguage();
   const [location, navigate] = useLocation();
-  const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
+  const [status, setStatus] = useState<string>("idle");
   
   // Forgot password form
   const form = useForm<ForgotPasswordFormValues>({

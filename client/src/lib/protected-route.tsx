@@ -31,22 +31,23 @@ export function ProtectedRoute({
     );
   }
 
-  // Bỏ qua kiểm tra quyền admin cho demo
-  // if (adminOnly && user.role !== 'admin') {
-  //   return (
-  //     <Route path={path}>
-  //       <Redirect to="/dashboard" />
-  //     </Route>
-  //   );
-  // }
+  // Kiểm tra quyền admin
+  if (adminOnly && user.role !== 'admin') {
+    return (
+      <Route path={path}>
+        <Redirect to="/dashboard" />
+      </Route>
+    );
+  }
 
-  // if (path.startsWith('/admin') && user.role !== 'admin') {
-  //   return (
-  //     <Route path={path}>
-  //       <Redirect to="/dashboard" />
-  //     </Route>
-  //   );
-  // }
+  // Cũng kiểm tra các trang admin qua đường dẫn
+  if (path.startsWith('/admin') && user.role !== 'admin') {
+    return (
+      <Route path={path}>
+        <Redirect to="/dashboard" />
+      </Route>
+    );
+  }
 
   return <Route path={path} component={Component} />;
 }

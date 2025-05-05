@@ -248,6 +248,39 @@ export const vi = {
       privacy: "Chính sách bảo mật",
       submit: "Đăng ký",
       orContinueWith: "Hoặc tiếp tục với"
+    },
+    verify: {
+      title: "Xác thực Email",
+      verifying: "Đang xác thực email của bạn...",
+      success: "Email của bạn đã được xác thực thành công! Bạn có thể đăng nhập ngay bây giờ.",
+      failure: "Xác thực email thất bại.",
+      noToken: "Không có mã xác thực. Vui lòng kiểm tra lại đường dẫn trong email.",
+      unknownError: "Đã xảy ra lỗi không xác định. Vui lòng thử lại.",
+      serverError: "Lỗi máy chủ. Vui lòng thử lại sau.",
+      loginButton: "Đến trang đăng nhập",
+      backToLogin: "Quay lại đăng nhập"
+    },
+    forgotPassword: {
+      title: "Quên mật khẩu",
+      instructions: "Vui lòng nhập địa chỉ email của bạn. Chúng tôi sẽ gửi cho bạn đường dẫn để đặt lại mật khẩu.",
+      email: "Email",
+      submit: "Gửi yêu cầu đặt lại",
+      success: "Nếu email của bạn tồn tại trong hệ thống, bạn sẽ nhận được email hướng dẫn đặt lại mật khẩu. Vui lòng kiểm tra hộp thư đến của bạn.",
+      backToLogin: "Quay lại đăng nhập"
+    },
+    resetPassword: {
+      title: "Đặt lại mật khẩu",
+      instructions: "Vui lòng nhập mật khẩu mới của bạn.",
+      newPassword: "Mật khẩu mới",
+      confirmPassword: "Xác nhận mật khẩu mới",
+      submit: "Đặt lại mật khẩu",
+      success: "Mật khẩu của bạn đã được đặt lại thành công! Bạn có thể đăng nhập với mật khẩu mới.",
+      failure: "Đặt lại mật khẩu thất bại.",
+      noToken: "Không có mã đặt lại. Vui lòng kiểm tra lại đường dẫn trong email.",
+      unknownError: "Đã xảy ra lỗi không xác định. Vui lòng thử lại.",
+      serverError: "Lỗi máy chủ. Vui lòng thử lại sau.",
+      loginButton: "Đến trang đăng nhập",
+      backToLogin: "Quay lại đăng nhập"
     }
   },
 

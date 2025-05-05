@@ -248,6 +248,39 @@ export const en = {
       privacy: "Privacy Policy",
       submit: "Register",
       orContinueWith: "Or continue with"
+    },
+    verify: {
+      title: "Verify Email",
+      verifying: "Verifying your email...",
+      success: "Your email has been successfully verified! You can now log in.",
+      failure: "Email verification failed.",
+      noToken: "No verification token provided. Please check your email link.",
+      unknownError: "An unknown error occurred. Please try again.",
+      serverError: "Server error. Please try again later.",
+      loginButton: "Go to Login",
+      backToLogin: "Back to Login"
+    },
+    forgotPassword: {
+      title: "Forgot Password",
+      instructions: "Please enter your email address. We'll send you a link to reset your password.",
+      email: "Email",
+      submit: "Send Reset Link",
+      success: "If your email exists in our system, you will receive a password reset link. Please check your inbox.",
+      backToLogin: "Back to Login"
+    },
+    resetPassword: {
+      title: "Reset Password",
+      instructions: "Please enter your new password.",
+      newPassword: "New Password",
+      confirmPassword: "Confirm New Password",
+      submit: "Reset Password",
+      success: "Your password has been reset successfully! You can now log in with your new password.",
+      failure: "Password reset failed.",
+      noToken: "No reset token provided. Please check your email link.",
+      unknownError: "An unknown error occurred. Please try again.",
+      serverError: "Server error. Please try again later.",
+      loginButton: "Go to Login",
+      backToLogin: "Back to Login"
     }
   },
 
