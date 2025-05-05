@@ -25,6 +25,7 @@ import AdminPayments from "@/pages/admin/payments";
 import AdminIntegrations from "@/pages/admin/integrations-fixed";
 import AdminHistory from "@/pages/admin/history";
 import AdminSettings from "@/pages/admin/settings";
+import AdminPerformance from "@/pages/admin/performance";
 
 function Router() {
   return (
@@ -51,6 +52,7 @@ function Router() {
       <ProtectedRoute path="/admin/integrations" component={AdminIntegrations} adminOnly={true} />
       <ProtectedRoute path="/admin/history" component={AdminHistory} adminOnly={true} />
       <ProtectedRoute path="/admin/settings" component={AdminSettings} adminOnly={true} />
+      <ProtectedRoute path="/admin/performance" component={AdminPerformance} adminOnly={true} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />

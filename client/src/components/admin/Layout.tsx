@@ -13,6 +13,8 @@ import {
   ChevronLeft,
   Menu,
   LogOut,
+  BarChart3,
+  Activity,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -57,6 +59,11 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       href: "/admin/payments",
       label: t("admin.payments"),
       icon: <CreditCard className="h-5 w-5" />,
+    },
+    {
+      href: "/admin/performance",
+      label: t("admin.performance"),
+      icon: <BarChart3 className="h-5 w-5" />,
     },
     {
       href: "/admin/integrations",
