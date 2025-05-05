@@ -309,17 +309,17 @@ export default function AdminUsers() {
         <title>{t("admin.users.title") || "Quản lý người dùng"} - {t("common.appName") || "SEO AI Writer"}</title>
       </Head>
       
-      <AdminLayout title={t("admin.users.title") || "Quản lý người dùng"}>
+      <AdminLayout title="Quản lý người dùng">
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">{t("admin.users.title") || "Quản lý người dùng"}</h1>
-            <p className="text-muted-foreground">{t("admin.users.description") || "Xem và quản lý tất cả người dùng trong hệ thống"}</p>
+            <h1 className="text-2xl font-bold">Quản lý người dùng</h1>
+            <p className="text-muted-foreground">Xem và quản lý tất cả người dùng trong hệ thống</p>
           </div>
           <div className="flex items-center space-x-2">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={t("admin.users.search") || "Tìm kiếm người dùng..."}
+                placeholder="Tìm kiếm người dùng..."
                 className="pl-8 w-full sm:w-[250px]"
                 value={searchQuery}
                 onChange={handleSearch}
@@ -329,14 +329,14 @@ export default function AdminUsers() {
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="mr-2 h-4 w-4" />
-                  {t("admin.users.addUser") || "Thêm người dùng"}
+                  Thêm người dùng
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[550px]">
                 <DialogHeader>
-                  <DialogTitle>{t("admin.users.addUser") || "Thêm người dùng mới"}</DialogTitle>
+                  <DialogTitle>Thêm người dùng mới</DialogTitle>
                   <DialogDescription>
-                    {t("admin.users.addUserDescription") || "Tạo người dùng mới trong hệ thống. Điền các thông tin dưới đây."}
+                    Tạo người dùng mới trong hệ thống. Điền các thông tin dưới đây.
                   </DialogDescription>
                 </DialogHeader>
                 
@@ -480,9 +480,9 @@ export default function AdminUsers() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t("admin.users.allUsers") || "Tất cả người dùng"}</CardTitle>
+            <CardTitle>Tất cả người dùng</CardTitle>
             <CardDescription>
-              {t("admin.users.totalCount") || "Tổng số:"} {usersData?.total || 0} {t("admin.users.users") || "người dùng"}
+              Tổng số: {usersData?.total || 0} người dùng
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -490,13 +490,13 @@ export default function AdminUsers() {
               <TableHeader>
                 <TableRow>
                   <TableHead>ID</TableHead>
-                  <TableHead>{t("admin.users.username") || "Tên đăng nhập"}</TableHead>
-                  <TableHead>{t("admin.users.fullName") || "Họ và tên"}</TableHead>
-                  <TableHead>{t("admin.users.email") || "Email"}</TableHead>
-                  <TableHead>{t("admin.users.role") || "Vai trò"}</TableHead>
-                  <TableHead>{t("admin.users.status") || "Trạng thái"}</TableHead>
-                  <TableHead>{t("admin.users.joinDate") || "Ngày tham gia"}</TableHead>
-                  <TableHead className="text-right">{t("admin.common.actions") || "Thao tác"}</TableHead>
+                  <TableHead>Tên đăng nhập</TableHead>
+                  <TableHead>Họ và tên</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Vai trò</TableHead>
+                  <TableHead>Trạng thái</TableHead>
+                  <TableHead>Ngày tham gia</TableHead>
+                  <TableHead className="text-right">Thao tác</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -515,9 +515,7 @@ export default function AdminUsers() {
                       <TableCell>{user.email}</TableCell>
                       <TableCell>
                         <Badge variant={user.role === "admin" ? "default" : "outline"}>
-                          {user.role === "admin" 
-                            ? (t("admin.users.roleAdmin") || "Quản trị viên") 
-                            : (t("admin.users.roleUser") || "Người dùng")}
+                          {user.role === "admin" ? "Quản trị viên" : "Người dùng"}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -537,22 +535,22 @@ export default function AdminUsers() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>{t("admin.common.actions") || "Thao tác"}</DropdownMenuLabel>
+                            <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
                             <DropdownMenuItem onClick={() => handleViewClick(user)}>
                               <Eye className="mr-2 h-4 w-4" />
-                              {t("admin.common.view") || "Xem chi tiết"}
+                              Xem chi tiết
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleEditClick(user)}>
                               <Edit className="mr-2 h-4 w-4" />
-                              {t("admin.common.edit") || "Chỉnh sửa"}
+                              Chỉnh sửa
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                               <CreditCard className="mr-2 h-4 w-4" />
-                              {t("admin.users.addCredits") || "Thêm credits"}
+                              Thêm credits
                             </DropdownMenuItem>
                             <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleDeleteClick(user)}>
                               <Trash className="mr-2 h-4 w-4" />
-                              {t("admin.common.delete") || "Xóa"}
+                              Xóa
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
