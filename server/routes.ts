@@ -8,6 +8,7 @@ import { sql } from "drizzle-orm";
 import { ApiResponse, GenerateContentRequest, GenerateContentResponse, PlanType } from "@shared/types";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
+import { updateSmtpConfig, testSmtpConnection } from "./email-service";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
