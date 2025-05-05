@@ -416,8 +416,8 @@ export default function AdminSettings() {
 
   // Test email settings mutation
   const testEmailSettingsMutation = useMutation({
-    mutationFn: async (email: string) => {
-      const res = await apiRequest("POST", "/api/admin/settings/email/test", { email });
+    mutationFn: async (data: { email: string }) => {
+      const res = await apiRequest("POST", "/api/admin/settings/email/test", data);
       return res.json();
     },
     onSuccess: () => {
@@ -502,7 +502,7 @@ export default function AdminSettings() {
     }
     
     // Send the test email
-    testEmailSettingsMutation.mutate(testEmailAddress);
+    testEmailSettingsMutation.mutate({ email: testEmailAddress });
   };
 
   const handleBackup = () => {
