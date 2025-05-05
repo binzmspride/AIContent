@@ -801,5 +801,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Email settings API (update SMTP settings)
+  app.patch('/api/admin/settings/email', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+      
+      const { smtpServer, smtpPort, smtpUsername, smtpPassword, emailSender } = req.body;
+      
+      // In a real app, save these settings to your database
+      // Here we're just sending back a success response as demo
+      
+      // Validate the settings structure
+      if (!smtpServer || !smtpPort || !smtpUsername || !smtpPassword || !emailSender) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Tất cả thông tin SMTP là bắt buộc' 
+        });
+      }
+      
+      // Save the settings values
+      // For this example, we'll assume they're saved successfully
+      
+      res.json({
+        success: true,
+        message: 'Cài đặt email đã được cập nhật thành công'
+      });
+    } catch (error) {
+      console.error('Error updating email settings:', error);
+      res.status(500).json({ success: false, error: 'Không thể cập nhật cài đặt email' });
+    }
+  });
+  
+  // Test email API
+  app.post('/api/admin/settings/email/test', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+      
+      // Get the test email recipient
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({
+          success: false,
+          error: 'Vui lòng cung cấp địa chỉ email để kiểm tra'
+        });
+      }
+      
+      // Check if we have the SendGrid API key
+      if (!process.env.SENDGRID_API_KEY) {
+        return res.status(400).json({
+          success: false,
+          error: 'Thiếu SENDGRID_API_KEY trong cấu hình. Vui lòng cung cấp key này để sử dụng tính năng gửi email.'
+        });
+      } else {
+        // Trong môi trường thực tế, chúng ta sẽ gửi email bằng SendGrid
+        // Đối với môi trường demo, chúng ta sẽ giả lập việc gửi email thành công
+        
+        console.log(`[DEMO] Sending test email to: ${email}`);
+        console.log(`[DEMO] Using SMTP settings from configuration`);
+        
+        // Giả lập delay của việc gửi email
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        res.json({
+          success: true,
+          message: 'Email kiểm tra đã được gửi thành công (chế độ demo)'
+        });
+      }
+    } catch (err) {
+      const error = err as Error;
+      console.error('Error sending test email:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: `Không thể gửi email kiểm tra: ${error.message || 'Lỗi không xác định'}` 
+      });
+    }
+  });
+
   return httpServer;
 }

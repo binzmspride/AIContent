@@ -478,22 +478,31 @@ export default function AdminSettings() {
     updateWebhookSettingsMutation.mutate(data);
   };
 
+  const [testEmailAddress, setTestEmailAddress] = useState("");
+
   const handleTestEmail = () => {
-    // Use the value from the email form fields
-    const serverEmail = emailForm.getValues("emailSender");
-    // Extract email from format like "SEO AI Writer <noreply@example.com>"
-    const emailMatch = serverEmail.match(/<([^>]+)>/) || [null, serverEmail];
-    const email = emailMatch[1] || serverEmail;
-    
-    if (email) {
-      testEmailSettingsMutation.mutate(email);
-    } else {
+    // Check if we have a test email address
+    if (!testEmailAddress) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng nhập địa chỉ email để kiểm tra",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate the email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(testEmailAddress)) {
       toast({
         title: "Lỗi",
         description: "Vui lòng nhập địa chỉ email hợp lệ",
         variant: "destructive",
       });
+      return;
     }
+    
+    // Send the test email
+    testEmailSettingsMutation.mutate(testEmailAddress);
   };
 
   const handleBackup = () => {
