@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from '@/hooks/use-language';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertTriangle } from "lucide-react";
+import { useQuery } from '@tanstack/react-query';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { PerformanceMetrics, TimeRange } from '@shared/types';
 
 // Định nghĩa các loại biểu đồ
 const CHART_TYPES = {
@@ -20,50 +23,16 @@ const TIME_RANGES = {
   MONTH: 'month',
 };
 
-// Dữ liệu mẫu cho biểu đồ
-const generateMockData = (timeRange: string) => {
-  // Tạo số lượng dữ liệu phù hợp với khoảng thời gian
-  const dataPoints = timeRange === TIME_RANGES.DAY ? 24 : 
-                     timeRange === TIME_RANGES.WEEK ? 7 : 30;
-  
-  const baseValue = Math.floor(Math.random() * 100) + 50;
-  
-  return Array.from({ length: dataPoints }, (_, i) => {
-    const timeLabel = timeRange === TIME_RANGES.DAY ? `${i}h` : 
-                      timeRange === TIME_RANGES.WEEK ? `Day ${i+1}` : `Day ${i+1}`;
-    
-    return {
-      name: timeLabel,
-      // Tạo giá trị ngẫu nhiên có sự biến thiên nhẹ
-      visitors: Math.max(10, baseValue + Math.floor(Math.random() * 40) - 20),
-      pageViews: Math.max(20, baseValue * 2 + Math.floor(Math.random() * 60) - 30),
-      responseTime: Math.max(50, 200 + Math.floor(Math.random() * 100) - 50),
-      serverLoad: Math.max(5, 30 + Math.floor(Math.random() * 20) - 10),
-      engagementRate: Math.min(100, Math.max(10, 45 + Math.floor(Math.random() * 20) - 10)),
-      avgSessionTime: Math.max(30, 120 + Math.floor(Math.random() * 60) - 30),
-    };
-  });
-};
-
 export default function PerformanceInsights() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState(CHART_TYPES.TRAFFIC);
-  const [timeRange, setTimeRange] = useState(TIME_RANGES.WEEK);
-  const [chartData, setChartData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Giả lập tải dữ liệu từ API
-    setLoading(true);
-    
-    // Mô phỏng độ trễ API
-    const timer = setTimeout(() => {
-      setChartData(generateMockData(timeRange));
-      setLoading(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, [timeRange]);
+  const [timeRange, setTimeRange] = useState<TimeRange>('week');
+  
+  // Fetch performance data from API
+  const { data, isLoading, error } = useQuery<{ success: boolean, data: PerformanceMetrics }>({
+    queryKey: ['/api/admin/performance', timeRange],
+    refetchOnWindowFocus: false,
+  });
 
   return (
     <Card className="w-full shadow-md">
@@ -93,16 +62,30 @@ export default function PerformanceInsights() {
             <TabsTrigger value={CHART_TYPES.ENGAGEMENT}>{t('admin.performanceMetrics.engagement')}</TabsTrigger>
           </TabsList>
           
-          {loading ? (
+          {isLoading ? (
             <div className="flex items-center justify-center h-64">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
+          ) : error ? (
+            <Alert variant="destructive" className="my-4">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                {t('common.errorLoading')}
+              </AlertDescription>
+            </Alert>
+          ) : !data?.data ? (
+            <Alert variant="destructive" className="my-4">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                {t('common.noDataAvailable')}
+              </AlertDescription>
+            </Alert>
           ) : (
             <>
               <TabsContent value={CHART_TYPES.TRAFFIC} className="mt-0">
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <BarChart data={data.data.data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" />
                       <YAxis />
@@ -117,18 +100,22 @@ export default function PerformanceInsights() {
                     <CardContent className="p-4">
                       <div className="text-sm font-medium text-muted-foreground">{t('admin.performanceMetrics.visitors')}</div>
                       <div className="text-2xl font-bold">
-                        {chartData.reduce((sum, item) => sum + item.visitors, 0)}
+                        {data.data.summary.totalVisitors}
                       </div>
-                      <div className="text-xs text-emerald-500">+5.2% {t('time.fromPrevious')} {timeRange}</div>
+                      <div className="text-xs text-emerald-500">
+                        +{data.data.summary.trends.visitors}% {t('time.fromPrevious')} {timeRange}
+                      </div>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="p-4">
                       <div className="text-sm font-medium text-muted-foreground">{t('admin.performanceMetrics.pageViews')}</div>
                       <div className="text-2xl font-bold">
-                        {chartData.reduce((sum, item) => sum + item.pageViews, 0)}
+                        {data.data.summary.totalPageViews}
                       </div>
-                      <div className="text-xs text-emerald-500">+8.1% {t('time.fromPrevious')} {timeRange}</div>
+                      <div className="text-xs text-emerald-500">
+                        +{data.data.summary.trends.pageViews}% {t('time.fromPrevious')} {timeRange}
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
@@ -137,7 +124,7 @@ export default function PerformanceInsights() {
               <TabsContent value={CHART_TYPES.PERFORMANCE} className="mt-0">
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <LineChart data={data.data.data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" />
                       <YAxis />
@@ -152,18 +139,23 @@ export default function PerformanceInsights() {
                     <CardContent className="p-4">
                       <div className="text-sm font-medium text-muted-foreground">{t('admin.performanceMetrics.avgResponseTime')}</div>
                       <div className="text-2xl font-bold">
-                        {Math.round(chartData.reduce((sum, item) => sum + item.responseTime, 0) / chartData.length)} ms
+                        {data.data.summary.avgResponseTime} ms
                       </div>
-                      <div className="text-xs text-emerald-500">-12.3% {t('time.fromPrevious')} {timeRange}</div>
+                      <div className={`text-xs ${data.data.summary.trends.responseTime < 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                        {data.data.summary.trends.responseTime}% {t('time.fromPrevious')} {timeRange}
+                      </div>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="p-4">
                       <div className="text-sm font-medium text-muted-foreground">{t('admin.performanceMetrics.avgServerLoad')}</div>
                       <div className="text-2xl font-bold">
-                        {Math.round(chartData.reduce((sum, item) => sum + item.serverLoad, 0) / chartData.length)}%
+                        {data.data.summary.avgServerLoad}%
                       </div>
-                      <div className="text-xs text-red-500">+3.5% {t('time.fromPrevious')} {timeRange}</div>
+                      <div className={`text-xs ${data.data.summary.trends.serverLoad < 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                        {data.data.summary.trends.serverLoad < 0 ? '' : '+'}
+                        {data.data.summary.trends.serverLoad}% {t('time.fromPrevious')} {timeRange}
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
@@ -172,7 +164,7 @@ export default function PerformanceInsights() {
               <TabsContent value={CHART_TYPES.ENGAGEMENT} className="mt-0">
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <AreaChart data={data.data.data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="name" />
                       <YAxis />
@@ -187,18 +179,22 @@ export default function PerformanceInsights() {
                     <CardContent className="p-4">
                       <div className="text-sm font-medium text-muted-foreground">{t('admin.performanceMetrics.engagementRate')}</div>
                       <div className="text-2xl font-bold">
-                        {Math.round(chartData.reduce((sum, item) => sum + item.engagementRate, 0) / chartData.length)}%
+                        {data.data.summary.avgEngagementRate}%
                       </div>
-                      <div className="text-xs text-emerald-500">+4.7% {t('time.fromPrevious')} {timeRange}</div>
+                      <div className="text-xs text-emerald-500">
+                        +{data.data.summary.trends.engagementRate}% {t('time.fromPrevious')} {timeRange}
+                      </div>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardContent className="p-4">
                       <div className="text-sm font-medium text-muted-foreground">{t('admin.performanceMetrics.avgSessionTime')}</div>
                       <div className="text-2xl font-bold">
-                        {Math.round(chartData.reduce((sum, item) => sum + item.avgSessionTime, 0) / chartData.length)} s
+                        {data.data.summary.avgSessionTime} s
                       </div>
-                      <div className="text-xs text-emerald-500">+6.2% {t('time.fromPrevious')} {timeRange}</div>
+                      <div className="text-xs text-emerald-500">
+                        +{data.data.summary.trends.sessionTime}% {t('time.fromPrevious')} {timeRange}
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
