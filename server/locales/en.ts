@@ -14,6 +14,8 @@ export const en = {
     next: "Next",
     submit: "Submit",
     language: "EN",
+    saveChanges: "Save Changes",
+    saving: "Saving...",
   },
 
   // Navigation

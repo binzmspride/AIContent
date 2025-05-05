@@ -14,6 +14,8 @@ export const vi = {
     next: "Tiếp tục",
     submit: "Gửi",
     language: "VN",
+    saveChanges: "Lưu thay đổi",
+    saving: "Đang lưu...",
   },
 
   // Navigation
