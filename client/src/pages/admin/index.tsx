@@ -135,7 +135,7 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {isLoadingStats ? "..." : stats?.totalArticles.toLocaleString()}
+                {isLoadingStats ? "..." : (stats?.totalArticles ?? 0).toLocaleString()}
               </div>
               <p className="text-xs text-muted-foreground">
                 +25% from last month
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {isLoadingStats ? "..." : stats?.totalCredits.toLocaleString()}
+                {isLoadingStats ? "..." : (stats?.totalCredits ?? 0).toLocaleString()}
               </div>
               <p className="text-xs text-muted-foreground">
                 +18% from last month
