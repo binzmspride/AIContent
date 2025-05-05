@@ -85,20 +85,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const registerMutation = useMutation<User, Error, RegisterData>({
+  const registerMutation = useMutation<any, Error, RegisterData>({
     mutationFn: async (userData: RegisterData) => {
       const res = await apiRequest("POST", "/api/register", userData);
       const data = await res.json();
       if (!data.success) {
-        throw new Error(data.error || "Registration failed");
+        throw new Error(data.error || "Đăng ký thất bại");
       }
-      return data.data;
+      return data;
     },
-    onSuccess: (userData: User) => {
-      queryClient.setQueryData(["/api/user"], userData);
+    onSuccess: (response) => {
+      // Không cập nhật user vì cần xác thực email trước
       toast({
         title: "Đăng ký thành công",
-        description: "Tài khoản của bạn đã được tạo thành công",
+        description: response.message || "Vui lòng kiểm tra email của bạn để xác thực tài khoản",
       });
     },
     onError: (error: Error) => {

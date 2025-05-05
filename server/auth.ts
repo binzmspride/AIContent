@@ -6,6 +6,7 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import * as schema from "@shared/schema";
+import { registerUser, verifyEmail, requestPasswordReset, resetPassword } from "./user-service";
 
 declare global {
   namespace Express {
@@ -63,7 +64,13 @@ export function setupAuth(app: Express) {
         
         if (!user) {
           console.log(`User not found: ${username}`);
-          return done(null, false, { message: 'Invalid username or password' });
+          return done(null, false, { message: 'Tên đăng nhập hoặc mật khẩu không chính xác' });
+        }
+        
+        // Kiểm tra tài khoản đã xác thực email chưa (trừ tài khoản admin)
+        if (user.role !== 'admin' && !user.isVerified) {
+          console.log(`User not verified: ${user.username}`);
+          return done(null, false, { message: 'Tài khoản chưa được xác thực. Vui lòng kiểm tra email để xác thực tài khoản.' });
         }
         
         console.log(`User found: ${user.username}, checking password...`);
@@ -72,7 +79,7 @@ export function setupAuth(app: Express) {
         
         if (!passwordMatch) {
           console.log(`Password mismatch for user: ${user.username}`);
-          return done(null, false, { message: 'Invalid username or password' });
+          return done(null, false, { message: 'Tên đăng nhập hoặc mật khẩu không chính xác' });
         }
         
         console.log(`Login successful for user: ${user.username}, role: ${user.role}`);
@@ -98,36 +105,149 @@ export function setupAuth(app: Express) {
     try {
       const { username, email, password, fullName } = req.body;
       
-      const existingUser = await storage.getUserByUsername(username);
-      if (existingUser) {
+      // Kiểm tra email đã tồn tại chưa
+      const existingUserByEmail = await storage.getUserByUsername(email);
+      if (existingUserByEmail) {
         return res.status(400).json({ 
           success: false, 
-          error: "Username already exists" 
+          error: "Email đã được sử dụng" 
         });
       }
+      
+      // Kiểm tra username đã tồn tại chưa (nếu khác email)
+      if (username !== email) {
+        const existingUserByUsername = await storage.getUserByUsername(username);
+        if (existingUserByUsername) {
+          return res.status(400).json({ 
+            success: false, 
+            error: "Username đã tồn tại" 
+          });
+        }
+      }
 
-      const hashedPassword = await hashPassword(password);
-      const user = await storage.createUser({
+      // Đăng ký người dùng mới với xác thực email
+      const result = await registerUser({
         username,
         email,
-        password: hashedPassword,
+        password: await hashPassword(password),
         fullName,
       });
 
-      // Give new users 5 free credits
-      await storage.addUserCredits(user.id, 5, undefined, 'Welcome bonus');
-
-      req.login(user, (err) => {
-        if (err) return next(err);
-        // Don't include password in response
-        const { password, ...userWithoutPassword } = user;
-        res.status(201).json({ 
-          success: true, 
-          data: userWithoutPassword 
+      if (!result.success) {
+        return res.status(400).json({
+          success: false,
+          error: result.error || "Lỗi khi đăng ký người dùng"
         });
+      }
+
+      // Tạo tín dụng miễn phí cho người dùng mới
+      if (result.user) {
+        await storage.addUserCredits(result.user.id, 5, undefined, 'Welcome bonus');
+      }
+
+      // Trả về thành công nhưng không đăng nhập tự động
+      // Người dùng cần xác thực email trước
+      return res.status(201).json({
+        success: true,
+        message: "Đăng ký thành công. Vui lòng kiểm tra email của bạn để xác thực tài khoản."
       });
     } catch (error) {
+      console.error("Registration error:", error);
       next(error);
+    }
+  });
+  
+  // API xác thực email
+  app.get("/api/verify-email", async (req, res) => {
+    try {
+      const { token } = req.query;
+      
+      if (!token || typeof token !== 'string') {
+        return res.status(400).json({
+          success: false,
+          error: "Token xác thực không hợp lệ"
+        });
+      }
+      
+      const result = await verifyEmail(token);
+      
+      if (!result.success) {
+        return res.status(400).json({
+          success: false,
+          error: result.error || "Không thể xác thực email"
+        });
+      }
+      
+      // Chuyển hướng người dùng đến trang đăng nhập với thông báo thành công
+      return res.redirect('/auth?verified=true');
+    } catch (error) {
+      console.error("Email verification error:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Lỗi server khi xác thực email"
+      });
+    }
+  });
+  
+  // Yêu cầu đặt lại mật khẩu
+  app.post("/api/forgot-password", async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({
+          success: false,
+          error: "Email là bắt buộc"
+        });
+      }
+      
+      const result = await requestPasswordReset(email);
+      
+      // Luôn trả về thành công để tránh rò rỉ thông tin
+      return res.status(200).json({
+        success: true,
+        message: "Nếu email tồn tại trong hệ thống, hướng dẫn đặt lại mật khẩu sẽ được gửi đến email của bạn."
+      });
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Lỗi server khi xử lý yêu cầu đặt lại mật khẩu"
+      });
+    }
+  });
+  
+  // Đặt lại mật khẩu
+  app.post("/api/reset-password", async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+      
+      if (!token || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          error: "Token và mật khẩu mới là bắt buộc"
+        });
+      }
+      
+      const result = await resetPassword(token, newPassword);
+      
+      if (!result.success) {
+        return res.status(400).json({
+          success: false,
+          error: result.error || "Không thể đặt lại mật khẩu"
+        });
+      }
+      
+      return res.status(200).json({
+        success: true,
+        message: "Mật khẩu đã được đặt lại thành công"
+      });
+    } catch (error) {
+      console.error("Reset password error:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Lỗi server khi đặt lại mật khẩu"
+      });
     }
   });
 
