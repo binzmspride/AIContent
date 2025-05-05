@@ -27,6 +27,7 @@ import {
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { User } from "lucide-react";
 import Head from "@/components/head";
+import PerformanceMiniDashboard from "@/components/admin/PerformanceMiniDashboard";
 
 interface AdminStats {
   totalUsers: number;
@@ -105,6 +106,18 @@ export default function AdminDashboard() {
       </Head>
       
       <AdminLayout title={t("admin.dashboard")}>
+        {/* Performance Mini Dashboard */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>
+              {t("admin.performanceMetrics.title") || "Performance Insights"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PerformanceMiniDashboard />
+          </CardContent>
+        </Card>
+        
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
