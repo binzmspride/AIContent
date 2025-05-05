@@ -100,81 +100,20 @@ export default function AdminUsers() {
   const { data: usersResponse, isLoading } = useQuery<{ success: boolean, data: { users: User[], total: number } }>({
     queryKey: ["/api/admin/users", searchQuery, currentPage, pageSize],
     queryFn: async () => {
-      // Mock data until API is available
-      const mockUsers: User[] = [
-        {
-          id: 1,
-          username: "admin",
-          email: "admin@example.com",
-          password: "hashed_password",
-          role: "admin",
-          fullName: "Administrator",
-          createdAt: "2023-01-01T00:00:00Z",
-          updatedAt: "2023-01-01T00:00:00Z",
-        },
-        {
-          id: 2,
-          username: "johndoe",
-          email: "john.doe@example.com",
-          password: "hashed_password",
-          role: "user",
-          fullName: "John Doe",
-          createdAt: "2023-01-15T10:30:00Z",
-          updatedAt: "2023-01-15T10:30:00Z",
-        },
-        {
-          id: 3,
-          username: "janedoe",
-          email: "jane.doe@example.com",
-          password: "hashed_password",
-          role: "user",
-          fullName: "Jane Doe",
-          createdAt: "2023-02-10T14:22:00Z",
-          updatedAt: "2023-02-10T14:22:00Z",
-        },
-        {
-          id: 4,
-          username: "robertsmith",
-          email: "robert.smith@example.com",
-          password: "hashed_password",
-          role: "user",
-          createdAt: "2023-03-05T09:15:00Z",
-          updatedAt: "2023-03-05T09:15:00Z",
-        },
-        {
-          id: 5,
-          username: "maryjones",
-          email: "mary.jones@example.com",
-          password: "hashed_password",
-          role: "user",
-          fullName: "Mary Jones",
-          createdAt: "2023-03-20T11:45:00Z",
-          updatedAt: "2023-03-20T11:45:00Z",
-        },
-      ];
+      const searchParams = new URLSearchParams();
+      searchParams.append('page', currentPage.toString());
+      searchParams.append('limit', pageSize.toString());
+      if (searchQuery) {
+        searchParams.append('search', searchQuery);
+      }
       
-      // Filter users by search query
-      const filteredUsers = searchQuery 
-        ? mockUsers.filter(user => 
-            user.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (user.fullName && user.fullName.toLowerCase().includes(searchQuery.toLowerCase()))
-          )
-        : mockUsers;
-        
-      // Paginate results
-      const paginatedUsers = filteredUsers.slice(
-        (currentPage - 1) * pageSize,
-        currentPage * pageSize
-      );
+      const response = await fetch(`/api/admin/users?${searchParams.toString()}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Không thể tải dữ liệu người dùng');
+      }
       
-      return {
-        success: true,
-        data: {
-          users: paginatedUsers,
-          total: filteredUsers.length
-        }
-      };
+      return await response.json();
     },
   });
 
