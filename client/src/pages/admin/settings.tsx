@@ -1059,7 +1059,34 @@ export default function AdminSettings() {
                         )}
                       />
                       
-                      <div className="pt-4 border-t mt-6 flex flex-wrap gap-4">
+                      <div className="border-t mt-6 pt-4">
+                        <h4 className="font-medium text-sm mb-2">{t("admin.settings.testEmailTitle") || "Kiểm tra cài đặt email"}</h4>
+                        <div className="flex space-x-2 mb-6">
+                          <div className="flex-1">
+                            <Input
+                              type="email"
+                              placeholder={t("admin.settings.testEmailPlaceholder") || "Nhập email để kiểm tra"}
+                              value={testEmailAddress}
+                              onChange={(e) => setTestEmailAddress(e.target.value)}
+                              className="w-full"
+                            />
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="flex items-center whitespace-nowrap"
+                            onClick={handleTestEmail}
+                            disabled={testEmailSettingsMutation.isPending || isLoading}
+                          >
+                            <Mail className="h-4 w-4 mr-2" />
+                            {testEmailSettingsMutation.isPending 
+                              ? (t("admin.settings.sendingTest") || "Đang gửi...") 
+                              : (t("admin.settings.testEmailButton") || "Gửi email kiểm tra")}
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-4">
                         <Button 
                           type="submit" 
                           className="flex items-center"
@@ -1069,19 +1096,6 @@ export default function AdminSettings() {
                           {updateEmailSettingsMutation.isPending 
                             ? (t("common.saving") || "Đang lưu...") 
                             : (t("common.saveChanges") || "Lưu thay đổi")}
-                        </Button>
-                        
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="flex items-center"
-                          onClick={handleTestEmail}
-                          disabled={testEmailSettingsMutation.isPending || isLoading}
-                        >
-                          <Mail className="h-4 w-4 mr-2" />
-                          {testEmailSettingsMutation.isPending 
-                            ? (t("admin.settings.sendingTest") || "Đang gửi...") 
-                            : (t("admin.settings.testEmailSettings") || "Kiểm tra cài đặt email")}
                         </Button>
                       </div>
                     </form>
