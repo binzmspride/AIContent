@@ -811,9 +811,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const { smtpServer, smtpPort, smtpUsername, smtpPassword, emailSender } = req.body;
       
-      // In a real app, save these settings to your database
-      // Here we're just sending back a success response as demo
-      
       // Validate the settings structure
       if (!smtpServer || !smtpPort || !smtpUsername || !smtpPassword || !emailSender) {
         return res.status(400).json({ 
@@ -822,8 +819,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Save the settings values
-      // For this example, we'll assume they're saved successfully
+      // Cập nhật cấu hình SMTP
+      updateSmtpConfig({
+        smtpServer,
+        smtpPort: Number(smtpPort),
+        smtpUsername,
+        smtpPassword,
+        emailSender
+      });
+      
+      // Trong ứng dụng thực tế, có thể lưu cấu hình vào database
       
       res.json({
         success: true,
@@ -852,25 +857,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Check if we have the SendGrid API key
-      if (!process.env.SENDGRID_API_KEY) {
-        return res.status(400).json({
-          success: false,
-          error: 'Thiếu SENDGRID_API_KEY trong cấu hình. Vui lòng cung cấp key này để sử dụng tính năng gửi email.'
-        });
-      } else {
-        // Trong môi trường thực tế, chúng ta sẽ gửi email bằng SendGrid
-        // Đối với môi trường demo, chúng ta sẽ giả lập việc gửi email thành công
-        
-        console.log(`[DEMO] Sending test email to: ${email}`);
-        console.log(`[DEMO] Using SMTP settings from configuration`);
-        
-        // Giả lập delay của việc gửi email
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
+      // Gửi email test bằng SMTP
+      const result = await testSmtpConnection(email);
+      
+      if (result.success) {
         res.json({
           success: true,
-          message: 'Email kiểm tra đã được gửi thành công (chế độ demo)'
+          message: 'Email kiểm tra đã được gửi thành công'
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          error: result.error || 'Không thể gửi email kiểm tra'
         });
       }
     } catch (err) {
