@@ -26,6 +26,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart, Bar } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { MoveUp, MoveDown, AlertTriangle, Clock } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
 
 interface PerformanceData {
   // Current stats
@@ -69,20 +71,31 @@ interface PerformanceData {
     averageTime: number;
     errorRate: number;
   }[];
+  
+  // Time range used for this data
+  timeRange: string;
 }
 
 export default function PerformanceInsights() {
   const { t } = useLanguage();
+  const [timeRange, setTimeRange] = useState<string>("24h");
   
   // Fetch performance metrics
   const { data: performance, isLoading: isLoadingPerformance } = useQuery<PerformanceData>({
-    queryKey: ["/api/admin/performance"],
+    queryKey: ["/api/admin/performance", timeRange],
+    queryFn: async () => {
+      const response = await fetch(`/api/admin/performance?timeRange=${timeRange}`);
+      const result = await response.json();
+      return result.data;
+    }
   });
   
   const timeRangeOptions = [
-    { label: t("admin.performance.last24h"), value: "24h" },
-    { label: t("admin.performance.last7d"), value: "7d" },
-    { label: t("admin.performance.last30d"), value: "30d" },
+    { label: t("admin.performanceMetrics.last6h"), value: "6h" },
+    { label: t("admin.performanceMetrics.last12h"), value: "12h" },
+    { label: t("admin.performanceMetrics.last24h"), value: "24h" },
+    { label: t("admin.performanceMetrics.last7d"), value: "7d" },
+    { label: t("admin.performanceMetrics.last30d"), value: "30d" },
   ];
   
   return (

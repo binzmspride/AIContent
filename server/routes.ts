@@ -6,6 +6,8 @@ import * as schema from "@shared/schema";
 import { db } from "../db";
 import { sql } from "drizzle-orm";
 import { ApiResponse, GenerateContentRequest, GenerateContentResponse, PlanType } from "@shared/types";
+import { scrypt, randomBytes, timingSafeEqual } from "crypto";
+import { promisify } from "util";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
@@ -627,41 +629,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ success: false, error: 'Admin access required' });
       }
       
-      const timeRange = req.query.timeRange || '24h';
+      const timeRange = req.query.timeRange as string || '24h';
       
       // In a real application, this would fetch actual data from monitoring systems
-      // For now, we'll return mock data for demonstration purposes
+      // For now, we'll return simulated data for demonstration purposes
+      
+      // Determine the number of data points and interval based on time range
+      let historyPoints = 24;
+      let intervalMs = 3600000; // 1 hour in milliseconds
+      
+      switch(timeRange) {
+        case '6h':
+          historyPoints = 12;
+          intervalMs = 1800000; // 30 minutes
+          break;
+        case '12h':
+          historyPoints = 24;
+          intervalMs = 1800000; // 30 minutes
+          break;
+        case '7d':
+          historyPoints = 28;
+          intervalMs = 21600000; // 6 hours
+          break;
+        case '30d':
+          historyPoints = 30;
+          intervalMs = 86400000; // 1 day
+          break;
+        default: // 24h
+          historyPoints = 24;
+          intervalMs = 3600000; // 1 hour
+      }
       
       // Generate historical data points
       const now = new Date();
-      const historyPoints = 24; // 24 hours of data
+      
+      // Generate response time history with trend patterns
+      const trend = Math.random() > 0.5 ? 1 : -1; // Random trend direction
+      let baseValue = 120; // Starting base value
       
       const responseTimeHistory = Array.from({ length: historyPoints }, (_, i) => {
-        const timestamp = new Date(now.getTime() - (historyPoints - 1 - i) * 3600000).toISOString();
+        const timestamp = new Date(now.getTime() - (historyPoints - 1 - i) * intervalMs).toISOString();
+        
+        // Create a slight trend over time
+        baseValue += trend * (Math.random() * 2);
+        baseValue = Math.max(100, Math.min(250, baseValue)); // Keep within reasonable bounds
+        
+        // Add daily pattern (slower in peak hours)
+        const hour = new Date(timestamp).getHours();
+        const hourFactor = hour >= 9 && hour <= 17 ? 1.2 : 0.9; // Business hours are slower
+        
+        const avgTime = baseValue * hourFactor;
+        
         return {
           timestamp,
-          average: 120 + Math.random() * 80,
-          p95: 180 + Math.random() * 100,
-          p99: 220 + Math.random() * 120,
+          average: avgTime,
+          p95: avgTime * 1.5 + Math.random() * 20,
+          p99: avgTime * 2 + Math.random() * 30,
         };
       });
       
+      // Generate request history with daily patterns
+      const requestBase = 800;
       const requestsHistory = Array.from({ length: historyPoints }, (_, i) => {
-        const timestamp = new Date(now.getTime() - (historyPoints - 1 - i) * 3600000).toISOString();
+        const timestamp = new Date(now.getTime() - (historyPoints - 1 - i) * intervalMs).toISOString();
+        const date = new Date(timestamp);
+        const hour = date.getHours();
+        
+        // Create a daily pattern (more requests during business hours)
+        const hourMultiplier = hour >= 9 && hour <= 17 ? 1.5 : 0.7;
+        // Weekend pattern (fewer requests on weekends)
+        const dayOfWeek = date.getDay();
+        const weekendFactor = dayOfWeek === 0 || dayOfWeek === 6 ? 0.6 : 1;
+        
+        const totalRequests = Math.floor(requestBase * hourMultiplier * weekendFactor + Math.random() * 200);
+        
         return {
           timestamp,
-          total: 1000 + Math.floor(Math.random() * 500),
-          errors: Math.floor(Math.random() * 50),
+          total: totalRequests,
+          errors: Math.floor(totalRequests * (0.01 + Math.random() * 0.03)), // 1-4% error rate
         };
       });
       
-      const resourceUsageHistory = Array.from({ length: historyPoints }, (_, i) => {
-        const timestamp = new Date(now.getTime() - (historyPoints - 1 - i) * 3600000).toISOString();
+      // Generate resource usage history with correlations to request volume
+      const resourceUsageHistory = requestsHistory.map(point => {
+        // Create correlation between request volume and resource usage
+        const requestLoad = point.total / 1500; // Normalize
+        
+        // Base values plus request correlation plus random variation
+        const cpuBase = 25 + (requestLoad * 15) + (Math.random() * 15);
+        const memoryBase = 40 + (requestLoad * 10) + (Math.random() * 10);
+        const diskBase = 55 + (Math.random() * 10); // Disk less affected by request volume
+        
         return {
-          timestamp,
-          cpu: 30 + Math.random() * 30,
-          memory: 40 + Math.random() * 25,
-          disk: 60 + Math.random() * 15,
+          timestamp: point.timestamp,
+          cpu: Math.min(95, cpuBase), // Cap at 95%
+          memory: Math.min(95, memoryBase),
+          disk: Math.min(95, diskBase),
         };
       });
       
@@ -672,23 +735,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         { endpoint: "/api/generate-content", count: 1820, averageTime: 2350, errorRate: 5.2 },
         { endpoint: "/api/admin/stats", count: 645, averageTime: 165, errorRate: 3.1 },
         { endpoint: "/api/plans", count: 1230, averageTime: 112, errorRate: 1.5 },
+        { endpoint: "/api/dashboard/generate-content", count: 985, averageTime: 2480, errorRate: 4.8 },
+        { endpoint: "/api/dashboard/articles", count: 3125, averageTime: 145, errorRate: 1.4 },
+        { endpoint: "/api/dashboard/stats", count: 4210, averageTime: 98, errorRate: 0.9 },
       ];
+      
+      // Calculate aggregated metrics
+      const totalReq = requestsHistory.reduce((sum, point) => sum + point.total, 0);
+      const totalErrors = requestsHistory.reduce((sum, point) => sum + point.errors, 0);
+      const avgResponseTime = responseTimeHistory.reduce((sum, point) => sum + point.average, 0) / responseTimeHistory.length;
       
       res.json({
         success: true,
         data: {
           // Current stats
-          averageResponseTime: 145,
-          p95ResponseTime: 220,
-          p99ResponseTime: 280,
+          averageResponseTime: Math.round(avgResponseTime),
+          p95ResponseTime: Math.round(responseTimeHistory[responseTimeHistory.length - 1].p95),
+          p99ResponseTime: Math.round(responseTimeHistory[responseTimeHistory.length - 1].p99),
           
-          totalRequests: 24560,
-          requestsPerMinute: 42,
-          errorRate: 2.5,
+          totalRequests: totalReq,
+          requestsPerMinute: Math.round(totalReq / (historyPoints * (intervalMs / 60000))),
+          errorRate: Number(((totalErrors / totalReq) * 100).toFixed(1)),
           
-          cpuUsage: 45,
-          memoryUsage: 62,
-          diskUsage: 72,
+          cpuUsage: Math.round(resourceUsageHistory[resourceUsageHistory.length - 1].cpu),
+          memoryUsage: Math.round(resourceUsageHistory[resourceUsageHistory.length - 1].memory),
+          diskUsage: Math.round(resourceUsageHistory[resourceUsageHistory.length - 1].disk),
           
           // Historical data
           responseTimeHistory,
@@ -697,6 +768,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Endpoint performance
           endpointPerformance,
+          
+          // Time range used
+          timeRange
         }
       });
     } catch (error) {
