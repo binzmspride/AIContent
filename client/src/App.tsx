@@ -17,6 +17,9 @@ import Credits from "@/pages/dashboard/credits";
 import Plans from "@/pages/dashboard/plans";
 import Connections from "@/pages/dashboard/connections";
 import Settings from "@/pages/dashboard/settings";
+import VerifyEmail from "@/pages/verify-email";
+import ForgotPassword from "@/pages/forgot-password";
+import ResetPassword from "@/pages/reset-password";
 import AdminDashboard from "@/pages/admin";
 import AdminUsers from "@/pages/admin/users";
 import AdminArticles from "@/pages/admin/articles";
@@ -33,6 +36,9 @@ function Router() {
       {/* Public routes */}
       <Route path="/" component={HomePage} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/verify-email" component={VerifyEmail} />
+      <Route path="/forgot-password" component={ForgotPassword} />
+      <Route path="/reset-password" component={ResetPassword} />
       
       {/* Protected Dashboard routes */}
       <ProtectedRoute path="/dashboard" component={Dashboard} />

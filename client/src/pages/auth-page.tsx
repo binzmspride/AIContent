@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -216,9 +216,9 @@ export default function AuthPage() {
                           />
 
                           <div className="text-sm">
-                            <a href="#" className="font-medium text-primary hover:text-primary/80">
+                            <Link href="/forgot-password" className="font-medium text-primary hover:text-primary/80">
                               {t("auth.login.forgotPassword")}
-                            </a>
+                            </Link>
                           </div>
                         </div>
 
