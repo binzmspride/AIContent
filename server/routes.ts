@@ -5,7 +5,15 @@ import { setupAuth } from "./auth";
 import * as schema from "@shared/schema";
 import { db } from "../db";
 import { sql } from "drizzle-orm";
-import { ApiResponse, GenerateContentRequest, GenerateContentResponse, PlanType } from "@shared/types";
+import { 
+  ApiResponse, 
+  GenerateContentRequest, 
+  GenerateContentResponse, 
+  PlanType,
+  PerformanceMetrics,
+  TimeRange,
+  PerformancePoint
+} from "@shared/types";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { updateSmtpConfig, testSmtpConnection } from "./email-service";

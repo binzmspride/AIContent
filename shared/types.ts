@@ -89,3 +89,43 @@ export type Theme = 'light' | 'dark';
 
 // Plan type
 export type PlanType = 'credit' | 'storage';
+
+// Performance data types
+export type TimeRange = 'day' | 'week' | 'month' | 'year';
+
+export type ChartType = 'traffic' | 'performance' | 'engagement' | 'conversion' | 'overview';
+
+export interface PerformancePoint {
+  name: string;
+  timestamp: string;
+  visitors?: number;
+  pageViews?: number;
+  responseTime?: number;
+  serverLoad?: number;
+  engagementRate?: number;
+  avgSessionTime?: number;
+  conversionRate?: number;
+}
+
+export interface PerformanceMetrics {
+  timeRange: TimeRange;
+  data: PerformancePoint[];
+  summary: {
+    totalVisitors: number;
+    totalPageViews: number;
+    avgResponseTime: number;
+    avgServerLoad: number;
+    avgEngagementRate: number;
+    avgSessionTime: number;
+    avgConversionRate: number;
+    trends: {
+      visitors: number;
+      pageViews: number;
+      responseTime: number;
+      serverLoad: number;
+      engagementRate: number;
+      sessionTime: number;
+      conversionRate: number;
+    }
+  }
+}
