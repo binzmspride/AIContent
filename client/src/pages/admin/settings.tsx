@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/admin/Layout";
 import { useLanguage } from "@/hooks/use-language";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -258,7 +258,7 @@ export default function AdminSettings() {
   });
 
   // Update settings when data is loaded
-  React.useEffect(() => {
+  useEffect(() => {
     if (settings) {
       generalForm.reset({
         siteName: settings.siteName,
@@ -479,7 +479,12 @@ export default function AdminSettings() {
   };
 
   const handleTestEmail = () => {
-    const email = emailForm.getValues("supportEmail");
+    // Use the value from the email form fields
+    const serverEmail = emailForm.getValues("emailSender");
+    // Extract email from format like "SEO AI Writer <noreply@example.com>"
+    const emailMatch = serverEmail.match(/<([^>]+)>/) || [null, serverEmail];
+    const email = emailMatch[1] || serverEmail;
+    
     if (email) {
       testEmailSettingsMutation.mutate(email);
     } else {
