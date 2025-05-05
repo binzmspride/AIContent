@@ -16,6 +16,79 @@ export const en = {
     language: "EN",
     saveChanges: "Save Changes",
     saving: "Saving...",
+    noData: "No Data",
+    noDataFound: "No data found. Please try again with a different search.",
+    operationSuccess: "Operation has been completed successfully.",
+    errorOccurred: "An error occurred. Please try again later.",
+    partialResults: "Partial Results",
+    partialResultsFound: "Only partial results were found. There may have been an error during loading.",
+    loadingData: "Loading data...",
+    processingRequest: "Processing request...",
+    generatingContent: "Generating AI content...",
+    analyzingContent: "Analyzing content...",
+    optimizingSEO: "Optimizing SEO...",
+    publishingContent: "Publishing content...",
+    loadingComplete: "Loading complete!",
+    
+    // Mascot messages
+    mascot: {
+      dashboard: {
+        welcomeTitle: "Hello!",
+        welcomeTip: "Welcome to SEO AI Writer! This is where you can view an overview of your account.",
+        creditsTitle: "Credits",
+        creditsTip: "The credits shown on the dashboard indicate how many new articles you can create.",
+        articlesTitle: "Your Articles",
+        articlesTip: "You can view your recent articles here and click to edit or publish them."
+      },
+      contentCreation: {
+        welcomeTitle: "Start creating content!",
+        welcomeTip: "Fill in all the information to create high-quality SEO articles.",
+        tipsTitle: "Content Creation Tips",
+        tipsList: "Use precise keywords, choose a tone appropriate for your audience, and provide detailed descriptions for the best results.",
+        creditsTitle: "Credit Usage",
+        creditsTip: "Each article will use 1-3 credits depending on the length you choose."
+      },
+      articles: {
+        welcomeTitle: "Your Articles",
+        welcomeTip: "This is where you can manage all your created articles.",
+        publishTitle: "Publish Articles",
+        publishTip: "You can publish articles to WordPress or social media after connecting your accounts."
+      },
+      connections: {
+        welcomeTitle: "Account Connections",
+        welcomeTip: "Connect WordPress and social media to publish articles directly.",
+        wordpressTitle: "WordPress",
+        wordpressTip: "To connect WordPress, you need a website URL, username, and Application Password."
+      },
+      credits: {
+        welcomeTitle: "Credit Management",
+        welcomeTip: "Purchase more credits to continue creating high-quality content.",
+        usageTitle: "Credit Usage",
+        usageTip: "Credits are used when creating new content and have no expiration date."
+      },
+      plans: {
+        welcomeTitle: "Subscription Plans",
+        welcomeTip: "Upgrade to higher plans to get more credits and storage space.",
+        featuresTitle: "Features",
+        featuresTip: "Premium plans include additional features like priority support and more connections."
+      },
+      general: {
+        welcomeTitle: "Hello!",
+        welcomeTip: "I'm your AI assistant. I'll help you use this system most effectively."
+      },
+      loadingMessages: {
+        starting: "Starting up...",
+        thinking: "Thinking...",
+        processing: "Processing your request...",
+        almostDone: "Almost done...",
+        finishing: "Finishing up...",
+        generatingIdeas: "Generating ideas...",
+        writingContent: "Writing content...",
+        optimizingSEO: "Optimizing SEO...",
+        checkingGrammar: "Checking grammar...",
+        finalizingArticle: "Finalizing article..."
+      }
+    },
   },
 
   // Navigation
