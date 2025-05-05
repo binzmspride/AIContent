@@ -116,7 +116,7 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {isLoadingStats ? "..." : stats?.totalUsers.toLocaleString()}
+                {isLoadingStats ? "..." : (stats?.totalUsers ?? 0).toLocaleString()}
               </div>
               <p className="text-xs text-muted-foreground">
                 +12% from last month
