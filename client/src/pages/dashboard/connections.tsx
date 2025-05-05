@@ -90,9 +90,11 @@ export default function Connections() {
   const [isTestingConnection, setIsTestingConnection] = useState(false);
 
   // Fetch connections
-  const { data: connections, isLoading: isLoadingConnections } = useQuery<Connection[]>({
+  const { data: connectionsResponse, isLoading: isLoadingConnections } = useQuery<{success: boolean, data: Connection[]}>({
     queryKey: ["/api/dashboard/connections"],
   });
+  
+  const connections = connectionsResponse?.data || [];
 
   // Setup form for WordPress connection
   const wordpressForm = useForm<z.infer<typeof wordpressSchema>>({

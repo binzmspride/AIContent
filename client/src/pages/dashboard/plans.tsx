@@ -96,7 +96,7 @@ export default function Plans() {
   };
 
   // Get active storage plan
-  const activeStoragePlan = userPlans?.userPlans.find(
+  const activeStoragePlan = userPlans?.userPlans?.find(
     up => up.plan.type === 'storage' && up.isActive
   );
 
