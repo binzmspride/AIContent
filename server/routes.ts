@@ -27,18 +27,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // ========== Translations API ==========
   // Get translations for the frontend
-  app.get('/api/translations', async (req, res) => {
+  app.get('/api/translations', (req, res) => {
     try {
-      // Simply return the imported translation files
+      console.log('Client requested translations, but now using client-side implementation');
+      // We've moved translations to client side, just return empty success
       res.json({ 
         success: true, 
-        data: { 
-          en, 
-          vi 
-        } 
+        message: 'Using client-side translations now'
       });
     } catch (error) {
-      console.error('Error fetching translations:', error);
+      console.error('Error in translations endpoint:', error);
       res.status(500).json({ success: false, error: 'Failed to fetch translations' });
     }
   });
