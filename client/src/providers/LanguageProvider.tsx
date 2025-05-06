@@ -60,4 +60,4 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useLanguage = () => useContext(LanguageContext);
+// Export is now in hooks/use-language.tsx
