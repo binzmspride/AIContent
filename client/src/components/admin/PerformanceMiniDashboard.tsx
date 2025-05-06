@@ -131,7 +131,7 @@ export default function PerformanceMiniDashboard() {
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
-                data={performance?.responseTimeHistory.slice(-12) || []}
+                data={performance?.responseTimeHistory?.slice(-12) || []}
                 margin={{
                   top: 5,
                   right: 5,
