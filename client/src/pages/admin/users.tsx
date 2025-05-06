@@ -309,11 +309,11 @@ export default function AdminUsers() {
         <title>{t("admin.users.title") || "Quản lý người dùng"} - {t("common.appName") || "SEO AI Writer"}</title>
       </Head>
       
-      <AdminLayout title="Quản lý người dùng">
+      <AdminLayout title={t("admin.users.title") || "Quản lý người dùng"}>
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">Quản lý người dùng</h1>
-            <p className="text-muted-foreground">Xem và quản lý tất cả người dùng trong hệ thống</p>
+            <h1 className="text-2xl font-bold">{t("admin.users.title") || "Quản lý người dùng"}</h1>
+            <p className="text-muted-foreground">{t("admin.users.description") || "Xem và quản lý tất cả người dùng trong hệ thống"}</p>
           </div>
           <div className="flex items-center space-x-2">
             <div className="relative">
@@ -480,9 +480,9 @@ export default function AdminUsers() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Tất cả người dùng</CardTitle>
+            <CardTitle>{t("admin.users.allUsers") || "Tất cả người dùng"}</CardTitle>
             <CardDescription>
-              Tổng số: {usersData?.total || 0} người dùng
+              {t("admin.users.totalCount") || "Tổng số"}: {usersData?.total || 0} {t("admin.users.users") || "người dùng"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -490,13 +490,13 @@ export default function AdminUsers() {
               <TableHeader>
                 <TableRow>
                   <TableHead>ID</TableHead>
-                  <TableHead>Tên đăng nhập</TableHead>
-                  <TableHead>Họ và tên</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Vai trò</TableHead>
-                  <TableHead>Trạng thái</TableHead>
-                  <TableHead>Ngày tham gia</TableHead>
-                  <TableHead className="text-right">Thao tác</TableHead>
+                  <TableHead>{t("admin.users.username") || "Tên đăng nhập"}</TableHead>
+                  <TableHead>{t("admin.users.fullName") || "Họ và tên"}</TableHead>
+                  <TableHead>{t("admin.users.email") || "Email"}</TableHead>
+                  <TableHead>{t("admin.users.role") || "Vai trò"}</TableHead>
+                  <TableHead>{t("admin.users.status") || "Trạng thái"}</TableHead>
+                  <TableHead>{t("admin.users.joinDate") || "Ngày tham gia"}</TableHead>
+                  <TableHead className="text-right">{t("admin.common.actions") || "Thao tác"}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -515,7 +515,9 @@ export default function AdminUsers() {
                       <TableCell>{user.email}</TableCell>
                       <TableCell>
                         <Badge variant={user.role === "admin" ? "default" : "outline"}>
-                          {user.role === "admin" ? "Quản trị viên" : "Người dùng"}
+                          {user.role === "admin" 
+                            ? (t("admin.users.roleAdmin") || "Quản trị viên") 
+                            : (t("admin.users.roleUser") || "Người dùng")}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -535,22 +537,22 @@ export default function AdminUsers() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+                            <DropdownMenuLabel>{t("admin.common.actions") || "Thao tác"}</DropdownMenuLabel>
                             <DropdownMenuItem onClick={() => handleViewClick(user)}>
                               <Eye className="mr-2 h-4 w-4" />
-                              Xem chi tiết
+                              {t("admin.users.viewDetails") || "Xem chi tiết"}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleEditClick(user)}>
                               <Edit className="mr-2 h-4 w-4" />
-                              Chỉnh sửa
+                              {t("admin.users.edit") || "Chỉnh sửa"}
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                               <CreditCard className="mr-2 h-4 w-4" />
-                              Thêm credits
+                              {t("admin.users.addCredits") || "Thêm credits"}
                             </DropdownMenuItem>
                             <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleDeleteClick(user)}>
                               <Trash className="mr-2 h-4 w-4" />
-                              Xóa
+                              {t("admin.users.delete") || "Xóa"}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
