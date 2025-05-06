@@ -181,7 +181,34 @@ export const en = {
       credits: "Credits",
       articles: "Articles",
       storage: "Storage",
-      usedOf: "used of"
-    }
+      usedOf: "used of",
+      creditsLeft: "Credits Left",
+      articlesCreated: "Articles Created",
+      storageUsed: "Storage Used",
+      recentArticles: "Recent Articles",
+      connections: "Connections",
+      manageConnections: "Manage Connections",
+      buyMoreCredits: "Buy More Credits",
+      articleTitle: "Article Title",
+      dateCreated: "Date Created",
+      status: "Status",
+      keywords: "Keywords",
+      actions: "Actions"
+    },
+    connections: {
+      wordpress: {
+        connected: "Connected"
+      },
+      social: {
+        connected: "Connected"
+      }
+    },
+    overview: "Overview",
+    createContent: "Create Content",
+    myArticles: "My Articles",
+    creditsMenu: "Credits",
+    plansMenu: "Plans",
+    connectionsMenu: "Connections",
+    settingsMenu: "Settings"
   }
 };

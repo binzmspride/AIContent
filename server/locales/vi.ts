@@ -181,7 +181,34 @@ export const vi = {
       credits: "Tín dụng",
       articles: "Bài viết",
       storage: "Dung lượng",
-      usedOf: "sử dụng của"
-    }
+      usedOf: "sử dụng của",
+      creditsLeft: "Tín dụng còn lại",
+      articlesCreated: "Bài viết đã tạo",
+      storageUsed: "Dung lượng đã dùng",
+      recentArticles: "Bài viết gần đây",
+      connections: "Kết nối",
+      manageConnections: "Quản lý kết nối",
+      buyMoreCredits: "Mua thêm tín dụng",
+      articleTitle: "Tiêu đề bài viết",
+      dateCreated: "Ngày tạo",
+      status: "Trạng thái",
+      keywords: "Từ khóa",
+      actions: "Thao tác"
+    },
+    connections: {
+      wordpress: {
+        connected: "Đã kết nối"
+      },
+      social: {
+        connected: "Đã kết nối"
+      }
+    },
+    overview: "Tổng quan",
+    createContent: "Tạo nội dung",
+    myArticles: "Bài viết của tôi",
+    creditsMenu: "Tín dụng",
+    plansMenu: "Gói dịch vụ",
+    connectionsMenu: "Kết nối",
+    settingsMenu: "Cài đặt"
   }
 };
