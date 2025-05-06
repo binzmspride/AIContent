@@ -133,11 +133,20 @@ export const en = {
         edit: "Edit",
         addCredits: "Add credits",
         delete: "Delete",
-        noUsers: "No users found"
+        noUsers: "No users found",
+        viewUser: "User Details",
+        viewUserDescription: "Detailed information about this user",
+        editUser: "Edit User",
+        editUserDescription: "Update user information",
+        deleteUser: "Delete User",
+        deleteUserDescription: "Are you sure you want to delete this user? This action cannot be undone.",
+        activity: "Recent Activity",
+        suspend: "Suspend Account"
       },
       common: {
         actions: "Actions",
-        openMenu: "Open menu"
+        openMenu: "Open menu",
+        edit: "Edit"
       }
     }
   },

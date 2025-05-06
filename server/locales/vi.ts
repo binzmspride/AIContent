@@ -133,11 +133,20 @@ export const vi = {
         edit: "Chỉnh sửa",
         addCredits: "Thêm credits",
         delete: "Xóa",
-        noUsers: "Không tìm thấy người dùng nào"
+        noUsers: "Không tìm thấy người dùng nào",
+        viewUser: "Chi tiết người dùng",
+        viewUserDescription: "Thông tin chi tiết của người dùng",
+        editUser: "Chỉnh sửa người dùng",
+        editUserDescription: "Cập nhật thông tin người dùng",
+        deleteUser: "Xóa người dùng",
+        deleteUserDescription: "Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể hoàn tác.",
+        activity: "Hoạt động gần đây",
+        suspend: "Khóa tài khoản"
       },
       common: {
         actions: "Thao tác",
-        openMenu: "Mở menu"
+        openMenu: "Mở menu",
+        edit: "Chỉnh sửa"
       }
     }
   },
