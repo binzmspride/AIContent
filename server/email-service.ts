@@ -2,6 +2,47 @@ import nodemailer from 'nodemailer';
 import { storage } from './storage';
 import { SmtpConfig } from '@shared/types';
 
+// Biến toàn cục lưu cấu hình ứng dụng
+export const appConfig = {
+  baseUrl: process.env.APP_BASE_URL || 'http://localhost:5000'
+};
+
+// Hàm cập nhật URL cơ sở của ứng dụng
+export async function updateAppBaseUrl(baseUrl: string): Promise<boolean> {
+  try {
+    // Cập nhật cấu hình trong bộ nhớ
+    appConfig.baseUrl = baseUrl;
+    console.log('App base URL updated in memory:', baseUrl);
+    
+    // Lưu cấu hình vào cơ sở dữ liệu
+    await storage.setSetting('appBaseUrl', baseUrl, 'general');
+    console.log('App base URL saved to database');
+    
+    return true;
+  } catch (error) {
+    console.error('Error updating app base URL:', error);
+    return false;
+  }
+}
+
+// Tải URL cơ sở từ cơ sở dữ liệu
+async function loadAppBaseUrlFromDatabase() {
+  try {
+    const baseUrl = await storage.getSetting('appBaseUrl');
+    if (baseUrl) {
+      appConfig.baseUrl = baseUrl;
+      console.log('App base URL loaded from database:', baseUrl);
+    } else {
+      console.log('No app base URL found in database, using default:', appConfig.baseUrl);
+    }
+  } catch (error) {
+    console.error('Error loading app base URL from database:', error);
+  }
+}
+
+// Tải cấu hình khi khởi động
+loadAppBaseUrlFromDatabase();
+
 // Biến toàn cục lưu cấu hình SMTP
 let smtpConfig = {
   host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',

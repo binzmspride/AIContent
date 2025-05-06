@@ -1,12 +1,8 @@
 import { randomBytes } from "crypto";
 import { storage } from "./storage";
-import { sendEmail } from "./email-service";
+import { sendEmail, appConfig } from "./email-service";
 import { getVerificationEmailTemplate, getResetPasswordEmailTemplate, getWelcomeEmailTemplate } from "./email-templates";
 import { InsertUser, User } from "@shared/schema";
-
-// Đường dẫn gốc của ứng dụng (lấy từ biến môi trường hoặc giá trị mặc định)
-// Sử dụng URL của Replit
-const APP_BASE_URL = process.env.APP_BASE_URL || "https://workspace.replit.dev";
 
 /**
  * Tạo token ngẫu nhiên
@@ -47,7 +43,7 @@ export async function registerUser(userData: InsertUser): Promise<{
     });
 
     // Gửi email xác thực
-    const verificationUrl = `${APP_BASE_URL}/verify-email?token=${verificationToken}`;
+    const verificationUrl = `${appConfig.baseUrl}/verify-email?token=${verificationToken}`;
     const emailTemplate = getVerificationEmailTemplate({
       username: user.username,
       verificationUrl
@@ -122,7 +118,7 @@ export async function verifyEmail(token: string): Promise<{
     }
 
     // Gửi email chào mừng
-    const loginUrl = `${APP_BASE_URL}/auth`;
+    const loginUrl = `${appConfig.baseUrl}/auth`;
     const emailTemplate = getWelcomeEmailTemplate({
       username: updatedUser.username,
       loginUrl
@@ -178,7 +174,7 @@ export async function requestPasswordReset(email: string): Promise<{
     });
 
     // Gửi email đặt lại mật khẩu
-    const resetUrl = `${APP_BASE_URL}/reset-password?token=${resetToken}`;
+    const resetUrl = `${appConfig.baseUrl}/reset-password?token=${resetToken}`;
     const emailTemplate = getResetPasswordEmailTemplate({
       username: user.username,
       resetUrl
