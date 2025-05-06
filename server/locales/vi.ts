@@ -1,4 +1,13 @@
 export const vi = {
+  // Time
+  time: {
+    day: "Ngày",
+    week: "Tuần",
+    month: "Tháng",
+    year: "Năm",
+    fromPrevious: "so với trước"
+  },
+  
   // Common
   common: {
     appName: "SEO AI Writer",

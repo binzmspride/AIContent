@@ -1,4 +1,13 @@
 export const en = {
+  // Time
+  time: {
+    day: "Day",
+    week: "Week",
+    month: "Month",
+    year: "Year",
+    fromPrevious: "from previous"
+  },
+  
   // Common
   common: {
     appName: "SEO AI Writer",
