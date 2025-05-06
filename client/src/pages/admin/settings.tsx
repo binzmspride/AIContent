@@ -1064,6 +1064,23 @@ export default function AdminSettings() {
                         )}
                       />
                       
+                      <FormField
+                        control={emailForm.control}
+                        name="appBaseUrl"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("admin.settings.appBaseUrl") || "URL cơ sở của ứng dụng"}</FormLabel>
+                            <FormControl>
+                              <Input placeholder="https://yourdomain.com" {...field} />
+                            </FormControl>
+                            <FormDescription>
+                              {t("admin.settings.appBaseUrlDescription") || "URL gốc của ứng dụng, sử dụng cho các liên kết trong email"}
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
                       <div className="border-t mt-6 pt-4">
                         <h4 className="font-medium text-sm mb-2">{t("admin.settings.testEmailTitle") || "Kiểm tra cài đặt email"}</h4>
                         <div className="flex space-x-2 mb-6">

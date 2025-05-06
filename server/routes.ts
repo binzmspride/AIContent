@@ -771,7 +771,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ success: false, error: 'Admin access required' });
       }
       
-      const { smtpServer, smtpPort, smtpUsername, smtpPassword, emailSender } = req.body;
+      const { smtpServer, smtpPort, smtpUsername, smtpPassword, emailSender, appBaseUrl } = req.body;
       
       // Validate the settings structure
       if (!smtpServer || !smtpPort || !smtpUsername || !smtpPassword || !emailSender) {
@@ -781,8 +781,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
+      // Validate the app base URL if provided
+      if (appBaseUrl && !appBaseUrl.startsWith('http')) {
+        return res.status(400).json({
+          success: false,
+          error: 'URL cơ sở của ứng dụng phải bắt đầu bằng http:// hoặc https://'
+        });
+      }
+      
       // Cập nhật cấu hình SMTP và lưu vào database
-      const result = await updateSmtpConfig({
+      const smtpResult = await updateSmtpConfig({
         smtpServer,
         smtpPort: Number(smtpPort),
         smtpUsername,
@@ -790,11 +798,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         emailSender
       });
       
-      if (!result) {
+      if (!smtpResult) {
         return res.status(500).json({ 
           success: false, 
           error: 'Không thể cập nhật cấu hình SMTP' 
         });
+      }
+      
+      // Cập nhật URL cơ sở của ứng dụng nếu được cung cấp
+      if (appBaseUrl) {
+        const appUrlResult = await updateAppBaseUrl(appBaseUrl);
+        if (!appUrlResult) {
+          return res.status(500).json({
+            success: false,
+            error: 'Không thể cập nhật URL cơ sở của ứng dụng'
+          });
+        }
       }
       
       res.json({
