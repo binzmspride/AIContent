@@ -24,6 +24,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // API routes
   const httpServer = createServer(app);
+  
+  // ========== Translations API ==========
+  // Get translations for the frontend
+  app.get('/api/translations', async (req, res) => {
+    try {
+      // Simply return the imported translation files
+      res.json({ 
+        success: true, 
+        data: { 
+          en, 
+          vi 
+        } 
+      });
+    } catch (error) {
+      console.error('Error fetching translations:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch translations' });
+    }
+  });
 
   // ========== Plans API ==========
   // Get all plans
