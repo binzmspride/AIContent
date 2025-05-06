@@ -1,4 +1,6 @@
 import nodemailer from 'nodemailer';
+import { storage } from './storage';
+import { SmtpConfig } from '@shared/types';
 
 // Biến toàn cục lưu cấu hình SMTP
 let smtpConfig = {
@@ -12,34 +14,70 @@ let smtpConfig = {
   from: process.env.SMTP_FROM || 'SEO AI Writer <seoviet.ai@gmail.com>'
 };
 
+// Tải cấu hình SMTP từ cơ sở dữ liệu
+async function loadSmtpConfigFromDatabase() {
+  try {
+    const dbConfig = await storage.getSmtpSettings();
+    if (dbConfig) {
+      smtpConfig = {
+        host: dbConfig.smtpServer,
+        port: dbConfig.smtpPort,
+        secure: dbConfig.smtpPort === 465,
+        auth: {
+          user: dbConfig.smtpUsername,
+          pass: dbConfig.smtpPassword
+        },
+        from: dbConfig.emailSender
+      };
+      console.log('SMTP configuration loaded from database');
+    } else {
+      console.log('No SMTP configuration found in database, using default values');
+    }
+  } catch (error) {
+    console.error('Error loading SMTP config from database:', error);
+  }
+}
+
+// Tải cấu hình khi khởi động
+loadSmtpConfigFromDatabase();
+
 // Hàm cập nhật cấu hình SMTP
-export function updateSmtpConfig(config: {
+export async function updateSmtpConfig(config: {
   smtpServer: string;
   smtpPort: number;
   smtpUsername: string;
   smtpPassword: string;
   emailSender: string;
-}) {
-  smtpConfig = {
-    host: config.smtpServer,
-    port: config.smtpPort,
-    secure: config.smtpPort === 465, // true for 465, false for other ports
-    auth: {
-      user: config.smtpUsername,
-      pass: config.smtpPassword
-    },
-    from: config.emailSender
-  };
+}): Promise<boolean> {
+  try {
+    // Cập nhật cấu hình trong bộ nhớ
+    smtpConfig = {
+      host: config.smtpServer,
+      port: config.smtpPort,
+      secure: config.smtpPort === 465, // true for 465, false for other ports
+      auth: {
+        user: config.smtpUsername,
+        pass: config.smtpPassword
+      },
+      from: config.emailSender
+    };
 
-  console.log('SMTP configuration updated:', {
-    host: smtpConfig.host,
-    port: smtpConfig.port,
-    secure: smtpConfig.secure,
-    user: smtpConfig.auth.user,
-    from: smtpConfig.from
-  });
+    console.log('SMTP configuration updated in memory');
 
-  return true;
+    // Lưu cấu hình vào cơ sở dữ liệu
+    await storage.setSetting('smtpServer', config.smtpServer, 'smtp');
+    await storage.setSetting('smtpPort', config.smtpPort.toString(), 'smtp');
+    await storage.setSetting('smtpUsername', config.smtpUsername, 'smtp');
+    await storage.setSetting('smtpPassword', config.smtpPassword, 'smtp');
+    await storage.setSetting('emailSender', config.emailSender, 'smtp');
+
+    console.log('SMTP configuration saved to database');
+    
+    return true;
+  } catch (error) {
+    console.error('Error updating SMTP configuration:', error);
+    return false;
+  }
 }
 
 // Hàm gửi email

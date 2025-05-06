@@ -781,8 +781,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Cập nhật cấu hình SMTP
-      updateSmtpConfig({
+      // Cập nhật cấu hình SMTP và lưu vào database
+      const result = await updateSmtpConfig({
         smtpServer,
         smtpPort: Number(smtpPort),
         smtpUsername,
@@ -790,7 +790,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         emailSender
       });
       
-      // Trong ứng dụng thực tế, có thể lưu cấu hình vào database
+      if (!result) {
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Không thể cập nhật cấu hình SMTP' 
+        });
+      }
       
       res.json({
         success: true,

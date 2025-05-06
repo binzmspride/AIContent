@@ -129,3 +129,12 @@ export interface PerformanceMetrics {
     }
   }
 }
+
+// SMTP configuration type
+export interface SmtpConfig {
+  smtpServer: string;
+  smtpPort: number;
+  smtpUsername: string;
+  smtpPassword: string;
+  emailSender: string;
+}
