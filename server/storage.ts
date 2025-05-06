@@ -19,6 +19,7 @@ export interface IStorage {
   createUser(user: schema.InsertUser): Promise<schema.User>;
   updateUser(id: number, data: Partial<schema.User>): Promise<schema.User | null>;
   updateUserPassword(id: number, newPassword: string): Promise<schema.User | null>;
+  deleteUser(id: number): Promise<boolean>;
   listUsers(page: number, limit: number): Promise<{ users: schema.User[], total: number }>;
   
   // Article management
@@ -164,6 +165,37 @@ class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error("Error updating user password:", error);
       return null;
+    }
+  }
+  
+  async deleteUser(id: number): Promise<boolean> {
+    try {
+      // Delete all related records first to maintain referential integrity
+      
+      // Delete user's articles
+      await db.delete(schema.articles)
+        .where(eq(schema.articles.userId, id));
+      
+      // Delete user's connections
+      await db.delete(schema.connections)
+        .where(eq(schema.connections.userId, id));
+      
+      // Delete user's credit transactions
+      await db.delete(schema.creditTransactions)
+        .where(eq(schema.creditTransactions.userId, id));
+      
+      // Delete user's plans
+      await db.delete(schema.userPlans)
+        .where(eq(schema.userPlans.userId, id));
+      
+      // Finally delete the user
+      await db.delete(schema.users)
+        .where(eq(schema.users.id, id));
+      
+      return true;
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      return false;
     }
   }
   

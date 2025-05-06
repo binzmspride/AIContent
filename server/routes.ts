@@ -635,11 +635,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ success: false, error: 'Người dùng không tồn tại' });
       }
       
-      // Trong thực tế, chúng ta sẽ cần kiểm tra các ràng buộc và dữ liệu liên quan
-      // trước khi xóa người dùng để tránh lỗi tham chiếu
+      // Thực hiện xóa người dùng
+      const deleted = await storage.deleteUser(userId);
       
-      // Thực hiện xóa người dùng (cần triển khai hàm này trong storage)
-      // Tạm thời chúng ta chỉ trả về thành công
+      if (!deleted) {
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Không thể xóa người dùng do lỗi hệ thống' 
+        });
+      }
+      
       res.json({ success: true, message: 'Người dùng đã được xóa thành công' });
     } catch (error) {
       console.error('Error deleting user:', error);
