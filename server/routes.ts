@@ -16,7 +16,7 @@ import {
 } from "@shared/types";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-import { updateSmtpConfig, testSmtpConnection } from "./email-service";
+import { updateSmtpConfig, testSmtpConnection, updateAppBaseUrl } from "./email-service";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
