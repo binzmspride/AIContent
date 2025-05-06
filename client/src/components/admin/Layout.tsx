@@ -157,7 +157,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                 )}
               >
                 <LayoutDashboard className="h-5 w-5" />
-                {isSidebarOpen && <span className="ml-3">User Dashboard</span>}
+                {isSidebarOpen && <span className="ml-3">{t("dashboard.title")}</span>}
               </Link>
             </li>
           </ul>
@@ -182,7 +182,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                   className="text-xs text-white/80 hover:text-white flex items-center mt-1"
                 >
                   <LogOut className="h-3 w-3 mr-1" />
-                  {t("nav.logout")}
+                  {t("common.logout")}
                 </button>
               </div>
             </div>
@@ -246,7 +246,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                       className="flex items-center py-2 px-4 rounded-md text-sm font-medium transition-colors text-white hover:text-white hover:bg-sidebar-accent/70"
                     >
                       <LayoutDashboard className="h-5 w-5" />
-                      <span className="ml-3">User Dashboard</span>
+                      <span className="ml-3">{t("dashboard.title")}</span>
                     </Link>
                   </li>
                 </ul>
@@ -267,7 +267,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
                       className="text-xs text-white/80 hover:text-white flex items-center mt-1"
                     >
                       <LogOut className="h-3 w-3 mr-1" />
-                      {t("nav.logout")}
+                      {t("common.logout")}
                     </button>
                   </div>
                 </div>

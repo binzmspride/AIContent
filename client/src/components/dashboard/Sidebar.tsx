@@ -30,7 +30,7 @@ export function Sidebar() {
   const links: SidebarLink[] = [
     {
       href: "/dashboard",
-      label: t("dashboard.overview"),
+      label: t("dashboard.title"),
       icon: <LayoutDashboard className="h-5 w-5 mr-3" />,
     },
     {
@@ -45,22 +45,22 @@ export function Sidebar() {
     },
     {
       href: "/dashboard/credits",
-      label: t("dashboard.creditsMenu"),
+      label: t("dashboard.credits"),
       icon: <Coins className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/plans",
-      label: t("dashboard.plansMenu"),
+      label: t("dashboard.plans"),
       icon: <Package className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/connections",
-      label: t("dashboard.connectionsMenu"),
+      label: t("dashboard.connections"),
       icon: <Link2 className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/settings",
-      label: t("dashboard.settingsMenu"),
+      label: t("dashboard.settings"),
       icon: <Settings className="h-5 w-5 mr-3" />,
     },
   ];
@@ -103,7 +103,7 @@ export function Sidebar() {
               className="flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
             >
               <LayoutDashboard className="h-5 w-5 mr-3" />
-              Admin Panel
+              {t("admin.adminPanel")}
             </Link>
           </li>
         </ul>
@@ -127,7 +127,7 @@ export function Sidebar() {
                 className="text-xs text-sidebar-foreground/70 hover:text-sidebar-foreground flex items-center mt-1"
               >
                 <LogOut className="h-3 w-3 mr-1" />
-                {t("nav.logout")}
+                {t("common.logout")}
               </button>
             </div>
           </div>
