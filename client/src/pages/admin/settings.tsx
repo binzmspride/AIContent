@@ -72,6 +72,7 @@ interface SystemSettings {
   smtpUsername: string;
   smtpPassword: string;
   emailSender: string;
+  appBaseUrl: string;
   // API integration settings
   openaiApiKey: string;
   claudeApiKey: string;
@@ -117,6 +118,7 @@ const emailSettingsSchema = z.object({
   smtpUsername: z.string().min(1, "SMTP username is required"),
   smtpPassword: z.string().min(1, "SMTP password is required"),
   emailSender: z.string().email("Must be a valid email address"),
+  appBaseUrl: z.string().url("Must be a valid URL"),
 });
 
 // API integration settings form schema
@@ -175,6 +177,7 @@ export default function AdminSettings() {
         smtpUsername: "noreply@example.com",
         smtpPassword: "password123",
         emailSender: "SEO AI Writer <noreply@example.com>",
+        appBaseUrl: "http://localhost:5000",
         
         openaiApiKey: "sk-*************************************",
         claudeApiKey: "",
@@ -235,6 +238,7 @@ export default function AdminSettings() {
       smtpUsername: settings?.smtpUsername || "",
       smtpPassword: settings?.smtpPassword || "",
       emailSender: settings?.emailSender || "",
+      appBaseUrl: settings?.appBaseUrl || "http://localhost:5000",
     },
   });
 
@@ -287,6 +291,7 @@ export default function AdminSettings() {
         smtpUsername: settings.smtpUsername,
         smtpPassword: settings.smtpPassword,
         emailSender: settings.emailSender,
+        appBaseUrl: settings.appBaseUrl,
       });
       
       apiForm.reset({
