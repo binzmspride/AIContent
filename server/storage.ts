@@ -47,6 +47,18 @@ export interface IStorage {
   subtractUserCredits(userId: number, amount: number, description: string): Promise<number>;
   getCreditHistory(userId: number, page: number, limit: number): Promise<{ transactions: schema.CreditTransaction[], total: number }>;
   
+  // System settings
+  getSetting(key: string): Promise<string | null>;
+  getSettingsByCategory(category: string): Promise<Record<string, string>>;
+  setSetting(key: string, value: string, category?: string): Promise<boolean>;
+  getSmtpSettings(): Promise<{
+    smtpServer: string;
+    smtpPort: number;
+    smtpUsername: string;
+    smtpPassword: string;
+    emailSender: string;
+  } | null>;
+  
   // Session store
   sessionStore: session.SessionStore;
 }
@@ -357,6 +369,96 @@ class DatabaseStorage implements IStorage {
       .where(eq(schema.creditTransactions.userId, userId));
     
     return { transactions, total: count };
+  }
+  
+  // System settings
+  async getSetting(key: string): Promise<string | null> {
+    try {
+      const setting = await db.query.systemSettings.findFirst({
+        where: eq(schema.systemSettings.key, key)
+      });
+      return setting?.value || null;
+    } catch (error) {
+      console.error(`Error retrieving setting [${key}]:`, error);
+      return null;
+    }
+  }
+  
+  async getSettingsByCategory(category: string): Promise<Record<string, string>> {
+    try {
+      const settings = await db.query.systemSettings.findMany({
+        where: eq(schema.systemSettings.category, category)
+      });
+      
+      return settings.reduce((acc, setting) => {
+        if (setting.value !== null) {
+          acc[setting.key] = setting.value;
+        }
+        return acc;
+      }, {} as Record<string, string>);
+    } catch (error) {
+      console.error(`Error retrieving settings for category [${category}]:`, error);
+      return {};
+    }
+  }
+  
+  async setSetting(key: string, value: string, category: string = 'general'): Promise<boolean> {
+    try {
+      // Check if the setting already exists
+      const existingSetting = await db.query.systemSettings.findFirst({
+        where: eq(schema.systemSettings.key, key)
+      });
+      
+      if (existingSetting) {
+        // Update existing setting
+        await db.update(schema.systemSettings)
+          .set({ 
+            value, 
+            updatedAt: new Date()
+          })
+          .where(eq(schema.systemSettings.key, key));
+      } else {
+        // Create new setting
+        await db.insert(schema.systemSettings)
+          .values({
+            key,
+            value,
+            category
+          });
+      }
+      
+      return true;
+    } catch (error) {
+      console.error(`Error saving setting [${key}]:`, error);
+      return false;
+    }
+  }
+  
+  async getSmtpSettings(): Promise<{
+    smtpServer: string;
+    smtpPort: number;
+    smtpUsername: string;
+    smtpPassword: string;
+    emailSender: string;
+  } | null> {
+    try {
+      const smtpSettings = await this.getSettingsByCategory('smtp');
+      
+      if (!smtpSettings.smtpServer || !smtpSettings.smtpUsername || !smtpSettings.smtpPassword) {
+        return null;
+      }
+      
+      return {
+        smtpServer: smtpSettings.smtpServer,
+        smtpPort: parseInt(smtpSettings.smtpPort || '587'),
+        smtpUsername: smtpSettings.smtpUsername,
+        smtpPassword: smtpSettings.smtpPassword,
+        emailSender: smtpSettings.emailSender || `SEO AI Writer <${smtpSettings.smtpUsername}>`
+      };
+    } catch (error) {
+      console.error('Error retrieving SMTP settings:', error);
+      return null;
+    }
   }
 }
 

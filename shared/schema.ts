@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, bigint, boolean, timestamp, pgEnum, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, bigint, boolean, timestamp, pgEnum, jsonb, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
@@ -90,6 +90,16 @@ export const creditTransactions = pgTable('credit_transactions', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+// System settings table
+export const systemSettings = pgTable('system_settings', {
+  id: serial('id').primaryKey(),
+  key: varchar('key', { length: 255 }).notNull().unique(),
+  value: text('value'),
+  category: varchar('category', { length: 50 }).notNull().default('general'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 // Define relations
 export const usersRelations = relations(users, ({ many }) => ({
   articles: many(articles),
@@ -149,6 +159,11 @@ export const selectConnectionSchema = createSelectSchema(connections);
 export const selectPlanSchema = createSelectSchema(plans);
 export const selectUserPlanSchema = createSelectSchema(userPlans);
 export const selectCreditTransactionSchema = createSelectSchema(creditTransactions);
+export const selectSystemSettingSchema = createSelectSchema(systemSettings);
+export const insertSystemSettingSchema = createInsertSchema(systemSettings, {
+  key: (schema) => schema.min(1, "Key is required"),
+  category: (schema) => schema.min(1, "Category is required"),
+});
 
 // Export types
 export type User = z.infer<typeof selectUserSchema>;
@@ -169,3 +184,6 @@ export type InsertUserPlan = z.infer<typeof insertUserPlanSchema>;
 
 export type CreditTransaction = z.infer<typeof selectCreditTransactionSchema>;
 export type InsertCreditTransaction = z.infer<typeof insertCreditTransactionSchema>;
+
+export type SystemSetting = z.infer<typeof selectSystemSettingSchema>;
+export type InsertSystemSetting = z.infer<typeof insertSystemSettingSchema>;
