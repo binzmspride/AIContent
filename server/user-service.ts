@@ -5,7 +5,8 @@ import { getVerificationEmailTemplate, getResetPasswordEmailTemplate, getWelcome
 import { InsertUser, User } from "@shared/schema";
 
 // Đường dẫn gốc của ứng dụng (lấy từ biến môi trường hoặc giá trị mặc định)
-const APP_BASE_URL = process.env.APP_BASE_URL || "http://localhost:3000";
+// Sử dụng URL của Replit
+const APP_BASE_URL = process.env.APP_BASE_URL || "https://workspace.replit.dev";
 
 /**
  * Tạo token ngẫu nhiên
