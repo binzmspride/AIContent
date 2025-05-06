@@ -42,14 +42,17 @@ export default function PerformanceInsights() {
             <CardTitle className="text-xl font-bold">{t('admin.performanceMetrics.title')}</CardTitle>
             <CardDescription>{t('admin.performanceMetrics.description')}</CardDescription>
           </div>
-          <Select value={timeRange} onValueChange={setTimeRange}>
+          <Select 
+            value={timeRange} 
+            onValueChange={(value: TimeRange) => setTimeRange(value)}
+          >
             <SelectTrigger className="w-40">
               <SelectValue placeholder={t('admin.performanceMetrics.selectTimeRange')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={TIME_RANGES.DAY}>{t('time.day')}</SelectItem>
-              <SelectItem value={TIME_RANGES.WEEK}>{t('time.week')}</SelectItem>
-              <SelectItem value={TIME_RANGES.MONTH}>{t('time.month')}</SelectItem>
+              <SelectItem value="day">{t('time.day')}</SelectItem>
+              <SelectItem value="week">{t('time.week')}</SelectItem>
+              <SelectItem value="month">{t('time.month')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
