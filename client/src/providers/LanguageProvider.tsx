@@ -31,6 +31,52 @@ const translations = {
       viewAll: "Xem tất cả",
       comparedToPreviousMonth: "so với tháng trước",
       tagline: "Nền tảng tạo bài viết SEO bằng AI cho người Việt",
+      mascot: {
+        dashboard: {
+          welcomeTitle: "Xin chào!",
+          welcomeTip: "Chào mừng bạn đến với SEO AI Writer! Đây là nơi bạn có thể xem tổng quan về tài khoản của mình.",
+          creditsTitle: "Tín dụng",
+          creditsTip: "Số tín dụng hiển thị ở bảng điều khiển cho biết bạn có thể tạo bao nhiêu bài viết mới.",
+          articlesTitle: "Bài viết của bạn",
+          articlesTip: "Bạn có thể xem các bài viết gần đây của mình tại đây và nhấp vào để chỉnh sửa hoặc xuất bản."
+        },
+        contentCreation: {
+          welcomeTitle: "Bắt đầu tạo nội dung!",
+          welcomeTip: "Hãy điền đầy đủ thông tin để tạo bài viết SEO chất lượng cao.",
+          tipsTitle: "Mẹo tạo nội dung",
+          tipsList: "Sử dụng từ khóa chính xác, chọn giọng điệu phù hợp với đối tượng, và cung cấp mô tả chi tiết để có kết quả tốt nhất.",
+          creditsTitle: "Sử dụng tín dụng",
+          creditsTip: "Mỗi bài viết sẽ sử dụng từ 1-3 tín dụng tùy thuộc vào độ dài bạn chọn."
+        },
+        articles: {
+          welcomeTitle: "Bài viết của bạn",
+          welcomeTip: "Đây là nơi bạn có thể quản lý tất cả bài viết đã tạo.",
+          publishTitle: "Xuất bản bài viết",
+          publishTip: "Bạn có thể xuất bản bài viết lên WordPress hoặc mạng xã hội sau khi đã kết nối tài khoản."
+        },
+        connections: {
+          welcomeTitle: "Kết nối tài khoản",
+          welcomeTip: "Kết nối WordPress và các mạng xã hội để xuất bản bài viết trực tiếp.",
+          wordpressTitle: "WordPress",
+          wordpressTip: "Để kết nối WordPress, bạn cần URL trang web, tên người dùng và Application Password."
+        },
+        credits: {
+          welcomeTitle: "Quản lý tín dụng",
+          welcomeTip: "Mua thêm tín dụng để tiếp tục tạo nội dung chất lượng cao.",
+          usageTitle: "Sử dụng tín dụng",
+          usageTip: "Tín dụng được sử dụng khi tạo nội dung mới và không có thời hạn sử dụng."
+        },
+        plans: {
+          welcomeTitle: "Gói đăng ký",
+          welcomeTip: "Nâng cấp lên gói cao hơn để nhận nhiều tín dụng và dung lượng lưu trữ hơn.",
+          featuresTitle: "Tính năng",
+          featuresTip: "Các gói cao cấp bao gồm thêm tính năng như hỗ trợ ưu tiên và nhiều kết nối hơn."
+        },
+        general: {
+          welcomeTitle: "Xin chào!",
+          welcomeTip: "Tôi là trợ lý AI của bạn. Tôi sẽ giúp bạn sử dụng hệ thống này hiệu quả nhất."
+        }
+      },
       close: "Đóng",
       create: "Tạo mới",
       manage: "Quản lý",
@@ -268,6 +314,52 @@ const translations = {
       viewAll: "View all",
       comparedToPreviousMonth: "compared to previous month",
       tagline: "AI-powered SEO content platform",
+      mascot: {
+        dashboard: {
+          welcomeTitle: "Welcome!",
+          welcomeTip: "Welcome to SEO AI Writer! This is where you can view an overview of your account.",
+          creditsTitle: "Credits",
+          creditsTip: "The credits displayed on the dashboard indicate how many new articles you can create.",
+          articlesTitle: "Your Articles",
+          articlesTip: "You can view your recent articles here and click to edit or publish them."
+        },
+        contentCreation: {
+          welcomeTitle: "Start Creating Content!",
+          welcomeTip: "Fill in all the information to create high-quality SEO content.",
+          tipsTitle: "Content Creation Tips",
+          tipsList: "Use precise keywords, choose a tone that matches your audience, and provide detailed descriptions for the best results.",
+          creditsTitle: "Credit Usage",
+          creditsTip: "Each article will use between 1-3 credits depending on the length you select."
+        },
+        articles: {
+          welcomeTitle: "Your Articles",
+          welcomeTip: "This is where you can manage all your created articles.",
+          publishTitle: "Publish Articles",
+          publishTip: "You can publish articles to WordPress or social media after connecting your accounts."
+        },
+        connections: {
+          welcomeTitle: "Account Connections",
+          welcomeTip: "Connect WordPress and social media to publish articles directly.",
+          wordpressTitle: "WordPress",
+          wordpressTip: "To connect WordPress, you need your website URL, username, and Application Password."
+        },
+        credits: {
+          welcomeTitle: "Credit Management",
+          welcomeTip: "Purchase more credits to continue creating high-quality content.",
+          usageTitle: "Credit Usage",
+          usageTip: "Credits are used when creating new content and have no expiration date."
+        },
+        plans: {
+          welcomeTitle: "Subscription Plans",
+          welcomeTip: "Upgrade to a higher plan to get more credits and storage space.",
+          featuresTitle: "Features",
+          featuresTip: "Premium plans include additional features like priority support and more connections."
+        },
+        general: {
+          welcomeTitle: "Hello!",
+          welcomeTip: "I'm your AI assistant. I will help you use this system effectively."
+        }
+      },
       close: "Close",
       create: "Create",
       manage: "Manage",
