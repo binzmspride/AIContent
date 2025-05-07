@@ -23,24 +23,9 @@ export function Features() {
       description: t("landing.features.items.1.description")
     },
     {
-      icon: <Globe className="h-7 w-7" />,
+      icon: <Share2 className="h-7 w-7" />,
       title: t("landing.features.items.2.title"),
       description: t("landing.features.items.2.description")
-    },
-    {
-      icon: <Share2 className="h-7 w-7" />,
-      title: t("landing.features.items.3.title"),
-      description: t("landing.features.items.3.description")
-    },
-    {
-      icon: <Languages className="h-7 w-7" />,
-      title: t("landing.features.items.4.title"),
-      description: t("landing.features.items.4.description")
-    },
-    {
-      icon: <LineChart className="h-7 w-7" />,
-      title: t("landing.features.items.5.title"),
-      description: t("landing.features.items.5.description")
     }
   ];
 

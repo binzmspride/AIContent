@@ -129,6 +129,42 @@ const translations = {
         newFeature: "Chúng tôi vừa cập nhật tính năng mới! Hãy khám phá ngay!"
       }
     },
+    nav: {
+      features: "Tính năng",
+      pricing: "Bảng giá",
+      faq: "Hỏi đáp",
+      contact: "Liên hệ",
+      dashboard: "Bảng điều khiển",
+      login: "Đăng nhập",
+      register: "Đăng ký"
+    },
+    landing: {
+      hero: {
+        badge: "Công nghệ AI tiên tiến",
+        title: "Tạo bài viết SEO chất lượng cao tức thì",
+        subtitle: "Sử dụng trí tuệ nhân tạo để tạo ra nội dung hấp dẫn, tối ưu cho SEO một cách nhanh chóng và hiệu quả.",
+        tryFree: "Dùng thử miễn phí",
+        viewDemo: "Xem demo"
+      },
+      features: {
+        title: "Tính năng nổi bật",
+        subtitle: "Khám phá những công cụ mạnh mẽ giúp tạo nội dung SEO hiệu quả",
+        items: [
+          {
+            title: "Sáng tạo nội dung thông minh",
+            description: "Tạo bài viết chất lượng cao với sự hỗ trợ của AI tiên tiến."
+          },
+          {
+            title: "Tối ưu hóa từ khóa",
+            description: "Phân tích và tối ưu từ khóa tự động để cải thiện thứ hạng tìm kiếm."
+          },
+          {
+            title: "Đa dạng nền tảng xuất bản",
+            description: "Xuất bản trực tiếp sang WordPress hoặc mạng xã hội chỉ với một cú nhấp chuột."
+          }
+        ]
+      }
+    },
     admin: {
       dashboard: "Quản trị",
       users: "Người dùng",
@@ -311,6 +347,42 @@ const translations = {
         noArticles: "You don't have any articles yet. Let's create your first one!",
         lowCredits: "You're running low on credits. Purchase more to continue using our services!",
         newFeature: "We just updated with a new feature! Check it out now!"
+      }
+    },
+    nav: {
+      features: "Features",
+      pricing: "Pricing",
+      faq: "FAQ",
+      contact: "Contact",
+      dashboard: "Dashboard",
+      login: "Login",
+      register: "Register"
+    },
+    landing: {
+      hero: {
+        badge: "Advanced AI Technology",
+        title: "Create High-Quality SEO Content Instantly",
+        subtitle: "Use artificial intelligence to generate engaging, SEO-optimized content quickly and efficiently.",
+        tryFree: "Try for Free",
+        viewDemo: "View Demo"
+      },
+      features: {
+        title: "Key Features",
+        subtitle: "Discover powerful tools for effective SEO content creation",
+        items: [
+          {
+            title: "Intelligent Content Creation",
+            description: "Generate high-quality articles with advanced AI assistance."
+          },
+          {
+            title: "Keyword Optimization",
+            description: "Automatic keyword analysis and optimization to improve search rankings."
+          },
+          {
+            title: "Multi-platform Publishing",
+            description: "Publish directly to WordPress or social media with just one click."
+          }
+        ]
       }
     },
     admin: {
