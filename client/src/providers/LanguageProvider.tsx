@@ -272,6 +272,16 @@ const translations: TranslationsType = {
       apiKeys: "API Keys",
       logout: "Đăng xuất",
       
+      navigationItems: {
+        dashboard: "Bảng điều khiển",
+        createContent: "Tạo nội dung",
+        myArticles: "Bài viết của tôi",
+        credits: "Tín dụng",
+        plans: "Gói dịch vụ",
+        connections: "Kết nối",
+        settings: "Cài đặt"
+      },
+      
       stats: {
         creditsLeft: "Số tín dụng còn lại",
         articlesCreated: "Bài viết đã tạo",
@@ -545,9 +555,19 @@ const translations: TranslationsType = {
       plans: "Plans",
       connections: "Connections",
       credits: "Credits",
-      settings: "Settings",
+      settings: "Settings", 
       apiKeys: "API Keys",
       logout: "Logout",
+      
+      navigationItems: {
+        dashboard: "Dashboard",
+        createContent: "Create Content",
+        myArticles: "My Articles",
+        credits: "Credits",
+        plans: "Plans",
+        connections: "Connections",
+        settings: "Settings"
+      },
       
       stats: {
         creditsLeft: "Credits Left",
