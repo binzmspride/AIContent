@@ -292,7 +292,7 @@ export default function Dashboard() {
                           <div className={`h-2 w-2 rounded-full ${stats?.connections?.wordpress ? 'bg-green-500' : 'bg-secondary-300'} mr-2`}></div>
                           <p className="text-xs text-white">
                             {stats?.connections?.wordpress 
-                              ? t("dashboard.connections.wordpress.connected") 
+                              ? t("dashboard.connectionTypes.wordpress.connected") 
                               : t("common.notConnected")
                             }
                           </p>
@@ -313,7 +313,7 @@ export default function Dashboard() {
                           <div className={`h-2 w-2 rounded-full ${stats?.connections?.facebook ? 'bg-green-500' : 'bg-secondary-300'} mr-2`}></div>
                           <p className="text-xs text-white">
                             {stats?.connections?.facebook
-                              ? t("dashboard.connections.social.connected")
+                              ? t("dashboard.connectionTypes.social.connected")
                               : t("common.notConnected")
                             }
                           </p>
@@ -334,7 +334,7 @@ export default function Dashboard() {
                           <div className={`h-2 w-2 rounded-full ${stats?.connections?.tiktok ? 'bg-green-500' : 'bg-secondary-300'} mr-2`}></div>
                           <p className="text-xs text-white">
                             {stats?.connections?.tiktok
-                              ? t("dashboard.connections.social.connected")
+                              ? t("dashboard.connectionTypes.social.connected")
                               : t("common.notConnected")
                             }
                           </p>

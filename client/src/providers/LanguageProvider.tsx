@@ -287,7 +287,7 @@ const translations: TranslationsType = {
         buyMoreCredits: "Mua thêm tín dụng"
       },
       
-      connections: {
+      connectionTypes: {
         wordpress: {
           connected: "Đã kết nối"
         },
@@ -571,7 +571,7 @@ const translations: TranslationsType = {
         buyMoreCredits: "Buy More Credits"
       },
       
-      connections: {
+      connectionTypes: {
         wordpress: {
           connected: "Connected"
         },
