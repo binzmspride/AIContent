@@ -22,6 +22,11 @@ interface LanguageContextType {
 // Hardcoded translations for essential UI elements
 const translations: TranslationsType = {
   vi: {
+    admin: {
+      adminPanel: "Quản trị viên",
+      adminDashboard: "Bảng điều khiển quản trị"
+    },
+    
     common: {
       loading: "Đang tải...",
       error: "Đã xảy ra lỗi",
@@ -88,7 +93,12 @@ const translations: TranslationsType = {
       verificationSent: "Email xác minh đã được gửi",
       verificationSuccess: "Xác minh thành công",
       loginRequired: "Vui lòng đăng nhập để tiếp tục",
-      or: "Hoặc"
+      or: "Hoặc",
+      
+      apiKeys: {
+        title: "API Keys",
+        description: "Quản lý API Keys"
+      }
     },
     
     auth: {
@@ -309,6 +319,11 @@ const translations: TranslationsType = {
   },
   
   en: {
+    admin: {
+      adminPanel: "Admin Panel",
+      adminDashboard: "Admin Dashboard"
+    },
+    
     common: {
       loading: "Loading...",
       error: "An error occurred",
@@ -375,7 +390,12 @@ const translations: TranslationsType = {
       verificationSent: "Verification email has been sent",
       verificationSuccess: "Verification successful",
       loginRequired: "Please login to continue",
-      or: "Or"
+      or: "Or",
+      
+      apiKeys: {
+        title: "API Keys",
+        description: "Manage API Keys"
+      }
     },
     
     auth: {
