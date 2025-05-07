@@ -95,7 +95,7 @@ export function Contact() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("landing.contact.form.name")}</FormLabel>
+                      <FormLabel className="text-gray-800">{t("landing.contact.form.name")}</FormLabel>
                       <FormControl>
                         <Input placeholder="" {...field} />
                       </FormControl>
@@ -109,7 +109,7 @@ export function Contact() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("landing.contact.form.email")}</FormLabel>
+                      <FormLabel className="text-gray-800">{t("landing.contact.form.email")}</FormLabel>
                       <FormControl>
                         <Input type="email" placeholder="" {...field} />
                       </FormControl>
@@ -123,7 +123,7 @@ export function Contact() {
                   name="subject"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("landing.contact.form.subject")}</FormLabel>
+                      <FormLabel className="text-gray-800">{t("landing.contact.form.subject")}</FormLabel>
                       <FormControl>
                         <Input placeholder="" {...field} />
                       </FormControl>
@@ -137,7 +137,7 @@ export function Contact() {
                   name="message"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("landing.contact.form.message")}</FormLabel>
+                      <FormLabel className="text-gray-800">{t("landing.contact.form.message")}</FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder="" 
