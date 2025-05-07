@@ -160,6 +160,61 @@ const translations: TranslationsType = {
             description: "Xuất bản trực tiếp sang WordPress hoặc mạng xã hội chỉ với một cú nhấp chuột."
           }
         ]
+      },
+      pricing: {
+        title: "Bảng giá",
+        subtitle: "Chọn gói phù hợp với nhu cầu của bạn",
+        creditPlans: "Gói credits",
+        storagePlans: "Gói lưu trữ",
+        features: {
+          credits: "credits",
+          wordPress: "Tích hợp WordPress",
+          seoOptimization: "Tối ưu SEO",
+          support: "Hỗ trợ",
+          supportEmail: "Email",
+          supportPriority: "Ưu tiên",
+          support247: "24/7",
+          saving: "Tiết kiệm"
+        },
+        buyNow: "Mua ngay",
+        guarantee: "Cam kết hoàn tiền trong 30 ngày",
+        contactUs: "Liên hệ với chúng tôi"
+      },
+      faq: {
+        title: "Câu hỏi thường gặp",
+        subtitle: "Những câu hỏi được hỏi nhiều nhất",
+        questions: [
+          {
+            question: "SEO AI Writer giúp tạo nội dung như thế nào?",
+            answer: "SEO AI Writer sử dụng công nghệ AI tiên tiến để phân tích từ khóa, nghiên cứu chủ đề và tạo ra nội dung chất lượng cao đã được tối ưu hóa cho SEO."
+          },
+          {
+            question: "Tôi có thể tạo bao nhiêu bài viết mỗi tháng?",
+            answer: "Điều này phụ thuộc vào gói dịch vụ bạn đăng ký. Mỗi gói sẽ cung cấp một số lượng credits nhất định, bạn có thể sử dụng để tạo nội dung. Một bài viết thường tiêu thụ từ 10-50 credits tùy thuộc vào độ dài và độ phức tạp."
+          },
+          {
+            question: "Nội dung được tạo ra có phải là nội dung duy nhất không?",
+            answer: "Có, mọi nội dung được tạo bởi SEO AI Writer đều là duy nhất và được thiết kế để vượt qua các công cụ kiểm tra đạo văn. Hệ thống của chúng tôi liên tục học hỏi và cập nhật để tạo ra nội dung chất lượng cao nhất."
+          },
+          {
+            question: "Tôi có thể tích hợp với WordPress của mình không?",
+            answer: "Có, SEO AI Writer cung cấp tích hợp liền mạch với WordPress, cho phép bạn xuất bản nội dung trực tiếp lên trang web của mình chỉ với một cú nhấp chuột."
+          },
+          {
+            question: "Dịch vụ của bạn có hỗ trợ ngôn ngữ nào?",
+            answer: "Hiện tại, chúng tôi hỗ trợ tiếng Việt và tiếng Anh. Chúng tôi đang làm việc để mở rộng danh sách ngôn ngữ được hỗ trợ trong tương lai gần."
+          }
+        ]
+      },
+      contact: {
+        title: "Liên hệ với chúng tôi",
+        subtitle: "Chúng tôi luôn sẵn sàng giúp đỡ bạn",
+        form: {
+          name: "Họ tên",
+          email: "Email",
+          message: "Tin nhắn",
+          submit: "Gửi"
+        }
       }
     }
   },
@@ -303,6 +358,61 @@ const translations: TranslationsType = {
             description: "Publish directly to WordPress or social media with just one click."
           }
         ]
+      },
+      pricing: {
+        title: "Pricing",
+        subtitle: "Choose a plan that fits your needs",
+        creditPlans: "Credit Plans",
+        storagePlans: "Storage Plans",
+        features: {
+          credits: "credits",
+          wordPress: "WordPress Integration",
+          seoOptimization: "SEO Optimization",
+          support: "Support",
+          supportEmail: "Email",
+          supportPriority: "Priority",
+          support247: "24/7",
+          saving: "Saving"
+        },
+        buyNow: "Buy Now",
+        guarantee: "30-day money-back guarantee",
+        contactUs: "Contact Us"
+      },
+      faq: {
+        title: "Frequently Asked Questions",
+        subtitle: "Most commonly asked questions",
+        questions: [
+          {
+            question: "How does SEO AI Writer help create content?",
+            answer: "SEO AI Writer uses advanced AI technology to analyze keywords, research topics, and generate high-quality content that is optimized for SEO."
+          },
+          {
+            question: "How many articles can I create per month?",
+            answer: "This depends on the service package you subscribe to. Each package provides a certain number of credits that you can use to generate content. An article typically consumes 10-50 credits depending on length and complexity."
+          },
+          {
+            question: "Is the generated content unique?",
+            answer: "Yes, all content created by SEO AI Writer is unique and designed to pass plagiarism checkers. Our system continuously learns and updates to produce the highest quality content."
+          },
+          {
+            question: "Can I integrate with my WordPress?",
+            answer: "Yes, SEO AI Writer provides seamless integration with WordPress, allowing you to publish content directly to your website with just one click."
+          },
+          {
+            question: "What languages does your service support?",
+            answer: "Currently, we support Vietnamese and English. We are working to expand our list of supported languages in the near future."
+          }
+        ]
+      },
+      contact: {
+        title: "Contact Us",
+        subtitle: "We're here to help you",
+        form: {
+          name: "Full Name",
+          email: "Email",
+          message: "Message",
+          submit: "Send"
+        }
       }
     }
   }
