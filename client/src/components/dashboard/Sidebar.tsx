@@ -60,6 +60,11 @@ export function Sidebar() {
       icon: <Link2 className="h-5 w-5 mr-3" />,
     },
     {
+      href: "/dashboard/api-keys",
+      label: t("common.apiKeys.title"),
+      icon: <Key className="h-5 w-5 mr-3" />,
+    },
+    {
       href: "/dashboard/settings",
       label: t("dashboard.navigationItems.settings"),
       icon: <Settings className="h-5 w-5 mr-3" />,

@@ -17,9 +17,11 @@ import Credits from "@/pages/dashboard/credits";
 import Plans from "@/pages/dashboard/plans";
 import Connections from "@/pages/dashboard/connections";
 import Settings from "@/pages/dashboard/settings";
+import ApiKeys from "@/pages/dashboard/api-keys";
 import VerifyEmail from "@/pages/verify-email";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
+import ApiDocs from "@/pages/api-docs";
 import AdminDashboard from "@/pages/admin";
 import AdminUsers from "@/pages/admin/users";
 import AdminArticles from "@/pages/admin/articles";
@@ -39,6 +41,7 @@ function Router() {
       <Route path="/verify-email" component={VerifyEmail} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/reset-password" component={ResetPassword} />
+      <Route path="/api/docs" component={ApiDocs} />
       
       {/* Protected Dashboard routes */}
       <ProtectedRoute path="/dashboard" component={Dashboard} />
@@ -47,6 +50,7 @@ function Router() {
       <ProtectedRoute path="/dashboard/credits" component={Credits} />
       <ProtectedRoute path="/dashboard/plans" component={Plans} />
       <ProtectedRoute path="/dashboard/connections" component={Connections} />
+      <ProtectedRoute path="/dashboard/api-keys" component={ApiKeys} />
       <ProtectedRoute path="/dashboard/settings" component={Settings} />
       
       {/* Admin routes */}
