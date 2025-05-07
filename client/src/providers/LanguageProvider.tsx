@@ -5,7 +5,7 @@ export type TranslationKey = string;
 
 // Define translations type structure
 type TranslationData = {
-  [key: string]: string | TranslationData;
+  [key: string]: string | TranslationData | Array<any>;
 };
 
 type TranslationsType = {
@@ -133,6 +133,34 @@ const translations: TranslationsType = {
         integration: "Tích hợp đa nền tảng: WordPress, social media",
         credits: "Hệ thống credits linh hoạt, chi phí tối ưu"
       }
+    },
+    
+    landing: {
+      hero: {
+        badge: "Công nghệ AI tiên tiến",
+        title: "Tạo bài viết SEO chất lượng cao tức thì",
+        subtitle: "Sử dụng trí tuệ nhân tạo để tạo ra nội dung hấp dẫn, tối ưu cho SEO một cách nhanh chóng và hiệu quả.",
+        tryFree: "Dùng thử miễn phí",
+        viewDemo: "Xem demo"
+      },
+      features: {
+        title: "Tính năng nổi bật",
+        subtitle: "Khám phá những công cụ mạnh mẽ giúp tạo nội dung SEO hiệu quả",
+        items: [
+          {
+            title: "Sáng tạo nội dung thông minh",
+            description: "Tạo bài viết chất lượng cao với sự hỗ trợ của AI tiên tiến."
+          },
+          {
+            title: "Tối ưu hóa từ khóa",
+            description: "Phân tích và tối ưu từ khóa tự động để cải thiện thứ hạng tìm kiếm."
+          },
+          {
+            title: "Đa dạng nền tảng xuất bản",
+            description: "Xuất bản trực tiếp sang WordPress hoặc mạng xã hội chỉ với một cú nhấp chuột."
+          }
+        ]
+      }
     }
   },
   
@@ -248,19 +276,45 @@ const translations: TranslationsType = {
         integration: "Multi-platform integration: WordPress, social media",
         credits: "Flexible credit system, optimized cost"
       }
+    },
+    
+    landing: {
+      hero: {
+        badge: "Advanced AI Technology",
+        title: "Create High-Quality SEO Content Instantly",
+        subtitle: "Use artificial intelligence to create engaging, SEO-optimized content quickly and efficiently.",
+        tryFree: "Try for Free",
+        viewDemo: "View Demo"
+      },
+      features: {
+        title: "Key Features",
+        subtitle: "Discover powerful tools to create effective SEO content",
+        items: [
+          {
+            title: "Intelligent Content Creation",
+            description: "Create high-quality articles with the help of advanced AI technology."
+          },
+          {
+            title: "Keyword Optimization",
+            description: "Automatic keyword analysis and optimization to improve search rankings."
+          },
+          {
+            title: "Multi-platform Publishing",
+            description: "Publish directly to WordPress or social media with just one click."
+          }
+        ]
+      }
     }
   }
 };
 
 const defaultLanguage: Language = 'vi';
 
-const LanguageContext = createContext<LanguageContextType>({
+export const LanguageContext = createContext<LanguageContextType>({
   language: defaultLanguage,
   setLanguage: () => {},
   t: (key: string) => key
 });
-
-export { LanguageContext };
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState<Language>(() => {

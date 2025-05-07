@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { LanguageContext } from '@/providers/LanguageProvider';
 
-function useLanguage() {
+export function useLanguage() {
   const context = useContext(LanguageContext);
   
   if (context === undefined) {
@@ -10,5 +10,3 @@ function useLanguage() {
   
   return context;
 }
-
-export { useLanguage };
