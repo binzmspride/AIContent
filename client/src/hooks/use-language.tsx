@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { LanguageContext } from '@/providers/LanguageProvider';
 
-export function useLanguage() {
+export const useLanguage = () => {
   const context = useContext(LanguageContext);
   
   if (context === undefined) {

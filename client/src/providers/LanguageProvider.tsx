@@ -502,12 +502,17 @@ const translations: TranslationsType = {
 
 const defaultLanguage: Language = 'vi';
 
-export const LanguageContext = createContext<LanguageContextType>({
+// Create context with default values
+const LanguageContext = createContext<LanguageContextType>({
   language: defaultLanguage,
   setLanguage: () => {},
   t: (key: string) => key
 });
 
+// Export context for use in hooks
+export { LanguageContext };
+
+// Export the provider component
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState<Language>(() => {
     const savedLanguage = localStorage.getItem('language') as Language;
