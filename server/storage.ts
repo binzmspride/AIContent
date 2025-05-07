@@ -500,6 +500,87 @@ class DatabaseStorage implements IStorage {
       return null;
     }
   }
+  
+  // API key management
+  async getApiKey(id: number): Promise<schema.ApiKey | null> {
+    try {
+      const apiKey = await db.query.apiKeys.findFirst({
+        where: eq(schema.apiKeys.id, id)
+      });
+      return apiKey || null;
+    } catch (error) {
+      console.error('Error getting API key:', error);
+      return null;
+    }
+  }
+  
+  async getApiKeyByKey(key: string): Promise<schema.ApiKey | null> {
+    try {
+      const apiKey = await db.query.apiKeys.findFirst({
+        where: eq(schema.apiKeys.key, key)
+      });
+      return apiKey || null;
+    } catch (error) {
+      console.error('Error getting API key by key:', error);
+      return null;
+    }
+  }
+  
+  async createApiKey(data: schema.InsertApiKey): Promise<schema.ApiKey> {
+    try {
+      const [newApiKey] = await db.insert(schema.apiKeys)
+        .values({
+          ...data,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      return newApiKey;
+    } catch (error) {
+      console.error('Error creating API key:', error);
+      throw error;
+    }
+  }
+  
+  async updateApiKey(id: number, data: Partial<schema.ApiKey>): Promise<schema.ApiKey | null> {
+    try {
+      const [updatedApiKey] = await db.update(schema.apiKeys)
+        .set({
+          ...data,
+          updatedAt: new Date()
+        })
+        .where(eq(schema.apiKeys.id, id))
+        .returning();
+      return updatedApiKey || null;
+    } catch (error) {
+      console.error('Error updating API key:', error);
+      return null;
+    }
+  }
+  
+  async deleteApiKey(id: number): Promise<boolean> {
+    try {
+      await db.delete(schema.apiKeys)
+        .where(eq(schema.apiKeys.id, id));
+      return true;
+    } catch (error) {
+      console.error('Error deleting API key:', error);
+      return false;
+    }
+  }
+  
+  async listApiKeys(userId: number): Promise<schema.ApiKey[]> {
+    try {
+      const apiKeys = await db.query.apiKeys.findMany({
+        where: eq(schema.apiKeys.userId, userId),
+        orderBy: [desc(schema.apiKeys.createdAt)]
+      });
+      return apiKeys;
+    } catch (error) {
+      console.error('Error listing API keys:', error);
+      return [];
+    }
+  }
 }
 
 export const storage: IStorage = new DatabaseStorage();
