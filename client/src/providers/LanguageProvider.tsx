@@ -257,6 +257,51 @@ const translations: TranslationsType = {
           contact: "Liên hệ"
         }
       }
+    },
+    
+    dashboard: {
+      title: "Bảng điều khiển",
+      overview: "Tổng quan",
+      insights: "Thông tin chi tiết",
+      myArticles: "Bài viết của tôi",
+      createContent: "Tạo nội dung",
+      plans: "Gói dịch vụ",
+      connections: "Kết nối",
+      credits: "Tín dụng",
+      settings: "Cài đặt",
+      apiKeys: "API Keys",
+      logout: "Đăng xuất",
+      
+      stats: {
+        creditsLeft: "Số tín dụng còn lại",
+        articlesCreated: "Bài viết đã tạo",
+        storageUsed: "Dung lượng sử dụng",
+        recentArticles: "Bài viết gần đây",
+        connections: "Kết nối",
+        manageConnections: "Quản lý kết nối",
+        articleTitle: "Tiêu đề bài viết",
+        dateCreated: "Ngày tạo",
+        status: "Trạng thái",
+        keywords: "Từ khóa",
+        actions: "Thao tác",
+        buyMoreCredits: "Mua thêm tín dụng"
+      },
+      
+      connections: {
+        wordpress: {
+          connected: "Đã kết nối"
+        },
+        social: {
+          connected: "Đã kết nối"
+        }
+      },
+      
+      mascot: {
+        dashboard: {
+          welcomeTitle: "Chào mừng bạn đến với SEO AI Writer!",
+          welcomeTip: "Đây là nơi bạn có thể xem tổng quan về tài khoản của mình"
+        }
+      }
     }
   },
   
@@ -494,6 +539,51 @@ const translations: TranslationsType = {
           terms: "Terms of Service",
           privacy: "Privacy Policy",
           contact: "Contact"
+        }
+      }
+    },
+    
+    dashboard: {
+      title: "Dashboard",
+      overview: "Overview",
+      insights: "Insights",
+      myArticles: "My Articles",
+      createContent: "Create Content",
+      plans: "Plans",
+      connections: "Connections",
+      credits: "Credits",
+      settings: "Settings",
+      apiKeys: "API Keys",
+      logout: "Logout",
+      
+      stats: {
+        creditsLeft: "Credits Left",
+        articlesCreated: "Articles Created",
+        storageUsed: "Storage Used",
+        recentArticles: "Recent Articles",
+        connections: "Connections",
+        manageConnections: "Manage Connections",
+        articleTitle: "Article Title",
+        dateCreated: "Date Created",
+        status: "Status",
+        keywords: "Keywords",
+        actions: "Actions",
+        buyMoreCredits: "Buy More Credits"
+      },
+      
+      connections: {
+        wordpress: {
+          connected: "Connected"
+        },
+        social: {
+          connected: "Connected"
+        }
+      },
+      
+      mascot: {
+        dashboard: {
+          welcomeTitle: "Welcome to SEO AI Writer!",
+          welcomeTip: "This is where you can see an overview of your account"
         }
       }
     }
