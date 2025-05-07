@@ -35,32 +35,32 @@ export function Sidebar() {
     },
     {
       href: "/dashboard/create-content",
-      label: t("dashboard.createContent"),
+      label: t("dashboard.navigationItems.createContent"),
       icon: <PenSquare className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/my-articles",
-      label: t("dashboard.myArticles"),
+      label: t("dashboard.navigationItems.myArticles"),
       icon: <FileText className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/credits",
-      label: t("dashboard.credits"),
+      label: t("dashboard.navigationItems.credits"),
       icon: <Coins className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/plans",
-      label: t("dashboard.plans"),
+      label: t("dashboard.navigationItems.plans"),
       icon: <Package className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/connections",
-      label: t("dashboard.connections"),
+      label: t("dashboard.navigationItems.connections"),
       icon: <Link2 className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/settings",
-      label: t("dashboard.settings"),
+      label: t("dashboard.navigationItems.settings"),
       icon: <Settings className="h-5 w-5 mr-3" />,
     },
   ];
