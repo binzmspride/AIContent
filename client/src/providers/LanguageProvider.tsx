@@ -185,6 +185,48 @@ const translations = {
       credits: "Tín dụng",
       plans: "Gói dịch vụ",
       settings: "Cài đặt",
+      create: {
+        title: "Tạo nội dung mới",
+        form: {
+          articleTitle: "Tiêu đề bài viết",
+          contentType: "Loại nội dung",
+          contentTypeOptions: {
+            blog: "Blog",
+            product: "Sản phẩm",
+            news: "Tin tức",
+            social: "Mạng xã hội"
+          },
+          keywords: "Từ khóa",
+          length: "Độ dài",
+          lengthOptions: {
+            short: "Ngắn (300-500 từ)",
+            medium: "Trung bình (500-800 từ)",
+            long: "Dài (800-1200 từ)",
+            extraLong: "Rất dài (1200-2000 từ)"
+          },
+          tone: "Giọng điệu",
+          toneOptions: {
+            professional: "Chuyên nghiệp",
+            conversational: "Trò chuyện",
+            informative: "Thông tin",
+            persuasive: "Thuyết phục",
+            humorous: "Hài hước"
+          },
+          prompt: "Mô tả nội dung",
+          addHeadings: "Thêm tiêu đề và phụ đề tự động"
+        },
+        generateContent: "Tạo nội dung",
+        reset: "Đặt lại",
+        clear: "Xóa",
+        preview: "Xem trước",
+        copyContent: "Sao chép nội dung",
+        downloadContent: "Tải xuống",
+        saveArticle: "Lưu bài viết",
+        notEnoughCredits: "Bạn không có đủ tín dụng để tạo nội dung. Vui lòng mua thêm tín dụng.",
+        purchaseCredits: "mua thêm tín dụng",
+        generatedContent: "Nội dung đã tạo",
+        relatedKeywords: "Từ khóa liên quan"
+      },
       mascot: {
         welcome: "Xin chào! Tôi là trợ lý AI của bạn. Tôi có thể giúp gì cho bạn?",
         noArticles: "Bạn chưa có bài viết nào. Hãy tạo bài viết đầu tiên!",
@@ -468,6 +510,48 @@ const translations = {
       credits: "Credits",
       plans: "Plans",
       settings: "Settings",
+      create: {
+        title: "Create New Content",
+        form: {
+          articleTitle: "Article Title",
+          contentType: "Content Type",
+          contentTypeOptions: {
+            blog: "Blog",
+            product: "Product",
+            news: "News",
+            social: "Social Media"
+          },
+          keywords: "Keywords",
+          length: "Length",
+          lengthOptions: {
+            short: "Short (300-500 words)",
+            medium: "Medium (500-800 words)",
+            long: "Long (800-1200 words)",
+            extraLong: "Extra Long (1200-2000 words)"
+          },
+          tone: "Tone",
+          toneOptions: {
+            professional: "Professional",
+            conversational: "Conversational",
+            informative: "Informative",
+            persuasive: "Persuasive",
+            humorous: "Humorous"
+          },
+          prompt: "Content Description",
+          addHeadings: "Add automatic headings and subheadings"
+        },
+        generateContent: "Generate Content",
+        reset: "Reset",
+        clear: "Clear",
+        preview: "Preview",
+        copyContent: "Copy Content",
+        downloadContent: "Download",
+        saveArticle: "Save Article",
+        notEnoughCredits: "You don't have enough credits to generate content. Please purchase more credits.",
+        purchaseCredits: "purchase more credits",
+        generatedContent: "Generated Content",
+        relatedKeywords: "Related Keywords"
+      },
       mascot: {
         welcome: "Hello! I'm your AI assistant. How can I help you today?",
         noArticles: "You don't have any articles yet. Let's create your first one!",
@@ -591,11 +675,13 @@ const translations = {
 
 const defaultLanguage: Language = 'vi';
 
-export const LanguageContext = createContext<LanguageContextType>({
+const LanguageContext = createContext<LanguageContextType>({
   language: defaultLanguage,
   setLanguage: () => {},
   t: (key: string) => key,
 });
+
+export { LanguageContext };
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState<Language>(() => {
