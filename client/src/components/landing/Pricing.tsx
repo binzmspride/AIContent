@@ -20,41 +20,41 @@ export function Pricing() {
 
   const creditPackages: PackageInfo[] = [
     {
-      name: t("dashboard.credits.packages.basic"),
+      name: t("landing.pricing.packages.basic"),
       price: 500000,
       icon: <Zap className="h-6 w-6 text-blue-400" />,
       features: [
         `50 ${t("landing.pricing.features.credits")}`,
         `~1000 ${t("landing.pricing.features.wordsPerCredit")}`,
         `${t("landing.pricing.features.seoOptimization")}`,
-        `${t("landing.pricing.features.support")} (email)`
+        `${t("landing.pricing.features.support")} (${t("landing.pricing.features.supportEmail")})`
       ],
       isPopular: false,
       color: "blue"
     },
     {
-      name: t("dashboard.credits.packages.advanced"),
+      name: t("landing.pricing.packages.advanced"),
       price: 900000,
       icon: <Sparkles className="h-6 w-6 text-accent" />,
       features: [
         `100 ${t("landing.pricing.features.credits")}`,
         `~1500 ${t("landing.pricing.features.wordsPerCredit")}`,
         `${t("landing.pricing.features.seoOptimization")} +`,
-        `${t("landing.pricing.features.support")} (priority)`,
+        `${t("landing.pricing.features.support")} (${t("landing.pricing.features.supportPriority")})`,
         `10% ${t("landing.pricing.features.saving")}`
       ],
       isPopular: true,
       color: "accent"
     },
     {
-      name: t("dashboard.credits.packages.professional"),
+      name: t("landing.pricing.packages.professional"),
       price: 2000000,
       icon: <Crown className="h-6 w-6 text-purple-500" />,
       features: [
         `250 ${t("landing.pricing.features.credits")}`,
         `~2000 ${t("landing.pricing.features.wordsPerCredit")}`,
         `${t("landing.pricing.features.seoOptimization")} ++`,
-        `${t("landing.pricing.features.support")} (24/7)`,
+        `${t("landing.pricing.features.support")} (${t("landing.pricing.features.support247")})`,
         `20% ${t("landing.pricing.features.saving")}`
       ],
       isPopular: false,
@@ -64,7 +64,7 @@ export function Pricing() {
 
   const storagePackages: PackageInfo[] = [
     {
-      name: "Gói Lưu Trữ Basic",
+      name: t("landing.pricing.packages.storageBasic"),
       price: 200000,
       period: "month",
       icon: <Server className="h-6 w-6 text-blue-400" />,
@@ -78,7 +78,7 @@ export function Pricing() {
       color: "blue"
     },
     {
-      name: "Gói Lưu Trữ Business",
+      name: t("landing.pricing.packages.storageBusiness"),
       price: 500000,
       period: "month",
       icon: <Server className="h-6 w-6 text-violet-500" />,
@@ -93,7 +93,7 @@ export function Pricing() {
       color: "violet"
     },
     {
-      name: "Gói Lưu Trữ Enterprise",
+      name: t("landing.pricing.packages.storageEnterprise"),
       price: 1000000,
       period: "month",
       icon: <Server className="h-6 w-6 text-purple-500" />,
