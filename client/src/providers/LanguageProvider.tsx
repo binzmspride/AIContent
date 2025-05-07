@@ -236,7 +236,7 @@ const translations: TranslationsType = {
       },
       footer: {
         description: "Nền tảng tạo nội dung SEO tiên tiến được hỗ trợ bởi AI giúp bạn tạo bài viết chất lượng cao nhanh chóng.",
-        copyright: "© 2023-2024 SEO AI Writer. Tất cả quyền được bảo lưu.",
+        copyright: "© 2023-2025 SEO AI Writer. Tất cả quyền được bảo lưu.",
         links: {
           product: "Sản phẩm",
           createSeoContent: "Tạo nội dung SEO",
@@ -475,7 +475,7 @@ const translations: TranslationsType = {
       },
       footer: {
         description: "Advanced AI-powered SEO content platform that helps you create high-quality articles quickly.",
-        copyright: "© 2023-2024 SEO AI Writer. All rights reserved.",
+        copyright: "© 2023-2025 SEO AI Writer. All rights reserved.",
         links: {
           product: "Product",
           createSeoContent: "Create SEO Content",
