@@ -229,8 +229,32 @@ const translations: TranslationsType = {
         form: {
           name: "Họ tên",
           email: "Email",
+          subject: "Tiêu đề",
           message: "Tin nhắn",
-          submit: "Gửi"
+          send: "Gửi"
+        }
+      },
+      footer: {
+        description: "Nền tảng tạo nội dung SEO tiên tiến được hỗ trợ bởi AI giúp bạn tạo bài viết chất lượng cao nhanh chóng.",
+        copyright: "© 2023-2024 SEO AI Writer. Tất cả quyền được bảo lưu.",
+        links: {
+          product: "Sản phẩm",
+          createSeoContent: "Tạo nội dung SEO",
+          wordpressConnect: "Kết nối WordPress",
+          socialShare: "Chia sẻ mạng xã hội",
+          seoAnalysis: "Phân tích SEO",
+          
+          company: "Công ty",
+          about: "Về chúng tôi",
+          blog: "Blog",
+          partners: "Đối tác",
+          careers: "Tuyển dụng",
+          
+          support: "Hỗ trợ",
+          helpCenter: "Trung tâm trợ giúp",
+          terms: "Điều khoản dịch vụ",
+          privacy: "Chính sách bảo mật",
+          contact: "Liên hệ"
         }
       }
     }
@@ -444,8 +468,32 @@ const translations: TranslationsType = {
         form: {
           name: "Full Name",
           email: "Email",
+          subject: "Subject",
           message: "Message",
-          submit: "Send"
+          send: "Send"
+        }
+      },
+      footer: {
+        description: "Advanced AI-powered SEO content platform that helps you create high-quality articles quickly.",
+        copyright: "© 2023-2024 SEO AI Writer. All rights reserved.",
+        links: {
+          product: "Product",
+          createSeoContent: "Create SEO Content",
+          wordpressConnect: "WordPress Connect",
+          socialShare: "Social Share",
+          seoAnalysis: "SEO Analysis",
+          
+          company: "Company",
+          about: "About Us",
+          blog: "Blog",
+          partners: "Partners",
+          careers: "Careers",
+          
+          support: "Support",
+          helpCenter: "Help Center",
+          terms: "Terms of Service",
+          privacy: "Privacy Policy",
+          contact: "Contact"
         }
       }
     }
