@@ -187,3 +187,40 @@ export type InsertCreditTransaction = z.infer<typeof insertCreditTransactionSche
 
 export type SystemSetting = z.infer<typeof selectSystemSettingSchema>;
 export type InsertSystemSetting = z.infer<typeof insertSystemSettingSchema>;
+
+// API Keys table for third-party integration
+export const apiKeys = pgTable('api_keys', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  name: text('name').notNull(),
+  key: text('key').notNull().unique(),
+  secret: text('secret').notNull(),
+  scopes: text('scopes').array().notNull().default([]),
+  isActive: boolean('is_active').notNull().default(true),
+  expiresAt: timestamp('expires_at'),
+  lastUsedAt: timestamp('last_used_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// API Keys relations
+export const apiKeysRelations = relations(apiKeys, ({ one }) => ({
+  user: one(users, { fields: [apiKeys.userId], references: [users.id] }),
+}));
+
+// Update user relations to include API keys
+export const usersRelationsWithApiKeys = relations(users, ({ many }) => ({
+  articles: many(articles),
+  connections: many(connections),
+  userPlans: many(userPlans),
+  creditTransactions: many(creditTransactions),
+  apiKeys: many(apiKeys),
+}));
+
+// API Keys schemas
+export const selectApiKeySchema = createSelectSchema(apiKeys);
+export const insertApiKeySchema = createInsertSchema(apiKeys);
+
+// API Keys types
+export type ApiKey = z.infer<typeof selectApiKeySchema>;
+export type InsertApiKey = z.infer<typeof insertApiKeySchema>;
