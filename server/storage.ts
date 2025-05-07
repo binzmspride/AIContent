@@ -60,6 +60,14 @@ export interface IStorage {
     emailSender: string;
   } | null>;
   
+  // API key management
+  getApiKey(id: number): Promise<schema.ApiKey | null>;
+  getApiKeyByKey(key: string): Promise<schema.ApiKey | null>;
+  createApiKey(data: schema.InsertApiKey): Promise<schema.ApiKey>;
+  updateApiKey(id: number, data: Partial<schema.ApiKey>): Promise<schema.ApiKey | null>;
+  deleteApiKey(id: number): Promise<boolean>;
+  listApiKeys(userId: number): Promise<schema.ApiKey[]>;
+  
   // Session store
   sessionStore: session.SessionStore;
 }

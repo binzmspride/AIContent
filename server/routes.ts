@@ -17,10 +17,14 @@ import {
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { updateSmtpConfig, testSmtpConnection, updateAppBaseUrl } from "./email-service";
+import { registerApiRoutes } from "./api-routes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
+  
+  // Register API routes for third-party integration
+  registerApiRoutes(app);
 
   // API routes
   const httpServer = createServer(app);
