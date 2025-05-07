@@ -390,7 +390,32 @@ const translations = {
         noArticles: "Bạn chưa có bài viết nào. Hãy tạo bài viết đầu tiên!",
         lowCredits: "Tín dụng của bạn sắp hết. Hãy mua thêm để tiếp tục sử dụng dịch vụ!",
         newFeature: "Chúng tôi vừa cập nhật tính năng mới! Hãy khám phá ngay!"
+      },
+    auth: {
+      login: {
+        title: "Đăng nhập",
+        username: "Tên đăng nhập hoặc Email",
+        password: "Mật khẩu",
+        rememberMe: "Ghi nhớ đăng nhập",
+        forgotPassword: "Quên mật khẩu?",
+        submit: "Đăng nhập",
+        switchToRegister: "Chưa có tài khoản? Đăng ký ngay",
+        orContinueWith: "Hoặc đăng nhập với"
+      },
+      register: {
+        title: "Đăng ký",
+        name: "Họ tên",
+        email: "Email",
+        password: "Mật khẩu",
+        confirmPassword: "Xác nhận mật khẩu",
+        termsAgree: "Tôi đồng ý với",
+        terms: "Điều khoản dịch vụ",
+        and: "và",
+        privacy: "Chính sách bảo mật",
+        submit: "Đăng ký",
+        switchToLogin: "Đã có tài khoản? Đăng nhập"
       }
+    }
     },
     nav: {
       features: "Tính năng",
@@ -617,6 +642,7 @@ const translations = {
       verificationSent: "Verification email has been sent",
       verificationSuccess: "Verification successful",
       loginRequired: "Please login to continue",
+      or: "Or",
       permissionDenied: "You don't have permission to access this page",
       serverError: "Server error",
       networkError: "Network error",
@@ -632,6 +658,31 @@ const translations = {
       systemMode: "System mode",
       theme: "Theme",
       id: "ID"
+    },
+    auth: {
+      login: {
+        title: "Login",
+        username: "Username or Email",
+        password: "Password",
+        rememberMe: "Remember me",
+        forgotPassword: "Forgot password?",
+        submit: "Login",
+        switchToRegister: "Don't have an account? Register now",
+        orContinueWith: "Or continue with"
+      },
+      register: {
+        title: "Register",
+        name: "Full Name",
+        email: "Email",
+        password: "Password",
+        confirmPassword: "Confirm Password",
+        termsAgree: "I agree to the",
+        terms: "Terms of Service",
+        and: "and",
+        privacy: "Privacy Policy",
+        submit: "Register",
+        switchToLogin: "Already have an account? Login"
+      }
     },
     dashboard: {
       title: "Dashboard",
