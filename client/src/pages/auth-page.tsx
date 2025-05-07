@@ -172,7 +172,7 @@ export default function AuthPage() {
                           name="username"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-slate-200">Username hoặc Email</FormLabel>
+                              <FormLabel className="text-slate-200">{t("auth.login.username")}</FormLabel>
                               <FormControl>
                                 <Input type="text" className="bg-slate-700/50 border-slate-600" {...field} />
                               </FormControl>
@@ -369,7 +369,7 @@ export default function AuthPage() {
                 {t("common.appName")}
               </h2>
               <p className="text-xl text-white/90 mb-8 max-w-lg mx-auto">
-                Tạo nội dung SEO chất lượng với công nghệ AI tiên tiến
+                {t("common.tagline")}
               </p>
               <div className="space-y-4">
                 <div className="flex items-center space-x-3 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
@@ -378,7 +378,7 @@ export default function AuthPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <p className="text-white text-md font-medium">Tạo nội dung chuẩn SEO chỉ trong vài phút</p>
+                  <p className="text-white text-md font-medium">{t("authPage.highlights.seo")}</p>
                 </div>
                 <div className="flex items-center space-x-3 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
                   <div className="bg-white/20 rounded-full p-2 flex-shrink-0">
@@ -386,7 +386,7 @@ export default function AuthPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <p className="text-white text-md font-medium">Tích hợp đa nền tảng: WordPress, social media</p>
+                  <p className="text-white text-md font-medium">{t("authPage.highlights.integration")}</p>
                 </div>
                 <div className="flex items-center space-x-3 bg-white/10 p-3 rounded-lg backdrop-blur-sm">
                   <div className="bg-white/20 rounded-full p-2 flex-shrink-0">
@@ -394,7 +394,7 @@ export default function AuthPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <p className="text-white text-md font-medium">Hệ thống credits linh hoạt, chi phí tối ưu</p>
+                  <p className="text-white text-md font-medium">{t("authPage.highlights.credits")}</p>
                 </div>
               </div>
             </div>

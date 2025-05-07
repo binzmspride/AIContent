@@ -391,6 +391,13 @@ const translations = {
         lowCredits: "Tín dụng của bạn sắp hết. Hãy mua thêm để tiếp tục sử dụng dịch vụ!",
         newFeature: "Chúng tôi vừa cập nhật tính năng mới! Hãy khám phá ngay!"
       },
+    authPage: {
+      highlights: {
+        seo: "Tạo nội dung chuẩn SEO chỉ trong vài phút",
+        integration: "Tích hợp đa nền tảng: WordPress, social media",
+        credits: "Hệ thống credits linh hoạt, chi phí tối ưu"
+      }
+    },
     auth: {
       login: {
         title: "Đăng nhập",
@@ -530,6 +537,13 @@ const translations = {
     }
   },
   en: {
+    authPage: {
+      highlights: {
+        seo: "Create SEO-optimized content in minutes",
+        integration: "Multi-platform integration: WordPress, social media",
+        credits: "Flexible credit system, optimized cost"
+      }
+    },
     common: {
       loading: "Loading...",
       error: "An error occurred",
