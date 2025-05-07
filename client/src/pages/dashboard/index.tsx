@@ -268,7 +268,7 @@ export default function Dashboard() {
             {/* Connection Status */}
             <div>
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-white">{t("dashboard.stats.connections")}</h2>
+                <h2 className="text-xl font-semibold text-white">{t("dashboard.stats.connectionsSection")}</h2>
                 <Link href="/dashboard/connections">
                   <Button variant="outline" size="sm">
                     {t("dashboard.stats.manageConnections")}

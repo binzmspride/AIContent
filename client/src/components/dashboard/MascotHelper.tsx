@@ -32,18 +32,18 @@ export function MascotHelper({ page, className, onDismiss }: MascotHelperProps) 
       case "dashboard":
         return [
           {
-            title: t("common.mascot.dashboard.welcomeTitle") || "Xin chào!",
-            content: t("common.mascot.dashboard.welcomeTip") || "Chào mừng bạn đến với SEO AI Writer! Đây là nơi bạn có thể xem tổng quan về tài khoản của mình.",
+            title: "Xin chào!",
+            content: "Chào mừng bạn đến với SEO AI Writer! Đây là nơi bạn có thể xem tổng quan về tài khoản của mình.",
             expression: "happy"
           },
           {
-            title: t("common.mascot.dashboard.creditsTitle") || "Tín dụng",
-            content: t("common.mascot.dashboard.creditsTip") || "Số tín dụng hiển thị ở bảng điều khiển cho biết bạn có thể tạo bao nhiêu bài viết mới.",
+            title: "Tín dụng",
+            content: "Số tín dụng hiển thị ở bảng điều khiển cho biết bạn có thể tạo bao nhiêu bài viết mới.",
             expression: "thinking"
           },
           {
-            title: t("common.mascot.dashboard.articlesTitle") || "Bài viết của bạn",
-            content: t("common.mascot.dashboard.articlesTip") || "Bạn có thể xem các bài viết gần đây của mình tại đây và nhấp vào để chỉnh sửa hoặc xuất bản.",
+            title: "Bài viết của bạn",
+            content: "Bạn có thể xem các bài viết gần đây của mình tại đây và nhấp vào để chỉnh sửa hoặc xuất bản.",
             expression: "idle"
           }
         ];

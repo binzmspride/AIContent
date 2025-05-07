@@ -277,7 +277,7 @@ const translations: TranslationsType = {
         articlesCreated: "Bài viết đã tạo",
         storageUsed: "Dung lượng sử dụng",
         recentArticles: "Bài viết gần đây",
-        connections: "Kết nối",
+        connectionsSection: "Kết nối",
         manageConnections: "Quản lý kết nối",
         articleTitle: "Tiêu đề bài viết",
         dateCreated: "Ngày tạo",
@@ -293,13 +293,6 @@ const translations: TranslationsType = {
         },
         social: {
           connected: "Đã kết nối"
-        }
-      },
-      
-      mascot: {
-        dashboard: {
-          welcomeTitle: "Chào mừng bạn đến với SEO AI Writer!",
-          welcomeTip: "Đây là nơi bạn có thể xem tổng quan về tài khoản của mình"
         }
       }
     }
@@ -561,7 +554,7 @@ const translations: TranslationsType = {
         articlesCreated: "Articles Created",
         storageUsed: "Storage Used",
         recentArticles: "Recent Articles",
-        connections: "Connections",
+        connectionsSection: "Connections",
         manageConnections: "Manage Connections",
         articleTitle: "Article Title",
         dateCreated: "Date Created",
@@ -577,13 +570,6 @@ const translations: TranslationsType = {
         },
         social: {
           connected: "Connected"
-        }
-      },
-      
-      mascot: {
-        dashboard: {
-          welcomeTitle: "Welcome to SEO AI Writer!",
-          welcomeTip: "This is where you can see an overview of your account"
         }
       }
     }
