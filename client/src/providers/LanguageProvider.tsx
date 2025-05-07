@@ -179,12 +179,170 @@ const translations = {
           connected: "Đã kết nối"
         }
       },
-      myArticles: "Bài viết của tôi",
-      createContent: "Tạo nội dung",
-      connections: "Kết nối",
-      credits: "Tín dụng",
-      plans: "Gói dịch vụ",
-      settings: "Cài đặt",
+      navigationItems: {
+        myArticles: "Bài viết của tôi", 
+        createContent: "Tạo nội dung",
+        connections: "Kết nối",
+        credits: "Tín dụng",
+        plans: "Gói dịch vụ",
+        settings: "Cài đặt"
+      },
+      articlesPage: {
+        title: "Bài viết của tôi",
+        empty: "Bạn chưa có bài viết nào. Hãy tạo bài viết đầu tiên!",
+        filter: "Lọc bài viết",
+        search: "Tìm kiếm bài viết",
+        columns: {
+          title: "Tiêu đề",
+          status: "Trạng thái",
+          created: "Ngày tạo",
+          keywords: "Từ khóa",
+          actions: "Thao tác"
+        },
+        status: {
+          draft: "Bản nháp",
+          published: "Đã xuất bản",
+          deleted: "Đã xóa"
+        },
+        actions: {
+          view: "Xem",
+          edit: "Sửa",
+          delete: "Xóa",
+          publish: "Xuất bản"
+        },
+        createNew: "Tạo bài viết mới",
+        viewDetails: "Xem chi tiết",
+        publishTo: "Xuất bản đến",
+        confirmation: {
+          delete: "Bạn có chắc chắn muốn xóa bài viết này không?",
+          publish: "Bạn có chắc chắn muốn xuất bản bài viết này không?"
+        }
+      },
+      creditsPage: {
+        title: "Tín dụng của tôi",
+        balance: "Số dư tín dụng",
+        buyMore: "Mua thêm tín dụng",
+        history: "Lịch sử giao dịch",
+        noPurchases: "Bạn chưa có giao dịch nào",
+        transactions: {
+          all: "Tất cả giao dịch",
+          purchases: "Giao dịch mua",
+          usage: "Giao dịch sử dụng"
+        },
+        purchase: {
+          title: "Mua tín dụng",
+          selectPackage: "Chọn gói tín dụng",
+          paymentMethod: "Phương thức thanh toán",
+          completePayment: "Hoàn tất thanh toán",
+          confirmation: "Xác nhận mua"
+        },
+        columns: {
+          date: "Ngày",
+          description: "Mô tả",
+          amount: "Số lượng",
+          type: "Loại giao dịch"
+        },
+        transactionTypes: {
+          purchase: "Mua",
+          usage: "Sử dụng",
+          refund: "Hoàn tiền",
+          bonus: "Thưởng"
+        }
+      },
+      plansPage: {
+        title: "Gói dịch vụ",
+        currentPlan: "Gói hiện tại của bạn",
+        upgrade: "Nâng cấp gói",
+        cancelPlan: "Hủy gói",
+        renewalDate: "Ngày gia hạn",
+        planDetails: "Chi tiết gói",
+        creditPlans: "Gói tín dụng",
+        storagePlans: "Gói lưu trữ",
+        planTypes: {
+          credit: "Tín dụng",
+          storage: "Lưu trữ"
+        },
+        planPeriods: {
+          monthly: "Hàng tháng",
+          yearly: "Hàng năm"
+        },
+        popular: "Phổ biến",
+        features: "Tính năng",
+        includedFeatures: "Tính năng bao gồm",
+        comparePlans: "So sánh các gói",
+        selectPlan: "Chọn gói này",
+        confirmation: {
+          upgrade: "Bạn có chắc chắn muốn nâng cấp lên gói này không?",
+          cancel: "Bạn có chắc chắn muốn hủy gói hiện tại không?"
+        }
+      },
+      connectionsPage: {
+        title: "Kết nối",
+        connect: "Kết nối",
+        disconnect: "Ngắt kết nối",
+        configure: "Cấu hình",
+        noConnections: "Bạn chưa có kết nối nào",
+        wordpress: {
+          title: "WordPress",
+          description: "Kết nối với trang WordPress của bạn để xuất bản bài viết trực tiếp",
+          form: {
+            url: "URL trang WordPress",
+            username: "Tên người dùng",
+            password: "Application Password",
+            urlPlaceholder: "https://trangcuaban.com",
+            testConnection: "Kiểm tra kết nối"
+          }
+        },
+        facebook: {
+          title: "Facebook",
+          description: "Kết nối với tài khoản Facebook để chia sẻ bài viết lên Trang hoặc Nhóm"
+        },
+        twitter: {
+          title: "Twitter",
+          description: "Kết nối với tài khoản Twitter để chia sẻ bài viết lên dòng thời gian"
+        },
+        tiktok: {
+          title: "TikTok",
+          description: "Kết nối với tài khoản TikTok để chia sẻ nội dung lên tài khoản của bạn"
+        },
+        connectionStatus: {
+          connected: "Đã kết nối",
+          notConnected: "Chưa kết nối",
+          connecting: "Đang kết nối...",
+          failed: "Kết nối thất bại"
+        }
+      },
+      settingsPage: {
+        title: "Cài đặt",
+        profile: "Hồ sơ",
+        account: "Tài khoản",
+        security: "Bảo mật",
+        notifications: "Thông báo",
+        language: "Ngôn ngữ",
+        appearance: "Giao diện",
+        form: {
+          name: "Tên",
+          email: "Email",
+          username: "Tên đăng nhập",
+          currentPassword: "Mật khẩu hiện tại",
+          newPassword: "Mật khẩu mới",
+          confirmPassword: "Xác nhận mật khẩu",
+          profilePicture: "Ảnh đại diện",
+          uploadPicture: "Tải lên ảnh",
+          removePicture: "Xóa ảnh",
+          darkMode: "Chế độ tối",
+          notifications: {
+            email: "Thông báo qua email",
+            app: "Thông báo trong ứng dụng",
+            marketing: "Nhận email tiếp thị"
+          }
+        },
+        save: "Lưu thay đổi",
+        deleteAccount: "Xóa tài khoản",
+        confirmation: {
+          deleteAccount: "Bạn có chắc chắn muốn xóa tài khoản không? Hành động này không thể hoàn tác."
+        }
+      },
       create: {
         title: "Tạo nội dung mới",
         form: {
