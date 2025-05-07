@@ -107,6 +107,7 @@ const translations = {
     dashboard: {
       title: "Bảng điều khiển",
       welcome: "Xin chào",
+      overview: "Tổng quan",
       stats: {
         credits: "Tín dụng",
         articles: "Bài viết",
@@ -114,7 +115,23 @@ const translations = {
         creditsLeft: "Tín dụng còn lại",
         articlesCreated: "Bài viết đã tạo",
         storageUsed: "Dung lượng đã dùng",
-        connections: "Kết nối"
+        connections: "Kết nối",
+        recentArticles: "Bài viết gần đây",
+        buyMoreCredits: "Mua thêm tín dụng",
+        manageConnections: "Quản lý kết nối",
+        articleTitle: "Tiêu đề",
+        dateCreated: "Ngày tạo",
+        status: "Trạng thái",
+        keywords: "Từ khóa",
+        actions: "Thao tác"
+      },
+      connectionStatus: {
+        wordpress: {
+          connected: "Đã kết nối"
+        },
+        social: {
+          connected: "Đã kết nối"
+        }
       },
       myArticles: "Bài viết của tôi",
       createContent: "Tạo nội dung",
@@ -327,6 +344,7 @@ const translations = {
     dashboard: {
       title: "Dashboard",
       welcome: "Welcome",
+      overview: "Overview",
       stats: {
         credits: "Credits",
         articles: "Articles",
@@ -334,7 +352,23 @@ const translations = {
         creditsLeft: "Credits Left",
         articlesCreated: "Articles Created",
         storageUsed: "Storage Used",
-        connections: "Connections"
+        connections: "Connections",
+        recentArticles: "Recent Articles",
+        buyMoreCredits: "Buy More Credits",
+        manageConnections: "Manage Connections",
+        articleTitle: "Title",
+        dateCreated: "Date Created",
+        status: "Status",
+        keywords: "Keywords",
+        actions: "Actions"
+      },
+      connectionStatus: {
+        wordpress: {
+          connected: "Connected"
+        },
+        social: {
+          connected: "Connected"
+        }
       },
       myArticles: "My Articles",
       createContent: "Create Content",
