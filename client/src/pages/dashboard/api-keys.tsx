@@ -65,7 +65,7 @@ function formatDate(date: string | null) {
 }
 
 export default function ApiKeysPage() {
-  const { translate } = useLanguage();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuth();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -231,7 +231,7 @@ export default function ApiKeysPage() {
   return (
     <div className="container py-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">{translate('apiKeys.title')}</h1>
+        <h1 className="text-3xl font-bold">{t('apiKeys.title')}</h1>
         <Dialog
           open={createDialogOpen}
           onOpenChange={(open) => {
@@ -240,29 +240,29 @@ export default function ApiKeysPage() {
           }}
         >
           <DialogTrigger asChild>
-            <Button>{translate('apiKeys.create')}</Button>
+            <Button>{t('apiKeys.create')}</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[500px]">
             {!newKeyData ? (
               <>
                 <DialogHeader>
-                  <DialogTitle>{translate('apiKeys.createTitle')}</DialogTitle>
+                  <DialogTitle>{t('apiKeys.createTitle')}</DialogTitle>
                   <DialogDescription>
-                    {translate('apiKeys.createDescription')}
+                    {t('apiKeys.createDescription')}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">{translate('apiKeys.nameLabel')}</Label>
+                    <Label htmlFor="name">{t('apiKeys.nameLabel')}</Label>
                     <Input
                       id="name"
                       value={newKeyName}
                       onChange={(e) => setNewKeyName(e.target.value)}
-                      placeholder={translate('apiKeys.namePlaceholder')}
+                      placeholder={t('apiKeys.namePlaceholder')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>{translate('apiKeys.scopesLabel')}</Label>
+                    <Label>{t('apiKeys.scopesLabel')}</Label>
                     <div className="grid gap-2">
                       <div className="flex items-center space-x-2">
                         <Checkbox
@@ -273,7 +273,7 @@ export default function ApiKeysPage() {
                           }
                         />
                         <Label htmlFor="user-read" className="font-normal">
-                          user:read - {translate('apiKeys.scopeUserRead')}
+                          user:read - {t('apiKeys.scopeUserRead')}
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -285,7 +285,7 @@ export default function ApiKeysPage() {
                           }
                         />
                         <Label htmlFor="articles-read" className="font-normal">
-                          articles:read - {translate('apiKeys.scopeArticlesRead')}
+                          articles:read - {t('apiKeys.scopeArticlesRead')}
                         </Label>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -297,7 +297,7 @@ export default function ApiKeysPage() {
                           }
                         />
                         <Label htmlFor="credits-read" className="font-normal">
-                          credits:read - {translate('apiKeys.scopeCreditsRead')}
+                          credits:read - {t('apiKeys.scopeCreditsRead')}
                         </Label>
                       </div>
                     </div>
@@ -311,28 +311,28 @@ export default function ApiKeysPage() {
                     {createKeyMutation.isPending && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     )}
-                    {translate('apiKeys.createButton')}
+                    {t('apiKeys.createButton')}
                   </Button>
                 </DialogFooter>
               </>
             ) : (
               <>
                 <DialogHeader>
-                  <DialogTitle>{translate('apiKeys.keyCreatedTitle')}</DialogTitle>
+                  <DialogTitle>{t('apiKeys.keyCreatedTitle')}</DialogTitle>
                   <DialogDescription>
-                    {translate('apiKeys.keyCreatedDescription')}
+                    {t('apiKeys.keyCreatedDescription')}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <Alert>
                     <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>{translate('apiKeys.securityWarningTitle')}</AlertTitle>
+                    <AlertTitle>{t('apiKeys.securityWarningTitle')}</AlertTitle>
                     <AlertDescription>
-                      {translate('apiKeys.securityWarningDescription')}
+                      {t('apiKeys.securityWarningDescription')}
                     </AlertDescription>
                   </Alert>
                   <div className="space-y-2">
-                    <Label>{translate('apiKeys.apiKeyLabel')}</Label>
+                    <Label>{t('apiKeys.apiKeyLabel')}</Label>
                     <div className="flex">
                       <Input value={newKeyData.key} readOnly className="font-mono" />
                       <Button
@@ -345,7 +345,7 @@ export default function ApiKeysPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>{translate('apiKeys.secretLabel')}</Label>
+                    <Label>{t('apiKeys.secretLabel')}</Label>
                     <div className="flex">
                       <Input
                         value={newKeyData.secret}
@@ -369,7 +369,7 @@ export default function ApiKeysPage() {
                 </div>
                 <DialogFooter>
                   <Button onClick={() => setCreateDialogOpen(false)}>
-                    {translate('apiKeys.closeButton')}
+                    {t('apiKeys.closeButton')}
                   </Button>
                 </DialogFooter>
               </>
@@ -380,9 +380,9 @@ export default function ApiKeysPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{translate('apiKeys.listTitle')}</CardTitle>
+          <CardTitle>{t('apiKeys.listTitle')}</CardTitle>
           <CardDescription>
-            {translate('apiKeys.listDescription')}
+            {t('apiKeys.listDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -392,18 +392,18 @@ export default function ApiKeysPage() {
             </div>
           ) : !apiKeys || apiKeys.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              {translate('apiKeys.noKeys')}
+              {t('apiKeys.noKeys')}
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{translate('apiKeys.tableColumnName')}</TableHead>
-                  <TableHead>{translate('apiKeys.tableColumnKey')}</TableHead>
-                  <TableHead>{translate('apiKeys.tableColumnScopes')}</TableHead>
-                  <TableHead>{translate('apiKeys.tableColumnStatus')}</TableHead>
-                  <TableHead>{translate('apiKeys.tableColumnLastUsed')}</TableHead>
-                  <TableHead>{translate('apiKeys.tableColumnCreated')}</TableHead>
+                  <TableHead>{t('apiKeys.tableColumnName')}</TableHead>
+                  <TableHead>{t('apiKeys.tableColumnKey')}</TableHead>
+                  <TableHead>{t('apiKeys.tableColumnScopes')}</TableHead>
+                  <TableHead>{t('apiKeys.tableColumnStatus')}</TableHead>
+                  <TableHead>{t('apiKeys.tableColumnLastUsed')}</TableHead>
+                  <TableHead>{t('apiKeys.tableColumnCreated')}</TableHead>
                   <TableHead className="w-10"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -438,7 +438,7 @@ export default function ApiKeysPage() {
                         variant={key.isActive ? 'default' : 'secondary'}
                         className={key.isActive ? 'bg-green-500' : 'bg-gray-500'}
                       >
-                        {key.isActive ? translate('apiKeys.statusActive') : translate('apiKeys.statusInactive')}
+                        {key.isActive ? t('apiKeys.statusActive') : t('apiKeys.statusInactive')}
                       </Badge>
                     </TableCell>
                     <TableCell>{formatDate(key.lastUsedAt)}</TableCell>
@@ -452,18 +452,18 @@ export default function ApiKeysPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>{translate('apiKeys.actions')}</DropdownMenuLabel>
+                          <DropdownMenuLabel>{t('apiKeys.actions')}</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             onClick={() => handleToggleActivation(key.id, key.isActive)}
                           >
-                            {key.isActive ? translate('apiKeys.deactivate') : translate('apiKeys.activate')}
+                            {key.isActive ? t('apiKeys.deactivate') : t('apiKeys.activate')}
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => handleDeleteKey(key.id)}
                             className="text-red-600 focus:text-red-600"
                           >
-                            {translate('apiKeys.delete')}
+                            {t('apiKeys.delete')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -476,7 +476,7 @@ export default function ApiKeysPage() {
         </CardContent>
         <CardFooter className="border-t bg-muted/50 p-4">
           <div className="text-sm text-muted-foreground">
-            {translate('apiKeys.docsLink')} <a href="/api/docs" target="_blank" className="text-primary hover:underline">{translate('apiKeys.viewDocs')}</a>
+            {t('apiKeys.docsLink')} <a href="/api/docs" target="_blank" className="text-primary hover:underline">{t('apiKeys.viewDocs')}</a>
           </div>
         </CardFooter>
       </Card>

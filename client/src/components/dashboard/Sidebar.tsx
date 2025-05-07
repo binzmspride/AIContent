@@ -13,6 +13,7 @@ import {
   Link2,
   Settings,
   LogOut,
+  Key,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
