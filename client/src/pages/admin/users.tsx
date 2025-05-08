@@ -306,14 +306,14 @@ export default function AdminUsers() {
   return (
     <>
       <Head>
-        <title>{t("common.admin.users.title") || "Quản lý người dùng"} - {t("common.appName") || "SEO AI Writer"}</title>
+        <title>{t("admin.users.title") || "Quản lý người dùng"} - {t("common.appName") || "SEO AI Writer"}</title>
       </Head>
       
-      <AdminLayout title={t("common.admin.users.title") || "Quản lý người dùng"}>
+      <AdminLayout title={t("admin.users.title") || "Quản lý người dùng"}>
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">{t("common.admin.users.title") || "Quản lý người dùng"}</h1>
-            <p className="text-muted-foreground">{t("common.admin.users.description") || "Xem và quản lý tất cả người dùng trong hệ thống"}</p>
+            <h1 className="text-2xl font-bold">{t("admin.users.title") || "Quản lý người dùng"}</h1>
+            <p className="text-muted-foreground">{t("admin.users.description") || "Xem và quản lý tất cả người dùng trong hệ thống"}</p>
           </div>
           <div className="flex items-center space-x-2">
             <div className="relative">
