@@ -505,6 +505,14 @@ const translations: TranslationsType = {
           description: "Thêm các liên kết ngoài và liên kết nội bộ",
           comingSoon: "Sắp ra mắt"
         },
+        knowledge: {
+          title: "Kiến thức",
+          description: "Cài đặt nguồn tham khảo và mô hình AI",
+          webResearch: "Nghiên cứu web",
+          webResearchDescription: "Cho phép AI tìm kiếm và sử dụng thông tin từ internet",
+          refSources: "Nguồn tham khảo",
+          aiModel: "Mô hình AI"
+        },
         generateContent: "Tạo nội dung",
         form: {
           articleTitle: "Tiêu đề bài viết",
@@ -930,7 +938,8 @@ const translations: TranslationsType = {
           style: "Style",
           format: "Format",
           media: "Media",
-          links: "Links"
+          links: "Links",
+          knowledge: "Knowledge"
         },
         keywords: {
           title: "Keywords for article",
@@ -1006,6 +1015,14 @@ const translations: TranslationsType = {
           title: "Links",
           description: "Add external and internal links",
           comingSoon: "Coming Soon"
+        },
+        knowledge: {
+          title: "Knowledge",
+          description: "Configure reference sources and AI model",
+          webResearch: "Web Research",
+          webResearchDescription: "Allow AI to search and use information from the internet",
+          refSources: "Reference Sources",
+          aiModel: "AI Model"
         },
         generateContent: "Generate Content",
         form: {

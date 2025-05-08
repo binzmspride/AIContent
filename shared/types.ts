@@ -19,6 +19,9 @@ export interface GenerateContentRequest {
   country?: 'vietnam' | 'us' | 'global';
   perspective?: 'auto' | 'first' | 'second' | 'third';
   complexity?: 'auto' | 'basic' | 'intermediate' | 'advanced';
+  useWebResearch?: boolean; // Cho phép AI tìm kiếm thông tin trên web
+  refSources?: string; // Nguồn tham khảo cụ thể
+  aiModel?: 'chatgpt' | 'gemini' | 'claude'; // Mô hình AI sử dụng
 }
 
 export interface ContentGenerationMetrics {
