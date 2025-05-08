@@ -45,7 +45,12 @@ const translations: TranslationsType = {
         roleAdmin: "Quản trị viên",
         statusActive: "Đang hoạt động",
         statusInactive: "Không hoạt động",
-        statusSuspended: "Đã bị khóa"
+        statusSuspended: "Đã bị khóa",
+        allUsers: "Tất cả người dùng",
+        totalCount: "Tổng số",
+        users: "người dùng",
+        joinDate: "Ngày tham gia",
+        noUsers: "Không tìm thấy người dùng nào"
       },
       plans: "Gói dịch vụ",
       payments: "Thanh toán",
@@ -412,7 +417,12 @@ const translations: TranslationsType = {
         roleAdmin: "Administrator",
         statusActive: "Active",
         statusInactive: "Inactive",
-        statusSuspended: "Suspended"
+        statusSuspended: "Suspended",
+        allUsers: "All Users",
+        totalCount: "Total Count",
+        users: "users",
+        joinDate: "Join Date",
+        noUsers: "No users found"
       },
       history: "History",
       settings: "Settings",

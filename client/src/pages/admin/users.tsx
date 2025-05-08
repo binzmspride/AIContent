@@ -480,9 +480,9 @@ export default function AdminUsers() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t("common.admin.users.allUsers") || "Tất cả người dùng"}</CardTitle>
+            <CardTitle>{t("admin.usersManagement.allUsers") || "Tất cả người dùng"}</CardTitle>
             <CardDescription>
-              {t("common.admin.users.totalCount") || "Tổng số"}: {usersData?.total || 0} {t("common.admin.users.users") || "người dùng"}
+              {t("admin.usersManagement.totalCount") || "Tổng số"}: {usersData?.total || 0} {t("admin.usersManagement.users") || "người dùng"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -490,12 +490,12 @@ export default function AdminUsers() {
               <TableHeader>
                 <TableRow>
                   <TableHead>ID</TableHead>
-                  <TableHead>{t("common.admin.users.username") || "Tên đăng nhập"}</TableHead>
-                  <TableHead>{t("common.admin.users.fullName") || "Họ và tên"}</TableHead>
-                  <TableHead>{t("common.admin.users.email") || "Email"}</TableHead>
-                  <TableHead>{t("common.admin.users.role") || "Vai trò"}</TableHead>
-                  <TableHead>{t("common.admin.users.status") || "Trạng thái"}</TableHead>
-                  <TableHead>{t("common.admin.users.joinDate") || "Ngày tham gia"}</TableHead>
+                  <TableHead>{t("admin.usersManagement.username") || "Tên đăng nhập"}</TableHead>
+                  <TableHead>{t("admin.usersManagement.fullName") || "Họ và tên"}</TableHead>
+                  <TableHead>{t("admin.usersManagement.email") || "Email"}</TableHead>
+                  <TableHead>{t("admin.usersManagement.role") || "Vai trò"}</TableHead>
+                  <TableHead>{t("admin.usersManagement.status") || "Trạng thái"}</TableHead>
+                  <TableHead>{t("admin.usersManagement.joinDate") || "Ngày tham gia"}</TableHead>
                   <TableHead className="text-right">{t("common.admin.common.actions") || "Thao tác"}</TableHead>
                 </TableRow>
               </TableHeader>
@@ -516,8 +516,8 @@ export default function AdminUsers() {
                       <TableCell>
                         <Badge variant={user.role === "admin" ? "default" : "outline"}>
                           {user.role === "admin" 
-                            ? (t("common.admin.users.roleAdmin") || "Quản trị viên") 
-                            : (t("common.admin.users.roleUser") || "Người dùng")}
+                            ? (t("admin.usersManagement.roleAdmin") || "Quản trị viên") 
+                            : (t("admin.usersManagement.roleUser") || "Người dùng")}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -562,7 +562,7 @@ export default function AdminUsers() {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-10">
-                      {t("common.admin.users.noUsers") || "Không tìm thấy người dùng nào"}
+                      {t("admin.usersManagement.noUsers") || "Không tìm thấy người dùng nào"}
                     </TableCell>
                   </TableRow>
                 )}
