@@ -230,6 +230,8 @@ export default function AdminArticles() {
           status: "draft",
           keywords: "local SEO, small business",
           userId: 2,
+          publishedUrl: null,
+          creditsUsed: 2,
           createdAt: "2023-05-25T15:20:30Z",
           updatedAt: "2023-05-25T15:20:30Z",
           author: {
@@ -245,6 +247,8 @@ export default function AdminArticles() {
           status: "published",
           keywords: "video marketing, trends",
           userId: 4,
+          publishedUrl: "https://example.com/video-marketing-trends",
+          creditsUsed: 3,
           createdAt: "2023-05-28T12:15:10Z",
           updatedAt: "2023-05-28T13:30:45Z",
           author: {
@@ -259,6 +263,8 @@ export default function AdminArticles() {
           status: "deleted",
           keywords: "e-commerce, SEO",
           userId: 5,
+          publishedUrl: null,
+          creditsUsed: 0,
           createdAt: "2023-05-30T09:45:20Z",
           updatedAt: "2023-05-30T10:55:35Z",
           author: {
@@ -274,6 +280,8 @@ export default function AdminArticles() {
           status: "published",
           keywords: "blog content, engagement",
           userId: 3,
+          publishedUrl: "https://example.com/how-to-create-engaging-blog-content",
+          creditsUsed: 2,
           createdAt: "2023-06-02T14:30:40Z",
           updatedAt: "2023-06-02T15:45:25Z",
           author: {
