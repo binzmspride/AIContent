@@ -222,11 +222,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
           <p>This is a placeholder for AI-generated content. In a real implementation, this would be generated based on the provided parameters using the n8n webhook.</p>
           <h2>About this topic</h2>
           <p>This content would be optimized for SEO with keywords: ${contentRequest.keywords}</p>
+          ${contentRequest.relatedKeywords ? `<p>Related keywords: ${contentRequest.relatedKeywords}</p>` : ''}
           <h2>More information</h2>
           <p>The content would be written in a ${contentRequest.tone} tone and would be approximately ${contentRequest.length === 'short' ? '500' : contentRequest.length === 'medium' ? '1000' : contentRequest.length === 'long' ? '1500' : '2000'} words long.</p>
           <p>Custom prompt details: ${contentRequest.prompt}</p>`,
         keywords: contentRequest.keywords.split(',').map(k => k.trim()),
-        creditsUsed: creditsNeeded
+        creditsUsed: creditsNeeded,
+        metrics: {
+          generationTimeMs: 1500, // Giả lập thời gian tạo nội dung (1.5 giây)
+          wordCount: contentRequest.length === 'short' ? 500 : 
+                    contentRequest.length === 'medium' ? 1000 : 
+                    contentRequest.length === 'long' ? 1500 : 2000,
+          characterCount: contentRequest.length === 'short' ? 3000 : 
+                         contentRequest.length === 'medium' ? 6000 : 
+                         contentRequest.length === 'long' ? 9000 : 12000
+        }
       };
       
       // In the real implementation, we would wait for the n8n webhook response
