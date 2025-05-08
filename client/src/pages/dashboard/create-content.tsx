@@ -879,22 +879,7 @@ export default function CreateContent() {
                             </p>
                           </div>
                           
-                          {/* Hướng dẫn chi tiết */}
-                          <div className="space-y-2">
-                            <Label htmlFor="contentPrompt" className="block text-sm font-medium">
-                              {t("dashboard.create.content.guide")}
-                            </Label>
-                            <Textarea
-                              id="contentPrompt"
-                              placeholder={t("dashboard.create.content.placeholder")}
-                              className="h-32"
-                              onChange={(e) => {
-                                const contentPrompt = e.target.value;
-                                form.setValue('prompt', contentPrompt);
-                              }}
-                              value={form.watch('prompt')}
-                            />
-                          </div>
+
                         </div>
                       </TabsContent>
                       
