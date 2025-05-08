@@ -441,6 +441,21 @@ const translations: TranslationsType = {
           relatedKeywordPlaceholder: "Nhập từ khóa liên quan",
           addNew: "Thêm mới"
         },
+        outline: {
+          title: "Dàn ý bài viết",
+          description: "Xây dựng cấu trúc nội dung bài viết của bạn bằng các tiêu đề có thứ bậc.",
+          customizeStructure: "Tùy chỉnh cấu trúc bài viết",
+          autoGenerateMessage: "Hệ thống sẽ tự động tạo dàn ý dựa trên từ khóa nếu bạn không cung cấp.",
+          empty: "Chưa có mục nào trong dàn ý. Hãy thêm mục đầu tiên bên dưới.",
+          headingPlaceholder: "Nhập tiêu đề mục",
+          addStructure: "Thêm mục"
+        },
+        content: {
+          title: "Nội dung bài viết",
+          description: "Cung cấp hướng dẫn chi tiết cho hệ thống AI để tạo nội dung phù hợp với yêu cầu của bạn.",
+          guide: "Hướng dẫn chi tiết",
+          placeholder: "Nhập hướng dẫn chi tiết về nội dung bạn muốn tạo..."
+        },
         media: {
           title: "Hình ảnh",
           description: "Thêm hình ảnh minh họa cho bài viết của bạn",
@@ -888,6 +903,21 @@ const translations: TranslationsType = {
           relatedKeyword: "Related keyword",
           relatedKeywordPlaceholder: "Enter related keyword",
           addNew: "Add new"
+        },
+        outline: {
+          title: "Article Outline",
+          description: "Build your content structure with hierarchical headings.",
+          customizeStructure: "Customize Article Structure",
+          autoGenerateMessage: "The system will automatically generate an outline based on keywords if you don't provide one.",
+          empty: "No outline items yet. Add your first heading below.",
+          headingPlaceholder: "Enter heading text",
+          addStructure: "Add Heading"
+        },
+        content: {
+          title: "Article Content",
+          description: "Provide detailed instructions for the AI system to generate content that matches your requirements.",
+          guide: "Detailed Instructions",
+          placeholder: "Enter detailed instructions about the content you want to generate..."
         },
         media: {
           title: "Images",

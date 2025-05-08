@@ -605,7 +605,7 @@ export default function CreateContent() {
                         <div className="space-y-4">
                           {outlineItems.length === 0 ? (
                             <div className="text-center py-6 text-sm text-gray-500 dark:text-gray-400">
-                              {t("dashboard.create.outline.empty", "Chưa có mục nào trong dàn ý. Hãy thêm mục đầu tiên bên dưới.")}
+                              {t("dashboard.create.outline.empty")}
                             </div>
                           ) : (
                             <div className="space-y-2">
