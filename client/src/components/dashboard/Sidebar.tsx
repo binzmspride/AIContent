@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
+import { useTheme } from "@/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollIcon } from "lucide-react";

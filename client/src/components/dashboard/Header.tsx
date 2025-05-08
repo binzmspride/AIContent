@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
+import { useTheme } from "@/providers/ThemeProvider";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
@@ -10,6 +11,8 @@ import {
   Coins,
   Menu,
   X,
+  Moon,
+  Sun,
 } from "lucide-react";
 import {
   Sheet,
@@ -17,6 +20,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Sidebar } from "./Sidebar";
+import { ThemeSwitcher } from "@/components/common/ThemeSwitcher";
 
 export function Header() {
   const { t, language, setLanguage } = useLanguage();
@@ -29,7 +33,7 @@ export function Header() {
   };
 
   return (
-    <header className="bg-white shadow-sm z-10 sticky top-0">
+    <header className="bg-white dark:bg-card shadow-sm z-10 sticky top-0">
       <div className="flex items-center justify-between h-16 px-6">
         <div className="md:hidden flex items-center">
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -80,6 +84,8 @@ export function Header() {
           <Button variant="ghost" size="icon" className="text-secondary-500 hover:text-secondary-600">
             <Bell className="h-5 w-5" />
           </Button>
+          
+          <ThemeSwitcher variant="icon" className="text-secondary-500 hover:text-secondary-600" />
           
           <button 
             onClick={toggleLanguage}
