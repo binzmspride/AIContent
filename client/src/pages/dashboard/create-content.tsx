@@ -212,51 +212,60 @@ export default function CreateContent() {
     const keywords = form.watch("keywords").split(",").filter(Boolean);
     return keywords.length > 1 ? keywords.slice(1).length : 0;
   };
-  
-  // Hàm thêm mục dàn ý mới
-  const addOutlineItem = useCallback((level: 'h2' | 'h3' | 'h4' = 'h2', text: string = '') => {
-    const newItem: OutlineItem = {
-      id: Date.now().toString(),
-      level,
-      text
-    };
-    setOutlineItems(prev => [...prev, newItem]);
+
+  // Hàm chuyển dàn ý thành prompt text
+  const convertOutlineToText = (items: OutlineItem[]): string => {
+    if (items.length === 0) return "";
     
-    // Cập nhật trường prompt trong form để phản ánh dàn ý
-    updatePromptFromOutline([...outlineItems, newItem]);
-  }, [outlineItems]);
-  
-  // Hàm xóa mục dàn ý
-  const removeOutlineItem = useCallback((id: string) => {
-    setOutlineItems(prev => {
-      const updated = prev.filter(item => item.id !== id);
-      updatePromptFromOutline(updated);
-      return updated;
-    });
-  }, []);
-  
-  // Hàm cập nhật mục dàn ý
-  const updateOutlineItem = useCallback((id: string, data: Partial<OutlineItem>) => {
-    setOutlineItems(prev => {
-      const updated = prev.map(item => 
-        item.id === id ? { ...item, ...data } : item
-      );
-      updatePromptFromOutline(updated);
-      return updated;
-    });
-  }, []);
-  
-  // Hàm cập nhật trường prompt từ các mục dàn ý
-  const updatePromptFromOutline = useCallback((items: OutlineItem[]) => {
-    if (items.length === 0) return;
-    
-    const outlineText = items.map(item => {
+    return items.map(item => {
       const prefix = item.level === 'h2' ? '# ' : item.level === 'h3' ? '## ' : '### ';
       return `${prefix}${item.text}`;
     }).join('\n');
+  };
+  
+  // Xử lý khi thêm mục dàn ý mới
+  const handleAddOutlineItem = () => {
+    if (currentHeadingText.trim()) {
+      const newItem: OutlineItem = {
+        id: Date.now().toString(),
+        level: currentHeadingLevel,
+        text: currentHeadingText.trim()
+      };
+      
+      const updatedItems = [...outlineItems, newItem];
+      setOutlineItems(updatedItems);
+      
+      // Cập nhật prompt
+      const outlineText = convertOutlineToText(updatedItems);
+      form.setValue('prompt', outlineText);
+      
+      // Reset input
+      setCurrentHeadingText('');
+    }
+  };
+  
+  // Xử lý khi xóa mục
+  const handleRemoveOutlineItem = (id: string) => {
+    const updatedItems = outlineItems.filter(item => item.id !== id);
+    setOutlineItems(updatedItems);
     
+    // Cập nhật prompt
+    const outlineText = convertOutlineToText(updatedItems);
     form.setValue('prompt', outlineText);
-  }, [form]);
+  };
+  
+  // Xử lý khi cập nhật mục
+  const handleUpdateOutlineItem = (id: string, data: Partial<OutlineItem>) => {
+    const updatedItems = outlineItems.map(item => 
+      item.id === id ? { ...item, ...data } : item
+    );
+    
+    setOutlineItems(updatedItems);
+    
+    // Cập nhật prompt
+    const outlineText = convertOutlineToText(updatedItems);
+    form.setValue('prompt', outlineText);
+  };
 
   return (
     <>
@@ -596,7 +605,7 @@ export default function CreateContent() {
                         <div className="space-y-4">
                           {outlineItems.length === 0 ? (
                             <div className="text-center py-6 text-sm text-gray-500 dark:text-gray-400">
-                              {t("dashboard.create.outline.empty")}
+                              {t("dashboard.create.outline.empty", "Chưa có mục nào trong dàn ý. Hãy thêm mục đầu tiên bên dưới.")}
                             </div>
                           ) : (
                             <div className="space-y-2">
@@ -606,7 +615,7 @@ export default function CreateContent() {
                                     <Select
                                       value={item.level}
                                       onValueChange={(value: string) => 
-                                        updateOutlineItem(item.id, { level: value as 'h2' | 'h3' | 'h4' })
+                                        handleUpdateOutlineItem(item.id, { level: value as 'h2' | 'h3' | 'h4' })
                                       }
                                     >
                                       <SelectTrigger className="w-20 h-10">
@@ -622,7 +631,7 @@ export default function CreateContent() {
                                   <div className="flex-grow">
                                     <Input 
                                       value={item.text}
-                                      onChange={(e) => updateOutlineItem(item.id, { text: e.target.value })}
+                                      onChange={(e) => handleUpdateOutlineItem(item.id, { text: e.target.value })}
                                       placeholder={t("dashboard.create.outline.headingPlaceholder")} 
                                       className="h-10"
                                     />
@@ -631,7 +640,7 @@ export default function CreateContent() {
                                     variant="ghost" 
                                     size="icon" 
                                     className="text-red-500"
-                                    onClick={() => removeOutlineItem(item.id)}
+                                    onClick={() => handleRemoveOutlineItem(item.id)}
                                   >
                                     <span className="sr-only">Delete</span>
                                     <Trash2 className="h-5 w-5" />
@@ -645,9 +654,9 @@ export default function CreateContent() {
                             <div className="flex items-start space-x-2">
                               <div className="flex-shrink-0">
                                 <Select
-                                  value="h2"
+                                  value={currentHeadingLevel}
                                   onValueChange={(value) => 
-                                    setInputValue(prev => ({ ...prev, level: value as 'h2' | 'h3' | 'h4' }))
+                                    setCurrentHeadingLevel(value as 'h2' | 'h3' | 'h4')
                                   }
                                 >
                                   <SelectTrigger className="w-20 h-10">
@@ -662,8 +671,8 @@ export default function CreateContent() {
                               </div>
                               <div className="flex-grow">
                                 <Input 
-                                  value={typeof inputValue === 'string' ? inputValue : ''}
-                                  onChange={(e) => setInputValue(e.target.value)}
+                                  value={currentHeadingText}
+                                  onChange={(e) => setCurrentHeadingText(e.target.value)}
                                   placeholder={t("dashboard.create.outline.headingPlaceholder")} 
                                   className="h-10"
                                 />
@@ -674,12 +683,7 @@ export default function CreateContent() {
                               type="button"
                               variant="outline" 
                               className="flex items-center text-violet-600 border-violet-200 bg-violet-50 hover:bg-violet-100 dark:border-violet-800 dark:bg-violet-900/50 dark:hover:bg-violet-900 dark:text-violet-300 w-full justify-center"
-                              onClick={() => {
-                                if (typeof inputValue === 'string' && inputValue.trim()) {
-                                  addOutlineItem('h2', inputValue.trim());
-                                  setInputValue('');
-                                }
-                              }}
+                              onClick={handleAddOutlineItem}
                             >
                               <Plus className="h-4 w-4 mr-2" />
                               {t("dashboard.create.outline.addStructure")}
