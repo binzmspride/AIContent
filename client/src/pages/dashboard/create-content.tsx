@@ -506,10 +506,10 @@ export default function CreateContent() {
                                       </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                      <SelectItem value="blog">{t("dashboard.create.form.contentTypes.blog")}</SelectItem>
-                                      <SelectItem value="product">{t("dashboard.create.form.contentTypes.product")}</SelectItem>
-                                      <SelectItem value="news">{t("dashboard.create.form.contentTypes.news")}</SelectItem>
-                                      <SelectItem value="social">{t("dashboard.create.form.contentTypes.social")}</SelectItem>
+                                      <SelectItem value="blog">{t("dashboard.create.form.contentTypeOptions.blog")}</SelectItem>
+                                      <SelectItem value="product">{t("dashboard.create.form.contentTypeOptions.product")}</SelectItem>
+                                      <SelectItem value="news">{t("dashboard.create.form.contentTypeOptions.news")}</SelectItem>
+                                      <SelectItem value="social">{t("dashboard.create.form.contentTypeOptions.social")}</SelectItem>
                                     </SelectContent>
                                   </Select>
                                   <FormMessage />
@@ -587,11 +587,11 @@ export default function CreateContent() {
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    <SelectItem value="professional">{t("dashboard.create.form.tones.professional")}</SelectItem>
-                                    <SelectItem value="conversational">{t("dashboard.create.form.tones.conversational")}</SelectItem>
-                                    <SelectItem value="informative">{t("dashboard.create.form.tones.informative")}</SelectItem>
-                                    <SelectItem value="persuasive">{t("dashboard.create.form.tones.persuasive")}</SelectItem>
-                                    <SelectItem value="humorous">{t("dashboard.create.form.tones.humorous")}</SelectItem>
+                                    <SelectItem value="professional">{t("dashboard.create.form.toneOptions.professional")}</SelectItem>
+                                    <SelectItem value="conversational">{t("dashboard.create.form.toneOptions.conversational")}</SelectItem>
+                                    <SelectItem value="informative">{t("dashboard.create.form.toneOptions.informative")}</SelectItem>
+                                    <SelectItem value="persuasive">{t("dashboard.create.form.toneOptions.persuasive")}</SelectItem>
+                                    <SelectItem value="humorous">{t("dashboard.create.form.toneOptions.humorous")}</SelectItem>
                                   </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -622,10 +622,10 @@ export default function CreateContent() {
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    <SelectItem value="short">{t("dashboard.create.form.lengths.short")}</SelectItem>
-                                    <SelectItem value="medium">{t("dashboard.create.form.lengths.medium")}</SelectItem>
-                                    <SelectItem value="long">{t("dashboard.create.form.lengths.long")}</SelectItem>
-                                    <SelectItem value="extra_long">{t("dashboard.create.form.lengths.extra_long")}</SelectItem>
+                                    <SelectItem value="short">{t("dashboard.create.form.lengthOptions.short")}</SelectItem>
+                                    <SelectItem value="medium">{t("dashboard.create.form.lengthOptions.medium")}</SelectItem>
+                                    <SelectItem value="long">{t("dashboard.create.form.lengthOptions.long")}</SelectItem>
+                                    <SelectItem value="extra_long">{t("dashboard.create.form.lengthOptions.extraLong")}</SelectItem>
                                   </SelectContent>
                                 </Select>
                                 <FormMessage />
