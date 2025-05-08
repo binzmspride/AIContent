@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { DashboardLayout } from "@/components/dashboard/Layout";
 import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
@@ -52,7 +52,9 @@ import {
   AlignJustify,
   Image,
   Link as LinkIcon,
-  X
+  X,
+  Plus,
+  Trash2
 } from "lucide-react";
 import { GenerateContentRequest, GenerateContentResponse } from "@shared/types";
 import { copyToClipboard, downloadAsFile } from "@/lib/utils";
@@ -524,22 +526,48 @@ export default function CreateContent() {
                         <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.outline.title")}</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.outline.description")}</p>
                         
-                        <div className="space-y-4">
-                          <div>
-                            <Label htmlFor="outlineDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                              {t("dashboard.create.outline.guide")}
-                            </Label>
-                            <Textarea
-                              id="outlineDescription"
-                              placeholder={t("dashboard.create.outline.placeholder")}
-                              className="h-32"
-                              onChange={(e) => {
-                                const outline = e.target.value;
-                                form.setValue('prompt', outline);
-                              }}
-                              value={form.watch('prompt')}
-                            />
+                        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-6">
+                          <div className="flex items-center mb-2">
+                            <div className="flex-shrink-0 w-6 h-6 rounded-full bg-violet-200 text-violet-600 flex items-center justify-center mr-2">
+                              <span className="text-sm">1</span>
+                            </div>
+                            <div className="font-medium">{t("dashboard.create.outline.customizeStructure")}</div>
                           </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-300 pl-8">
+                            {t("dashboard.create.outline.autoGenerateMessage")}
+                          </p>
+                        </div>
+                        
+                        <div className="space-y-4">
+                          <div className="flex items-start space-x-2 mb-3">
+                            <div className="flex-shrink-0">
+                              <Select defaultValue="h2">
+                                <SelectTrigger className="w-20 h-10">
+                                  <SelectValue placeholder="H2" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="h2">H2</SelectItem>
+                                  <SelectItem value="h3">H3</SelectItem>
+                                  <SelectItem value="h4">H4</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="flex-grow">
+                              <Input 
+                                placeholder={t("dashboard.create.outline.headingPlaceholder")} 
+                                className="h-10"
+                              />
+                            </div>
+                            <Button variant="ghost" size="icon" className="text-red-500">
+                              <span className="sr-only">Delete</span>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                            </Button>
+                          </div>
+                          
+                          <Button variant="outline" className="flex items-center text-violet-600 border-violet-200 bg-violet-50 hover:bg-violet-100 dark:border-violet-800 dark:bg-violet-900/50 dark:hover:bg-violet-900 dark:text-violet-300 w-full justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+                            {t("dashboard.create.outline.addStructure")}
+                          </Button>
                         </div>
                       </TabsContent>
                       
