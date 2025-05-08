@@ -95,8 +95,8 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors",
                   location === link.href
-                    ? "bg-sidebar-accent dark:bg-primary-800 text-sidebar-foreground dark:text-white"
-                    : "text-sidebar-foreground/70 dark:text-secondary-300 hover:text-sidebar-foreground dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
+                    ? "bg-sidebar-accent dark:bg-primary-800 text-white dark:text-white"
+                    : "text-white dark:text-secondary-300 hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
                 )}
               >
                 {link.icon}
@@ -108,7 +108,7 @@ export function Sidebar() {
           <li>
             <Link 
               href="/admin"
-              className="flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 dark:text-secondary-300 hover:text-sidebar-foreground dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
+              className="flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors text-white dark:text-secondary-300 hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
             >
               <LayoutDashboard className="h-5 w-5 mr-3" />
               {t("admin.adminPanel")}
@@ -132,7 +132,7 @@ export function Sidebar() {
               </p>
               <button
                 onClick={handleLogout}
-                className="text-xs text-sidebar-foreground/70 dark:text-secondary-300 hover:text-sidebar-foreground dark:hover:text-secondary-100 flex items-center mt-1"
+                className="text-xs text-white dark:text-secondary-300 hover:text-white dark:hover:text-secondary-100 flex items-center mt-1"
               >
                 <LogOut className="h-3 w-3 mr-1" />
                 {t("common.logout")}
