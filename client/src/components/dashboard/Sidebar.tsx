@@ -95,8 +95,8 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors",
                   location === link.href
-                    ? "bg-sidebar-accent dark:bg-primary-800 text-white dark:text-white"
-                    : "text-white dark:text-secondary-300 hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
+                    ? "bg-sidebar-accent dark:bg-primary-800 text-white font-semibold dark:text-white"
+                    : "text-white font-semibold dark:text-white hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
                 )}
               >
                 {link.icon}
@@ -108,7 +108,7 @@ export function Sidebar() {
           <li>
             <Link 
               href="/admin"
-              className="flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors text-white dark:text-secondary-300 hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
+              className="flex items-center py-3 px-4 rounded-md text-sm font-semibold transition-colors text-white dark:text-white hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
             >
               <LayoutDashboard className="h-5 w-5 mr-3" />
               {t("admin.adminPanel")}
@@ -132,14 +132,14 @@ export function Sidebar() {
               </p>
               <button
                 onClick={handleLogout}
-                className="text-xs text-white dark:text-secondary-300 hover:text-white dark:hover:text-secondary-100 flex items-center mt-1"
+                className="text-xs text-white font-semibold dark:text-white hover:text-white dark:hover:text-white flex items-center mt-1"
               >
                 <LogOut className="h-3 w-3 mr-1" />
                 {t("common.logout")}
               </button>
             </div>
           </div>
-          <ThemeSwitcher variant="icon" className="text-white/70 dark:text-secondary-300 hover:text-white dark:hover:text-secondary-100" />
+          <ThemeSwitcher variant="icon" className="text-white dark:text-white hover:text-white dark:hover:text-white" />
         </div>
       </div>
     </div>
