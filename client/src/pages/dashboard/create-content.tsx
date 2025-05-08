@@ -69,12 +69,16 @@ const formSchema = z.object({
     message: "Keywords must be at least 3 characters.",
   }),
   length: z.enum(["short", "medium", "long", "extra_long"]),
-  tone: z.enum(["professional", "conversational", "informative", "persuasive", "humorous"]),
+  tone: z.enum(["professional", "conversational", "informative", "persuasive", "humorous", "neutral"]),
   prompt: z.string().min(10, {
     message: "Content description must be at least 10 characters.",
   }),
   addHeadings: z.boolean().default(true),
   relatedKeywords: z.string().optional(),
+  language: z.enum(["vietnamese", "english"]).optional(),
+  country: z.enum(["vietnam", "us", "global"]).optional(),
+  perspective: z.enum(["auto", "first", "second", "third"]).optional(),
+  complexity: z.enum(["auto", "basic", "intermediate", "advanced"]).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -693,12 +697,137 @@ export default function CreateContent() {
                       </TabsContent>
                       
                       <TabsContent value="content" className="mt-0 border rounded-lg p-4">
-                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.content.title")}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.content.description")}</p>
-                        
-                        <div className="space-y-4">
+                        <div className="flex items-start">
+                          <FileTextIcon className="h-6 w-6 text-blue-500 mr-2 flex-shrink-0 mt-1" />
                           <div>
-                            <Label htmlFor="contentPrompt" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.content.title")}</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.content.description")}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-6">
+                          {/* Ngôn ngữ */}
+                          <div className="space-y-2">
+                            <Label htmlFor="language" className="block text-sm font-medium">
+                              {t("dashboard.create.content.language")}
+                            </Label>
+                            <Select
+                              value={form.watch('language') || 'vietnamese'}
+                              onValueChange={(value) => form.setValue('language', value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder={t("dashboard.create.content.selectLanguage")} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="vietnamese">{t("dashboard.create.content.languages.vietnamese")}</SelectItem>
+                                <SelectItem value="english">{t("dashboard.create.content.languages.english")}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {t("dashboard.create.content.languageHint")}
+                            </p>
+                          </div>
+                          
+                          {/* Quốc gia */}
+                          <div className="space-y-2">
+                            <Label htmlFor="country" className="block text-sm font-medium">
+                              {t("dashboard.create.content.country")}
+                            </Label>
+                            <Select
+                              value={form.watch('country') || 'vietnam'}
+                              onValueChange={(value) => form.setValue('country', value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder={t("dashboard.create.content.selectCountry")} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="vietnam">{t("dashboard.create.content.countries.vietnam")}</SelectItem>
+                                <SelectItem value="us">{t("dashboard.create.content.countries.us")}</SelectItem>
+                                <SelectItem value="global">{t("dashboard.create.content.countries.global")}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {t("dashboard.create.content.countryHint")}
+                            </p>
+                          </div>
+                          
+                          {/* Giọng nói */}
+                          <div className="space-y-2">
+                            <Label htmlFor="voice" className="block text-sm font-medium">
+                              {t("dashboard.create.content.voice")}
+                            </Label>
+                            <Select
+                              value={form.watch('tone') || 'neutral'}
+                              onValueChange={(value) => form.setValue('tone', value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder={t("dashboard.create.content.selectVoice")} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="professional">{t("dashboard.create.form.toneOptions.professional")}</SelectItem>
+                                <SelectItem value="conversational">{t("dashboard.create.form.toneOptions.conversational")}</SelectItem>
+                                <SelectItem value="informative">{t("dashboard.create.form.toneOptions.informative")}</SelectItem>
+                                <SelectItem value="persuasive">{t("dashboard.create.form.toneOptions.persuasive")}</SelectItem>
+                                <SelectItem value="humorous">{t("dashboard.create.form.toneOptions.humorous")}</SelectItem>
+                                <SelectItem value="neutral">{t("dashboard.create.content.voices.neutral")}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {t("dashboard.create.content.voiceHint")}
+                            </p>
+                          </div>
+                          
+                          {/* Ngôi kể */}
+                          <div className="space-y-2">
+                            <Label htmlFor="perspective" className="block text-sm font-medium">
+                              {t("dashboard.create.content.perspective")}
+                            </Label>
+                            <Select
+                              value={form.watch('perspective') || 'auto'}
+                              onValueChange={(value) => form.setValue('perspective', value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder={t("dashboard.create.content.selectPerspective")} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="auto">{t("dashboard.create.content.perspectives.auto")}</SelectItem>
+                                <SelectItem value="first">{t("dashboard.create.content.perspectives.first")}</SelectItem>
+                                <SelectItem value="second">{t("dashboard.create.content.perspectives.second")}</SelectItem>
+                                <SelectItem value="third">{t("dashboard.create.content.perspectives.third")}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {t("dashboard.create.content.perspectiveHint")}
+                            </p>
+                          </div>
+                          
+                          {/* Mức độ */}
+                          <div className="space-y-2">
+                            <Label htmlFor="complexity" className="block text-sm font-medium">
+                              {t("dashboard.create.content.complexity")}
+                            </Label>
+                            <Select
+                              value={form.watch('complexity') || 'auto'}
+                              onValueChange={(value) => form.setValue('complexity', value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder={t("dashboard.create.content.selectComplexity")} />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="auto">{t("dashboard.create.content.complexities.auto")}</SelectItem>
+                                <SelectItem value="basic">{t("dashboard.create.content.complexities.basic")}</SelectItem>
+                                <SelectItem value="intermediate">{t("dashboard.create.content.complexities.intermediate")}</SelectItem>
+                                <SelectItem value="advanced">{t("dashboard.create.content.complexities.advanced")}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {t("dashboard.create.content.complexityHint")}
+                            </p>
+                          </div>
+                          
+                          {/* Hướng dẫn chi tiết */}
+                          <div className="space-y-2">
+                            <Label htmlFor="contentPrompt" className="block text-sm font-medium">
                               {t("dashboard.create.content.guide")}
                             </Label>
                             <Textarea

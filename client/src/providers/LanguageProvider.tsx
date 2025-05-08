@@ -451,10 +451,49 @@ const translations: TranslationsType = {
           addStructure: "Thêm mục"
         },
         content: {
-          title: "Nội dung bài viết",
-          description: "Cung cấp hướng dẫn chi tiết cho hệ thống AI để tạo nội dung phù hợp với yêu cầu của bạn.",
+          title: "Nội dung cho bài viết",
+          description: "Hệ thống sẽ tạo nội dung cho bài viết của bạn.",
           guide: "Hướng dẫn chi tiết",
-          placeholder: "Nhập hướng dẫn chi tiết về nội dung bạn muốn tạo..."
+          placeholder: "Nhập hướng dẫn chi tiết về nội dung bạn muốn tạo...",
+          language: "Ngôn ngữ",
+          selectLanguage: "Chọn ngôn ngữ",
+          languages: {
+            vietnamese: "Tiếng Việt",
+            english: "Tiếng Anh"
+          },
+          languageHint: "Ngôn ngữ mà tất cả các bài viết sẽ được viết.",
+          country: "Quốc gia",
+          selectCountry: "Chọn quốc gia",
+          countries: {
+            vietnam: "Việt Nam",
+            us: "Hoa Kỳ",
+            global: "Toàn cầu"
+          },
+          countryHint: "Quốc gia mục tiêu mà nội dung sẽ tập trung hướng đến",
+          voice: "Giọng nói",
+          selectVoice: "Chọn giọng nói",
+          voices: {
+            neutral: "Trung lập"
+          },
+          voiceHint: "Ví dụ: vui vẻ, trung lập, học thuật",
+          perspective: "Ngôi kể",
+          selectPerspective: "Chọn ngôi kể",
+          perspectives: {
+            auto: "Tự động",
+            first: "Ngôi thứ nhất (tôi, chúng tôi)",
+            second: "Ngôi thứ hai (bạn)",
+            third: "Ngôi thứ ba (anh ấy, cô ấy, họ)"
+          },
+          perspectiveHint: "Điều này sẽ ảnh hưởng đến các đại từ được sử dụng trong bài viết.",
+          complexity: "Mức độ",
+          selectComplexity: "Chọn mức độ",
+          complexities: {
+            auto: "Tự động",
+            basic: "Cơ bản",
+            intermediate: "Trung bình",
+            advanced: "Nâng cao"
+          },
+          complexityHint: "Lựa chọn giọng văn phù hợp với ngữ cảnh bài viết."
         },
         media: {
           title: "Hình ảnh",
@@ -915,9 +954,48 @@ const translations: TranslationsType = {
         },
         content: {
           title: "Article Content",
-          description: "Provide detailed instructions for the AI system to generate content that matches your requirements.",
+          description: "The system will generate content for your article.",
           guide: "Detailed Instructions",
-          placeholder: "Enter detailed instructions about the content you want to generate..."
+          placeholder: "Enter detailed instructions about the content you want to generate...",
+          language: "Language",
+          selectLanguage: "Select language",
+          languages: {
+            vietnamese: "Vietnamese",
+            english: "English"
+          },
+          languageHint: "Language in which all articles will be written.",
+          country: "Country",
+          selectCountry: "Select country",
+          countries: {
+            vietnam: "Vietnam",
+            us: "United States",
+            global: "Global"
+          },
+          countryHint: "Target country that the content will focus on",
+          voice: "Voice",
+          selectVoice: "Select voice",
+          voices: {
+            neutral: "Neutral"
+          },
+          voiceHint: "E.g.: cheerful, neutral, academic",
+          perspective: "Perspective",
+          selectPerspective: "Select perspective",
+          perspectives: {
+            auto: "Automatic",
+            first: "First person (I, we)",
+            second: "Second person (you)",
+            third: "Third person (he, she, they)"
+          },
+          perspectiveHint: "This will affect the pronouns used in the article.",
+          complexity: "Complexity",
+          selectComplexity: "Select complexity",
+          complexities: {
+            auto: "Automatic",
+            basic: "Basic",
+            intermediate: "Intermediate",
+            advanced: "Advanced"
+          },
+          complexityHint: "Choose appropriate tone for your article context."
         },
         media: {
           title: "Images",
