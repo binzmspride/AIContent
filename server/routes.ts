@@ -223,8 +223,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           <h2>About this topic</h2>
           <p>This content would be optimized for SEO with keywords: ${contentRequest.keywords}</p>
           ${contentRequest.relatedKeywords ? `<p>Related keywords: ${contentRequest.relatedKeywords}</p>` : ''}
-          <h2>More information</h2>
+          <h2>Content settings</h2>
           <p>The content would be written in a ${contentRequest.tone} tone and would be approximately ${contentRequest.length === 'short' ? '500' : contentRequest.length === 'medium' ? '1000' : contentRequest.length === 'long' ? '1500' : '2000'} words long.</p>
+          <p>Language: ${contentRequest.language || 'Vietnamese'}, Country: ${contentRequest.country || 'Vietnam'}</p>
+          <p>Perspective: ${contentRequest.perspective || 'Auto'}, Complexity: ${contentRequest.complexity || 'Auto'}</p>
+          ${contentRequest.useWebResearch ? `<p>Web research: Enabled</p>` : ''}
+          ${contentRequest.refSources ? `<p>Reference sources: ${contentRequest.refSources}</p>` : ''}
+          ${contentRequest.aiModel ? `<p>AI model: ${contentRequest.aiModel}</p>` : ''}
           <p>Custom prompt details: ${contentRequest.prompt}</p>`,
         keywords: contentRequest.keywords.split(',').map(k => k.trim()),
         creditsUsed: creditsNeeded,
