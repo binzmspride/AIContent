@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useTheme } from "@/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ThemeSwitcher } from "@/components/common/ThemeSwitcher";
 import { ScrollIcon } from "lucide-react";
 import {
   LayoutDashboard,
@@ -107,7 +108,7 @@ export function Sidebar() {
           <li>
             <Link 
               href="/admin"
-              className="flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+              className="flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors text-sidebar-foreground/70 dark:text-secondary-300 hover:text-sidebar-foreground dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
             >
               <LayoutDashboard className="h-5 w-5 mr-3" />
               {t("admin.adminPanel")}
@@ -116,7 +117,7 @@ export function Sidebar() {
         </ul>
       </nav>
       
-      <div className="p-4 border-t border-sidebar-border mt-auto">
+      <div className="p-4 border-t border-sidebar-border dark:border-border mt-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Avatar className="h-8 w-8">
@@ -126,18 +127,19 @@ export function Sidebar() {
               </AvatarFallback>
             </Avatar>
             <div className="ml-3">
-              <p className="text-sm font-medium text-white">
+              <p className="text-sm font-medium text-white dark:text-secondary-100">
                 {user?.fullName || user?.username}
               </p>
               <button
                 onClick={handleLogout}
-                className="text-xs text-sidebar-foreground/70 hover:text-sidebar-foreground flex items-center mt-1"
+                className="text-xs text-sidebar-foreground/70 dark:text-secondary-300 hover:text-sidebar-foreground dark:hover:text-secondary-100 flex items-center mt-1"
               >
                 <LogOut className="h-3 w-3 mr-1" />
                 {t("common.logout")}
               </button>
             </div>
           </div>
+          <ThemeSwitcher variant="icon" className="text-white/70 dark:text-secondary-300 hover:text-white dark:hover:text-secondary-100" />
         </div>
       </div>
     </div>

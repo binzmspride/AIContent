@@ -366,36 +366,85 @@ export default function Settings() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>{t("dashboard.settings.preferences.theme")}</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select theme" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="light" className="flex items-center">
-                                <div className="flex items-center">
-                                  <Sun className="h-4 w-4 mr-2" />
+                          <div className="space-y-4">
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select theme" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="light" className="flex items-center">
+                                  <div className="flex items-center">
+                                    <Sun className="h-4 w-4 mr-2 text-amber-500" />
+                                    {t("dashboard.settings.preferences.themes.light")}
+                                  </div>
+                                </SelectItem>
+                                <SelectItem value="dark">
+                                  <div className="flex items-center">
+                                    <Moon className="h-4 w-4 mr-2 text-indigo-400" />
+                                    {t("dashboard.settings.preferences.themes.dark")}
+                                  </div>
+                                </SelectItem>
+                                <SelectItem value="system">
+                                  <div className="flex items-center">
+                                    <Monitor className="h-4 w-4 mr-2 text-slate-400" />
+                                    {t("dashboard.settings.preferences.themes.system")}
+                                  </div>
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            
+                            <div className="grid grid-cols-3 gap-2">
+                              <button
+                                type="button"
+                                onClick={() => field.onChange("light")}
+                                className={`flex flex-col items-center justify-center p-3 rounded-md border transition-all ${
+                                  field.value === "light" 
+                                    ? "border-primary bg-primary/5 ring-2 ring-primary/20" 
+                                    : "border-border hover:border-primary/30 hover:bg-primary/5"
+                                }`}
+                              >
+                                <Sun className="h-6 w-6 mb-1 text-amber-500" />
+                                <span className="text-xs font-medium">
                                   {t("dashboard.settings.preferences.themes.light")}
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="dark">
-                                <div className="flex items-center">
-                                  <Moon className="h-4 w-4 mr-2" />
+                                </span>
+                              </button>
+                              
+                              <button
+                                type="button"
+                                onClick={() => field.onChange("dark")}
+                                className={`flex flex-col items-center justify-center p-3 rounded-md border transition-all ${
+                                  field.value === "dark" 
+                                    ? "border-primary bg-primary/5 ring-2 ring-primary/20" 
+                                    : "border-border hover:border-primary/30 hover:bg-primary/5"
+                                }`}
+                              >
+                                <Moon className="h-6 w-6 mb-1 text-indigo-400" />
+                                <span className="text-xs font-medium">
                                   {t("dashboard.settings.preferences.themes.dark")}
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="system">
-                                <div className="flex items-center">
-                                  <Monitor className="h-4 w-4 mr-2" />
+                                </span>
+                              </button>
+                              
+                              <button
+                                type="button"
+                                onClick={() => field.onChange("system")}
+                                className={`flex flex-col items-center justify-center p-3 rounded-md border transition-all ${
+                                  field.value === "system" 
+                                    ? "border-primary bg-primary/5 ring-2 ring-primary/20" 
+                                    : "border-border hover:border-primary/30 hover:bg-primary/5"
+                                }`}
+                              >
+                                <Monitor className="h-6 w-6 mb-1 text-slate-400" />
+                                <span className="text-xs font-medium">
                                   {t("dashboard.settings.preferences.themes.system")}
-                                </div>
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
+                                </span>
+                              </button>
+                            </div>
+                          </div>
                           <FormMessage />
                         </FormItem>
                       )}
