@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import { LanguageProvider } from "@/providers/LanguageProvider";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
+import { FloatingThemeIndicator } from "@/components/common/FloatingThemeIndicator";
 
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/home-page";
@@ -78,6 +79,7 @@ function App() {
           <AuthProvider>
             <Router />
             <Toaster />
+            <FloatingThemeIndicator position="bottom-right" />
           </AuthProvider>
         </LanguageProvider>
       </ThemeProvider>

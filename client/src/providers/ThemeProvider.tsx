@@ -1,80 +1,101 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { Theme } from "@shared/types";
 
+type ThemeType = Theme | "system";
+
 interface ThemeContextType {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
+  theme: ThemeType;
+  resolvedTheme: Theme;
+  setTheme: (theme: ThemeType) => void;
   toggleTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setThemeState] = useState<ThemeType>("system");
+  const [resolvedTheme, setResolvedTheme] = useState<Theme>("light");
+  
+  // Function to get system theme preference
+  const getSystemTheme = (): Theme => {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  };
+  
+  // Set theme in localStorage and update state
+  const setTheme = (newTheme: ThemeType) => {
+    localStorage.setItem("theme", newTheme);
+    setThemeState(newTheme);
+  };
   
   // Effect to initialize theme from localStorage and handle system preference
   useEffect(() => {
     // Check if theme is stored in localStorage
-    const storedTheme = localStorage.getItem("theme") as Theme | null;
+    const storedTheme = localStorage.getItem("theme") as ThemeType | null;
     
+    // Set initial theme
     if (storedTheme) {
-      // Use the stored theme
-      setTheme(storedTheme);
+      setThemeState(storedTheme);
     } else {
-      // Check for system preference
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      setTheme(prefersDark ? "dark" : "light");
+      setThemeState("system");
     }
     
     // Listen for system preference changes
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem("theme")) {
-        setTheme(e.matches ? "dark" : "light");
+    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+      if (theme === "system") {
+        setResolvedTheme(e.matches ? "dark" : "light");
       }
     };
     
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
+    mediaQuery.addEventListener("change", handleSystemThemeChange);
+    return () => mediaQuery.removeEventListener("change", handleSystemThemeChange);
   }, []);
   
-  // Effect to apply theme class to document and store in localStorage
+  // Effect to resolve theme based on system preference if needed
+  useEffect(() => {
+    if (theme === "system") {
+      setResolvedTheme(getSystemTheme());
+    } else {
+      setResolvedTheme(theme as Theme);
+    }
+  }, [theme]);
+  
+  // Effect to apply theme class to document
   useEffect(() => {
     // Remove previous theme class
     document.documentElement.classList.remove("light", "dark");
     
     // Add current theme class
-    document.documentElement.classList.add(theme);
-    
-    // Store theme preference
-    localStorage.setItem("theme", theme);
+    document.documentElement.classList.add(resolvedTheme);
     
     // Add transition class for smooth color transitions
     document.documentElement.classList.add("theme-transition");
     
-    // Remove transition class after animations complete to prevent transition during other changes
-    const transitionEndHandler = () => {
+    // Remove transition class after animations complete to prevent transition during unrelated changes
+    const timeout = setTimeout(() => {
       document.documentElement.classList.remove("theme-transition");
-    };
+    }, 1000);
     
-    const transitionElements = document.querySelectorAll("*");
-    transitionElements.forEach((element) => {
-      element.addEventListener("transitionend", transitionEndHandler, { once: true });
-    });
-    
-    return () => {
-      transitionElements.forEach((element) => {
-        element.removeEventListener("transitionend", transitionEndHandler);
-      });
-    };
-  }, [theme]);
+    return () => clearTimeout(timeout);
+  }, [resolvedTheme]);
   
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    if (theme === "system") {
+      setTheme(resolvedTheme === "dark" ? "light" : "dark");
+    } else {
+      setTheme(theme === "light" ? "dark" : "light");
+    }
+  };
+  
+  const contextValue: ThemeContextType = {
+    theme,
+    resolvedTheme,
+    setTheme,
+    toggleTheme
   };
   
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+    <ThemeContext.Provider value={contextValue}>
       {children}
     </ThemeContext.Provider>
   );
