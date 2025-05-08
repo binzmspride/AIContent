@@ -21,6 +21,12 @@ import {
   Card,
   CardContent,
 } from "@/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,7 +39,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Copy, Download, ExternalLink, Pencil, AlertCircle } from "lucide-react";
+import { 
+  Copy, 
+  Download, 
+  ExternalLink, 
+  Pencil, 
+  AlertCircle, 
+  KeyRound, 
+  List, 
+  FileText, 
+  PaintBucket, 
+  AlignJustify,
+  Image,
+  Link as LinkIcon
+} from "lucide-react";
 import { GenerateContentRequest, GenerateContentResponse } from "@shared/types";
 import { copyToClipboard, downloadAsFile } from "@/lib/utils";
 import Head from "@/components/head";

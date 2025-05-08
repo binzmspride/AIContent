@@ -416,6 +416,61 @@ const translations: TranslationsType = {
           actions: "Thao tác"
         }
       },
+
+      create: {
+        title: "Tạo nội dung",
+        subtitle: "Tạo bài viết chuẩn SEO với công nghệ AI",
+        tabs: {
+          keywords: "Từ khóa",
+          outline: "Dàn ý",
+          content: "Nội dung",
+          style: "Kiểu thức",
+          format: "Định dạng",
+          media: "Hình ảnh",
+          links: "Liên kết"
+        },
+        keywords: {
+          title: "Từ khóa cho bài viết",
+          description: "Hệ thống sẽ ép các từ khóa này vào phần AI tạo. Đảm bảo các từ khóa có liên quan đến chủ đề của bài viết.",
+          mainKeyword: "Từ khóa chính",
+          mainKeywordPlaceholder: "Nhập từ khóa chính",
+          secondaryKeyword: "Từ khóa phụ",
+          secondaryKeywordPlaceholder: "Nhập từ khóa phụ",
+          relatedKeyword: "Từ khóa liên quan",
+          relatedKeywordPlaceholder: "Nhập từ khóa liên quan",
+          addNew: "Thêm mới"
+        },
+        form: {
+          articleTitle: "Tiêu đề bài viết",
+          contentType: "Loại nội dung",
+          keywords: "Từ khóa",
+          length: "Độ dài",
+          tone: "Giọng điệu",
+          prompt: "Hướng dẫn chi tiết",
+          addHeadings: "Thêm tiêu đề phần",
+          generate: "Tạo nội dung",
+          reset: "Đặt lại",
+          contentTypeOptions: {
+            blog: "Bài Blog",
+            product: "Nội dung sản phẩm",
+            news: "Tin tức",
+            social: "Mạng xã hội"
+          },
+          lengthOptions: {
+            short: "Ngắn (300-500 từ)",
+            medium: "Vừa (500-800 từ)",
+            long: "Dài (800-1500 từ)",
+            extraLong: "Rất dài (1500+ từ)"
+          },
+          toneOptions: {
+            professional: "Chuyên nghiệp",
+            conversational: "Trò chuyện",
+            informative: "Thông tin",
+            persuasive: "Thuyết phục",
+            humorous: "Hài hước"
+          }
+        }
+      },
       
       connectionTypes: {
         wordpress: {
@@ -796,6 +851,61 @@ const translations: TranslationsType = {
           status: "Status",
           keywords: "Keywords",
           actions: "Actions"
+        }
+      },
+      
+      create: {
+        title: "Create Content",
+        subtitle: "Create SEO-optimized content with AI",
+        tabs: {
+          keywords: "Keywords",
+          outline: "Outline",
+          content: "Content",
+          style: "Style",
+          format: "Format",
+          media: "Media",
+          links: "Links"
+        },
+        keywords: {
+          title: "Keywords for article",
+          description: "The system will incorporate these keywords in the AI generation. Make sure the keywords are related to the topic of the article.",
+          mainKeyword: "Main keyword",
+          mainKeywordPlaceholder: "Enter main keyword",
+          secondaryKeyword: "Secondary keyword",
+          secondaryKeywordPlaceholder: "Enter secondary keyword",
+          relatedKeyword: "Related keyword",
+          relatedKeywordPlaceholder: "Enter related keyword",
+          addNew: "Add new"
+        },
+        form: {
+          articleTitle: "Article Title",
+          contentType: "Content Type",
+          keywords: "Keywords",
+          length: "Length",
+          tone: "Tone",
+          prompt: "Detailed Instructions",
+          addHeadings: "Add Section Headings",
+          generate: "Generate Content",
+          reset: "Reset",
+          contentTypeOptions: {
+            blog: "Blog Post",
+            product: "Product Content",
+            news: "News Article",
+            social: "Social Media"
+          },
+          lengthOptions: {
+            short: "Short (300-500 words)",
+            medium: "Medium (500-800 words)",
+            long: "Long (800-1500 words)",
+            extraLong: "Extra Long (1500+ words)"
+          },
+          toneOptions: {
+            professional: "Professional",
+            conversational: "Conversational",
+            informative: "Informative",
+            persuasive: "Persuasive",
+            humorous: "Humorous"
+          }
         }
       },
       
