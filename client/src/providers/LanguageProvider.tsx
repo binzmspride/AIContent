@@ -777,6 +777,28 @@ const translations: TranslationsType = {
       apiKeys: "API Keys",
       logout: "Logout",
       
+      articles: {
+        search: "Search articles",
+        filter: "Filter articles",
+        newArticle: "Create new article",
+        statuses: {
+          all: "All statuses",
+          draft: "Draft",
+          published: "Published",
+          wordpress: "WordPress",
+          facebook: "Facebook",
+          tiktok: "TikTok",
+          twitter: "Twitter"
+        },
+        columns: {
+          title: "Title",
+          createdAt: "Created At",
+          status: "Status",
+          keywords: "Keywords",
+          actions: "Actions"
+        }
+      },
+      
       navigationItems: {
         dashboard: "Dashboard",
         createContent: "Create Content",
