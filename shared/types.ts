@@ -14,6 +14,7 @@ export interface GenerateContentRequest {
   tone: 'professional' | 'conversational' | 'informative' | 'persuasive' | 'humorous';
   prompt: string;
   addHeadings: boolean;
+  relatedKeywords?: string; // Từ khóa liên quan, dạng chuỗi phân tách bởi dấu phẩy
 }
 
 export interface ContentGenerationMetrics {

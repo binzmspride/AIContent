@@ -72,6 +72,7 @@ const formSchema = z.object({
     message: "Content description must be at least 10 characters.",
   }),
   addHeadings: z.boolean().default(true),
+  relatedKeywords: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -92,6 +93,7 @@ export default function CreateContent() {
       tone: "conversational",
       prompt: "",
       addHeadings: true,
+      relatedKeywords: "",
     },
   });
 
@@ -130,7 +132,14 @@ export default function CreateContent() {
       return;
     }
 
-    generateContentMutation.mutate(data);
+    // Đặt relatedKeywords vào request
+    const requestData: GenerateContentRequest = {
+      ...data,
+      // Đảm bảo relatedKeywords là chuỗi rỗng nếu không có giá trị
+      relatedKeywords: data.relatedKeywords || ""
+    };
+
+    generateContentMutation.mutate(requestData);
   };
 
   const handleCopyContent = () => {
@@ -407,23 +416,24 @@ export default function CreateContent() {
                             <Label htmlFor="relatedKeyword" className="text-gray-700 dark:text-gray-200 mb-1 block">
                               {t("dashboard.create.keywords.relatedKeyword")}
                               <span className="ml-1 text-sm text-gray-500 dark:text-gray-400">
-                                (0/3)
+                                ({(form.watch("relatedKeywords") || "").split(",").filter(Boolean).length}/3)
                               </span>
                             </Label>
                             
                             <div className="flex flex-wrap gap-2 mb-2">
-                              {/* Hiển thị các từ khóa liên quan dưới dạng badge */}
-                              {Array(0).fill(0).map((_, index) => (
+                              {(form.watch("relatedKeywords") || "").split(",").filter(Boolean).map((keyword, index) => (
                                 <Badge
                                   key={index}
                                   className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-sm font-medium text-emerald-700 dark:bg-emerald-900 dark:text-emerald-100"
                                 >
-                                  <span className="mr-1">Từ khóa liên quan mẫu</span>
+                                  <span className="mr-1">{keyword.trim()}</span>
                                   <button
                                     type="button"
                                     className="flex-shrink-0 ml-1 h-4 w-4 rounded-full inline-flex items-center justify-center text-emerald-600 dark:text-emerald-100 hover:bg-emerald-200 hover:text-emerald-800 dark:hover:bg-emerald-800 dark:hover:text-white focus:outline-none"
                                     onClick={() => {
-                                      // Xóa từ khóa liên quan
+                                      const currentRelatedKeywords = (form.watch("relatedKeywords") || "").split(",").filter(Boolean);
+                                      currentRelatedKeywords.splice(index, 1);
+                                      form.setValue("relatedKeywords", currentRelatedKeywords.join(","));
                                     }}
                                   >
                                     <span className="sr-only">Remove keyword</span>
@@ -438,15 +448,19 @@ export default function CreateContent() {
                                 id="relatedKeyword"
                                 placeholder={t("dashboard.create.keywords.relatedKeywordPlaceholder")}
                                 className="flex-1"
-                                disabled={false}
+                                disabled={(form.watch("relatedKeywords") || "").split(",").filter(Boolean).length >= 3}
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') {
                                     e.preventDefault();
                                     const input = e.target as HTMLInputElement;
                                     const keyword = input.value.trim();
                                     if (keyword) {
-                                      // Thêm từ khóa liên quan
-                                      input.value = "";
+                                      const currentRelatedKeywords = (form.watch("relatedKeywords") || "").split(",").filter(Boolean);
+                                      if (currentRelatedKeywords.length < 3) {
+                                        currentRelatedKeywords.push(keyword);
+                                        form.setValue("relatedKeywords", currentRelatedKeywords.join(","));
+                                        input.value = "";
+                                      }
                                     }
                                   }
                                 }}
@@ -456,13 +470,17 @@ export default function CreateContent() {
                                 variant="outline" 
                                 size="sm" 
                                 className="ml-2 bg-blue-500 text-white hover:bg-blue-600"
-                                disabled={false}
+                                disabled={(form.watch("relatedKeywords") || "").split(",").filter(Boolean).length >= 3}
                                 onClick={() => {
                                   const input = document.getElementById("relatedKeyword") as HTMLInputElement;
                                   const keyword = input.value.trim();
                                   if (keyword) {
-                                    // Thêm từ khóa liên quan
-                                    input.value = "";
+                                    const currentRelatedKeywords = (form.watch("relatedKeywords") || "").split(",").filter(Boolean);
+                                    if (currentRelatedKeywords.length < 3) {
+                                      currentRelatedKeywords.push(keyword);
+                                      form.setValue("relatedKeywords", currentRelatedKeywords.join(","));
+                                      input.value = "";
+                                    }
                                   }
                                 }}
                               >
