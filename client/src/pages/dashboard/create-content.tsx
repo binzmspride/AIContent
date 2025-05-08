@@ -367,6 +367,12 @@ export default function CreateContent() {
                                       type="button"
                                       className="flex-shrink-0 ml-1 h-4 w-4 rounded-full inline-flex items-center justify-center text-cyan-600 dark:text-cyan-100 hover:bg-cyan-200 hover:text-cyan-800 dark:hover:bg-cyan-800 dark:hover:text-white focus:outline-none"
                                       onClick={() => {
+                                        // Ngăn xóa từ khóa chính (vị trí 0)
+                                        if (index === 0) {
+                                          // Hiển thị thông báo hoặc không làm gì
+                                          console.log("Không thể xóa từ khóa chính");
+                                          return;
+                                        }
                                         const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
                                         currentKeywords.splice(index, 1);
                                         form.setValue("keywords", currentKeywords.join(","));
@@ -392,8 +398,15 @@ export default function CreateContent() {
                                     const keyword = input.value.trim();
                                     if (keyword) {
                                       const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
-                                      currentKeywords.push(keyword);
-                                      form.setValue("keywords", currentKeywords.join(","));
+                                      // Đảm bảo từ khóa chính vẫn ở vị trí đầu tiên
+                                      const mainKeyword = currentKeywords.length > 0 ? currentKeywords[0] : "";
+                                      // Lấy các từ khóa phụ hiện tại
+                                      const secondaryKeywords = currentKeywords.length > 1 ? currentKeywords.slice(1) : [];
+                                      // Thêm từ khóa mới vào mảng từ khóa phụ
+                                      secondaryKeywords.push(keyword);
+                                      // Gộp lại với từ khóa chính
+                                      const newKeywords = [mainKeyword, ...secondaryKeywords].filter(Boolean);
+                                      form.setValue("keywords", newKeywords.join(","));
                                       input.value = "";
                                     }
                                   }
@@ -443,8 +456,15 @@ export default function CreateContent() {
                                     const keyword = input.value.trim();
                                     if (keyword) {
                                       const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
-                                      currentKeywords.push(keyword);
-                                      form.setValue("keywords", currentKeywords.join(","));
+                                      // Đảm bảo từ khóa chính vẫn ở vị trí đầu tiên
+                                      const mainKeyword = currentKeywords.length > 0 ? currentKeywords[0] : "";
+                                      // Lấy các từ khóa phụ hiện tại
+                                      const secondaryKeywords = currentKeywords.length > 1 ? currentKeywords.slice(1) : [];
+                                      // Thêm từ khóa mới vào mảng từ khóa phụ
+                                      secondaryKeywords.push(keyword);
+                                      // Gộp lại với từ khóa chính
+                                      const newKeywords = [mainKeyword, ...secondaryKeywords].filter(Boolean);
+                                      form.setValue("keywords", newKeywords.join(","));
                                       input.value = "";
                                     }
                                   }
