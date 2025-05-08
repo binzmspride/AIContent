@@ -84,12 +84,14 @@ type ArticleStatus = "all" | "draft" | "published" | "deleted";
 type SortField = "createdAt" | "updatedAt" | "title";
 type SortOrder = "asc" | "desc";
 
-interface ExtendedArticle extends Article {
+interface ExtendedArticle extends Omit<Article, 'createdAt' | 'updatedAt'> {
   author: {
     id: number;
     username: string;
     fullName?: string;
   };
+  createdAt: string;
+  updatedAt: string;
 }
 
 export default function AdminArticles() {
@@ -287,9 +289,9 @@ export default function AdminArticles() {
         if (sortField === "title") {
           compareResult = a.title.localeCompare(b.title);
         } else if (sortField === "createdAt") {
-          compareResult = new Date(a.createdAt as string).getTime() - new Date(b.createdAt as string).getTime();
+          compareResult = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
         } else if (sortField === "updatedAt") {
-          compareResult = new Date(a.updatedAt as string).getTime() - new Date(b.updatedAt as string).getTime();
+          compareResult = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
         }
         
         return sortOrder === "asc" ? compareResult : -compareResult;
@@ -524,8 +526,8 @@ export default function AdminArticles() {
                       <TableCell>
                         {getStatusBadge(article.status)}
                       </TableCell>
-                      <TableCell>{formatDate(article.createdAt)}</TableCell>
-                      <TableCell>{formatDate(article.updatedAt)}</TableCell>
+                      <TableCell>{formatDate(article.createdAt as string)}</TableCell>
+                      <TableCell>{formatDate(article.updatedAt as string)}</TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -674,11 +676,11 @@ export default function AdminArticles() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("admin.articlesManagement.createdAt") || "Ngày tạo"}</h3>
-                    <p>{formatDate(selectedArticle.createdAt)}</p>
+                    <p>{formatDate(selectedArticle.createdAt as string)}</p>
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("admin.articlesManagement.updatedAt") || "Cập nhật lần cuối"}</h3>
-                    <p>{formatDate(selectedArticle.updatedAt)}</p>
+                    <p>{formatDate(selectedArticle.updatedAt as string)}</p>
                   </div>
                 </div>
               </div>
@@ -711,7 +713,7 @@ export default function AdminArticles() {
                 <p><strong>{t("common.title") || "Tiêu đề"}:</strong> {selectedArticle.title}</p>
                 <p><strong>{t("admin.articlesManagement.author") || "Tác giả"}:</strong> {selectedArticle.author.fullName || selectedArticle.author.username}</p>
                 <p><strong>{t("common.status") || "Trạng thái"}:</strong> {selectedArticle.status}</p>
-                <p><strong>{t("admin.articlesManagement.createdAt") || "Ngày tạo"}:</strong> {formatDate(selectedArticle.createdAt)}</p>
+                <p><strong>{t("admin.articlesManagement.createdAt") || "Ngày tạo"}:</strong> {formatDate(selectedArticle.createdAt as string)}</p>
               </div>
             )}
             
