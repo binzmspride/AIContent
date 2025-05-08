@@ -79,11 +79,21 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+// Định nghĩa kiểu dữ liệu cho mục dàn ý
+type OutlineItem = {
+  id: string;
+  level: 'h2' | 'h3' | 'h4';
+  text: string;
+};
+
 export default function CreateContent() {
   const { t } = useLanguage();
   const { user } = useAuth();
   const { toast } = useToast();
   const [generatedContent, setGeneratedContent] = useState<GenerateContentResponse | null>(null);
+  const [outlineItems, setOutlineItems] = useState<OutlineItem[]>([]);
+  const [currentHeadingText, setCurrentHeadingText] = useState("");
+  const [currentHeadingLevel, setCurrentHeadingLevel] = useState<'h2' | 'h3' | 'h4'>('h2');
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -202,6 +212,51 @@ export default function CreateContent() {
     const keywords = form.watch("keywords").split(",").filter(Boolean);
     return keywords.length > 1 ? keywords.slice(1).length : 0;
   };
+  
+  // Hàm thêm mục dàn ý mới
+  const addOutlineItem = useCallback((level: 'h2' | 'h3' | 'h4' = 'h2', text: string = '') => {
+    const newItem: OutlineItem = {
+      id: Date.now().toString(),
+      level,
+      text
+    };
+    setOutlineItems(prev => [...prev, newItem]);
+    
+    // Cập nhật trường prompt trong form để phản ánh dàn ý
+    updatePromptFromOutline([...outlineItems, newItem]);
+  }, [outlineItems]);
+  
+  // Hàm xóa mục dàn ý
+  const removeOutlineItem = useCallback((id: string) => {
+    setOutlineItems(prev => {
+      const updated = prev.filter(item => item.id !== id);
+      updatePromptFromOutline(updated);
+      return updated;
+    });
+  }, []);
+  
+  // Hàm cập nhật mục dàn ý
+  const updateOutlineItem = useCallback((id: string, data: Partial<OutlineItem>) => {
+    setOutlineItems(prev => {
+      const updated = prev.map(item => 
+        item.id === id ? { ...item, ...data } : item
+      );
+      updatePromptFromOutline(updated);
+      return updated;
+    });
+  }, []);
+  
+  // Hàm cập nhật trường prompt từ các mục dàn ý
+  const updatePromptFromOutline = useCallback((items: OutlineItem[]) => {
+    if (items.length === 0) return;
+    
+    const outlineText = items.map(item => {
+      const prefix = item.level === 'h2' ? '# ' : item.level === 'h3' ? '## ' : '### ';
+      return `${prefix}${item.text}`;
+    }).join('\n');
+    
+    form.setValue('prompt', outlineText);
+  }, [form]);
 
   return (
     <>
@@ -539,35 +594,97 @@ export default function CreateContent() {
                         </div>
                         
                         <div className="space-y-4">
-                          <div className="flex items-start space-x-2 mb-3">
-                            <div className="flex-shrink-0">
-                              <Select defaultValue="h2">
-                                <SelectTrigger className="w-20 h-10">
-                                  <SelectValue placeholder="H2" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="h2">H2</SelectItem>
-                                  <SelectItem value="h3">H3</SelectItem>
-                                  <SelectItem value="h4">H4</SelectItem>
-                                </SelectContent>
-                              </Select>
+                          {outlineItems.length === 0 ? (
+                            <div className="text-center py-6 text-sm text-gray-500 dark:text-gray-400">
+                              {t("dashboard.create.outline.empty")}
                             </div>
-                            <div className="flex-grow">
-                              <Input 
-                                placeholder={t("dashboard.create.outline.headingPlaceholder")} 
-                                className="h-10"
-                              />
+                          ) : (
+                            <div className="space-y-2">
+                              {outlineItems.map((item) => (
+                                <div key={item.id} className="flex items-start space-x-2">
+                                  <div className="flex-shrink-0">
+                                    <Select
+                                      value={item.level}
+                                      onValueChange={(value: string) => 
+                                        updateOutlineItem(item.id, { level: value as 'h2' | 'h3' | 'h4' })
+                                      }
+                                    >
+                                      <SelectTrigger className="w-20 h-10">
+                                        <SelectValue placeholder="H2" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="h2">H2</SelectItem>
+                                        <SelectItem value="h3">H3</SelectItem>
+                                        <SelectItem value="h4">H4</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="flex-grow">
+                                    <Input 
+                                      value={item.text}
+                                      onChange={(e) => updateOutlineItem(item.id, { text: e.target.value })}
+                                      placeholder={t("dashboard.create.outline.headingPlaceholder")} 
+                                      className="h-10"
+                                    />
+                                  </div>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="text-red-500"
+                                    onClick={() => removeOutlineItem(item.id)}
+                                  >
+                                    <span className="sr-only">Delete</span>
+                                    <Trash2 className="h-5 w-5" />
+                                  </Button>
+                                </div>
+                              ))}
                             </div>
-                            <Button variant="ghost" size="icon" className="text-red-500">
-                              <span className="sr-only">Delete</span>
-                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                          )}
+                          
+                          <div className="flex flex-col space-y-2">
+                            <div className="flex items-start space-x-2">
+                              <div className="flex-shrink-0">
+                                <Select
+                                  value="h2"
+                                  onValueChange={(value) => 
+                                    setInputValue(prev => ({ ...prev, level: value as 'h2' | 'h3' | 'h4' }))
+                                  }
+                                >
+                                  <SelectTrigger className="w-20 h-10">
+                                    <SelectValue placeholder="H2" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="h2">H2</SelectItem>
+                                    <SelectItem value="h3">H3</SelectItem>
+                                    <SelectItem value="h4">H4</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="flex-grow">
+                                <Input 
+                                  value={typeof inputValue === 'string' ? inputValue : ''}
+                                  onChange={(e) => setInputValue(e.target.value)}
+                                  placeholder={t("dashboard.create.outline.headingPlaceholder")} 
+                                  className="h-10"
+                                />
+                              </div>
+                            </div>
+                            
+                            <Button 
+                              type="button"
+                              variant="outline" 
+                              className="flex items-center text-violet-600 border-violet-200 bg-violet-50 hover:bg-violet-100 dark:border-violet-800 dark:bg-violet-900/50 dark:hover:bg-violet-900 dark:text-violet-300 w-full justify-center"
+                              onClick={() => {
+                                if (typeof inputValue === 'string' && inputValue.trim()) {
+                                  addOutlineItem('h2', inputValue.trim());
+                                  setInputValue('');
+                                }
+                              }}
+                            >
+                              <Plus className="h-4 w-4 mr-2" />
+                              {t("dashboard.create.outline.addStructure")}
                             </Button>
                           </div>
-                          
-                          <Button variant="outline" className="flex items-center text-violet-600 border-violet-200 bg-violet-50 hover:bg-violet-100 dark:border-violet-800 dark:bg-violet-900/50 dark:hover:bg-violet-900 dark:text-violet-300 w-full justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
-                            {t("dashboard.create.outline.addStructure")}
-                          </Button>
                         </div>
                       </TabsContent>
                       
