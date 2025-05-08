@@ -667,7 +667,7 @@ export default function AdminUsers() {
                 </div>
                 
                 <div className="border-t pt-4 mt-4">
-                  <h3 className="text-base font-medium mb-2">{t("common.admin.users.activity") || "Hoạt động gần đây"}</h3>
+                  <h3 className="text-base font-medium mb-2">{t("admin.usersManagement.activity") || "Hoạt động gần đây"}</h3>
                   <div className="text-sm text-muted-foreground">
                     <p>- Đăng nhập lúc {formatDate(new Date().toISOString())}</p>
                     <p>- Tạo bài viết lúc {formatDate(new Date().toISOString())}</p>
@@ -690,7 +690,7 @@ export default function AdminUsers() {
                 if (selectedUser) handleEditClick(selectedUser);
               }}>
                 <Pencil className="mr-2 h-4 w-4" />
-                {t("common.admin.common.edit") || "Chỉnh sửa"}
+                {t("common.edit") || "Chỉnh sửa"}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -700,9 +700,9 @@ export default function AdminUsers() {
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent className="sm:max-w-[550px]">
             <DialogHeader>
-              <DialogTitle>{t("common.admin.users.editUser") || "Chỉnh sửa người dùng"}</DialogTitle>
+              <DialogTitle>{t("admin.usersManagement.editUser") || "Chỉnh sửa người dùng"}</DialogTitle>
               <DialogDescription>
-                {t("common.admin.users.editUserDescription") || "Cập nhật thông tin người dùng"}
+                {t("admin.usersManagement.editUserDescription") || "Cập nhật thông tin người dùng"}
               </DialogDescription>
             </DialogHeader>
             
@@ -713,7 +713,7 @@ export default function AdminUsers() {
                   name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("common.admin.users.username") || "Tên đăng nhập"}</FormLabel>
+                      <FormLabel>{t("admin.usersManagement.username") || "Tên đăng nhập"}</FormLabel>
                       <FormControl>
                         <Input placeholder="johndoe" {...field} />
                       </FormControl>
@@ -727,7 +727,7 @@ export default function AdminUsers() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("common.admin.users.email") || "Email"}</FormLabel>
+                      <FormLabel>{t("admin.usersManagement.email") || "Email"}</FormLabel>
                       <FormControl>
                         <Input placeholder="john.doe@example.com" {...field} />
                       </FormControl>
@@ -741,7 +741,7 @@ export default function AdminUsers() {
                   name="fullName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("common.admin.users.fullName") || "Họ và tên"}</FormLabel>
+                      <FormLabel>{t("admin.usersManagement.fullName") || "Họ và tên"}</FormLabel>
                       <FormControl>
                         <Input placeholder="John Doe" {...field} value={field.value || ""} />
                       </FormControl>
@@ -756,19 +756,19 @@ export default function AdminUsers() {
                     name="role"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("common.admin.users.role") || "Vai trò"}</FormLabel>
+                        <FormLabel>{t("admin.usersManagement.role") || "Vai trò"}</FormLabel>
                         <Select 
                           onValueChange={field.onChange} 
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={t("common.admin.users.selectRole") || "Chọn vai trò"} />
+                              <SelectValue placeholder={t("admin.usersManagement.selectRole") || "Chọn vai trò"} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="user">{t("common.admin.users.roleUser") || "Người dùng"}</SelectItem>
-                            <SelectItem value="admin">{t("common.admin.users.roleAdmin") || "Quản trị viên"}</SelectItem>
+                            <SelectItem value="user">{t("admin.usersManagement.roleUser") || "Người dùng"}</SelectItem>
+                            <SelectItem value="admin">{t("admin.usersManagement.roleAdmin") || "Quản trị viên"}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -781,20 +781,20 @@ export default function AdminUsers() {
                     name="status"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("common.admin.users.status") || "Trạng thái"}</FormLabel>
+                        <FormLabel>{t("common.status") || "Trạng thái"}</FormLabel>
                         <Select 
                           onValueChange={field.onChange} 
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={t("common.admin.users.selectStatus") || "Chọn trạng thái"} />
+                              <SelectValue placeholder={t("admin.usersManagement.selectStatus") || "Chọn trạng thái"} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="active">{t("common.admin.users.statusActive") || "Đang hoạt động"}</SelectItem>
-                            <SelectItem value="inactive">{t("common.admin.users.statusInactive") || "Không hoạt động"}</SelectItem>
-                            <SelectItem value="suspended">{t("common.admin.users.statusSuspended") || "Đã bị khóa"}</SelectItem>
+                            <SelectItem value="active">{t("admin.usersManagement.statusActive") || "Đang hoạt động"}</SelectItem>
+                            <SelectItem value="inactive">{t("admin.usersManagement.statusInactive") || "Không hoạt động"}</SelectItem>
+                            <SelectItem value="suspended">{t("admin.usersManagement.statusSuspended") || "Đã bị khóa"}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -826,7 +826,7 @@ export default function AdminUsers() {
                     className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100"
                   >
                     <Ban className="mr-2 h-4 w-4" />
-                    {t("common.admin.users.suspend") || "Khóa tài khoản"}
+                    {t("admin.usersManagement.suspend") || "Khóa tài khoản"}
                   </Button>
                   <Button 
                     type="button" 
@@ -853,22 +853,22 @@ export default function AdminUsers() {
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DialogContent className="sm:max-w-[450px]">
             <DialogHeader>
-              <DialogTitle>{t("common.admin.users.deleteUser") || "Xóa người dùng"}</DialogTitle>
+              <DialogTitle>{t("admin.usersManagement.deleteUser") || "Xóa người dùng"}</DialogTitle>
               <DialogDescription>
-                {t("common.admin.users.deleteUserDescription") || "Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể hoàn tác."}
+                {t("admin.usersManagement.deleteUserDescription") || "Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể hoàn tác."}
               </DialogDescription>
             </DialogHeader>
             
             {selectedUser && (
               <div className="py-4">
-                <p><strong>{t("common.admin.users.username") || "Tên đăng nhập"}:</strong> {selectedUser.username}</p>
-                <p><strong>{t("common.admin.users.email") || "Email"}:</strong> {selectedUser.email}</p>
+                <p><strong>{t("admin.usersManagement.username") || "Tên đăng nhập"}:</strong> {selectedUser.username}</p>
+                <p><strong>{t("admin.usersManagement.email") || "Email"}:</strong> {selectedUser.email}</p>
                 {selectedUser.fullName && (
-                  <p><strong>{t("common.admin.users.fullName") || "Họ và tên"}:</strong> {selectedUser.fullName}</p>
+                  <p><strong>{t("admin.usersManagement.fullName") || "Họ và tên"}:</strong> {selectedUser.fullName}</p>
                 )}
-                <p><strong>{t("common.admin.users.role") || "Vai trò"}:</strong> {selectedUser.role === "admin" 
-                  ? (t("common.admin.users.roleAdmin") || "Quản trị viên") 
-                  : (t("common.admin.users.roleUser") || "Người dùng")}
+                <p><strong>{t("admin.usersManagement.role") || "Vai trò"}:</strong> {selectedUser.role === "admin" 
+                  ? (t("admin.usersManagement.roleAdmin") || "Quản trị viên") 
+                  : (t("admin.usersManagement.roleUser") || "Người dùng")}
                 </p>
               </div>
             )}
