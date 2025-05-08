@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { DashboardLayout } from "@/components/dashboard/Layout";
 import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -50,7 +51,8 @@ import {
   PaintBucket, 
   AlignJustify,
   Image,
-  Link as LinkIcon
+  Link as LinkIcon,
+  X
 } from "lucide-react";
 import { GenerateContentRequest, GenerateContentResponse } from "@shared/types";
 import { copyToClipboard, downloadAsFile } from "@/lib/utils";
@@ -277,28 +279,125 @@ export default function CreateContent() {
                             )}
                           />
                           
+                          {/* Từ khóa chính */}
                           <div>
-                            <Label htmlFor="mainKeyword" className="text-gray-700 dark:text-gray-200">{t("dashboard.create.keywords.mainKeyword")} <span className="text-red-500">*</span></Label>
+                            <Label htmlFor="mainKeyword" className="text-gray-700 dark:text-gray-200 mb-1 block">{t("dashboard.create.keywords.mainKeyword")} <span className="text-red-500">*</span></Label>
+                            
+                            {form.watch("keywords").split(",")[0] && (
+                              <div className="flex flex-wrap gap-2 mb-2">
+                                <Badge
+                                  className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-sm font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-100"
+                                >
+                                  <span className="mr-1">{form.watch("keywords").split(",")[0]}</span>
+                                  <button
+                                    type="button"
+                                    className="flex-shrink-0 ml-1 h-4 w-4 rounded-full inline-flex items-center justify-center text-blue-600 dark:text-blue-100 hover:bg-blue-200 hover:text-blue-800 dark:hover:bg-blue-800 dark:hover:text-white focus:outline-none"
+                                    onClick={() => {
+                                      const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
+                                      const secondaryKeywords = currentKeywords.slice(1);
+                                      form.setValue("keywords", secondaryKeywords.join(","));
+                                    }}
+                                  >
+                                    <span className="sr-only">Remove main keyword</span>
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </Badge>
+                              </div>
+                            )}
+                            
                             <Input 
                               id="mainKeyword"
                               placeholder={t("dashboard.create.keywords.mainKeywordPlaceholder")}
                               className="mt-1"
-                              value={form.watch("keywords").split(",")[0] || ""}
+                              value={form.watch("keywords").split(",")[0] ? "" : form.watch("keywords").split(",")[0] || ""}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  const input = e.target as HTMLInputElement;
+                                  const keyword = input.value.trim();
+                                  if (keyword) {
+                                    const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
+                                    if (currentKeywords.length === 0) {
+                                      currentKeywords.push(keyword);
+                                    } else {
+                                      currentKeywords[0] = keyword;
+                                    }
+                                    form.setValue("keywords", currentKeywords.join(","));
+                                    input.value = "";
+                                  }
+                                }
+                              }}
                               onChange={(e) => {
-                                const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
-                                currentKeywords[0] = e.target.value;
-                                form.setValue("keywords", currentKeywords.join(","));
+                                if (!form.watch("keywords").split(",")[0]) {
+                                  const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
+                                  currentKeywords[0] = e.target.value;
+                                  form.setValue("keywords", currentKeywords.join(","));
+                                }
+                              }}
+                              onBlur={(e) => {
+                                const keyword = e.target.value.trim();
+                                if (keyword && !form.watch("keywords").split(",")[0]) {
+                                  const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
+                                  if (currentKeywords.length === 0) {
+                                    currentKeywords.push(keyword);
+                                  } else {
+                                    currentKeywords[0] = keyword;
+                                  }
+                                  form.setValue("keywords", currentKeywords.join(","));
+                                  e.target.value = "";
+                                }
                               }}
                             />
                           </div>
                           
+                          {/* Từ khóa phụ */}
                           <div>
-                            <Label htmlFor="secondaryKeyword" className="text-gray-700 dark:text-gray-200">{t("dashboard.create.keywords.secondaryKeyword")}</Label>
+                            <Label htmlFor="secondaryKeyword" className="text-gray-700 dark:text-gray-200 mb-1 block">{t("dashboard.create.keywords.secondaryKeyword")}</Label>
+                            
+                            <div className="flex flex-wrap gap-2 mb-2">
+                              {form.watch("keywords").split(",").filter(Boolean).map((keyword, index) => {
+                                if (index === 0) return null; // Skip main keyword
+                                return (
+                                  <Badge
+                                    key={index}
+                                    className="inline-flex items-center rounded-full bg-cyan-50 px-2.5 py-1 text-sm font-medium text-cyan-700 dark:bg-cyan-900 dark:text-cyan-100"
+                                  >
+                                    <span className="mr-1">{keyword.trim()}</span>
+                                    <button
+                                      type="button"
+                                      className="flex-shrink-0 ml-1 h-4 w-4 rounded-full inline-flex items-center justify-center text-cyan-600 dark:text-cyan-100 hover:bg-cyan-200 hover:text-cyan-800 dark:hover:bg-cyan-800 dark:hover:text-white focus:outline-none"
+                                      onClick={() => {
+                                        const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
+                                        currentKeywords.splice(index, 1);
+                                        form.setValue("keywords", currentKeywords.join(","));
+                                      }}
+                                    >
+                                      <span className="sr-only">Remove keyword</span>
+                                      <X className="h-3 w-3" />
+                                    </button>
+                                  </Badge>
+                                );
+                              })}
+                            </div>
+                            
                             <div className="flex mt-1">
                               <Input 
                                 id="secondaryKeyword"
                                 placeholder={t("dashboard.create.keywords.secondaryKeywordPlaceholder")}
                                 className="flex-1"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    const input = e.target as HTMLInputElement;
+                                    const keyword = input.value.trim();
+                                    if (keyword) {
+                                      const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
+                                      currentKeywords.push(keyword);
+                                      form.setValue("keywords", currentKeywords.join(","));
+                                      input.value = "";
+                                    }
+                                  }
+                                }}
                               />
                               <Button 
                                 type="button" 
@@ -306,12 +405,13 @@ export default function CreateContent() {
                                 size="sm" 
                                 className="ml-2 bg-blue-500 text-white hover:bg-blue-600"
                                 onClick={() => {
-                                  const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
-                                  const secondaryKeyword = (document.getElementById("secondaryKeyword") as HTMLInputElement).value;
-                                  if (secondaryKeyword) {
-                                    currentKeywords.push(secondaryKeyword);
+                                  const input = document.getElementById("secondaryKeyword") as HTMLInputElement;
+                                  const keyword = input.value.trim();
+                                  if (keyword) {
+                                    const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
+                                    currentKeywords.push(keyword);
                                     form.setValue("keywords", currentKeywords.join(","));
-                                    (document.getElementById("secondaryKeyword") as HTMLInputElement).value = "";
+                                    input.value = "";
                                   }
                                 }}
                               >
@@ -320,13 +420,28 @@ export default function CreateContent() {
                             </div>
                           </div>
                           
+                          {/* Từ khóa liên quan */}
                           <div>
-                            <Label htmlFor="relatedKeyword" className="text-gray-700 dark:text-gray-200">{t("dashboard.create.keywords.relatedKeyword")}</Label>
+                            <Label htmlFor="relatedKeyword" className="text-gray-700 dark:text-gray-200 mb-1 block">{t("dashboard.create.keywords.relatedKeyword")}</Label>
+                            
                             <div className="flex mt-1">
                               <Input 
                                 id="relatedKeyword"
                                 placeholder={t("dashboard.create.keywords.relatedKeywordPlaceholder")}
                                 className="flex-1"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    const input = e.target as HTMLInputElement;
+                                    const keyword = input.value.trim();
+                                    if (keyword) {
+                                      const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
+                                      currentKeywords.push(keyword);
+                                      form.setValue("keywords", currentKeywords.join(","));
+                                      input.value = "";
+                                    }
+                                  }
+                                }}
                               />
                               <Button 
                                 type="button" 
@@ -334,12 +449,13 @@ export default function CreateContent() {
                                 size="sm" 
                                 className="ml-2 bg-blue-500 text-white hover:bg-blue-600"
                                 onClick={() => {
-                                  const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
-                                  const relatedKeyword = (document.getElementById("relatedKeyword") as HTMLInputElement).value;
-                                  if (relatedKeyword) {
-                                    currentKeywords.push(relatedKeyword);
+                                  const input = document.getElementById("relatedKeyword") as HTMLInputElement;
+                                  const keyword = input.value.trim();
+                                  if (keyword) {
+                                    const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
+                                    currentKeywords.push(keyword);
                                     form.setValue("keywords", currentKeywords.join(","));
-                                    (document.getElementById("relatedKeyword") as HTMLInputElement).value = "";
+                                    input.value = "";
                                   }
                                 }}
                               >
