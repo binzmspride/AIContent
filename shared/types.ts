@@ -11,10 +11,14 @@ export interface GenerateContentRequest {
   contentType: 'blog' | 'product' | 'news' | 'social';
   keywords: string;
   length: 'short' | 'medium' | 'long' | 'extra_long';
-  tone: 'professional' | 'conversational' | 'informative' | 'persuasive' | 'humorous';
+  tone: 'professional' | 'conversational' | 'informative' | 'persuasive' | 'humorous' | 'neutral';
   prompt: string;
   addHeadings: boolean;
   relatedKeywords?: string; // Từ khóa liên quan, dạng chuỗi phân tách bởi dấu phẩy
+  language?: 'vietnamese' | 'english';
+  country?: 'vietnam' | 'us' | 'global';
+  perspective?: 'auto' | 'first' | 'second' | 'third';
+  complexity?: 'auto' | 'basic' | 'intermediate' | 'advanced';
 }
 
 export interface ContentGenerationMetrics {

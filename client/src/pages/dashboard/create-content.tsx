@@ -110,6 +110,10 @@ export default function CreateContent() {
       prompt: "",
       addHeadings: true,
       relatedKeywords: "",
+      language: "vietnamese",
+      country: "vietnam",
+      perspective: "auto",
+      complexity: "auto",
     },
   });
 
@@ -698,7 +702,7 @@ export default function CreateContent() {
                       
                       <TabsContent value="content" className="mt-0 border rounded-lg p-4">
                         <div className="flex items-start">
-                          <FileTextIcon className="h-6 w-6 text-blue-500 mr-2 flex-shrink-0 mt-1" />
+                          <FileText className="h-6 w-6 text-blue-500 mr-2 flex-shrink-0 mt-1" />
                           <div>
                             <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.content.title")}</h3>
                             <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.content.description")}</p>
@@ -711,18 +715,28 @@ export default function CreateContent() {
                             <Label htmlFor="language" className="block text-sm font-medium">
                               {t("dashboard.create.content.language")}
                             </Label>
-                            <Select
-                              value={form.watch('language') || 'vietnamese'}
-                              onValueChange={(value) => form.setValue('language', value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder={t("dashboard.create.content.selectLanguage")} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="vietnamese">{t("dashboard.create.content.languages.vietnamese")}</SelectItem>
-                                <SelectItem value="english">{t("dashboard.create.content.languages.english")}</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <FormField
+                              control={form.control}
+                              name="language"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <Select
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder={t("dashboard.create.content.selectLanguage")} />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="vietnamese">{t("dashboard.create.content.languages.vietnamese")}</SelectItem>
+                                      <SelectItem value="english">{t("dashboard.create.content.languages.english")}</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </FormItem>
+                              )}
+                            />
                             <p className="text-xs text-gray-500 mt-1">
                               {t("dashboard.create.content.languageHint")}
                             </p>
@@ -733,19 +747,29 @@ export default function CreateContent() {
                             <Label htmlFor="country" className="block text-sm font-medium">
                               {t("dashboard.create.content.country")}
                             </Label>
-                            <Select
-                              value={form.watch('country') || 'vietnam'}
-                              onValueChange={(value) => form.setValue('country', value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder={t("dashboard.create.content.selectCountry")} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="vietnam">{t("dashboard.create.content.countries.vietnam")}</SelectItem>
-                                <SelectItem value="us">{t("dashboard.create.content.countries.us")}</SelectItem>
-                                <SelectItem value="global">{t("dashboard.create.content.countries.global")}</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <FormField
+                              control={form.control}
+                              name="country"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <Select
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder={t("dashboard.create.content.selectCountry")} />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="vietnam">{t("dashboard.create.content.countries.vietnam")}</SelectItem>
+                                      <SelectItem value="us">{t("dashboard.create.content.countries.us")}</SelectItem>
+                                      <SelectItem value="global">{t("dashboard.create.content.countries.global")}</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </FormItem>
+                              )}
+                            />
                             <p className="text-xs text-gray-500 mt-1">
                               {t("dashboard.create.content.countryHint")}
                             </p>
@@ -753,25 +777,35 @@ export default function CreateContent() {
                           
                           {/* Giọng nói */}
                           <div className="space-y-2">
-                            <Label htmlFor="voice" className="block text-sm font-medium">
+                            <Label htmlFor="tone" className="block text-sm font-medium">
                               {t("dashboard.create.content.voice")}
                             </Label>
-                            <Select
-                              value={form.watch('tone') || 'neutral'}
-                              onValueChange={(value) => form.setValue('tone', value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder={t("dashboard.create.content.selectVoice")} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="professional">{t("dashboard.create.form.toneOptions.professional")}</SelectItem>
-                                <SelectItem value="conversational">{t("dashboard.create.form.toneOptions.conversational")}</SelectItem>
-                                <SelectItem value="informative">{t("dashboard.create.form.toneOptions.informative")}</SelectItem>
-                                <SelectItem value="persuasive">{t("dashboard.create.form.toneOptions.persuasive")}</SelectItem>
-                                <SelectItem value="humorous">{t("dashboard.create.form.toneOptions.humorous")}</SelectItem>
-                                <SelectItem value="neutral">{t("dashboard.create.content.voices.neutral")}</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <FormField
+                              control={form.control}
+                              name="tone"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <Select
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder={t("dashboard.create.content.selectVoice")} />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="professional">{t("dashboard.create.form.toneOptions.professional")}</SelectItem>
+                                      <SelectItem value="conversational">{t("dashboard.create.form.toneOptions.conversational")}</SelectItem>
+                                      <SelectItem value="informative">{t("dashboard.create.form.toneOptions.informative")}</SelectItem>
+                                      <SelectItem value="persuasive">{t("dashboard.create.form.toneOptions.persuasive")}</SelectItem>
+                                      <SelectItem value="humorous">{t("dashboard.create.form.toneOptions.humorous")}</SelectItem>
+                                      <SelectItem value="neutral">{t("dashboard.create.content.voices.neutral")}</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </FormItem>
+                              )}
+                            />
                             <p className="text-xs text-gray-500 mt-1">
                               {t("dashboard.create.content.voiceHint")}
                             </p>
@@ -782,20 +816,30 @@ export default function CreateContent() {
                             <Label htmlFor="perspective" className="block text-sm font-medium">
                               {t("dashboard.create.content.perspective")}
                             </Label>
-                            <Select
-                              value={form.watch('perspective') || 'auto'}
-                              onValueChange={(value) => form.setValue('perspective', value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder={t("dashboard.create.content.selectPerspective")} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="auto">{t("dashboard.create.content.perspectives.auto")}</SelectItem>
-                                <SelectItem value="first">{t("dashboard.create.content.perspectives.first")}</SelectItem>
-                                <SelectItem value="second">{t("dashboard.create.content.perspectives.second")}</SelectItem>
-                                <SelectItem value="third">{t("dashboard.create.content.perspectives.third")}</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <FormField
+                              control={form.control}
+                              name="perspective"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <Select
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder={t("dashboard.create.content.selectPerspective")} />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="auto">{t("dashboard.create.content.perspectives.auto")}</SelectItem>
+                                      <SelectItem value="first">{t("dashboard.create.content.perspectives.first")}</SelectItem>
+                                      <SelectItem value="second">{t("dashboard.create.content.perspectives.second")}</SelectItem>
+                                      <SelectItem value="third">{t("dashboard.create.content.perspectives.third")}</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </FormItem>
+                              )}
+                            />
                             <p className="text-xs text-gray-500 mt-1">
                               {t("dashboard.create.content.perspectiveHint")}
                             </p>
@@ -806,20 +850,30 @@ export default function CreateContent() {
                             <Label htmlFor="complexity" className="block text-sm font-medium">
                               {t("dashboard.create.content.complexity")}
                             </Label>
-                            <Select
-                              value={form.watch('complexity') || 'auto'}
-                              onValueChange={(value) => form.setValue('complexity', value)}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder={t("dashboard.create.content.selectComplexity")} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="auto">{t("dashboard.create.content.complexities.auto")}</SelectItem>
-                                <SelectItem value="basic">{t("dashboard.create.content.complexities.basic")}</SelectItem>
-                                <SelectItem value="intermediate">{t("dashboard.create.content.complexities.intermediate")}</SelectItem>
-                                <SelectItem value="advanced">{t("dashboard.create.content.complexities.advanced")}</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <FormField
+                              control={form.control}
+                              name="complexity"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <Select
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder={t("dashboard.create.content.selectComplexity")} />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="auto">{t("dashboard.create.content.complexities.auto")}</SelectItem>
+                                      <SelectItem value="basic">{t("dashboard.create.content.complexities.basic")}</SelectItem>
+                                      <SelectItem value="intermediate">{t("dashboard.create.content.complexities.intermediate")}</SelectItem>
+                                      <SelectItem value="advanced">{t("dashboard.create.content.complexities.advanced")}</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </FormItem>
+                              )}
+                            />
                             <p className="text-xs text-gray-500 mt-1">
                               {t("dashboard.create.content.complexityHint")}
                             </p>
