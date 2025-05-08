@@ -182,6 +182,7 @@ const translations: TranslationsType = {
       verificationSuccess: "Xác minh thành công",
       loginRequired: "Vui lòng đăng nhập để tiếp tục",
       or: "Hoặc",
+      generating: "Đang tạo...",
       
       apiKeys: {
         title: "API Keys",
@@ -440,6 +441,17 @@ const translations: TranslationsType = {
           relatedKeywordPlaceholder: "Nhập từ khóa liên quan",
           addNew: "Thêm mới"
         },
+        media: {
+          title: "Hình ảnh",
+          description: "Thêm hình ảnh minh họa cho bài viết của bạn",
+          comingSoon: "Sắp ra mắt"
+        },
+        links: {
+          title: "Liên kết",
+          description: "Thêm các liên kết ngoài và liên kết nội bộ",
+          comingSoon: "Sắp ra mắt"
+        },
+        generateContent: "Tạo nội dung",
         form: {
           articleTitle: "Tiêu đề bài viết",
           contentType: "Loại nội dung",
@@ -877,6 +889,17 @@ const translations: TranslationsType = {
           relatedKeywordPlaceholder: "Enter related keyword",
           addNew: "Add new"
         },
+        media: {
+          title: "Images",
+          description: "Add illustrative images to your article",
+          comingSoon: "Coming Soon"
+        },
+        links: {
+          title: "Links",
+          description: "Add external and internal links",
+          comingSoon: "Coming Soon"
+        },
+        generateContent: "Generate Content",
         form: {
           articleTitle: "Article Title",
           contentType: "Content Type",
