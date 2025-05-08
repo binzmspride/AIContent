@@ -47,7 +47,8 @@ import {
   AlertCircle, 
   KeyRound, 
   List, 
-  FileText, 
+  FileText,
+  BookOpenText, 
   PaintBucket, 
   AlignJustify,
   Image,
@@ -79,6 +80,9 @@ const formSchema = z.object({
   country: z.enum(["vietnam", "us", "global"]).optional(),
   perspective: z.enum(["auto", "first", "second", "third"]).optional(),
   complexity: z.enum(["auto", "basic", "intermediate", "advanced"]).optional(),
+  useWebResearch: z.boolean().default(false),
+  refSources: z.string().optional(),
+  aiModel: z.enum(["chatgpt", "gemini", "claude"]).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -114,6 +118,9 @@ export default function CreateContent() {
       country: "vietnam",
       perspective: "auto",
       complexity: "auto",
+      useWebResearch: false,
+      refSources: "",
+      aiModel: "chatgpt",
     },
   });
 
@@ -339,6 +346,10 @@ export default function CreateContent() {
                     <TabsTrigger value="links" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <LinkIcon className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.links")}</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="knowledge" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
+                      <BookOpenText className="h-5 w-5 mr-2" />
+                      <span>{t("dashboard.create.tabs.knowledge")}</span>
                     </TabsTrigger>
                   </TabsList>
                 </div>
