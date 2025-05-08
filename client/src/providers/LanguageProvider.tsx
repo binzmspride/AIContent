@@ -395,6 +395,28 @@ const translations: TranslationsType = {
         buyMoreCredits: "Mua thêm tín dụng"
       },
       
+      articles: {
+        search: "Tìm kiếm bài viết",
+        filter: "Lọc bài viết",
+        newArticle: "Tạo bài viết mới",
+        statuses: {
+          all: "Tất cả trạng thái",
+          draft: "Bản nháp",
+          published: "Đã xuất bản",
+          wordpress: "WordPress",
+          facebook: "Facebook",
+          tiktok: "TikTok",
+          twitter: "Twitter"
+        },
+        columns: {
+          title: "Tiêu đề",
+          createdAt: "Ngày tạo",
+          status: "Trạng thái",
+          keywords: "Từ khóa",
+          actions: "Thao tác"
+        }
+      },
+      
       connectionTypes: {
         wordpress: {
           connected: "Đã kết nối"
