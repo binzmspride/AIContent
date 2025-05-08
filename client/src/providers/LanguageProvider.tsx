@@ -29,7 +29,7 @@ const translations: TranslationsType = {
       users: "Người dùng",
       articles: "Bài viết",
       
-      users: {
+      usersManagement: {
         title: "Quản lý người dùng",
         description: "Xem và quản lý tất cả người dùng trong hệ thống",
         username: "Tên đăng nhập",
@@ -396,7 +396,7 @@ const translations: TranslationsType = {
       performance: "Performance",
       integrations: "Integrations",
       
-      users: {
+      usersManagement: {
         title: "Users Management",
         description: "View and manage all users in the system",
         username: "Username",

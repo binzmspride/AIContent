@@ -306,14 +306,14 @@ export default function AdminUsers() {
   return (
     <>
       <Head>
-        <title>{t("admin.users.title") || "Quản lý người dùng"} - {t("common.appName") || "SEO AI Writer"}</title>
+        <title>{t("admin.usersManagement.title") || "Quản lý người dùng"} - {t("common.appName") || "SEO AI Writer"}</title>
       </Head>
       
-      <AdminLayout title={t("admin.users.title") || "Quản lý người dùng"}>
+      <AdminLayout title={t("admin.usersManagement.title") || "Quản lý người dùng"}>
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">{t("admin.users.title") || "Quản lý người dùng"}</h1>
-            <p className="text-muted-foreground">{t("admin.users.description") || "Xem và quản lý tất cả người dùng trong hệ thống"}</p>
+            <h1 className="text-2xl font-bold">{t("admin.usersManagement.title") || "Quản lý người dùng"}</h1>
+            <p className="text-muted-foreground">{t("admin.usersManagement.description") || "Xem và quản lý tất cả người dùng trong hệ thống"}</p>
           </div>
           <div className="flex items-center space-x-2">
             <div className="relative">
@@ -347,7 +347,7 @@ export default function AdminUsers() {
                       name="username"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("common.admin.users.username") || "Tên đăng nhập"}</FormLabel>
+                          <FormLabel>{t("admin.usersManagement.username") || "Tên đăng nhập"}</FormLabel>
                           <FormControl>
                             <Input placeholder="johndoe" {...field} />
                           </FormControl>
@@ -361,7 +361,7 @@ export default function AdminUsers() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("common.admin.users.email") || "Email"}</FormLabel>
+                          <FormLabel>{t("admin.usersManagement.email") || "Email"}</FormLabel>
                           <FormControl>
                             <Input placeholder="john.doe@example.com" {...field} />
                           </FormControl>
