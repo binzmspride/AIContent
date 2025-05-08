@@ -16,11 +16,18 @@ export interface GenerateContentRequest {
   addHeadings: boolean;
 }
 
+export interface ContentGenerationMetrics {
+  generationTimeMs: number;
+  wordCount: number;
+  characterCount?: number;
+}
+
 export interface GenerateContentResponse {
   title: string;
   content: string;
   keywords: string[];
   creditsUsed: number;
+  metrics: ContentGenerationMetrics;
 }
 
 // WordPress connection types
