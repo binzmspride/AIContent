@@ -186,6 +186,12 @@ export default function CreateContent() {
     }
   };
 
+  // Hàm kiểm tra số lượng từ khóa phụ (không bao gồm từ khóa chính)
+  const getSecondaryKeywordCount = () => {
+    const keywords = form.watch("keywords").split(",").filter(Boolean);
+    return keywords.length > 1 ? keywords.slice(1).length : 0;
+  };
+
   return (
     <>
       <Head>
@@ -283,76 +289,32 @@ export default function CreateContent() {
                           <div>
                             <Label htmlFor="mainKeyword" className="text-gray-700 dark:text-gray-200 mb-1 block">{t("dashboard.create.keywords.mainKeyword")} <span className="text-red-500">*</span></Label>
                             
-                            {form.watch("keywords").split(",")[0] && (
-                              <div className="flex flex-wrap gap-2 mb-2">
-                                <Badge
-                                  className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-sm font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-100"
-                                >
-                                  <span className="mr-1">{form.watch("keywords").split(",")[0]}</span>
-                                  <button
-                                    type="button"
-                                    className="flex-shrink-0 ml-1 h-4 w-4 rounded-full inline-flex items-center justify-center text-blue-600 dark:text-blue-100 hover:bg-blue-200 hover:text-blue-800 dark:hover:bg-blue-800 dark:hover:text-white focus:outline-none"
-                                    onClick={() => {
-                                      const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
-                                      const secondaryKeywords = currentKeywords.slice(1);
-                                      form.setValue("keywords", secondaryKeywords.join(","));
-                                    }}
-                                  >
-                                    <span className="sr-only">Remove main keyword</span>
-                                    <X className="h-3 w-3" />
-                                  </button>
-                                </Badge>
-                              </div>
-                            )}
-                            
+                            {/* Trường input thông thường cho từ khóa chính */}
                             <Input 
                               id="mainKeyword"
                               placeholder={t("dashboard.create.keywords.mainKeywordPlaceholder")}
                               className="mt-1"
-                              value={form.watch("keywords").split(",")[0] ? "" : form.watch("keywords").split(",")[0] || ""}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  e.preventDefault();
-                                  const input = e.target as HTMLInputElement;
-                                  const keyword = input.value.trim();
-                                  if (keyword) {
-                                    const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
-                                    if (currentKeywords.length === 0) {
-                                      currentKeywords.push(keyword);
-                                    } else {
-                                      currentKeywords[0] = keyword;
-                                    }
-                                    form.setValue("keywords", currentKeywords.join(","));
-                                    input.value = "";
-                                  }
-                                }
-                              }}
+                              value={form.watch("keywords").split(",")[0] || ""}
                               onChange={(e) => {
-                                if (!form.watch("keywords").split(",")[0]) {
-                                  const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
-                                  currentKeywords[0] = e.target.value;
-                                  form.setValue("keywords", currentKeywords.join(","));
-                                }
-                              }}
-                              onBlur={(e) => {
-                                const keyword = e.target.value.trim();
-                                if (keyword && !form.watch("keywords").split(",")[0]) {
-                                  const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
-                                  if (currentKeywords.length === 0) {
-                                    currentKeywords.push(keyword);
-                                  } else {
-                                    currentKeywords[0] = keyword;
-                                  }
-                                  form.setValue("keywords", currentKeywords.join(","));
-                                  e.target.value = "";
-                                }
+                                const mainKeyword = e.target.value.trim();
+                                const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
+                                const secondaryKeywords = currentKeywords.length > 1 ? currentKeywords.slice(1) : [];
+                                const newKeywords = mainKeyword 
+                                  ? [mainKeyword, ...secondaryKeywords]
+                                  : secondaryKeywords;
+                                form.setValue("keywords", newKeywords.join(","));
                               }}
                             />
                           </div>
                           
                           {/* Từ khóa phụ */}
                           <div>
-                            <Label htmlFor="secondaryKeyword" className="text-gray-700 dark:text-gray-200 mb-1 block">{t("dashboard.create.keywords.secondaryKeyword")}</Label>
+                            <Label htmlFor="secondaryKeyword" className="text-gray-700 dark:text-gray-200 mb-1 block">
+                              {t("dashboard.create.keywords.secondaryKeyword")}
+                              <span className="ml-1 text-sm text-gray-500 dark:text-gray-400">
+                                ({getSecondaryKeywordCount()}/3)
+                              </span>
+                            </Label>
                             
                             <div className="flex flex-wrap gap-2 mb-2">
                               {form.watch("keywords").split(",").filter(Boolean).map((keyword, index) => {
@@ -367,12 +329,6 @@ export default function CreateContent() {
                                       type="button"
                                       className="flex-shrink-0 ml-1 h-4 w-4 rounded-full inline-flex items-center justify-center text-cyan-600 dark:text-cyan-100 hover:bg-cyan-200 hover:text-cyan-800 dark:hover:bg-cyan-800 dark:hover:text-white focus:outline-none"
                                       onClick={() => {
-                                        // Ngăn xóa từ khóa chính (vị trí 0)
-                                        if (index === 0) {
-                                          // Hiển thị thông báo hoặc không làm gì
-                                          console.log("Không thể xóa từ khóa chính");
-                                          return;
-                                        }
                                         const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
                                         currentKeywords.splice(index, 1);
                                         form.setValue("keywords", currentKeywords.join(","));
@@ -391,23 +347,26 @@ export default function CreateContent() {
                                 id="secondaryKeyword"
                                 placeholder={t("dashboard.create.keywords.secondaryKeywordPlaceholder")}
                                 className="flex-1"
+                                disabled={getSecondaryKeywordCount() >= 3}
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') {
                                     e.preventDefault();
                                     const input = e.target as HTMLInputElement;
                                     const keyword = input.value.trim();
-                                    if (keyword) {
+                                    if (keyword && getSecondaryKeywordCount() < 3) {
                                       const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
                                       // Đảm bảo từ khóa chính vẫn ở vị trí đầu tiên
                                       const mainKeyword = currentKeywords.length > 0 ? currentKeywords[0] : "";
                                       // Lấy các từ khóa phụ hiện tại
                                       const secondaryKeywords = currentKeywords.length > 1 ? currentKeywords.slice(1) : [];
-                                      // Thêm từ khóa mới vào mảng từ khóa phụ
-                                      secondaryKeywords.push(keyword);
-                                      // Gộp lại với từ khóa chính
-                                      const newKeywords = [mainKeyword, ...secondaryKeywords].filter(Boolean);
-                                      form.setValue("keywords", newKeywords.join(","));
-                                      input.value = "";
+                                      // Thêm từ khóa mới vào mảng từ khóa phụ nếu chưa đủ 3 từ
+                                      if (secondaryKeywords.length < 3) {
+                                        secondaryKeywords.push(keyword);
+                                        // Gộp lại với từ khóa chính
+                                        const newKeywords = [mainKeyword, ...secondaryKeywords].filter(Boolean);
+                                        form.setValue("keywords", newKeywords.join(","));
+                                        input.value = "";
+                                      }
                                     }
                                   }
                                 }}
@@ -417,21 +376,24 @@ export default function CreateContent() {
                                 variant="outline" 
                                 size="sm" 
                                 className="ml-2 bg-blue-500 text-white hover:bg-blue-600"
+                                disabled={getSecondaryKeywordCount() >= 3}
                                 onClick={() => {
                                   const input = document.getElementById("secondaryKeyword") as HTMLInputElement;
                                   const keyword = input.value.trim();
-                                  if (keyword) {
+                                  if (keyword && getSecondaryKeywordCount() < 3) {
                                     const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
                                     // Đảm bảo từ khóa chính vẫn ở vị trí đầu tiên
                                     const mainKeyword = currentKeywords.length > 0 ? currentKeywords[0] : "";
                                     // Lấy các từ khóa phụ hiện tại
                                     const secondaryKeywords = currentKeywords.length > 1 ? currentKeywords.slice(1) : [];
-                                    // Thêm từ khóa mới vào mảng từ khóa phụ
-                                    secondaryKeywords.push(keyword);
-                                    // Gộp lại với từ khóa chính
-                                    const newKeywords = [mainKeyword, ...secondaryKeywords].filter(Boolean);
-                                    form.setValue("keywords", newKeywords.join(","));
-                                    input.value = "";
+                                    // Thêm từ khóa mới vào mảng từ khóa phụ nếu chưa đủ 3 từ
+                                    if (secondaryKeywords.length < 3) {
+                                      secondaryKeywords.push(keyword);
+                                      // Gộp lại với từ khóa chính
+                                      const newKeywords = [mainKeyword, ...secondaryKeywords].filter(Boolean);
+                                      form.setValue("keywords", newKeywords.join(","));
+                                      input.value = "";
+                                    }
                                   }
                                 }}
                               >
@@ -440,94 +402,109 @@ export default function CreateContent() {
                             </div>
                           </div>
                           
-                          {/* Từ khóa liên quan */}
-                          <div>
-                            <Label htmlFor="relatedKeyword" className="text-gray-700 dark:text-gray-200 mb-1 block">{t("dashboard.create.keywords.relatedKeyword")}</Label>
-                            
-                            <div className="flex mt-1">
-                              <Input 
-                                id="relatedKeyword"
-                                placeholder={t("dashboard.create.keywords.relatedKeywordPlaceholder")}
-                                className="flex-1"
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    const input = e.target as HTMLInputElement;
-                                    const keyword = input.value.trim();
-                                    if (keyword) {
-                                      const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
-                                      // Đảm bảo từ khóa chính vẫn ở vị trí đầu tiên
-                                      const mainKeyword = currentKeywords.length > 0 ? currentKeywords[0] : "";
-                                      // Lấy các từ khóa phụ hiện tại
-                                      const secondaryKeywords = currentKeywords.length > 1 ? currentKeywords.slice(1) : [];
-                                      // Thêm từ khóa mới vào mảng từ khóa phụ
-                                      secondaryKeywords.push(keyword);
-                                      // Gộp lại với từ khóa chính
-                                      const newKeywords = [mainKeyword, ...secondaryKeywords].filter(Boolean);
-                                      form.setValue("keywords", newKeywords.join(","));
-                                      input.value = "";
-                                    }
-                                  }
-                                }}
-                              />
-                              <Button 
-                                type="button" 
-                                variant="outline" 
-                                size="sm" 
-                                className="ml-2 bg-blue-500 text-white hover:bg-blue-600"
-                                onClick={() => {
-                                  const input = document.getElementById("relatedKeyword") as HTMLInputElement;
-                                  const keyword = input.value.trim();
-                                  if (keyword) {
-                                    const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
-                                    // Đảm bảo từ khóa chính vẫn ở vị trí đầu tiên
-                                    const mainKeyword = currentKeywords.length > 0 ? currentKeywords[0] : "";
-                                    // Lấy các từ khóa phụ hiện tại
-                                    const secondaryKeywords = currentKeywords.length > 1 ? currentKeywords.slice(1) : [];
-                                    // Thêm từ khóa mới vào mảng từ khóa phụ
-                                    secondaryKeywords.push(keyword);
-                                    // Gộp lại với từ khóa chính
-                                    const newKeywords = [mainKeyword, ...secondaryKeywords].filter(Boolean);
-                                    form.setValue("keywords", newKeywords.join(","));
-                                    input.value = "";
-                                  }
-                                }}
-                              >
-                                {t("dashboard.create.keywords.addNew")}
-                              </Button>
-                            </div>
+                          <div className="pt-4 border-t mt-4">
+                            <FormField
+                              control={form.control}
+                              name="contentType"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>{t("dashboard.create.form.contentType")}</FormLabel>
+                                  <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                  >
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select content type" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="blog">{t("dashboard.create.form.contentTypes.blog")}</SelectItem>
+                                      <SelectItem value="product">{t("dashboard.create.form.contentTypes.product")}</SelectItem>
+                                      <SelectItem value="news">{t("dashboard.create.form.contentTypes.news")}</SelectItem>
+                                      <SelectItem value="social">{t("dashboard.create.form.contentTypes.social")}</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
                           </div>
                         </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="outline" className="mt-0 border rounded-lg p-4">
+                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.outline.title")}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.outline.description")}</p>
                         
-                        <div className="pt-4 border-t mt-4">
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="outlineDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                              {t("dashboard.create.outline.guide")}
+                            </Label>
+                            <Textarea
+                              id="outlineDescription"
+                              placeholder={t("dashboard.create.outline.placeholder")}
+                              className="h-32"
+                              onChange={(e) => {
+                                const outline = e.target.value;
+                                form.setValue('prompt', outline);
+                              }}
+                              value={form.watch('prompt')}
+                            />
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="content" className="mt-0 border rounded-lg p-4">
+                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.content.title")}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.content.description")}</p>
+                        
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="contentPrompt" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                              {t("dashboard.create.content.guide")}
+                            </Label>
+                            <Textarea
+                              id="contentPrompt"
+                              placeholder={t("dashboard.create.content.placeholder")}
+                              className="h-32"
+                              onChange={(e) => {
+                                const contentPrompt = e.target.value;
+                                form.setValue('prompt', contentPrompt);
+                              }}
+                              value={form.watch('prompt')}
+                            />
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="style" className="mt-0 border rounded-lg p-4">
+                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.style.title")}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.style.description")}</p>
+                        
+                        <div className="space-y-4">
                           <FormField
                             control={form.control}
-                            name="contentType"
+                            name="tone"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>{t("dashboard.create.form.contentType")}</FormLabel>
+                                <FormLabel>{t("dashboard.create.form.contentTone")}</FormLabel>
                                 <Select
                                   onValueChange={field.onChange}
                                   defaultValue={field.value}
                                 >
                                   <FormControl>
                                     <SelectTrigger>
-                                      <SelectValue placeholder="Select content type" />
+                                      <SelectValue placeholder="Select tone" />
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    <SelectItem value="blog">
-                                      {t("dashboard.create.form.contentTypeOptions.blog")}
-                                    </SelectItem>
-                                    <SelectItem value="product">
-                                      {t("dashboard.create.form.contentTypeOptions.product")}
-                                    </SelectItem>
-                                    <SelectItem value="news">
-                                      {t("dashboard.create.form.contentTypeOptions.news")}
-                                    </SelectItem>
-                                    <SelectItem value="social">
-                                      {t("dashboard.create.form.contentTypeOptions.social")}
-                                    </SelectItem>
+                                    <SelectItem value="professional">{t("dashboard.create.form.tones.professional")}</SelectItem>
+                                    <SelectItem value="conversational">{t("dashboard.create.form.tones.conversational")}</SelectItem>
+                                    <SelectItem value="informative">{t("dashboard.create.form.tones.informative")}</SelectItem>
+                                    <SelectItem value="persuasive">{t("dashboard.create.form.tones.persuasive")}</SelectItem>
+                                    <SelectItem value="humorous">{t("dashboard.create.form.tones.humorous")}</SelectItem>
                                   </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -537,54 +514,17 @@ export default function CreateContent() {
                         </div>
                       </TabsContent>
                       
-                      <TabsContent value="content" className="mt-0 border rounded-lg p-4">
-                        <FormField
-                          control={form.control}
-                          name="prompt"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>{t("dashboard.create.form.prompt")}</FormLabel>
-                              <FormControl>
-                                <Textarea
-                                  placeholder="Describe the content you want to create in detail. The more specific, the better the results."
-                                  className="min-h-[150px]"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                      <TabsContent value="format" className="mt-0 border rounded-lg p-4">
+                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.format.title")}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.format.description")}</p>
                         
-                        <FormField
-                          control={form.control}
-                          name="addHeadings"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 mt-4">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                              </FormControl>
-                              <div className="space-y-1 leading-none">
-                                <FormLabel>
-                                  {t("dashboard.create.form.addHeadings")}
-                                </FormLabel>
-                              </div>
-                            </FormItem>
-                          )}
-                        />
-                      </TabsContent>
-                      
-                      <TabsContent value="style" className="mt-0 border rounded-lg p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
                           <FormField
                             control={form.control}
                             name="length"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>{t("dashboard.create.form.length")}</FormLabel>
+                                <FormLabel>{t("dashboard.create.form.contentLength")}</FormLabel>
                                 <Select
                                   onValueChange={field.onChange}
                                   defaultValue={field.value}
@@ -595,18 +535,10 @@ export default function CreateContent() {
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    <SelectItem value="short">
-                                      {t("dashboard.create.form.lengthOptions.short")}
-                                    </SelectItem>
-                                    <SelectItem value="medium">
-                                      {t("dashboard.create.form.lengthOptions.medium")}
-                                    </SelectItem>
-                                    <SelectItem value="long">
-                                      {t("dashboard.create.form.lengthOptions.long")}
-                                    </SelectItem>
-                                    <SelectItem value="extra_long">
-                                      {t("dashboard.create.form.lengthOptions.extraLong")}
-                                    </SelectItem>
+                                    <SelectItem value="short">{t("dashboard.create.form.lengths.short")}</SelectItem>
+                                    <SelectItem value="medium">{t("dashboard.create.form.lengths.medium")}</SelectItem>
+                                    <SelectItem value="long">{t("dashboard.create.form.lengths.long")}</SelectItem>
+                                    <SelectItem value="extra_long">{t("dashboard.create.form.lengths.extra_long")}</SelectItem>
                                   </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -614,151 +546,135 @@ export default function CreateContent() {
                             )}
                           />
                           
-                          <FormField
-                            control={form.control}
-                            name="tone"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>{t("dashboard.create.form.tone")}</FormLabel>
-                                <Select
-                                  onValueChange={field.onChange}
-                                  defaultValue={field.value}
-                                >
+                          <div className="flex items-start space-x-2">
+                            <FormField
+                              control={form.control}
+                              name="addHeadings"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4">
                                   <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select content tone" />
-                                    </SelectTrigger>
+                                    <Checkbox
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
                                   </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="professional">
-                                      {t("dashboard.create.form.toneOptions.professional")}
-                                    </SelectItem>
-                                    <SelectItem value="conversational">
-                                      {t("dashboard.create.form.toneOptions.conversational")}
-                                    </SelectItem>
-                                    <SelectItem value="informative">
-                                      {t("dashboard.create.form.toneOptions.informative")}
-                                    </SelectItem>
-                                    <SelectItem value="persuasive">
-                                      {t("dashboard.create.form.toneOptions.persuasive")}
-                                    </SelectItem>
-                                    <SelectItem value="humorous">
-                                      {t("dashboard.create.form.toneOptions.humorous")}
-                                    </SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                                  <div className="space-y-1 leading-none">
+                                    <FormLabel>
+                                      {t("dashboard.create.form.addHeadings")}
+                                    </FormLabel>
+                                  </div>
+                                </FormItem>
+                              )}
+                            />
+                          </div>
                         </div>
-                      </TabsContent>
-                      
-                      <TabsContent value="outline" className="mt-0 border rounded-lg p-4">
-                        <p className="text-sm text-gray-500">Tính năng đang phát triển</p>
-                      </TabsContent>
-                      
-                      <TabsContent value="format" className="mt-0 border rounded-lg p-4">
-                        <p className="text-sm text-gray-500">Tính năng đang phát triển</p>
                       </TabsContent>
                       
                       <TabsContent value="media" className="mt-0 border rounded-lg p-4">
-                        <p className="text-sm text-gray-500">Tính năng đang phát triển</p>
+                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.media.title")}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.media.description")}</p>
+                        <div className="flex items-center justify-center h-40 border-2 border-dashed border-gray-300 rounded-lg">
+                          <div className="text-center">
+                            <p className="text-sm text-gray-500">{t("dashboard.create.media.comingSoon")}</p>
+                          </div>
+                        </div>
                       </TabsContent>
                       
                       <TabsContent value="links" className="mt-0 border rounded-lg p-4">
-                        <p className="text-sm text-gray-500">Tính năng đang phát triển</p>
-                      </TabsContent>
-                      
-                      {(user?.credits || 0) < 1 && (
-                        <div className="flex items-center p-4 mb-4 text-sm text-amber-800 rounded-lg bg-amber-50">
-                          <AlertCircle className="flex-shrink-0 inline w-5 h-5 mr-3" />
-                          <span className="sr-only">Warning</span>
-                          <div>
-                            You don't have enough credits to generate content. Please 
-                            <a href="/dashboard/credits" className="font-medium underline ml-1">purchase more credits</a>.
+                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.links.title")}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.links.description")}</p>
+                        <div className="flex items-center justify-center h-40 border-2 border-dashed border-gray-300 rounded-lg">
+                          <div className="text-center">
+                            <p className="text-sm text-gray-500">{t("dashboard.create.links.comingSoon")}</p>
                           </div>
                         </div>
-                      )}
+                      </TabsContent>
                       
-                      <div className="flex justify-end space-x-4">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => form.reset()}
-                        >
-                          {t("dashboard.create.form.reset")}
-                        </Button>
+                      <div className="border-t pt-4 flex justify-end space-x-2">
                         <Button
                           type="submit"
-                          disabled={generateContentMutation.isPending || (user?.credits || 0) < 1}
+                          className="bg-blue-600 hover:bg-blue-700"
+                          disabled={generateContentMutation.isPending}
                         >
                           {generateContentMutation.isPending ? (
-                            <span className="flex items-center">
+                            <div className="flex items-center">
                               <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                               </svg>
-                              {t("common.loading")}
-                            </span>
+                              {t("common.generating")}
+                            </div>
                           ) : (
-                            t("dashboard.create.form.generate")
+                            t("dashboard.create.generateContent")
                           )}
                         </Button>
                       </div>
                     </form>
                   </Form>
+                  
+                  {generatedContent && (
+                    <div className="mt-8 border rounded-lg p-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{t("dashboard.create.generatedContent")}</h3>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleCopyContent}
+                            className="flex items-center text-gray-700 dark:text-gray-200"
+                          >
+                            <Copy className="h-4 w-4 mr-1" />
+                            {t("common.copy")}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm" 
+                            onClick={handleDownloadContent}
+                            className="flex items-center text-gray-700 dark:text-gray-200"
+                          >
+                            <Download className="h-4 w-4 mr-1" />
+                            {t("common.download")}
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={handleSaveArticle}
+                            className="flex items-center"
+                          >
+                            <Pencil className="h-4 w-4 mr-1" />
+                            {t("common.save")}
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="border rounded">
+                        <div className="bg-gray-50 dark:bg-gray-900 p-3 border-b">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">{t("dashboard.create.performance.title")}</p>
+                          <div className="flex mt-2 text-sm">
+                            <div className="mr-4">
+                              <span className="text-gray-500 dark:text-gray-400">{t("dashboard.create.performance.timeToGenerate")}: </span>
+                              <span className="font-medium text-gray-900 dark:text-gray-100">{generatedContent.metrics.generationTimeMs / 1000}s</span>
+                            </div>
+                            <div className="mr-4">
+                              <span className="text-gray-500 dark:text-gray-400">{t("dashboard.create.performance.creditsUsed")}: </span>
+                              <span className="font-medium text-gray-900 dark:text-gray-100">{generatedContent.creditsUsed}</span>
+                            </div>
+                            <div>
+                              <span className="text-gray-500 dark:text-gray-400">{t("dashboard.create.performance.wordCount")}: </span>
+                              <span className="font-medium text-gray-900 dark:text-gray-100">{generatedContent.metrics.wordCount}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-4 prose prose-blue dark:prose-invert prose-headings:font-semibold prose-img:rounded-lg max-w-none">
+                          <div dangerouslySetInnerHTML={{ __html: generatedContent.content }} />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-              
-              {generatedContent && (
-                <div className="mt-8 border rounded-lg p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <h2 className="text-xl font-bold">{generatedContent.title}</h2>
-                    <div className="flex space-x-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={handleCopyContent}
-                      >
-                        <Copy className="h-4 w-4 mr-2" />
-                        Copy
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={handleDownloadContent}
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download
-                      </Button>
-                      <Button 
-                        size="sm"
-                        onClick={handleSaveArticle}
-                      >
-                        <Pencil className="h-4 w-4 mr-2" />
-                        Save Article
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {generatedContent.keywords.map((keyword, index) => (
-                      <span 
-                        key={index} 
-                        className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700"
-                      >
-                        {keyword}
-                      </span>
-                    ))}
-                  </div>
-                  
-                  <div 
-                    className="prose prose-sm md:prose-base lg:prose-lg max-w-none" 
-                    dangerouslySetInnerHTML={{ __html: generatedContent.content }}
-                  />
-                </div>
-              )}
             </Tabs>
           </CardContent>
         </Card>
