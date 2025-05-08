@@ -25,6 +25,15 @@ const translations: TranslationsType = {
     admin: {
       adminPanel: "Quản trị viên",
       adminDashboard: "Bảng điều khiển quản trị",
+      dashboard: "Bảng điều khiển",
+      users: "Người dùng",
+      articles: "Bài viết",
+      plans: "Gói dịch vụ",
+      payments: "Thanh toán",
+      performance: "Hiệu suất",
+      integrations: "Tích hợp",
+      history: "Lịch sử",
+      settings: "Cài đặt",
       
       performanceMetrics: {
         title: "Số liệu hiệu suất",
@@ -343,6 +352,15 @@ const translations: TranslationsType = {
     admin: {
       adminPanel: "Admin Panel",
       adminDashboard: "Admin Dashboard",
+      dashboard: "Dashboard",
+      users: "Users",
+      articles: "Articles",
+      plans: "Plans",
+      payments: "Payments",
+      performance: "Performance",
+      integrations: "Integrations",
+      history: "History",
+      settings: "Settings",
       
       performanceMetrics: {
         title: "Performance Metrics",
