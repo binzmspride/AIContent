@@ -77,10 +77,10 @@ export function Sidebar() {
   };
 
   return (
-    <div className="w-64 bg-sidebar h-screen flex flex-col fixed">
-      <div className="p-4 flex items-center border-b border-sidebar-border">
-        <ScrollIcon className="h-8 w-auto text-white" />
-        <span className="ml-2 text-xl font-bold text-white font-heading">
+    <div className="w-64 bg-sidebar dark:bg-card h-screen flex flex-col fixed">
+      <div className="p-4 flex items-center border-b border-sidebar-border dark:border-border">
+        <ScrollIcon className="h-8 w-auto text-white dark:text-secondary-100" />
+        <span className="ml-2 text-xl font-bold text-white dark:text-secondary-100 font-heading">
           {t("common.appName")}
         </span>
       </div>
@@ -94,8 +94,8 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors",
                   location === link.href
-                    ? "bg-sidebar-accent text-sidebar-foreground"
-                    : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                    ? "bg-sidebar-accent dark:bg-primary-800 text-sidebar-foreground dark:text-white"
+                    : "text-sidebar-foreground/70 dark:text-secondary-300 hover:text-sidebar-foreground dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
                 )}
               >
                 {link.icon}

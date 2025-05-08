@@ -38,7 +38,7 @@ export function Header() {
         <div className="md:hidden flex items-center">
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="text-secondary-700 dark:text-secondary-300">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
@@ -54,7 +54,7 @@ export function Header() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder={t("dashboard.articles.search")}
-              className="pl-10 pr-3 py-2 w-full"
+              className="pl-10 pr-3 py-2 w-full bg-white dark:bg-card"
             />
           </div>
         </div>
@@ -65,7 +65,7 @@ export function Header() {
             variant="ghost" 
             size="icon" 
             onClick={() => setIsSearchOpen(!isSearchOpen)}
-            className={isSearchOpen ? 'hidden' : ''}
+            className={`${isSearchOpen ? 'hidden' : ''} text-secondary-700 dark:text-secondary-300`}
           >
             <Search className="h-5 w-5" />
           </Button>
@@ -73,7 +73,7 @@ export function Header() {
             variant="ghost" 
             size="icon" 
             onClick={() => setIsSearchOpen(false)} 
-            className={!isSearchOpen ? 'hidden' : ''}
+            className={`${!isSearchOpen ? 'hidden' : ''} text-secondary-700 dark:text-secondary-300`}
           >
             <X className="h-5 w-5" />
           </Button>
@@ -81,21 +81,21 @@ export function Header() {
 
         {/* Right Navigation */}
         <div className={`flex items-center space-x-4 ${isSearchOpen ? 'hidden' : 'flex'}`}>
-          <Button variant="ghost" size="icon" className="text-secondary-500 hover:text-secondary-600">
+          <Button variant="ghost" size="icon" className="text-secondary-500 dark:text-secondary-300 hover:text-secondary-600 dark:hover:text-secondary-200">
             <Bell className="h-5 w-5" />
           </Button>
           
-          <ThemeSwitcher variant="icon" className="text-secondary-500 hover:text-secondary-600" />
+          <ThemeSwitcher variant="icon" className="text-secondary-500 dark:text-secondary-300 hover:text-secondary-600 dark:hover:text-secondary-200" />
           
           <button 
             onClick={toggleLanguage}
-            className="text-secondary-500 hover:text-primary-600 p-1 rounded-md hidden sm:block"
+            className="text-secondary-500 dark:text-secondary-300 hover:text-primary-600 dark:hover:text-primary-400 p-1 rounded-md hidden sm:block"
           >
             {language === "vi" ? "EN" : "VN"}
           </button>
           
           <Link href="/dashboard/credits">
-            <div className="text-secondary-500 bg-secondary-100 px-3 py-1 rounded-full text-sm font-medium flex items-center hover:bg-secondary-200 transition-colors cursor-pointer">
+            <div className="text-secondary-500 dark:text-secondary-200 bg-secondary-100 dark:bg-secondary-800 px-3 py-1 rounded-full text-sm font-medium flex items-center hover:bg-secondary-200 dark:hover:bg-secondary-700 transition-colors cursor-pointer">
               <Coins className="h-4 w-4 mr-1 text-accent-500" />
               <span>{user?.credits || 0}</span>
             </div>
