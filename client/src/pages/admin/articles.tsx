@@ -84,14 +84,22 @@ type ArticleStatus = "all" | "draft" | "published" | "deleted";
 type SortField = "createdAt" | "updatedAt" | "title";
 type SortOrder = "asc" | "desc";
 
-interface ExtendedArticle extends Omit<Article, 'createdAt' | 'updatedAt'> {
+interface ExtendedArticle {
+  id: number;
+  title: string;
+  content: string;
+  status: string;
+  keywords: string;
+  userId: number;
+  publishedUrl?: string | null;
+  creditsUsed?: number;
+  createdAt: string;
+  updatedAt: string;
   author: {
     id: number;
     username: string;
     fullName?: string;
   };
-  createdAt: string;
-  updatedAt: string;
 }
 
 export default function AdminArticles() {
@@ -121,6 +129,8 @@ export default function AdminArticles() {
           status: "published",
           keywords: "SEO, best practices, 2023",
           userId: 2,
+          publishedUrl: "https://example.com/seo-best-practices",
+          creditsUsed: 3,
           createdAt: "2023-05-10T14:30:45Z",
           updatedAt: "2023-05-10T15:45:30Z",
           author: {
@@ -136,6 +146,8 @@ export default function AdminArticles() {
           status: "published",
           keywords: "content marketing, strategies",
           userId: 3,
+          publishedUrl: "https://example.com/content-marketing-strategies",
+          creditsUsed: 2,
           createdAt: "2023-05-12T10:15:20Z",
           updatedAt: "2023-05-12T11:30:15Z",
           author: {
@@ -151,6 +163,8 @@ export default function AdminArticles() {
           status: "draft",
           keywords: "mobile optimization, website",
           userId: 2,
+          publishedUrl: null,
+          creditsUsed: 1,
           createdAt: "2023-05-15T09:20:10Z",
           updatedAt: "2023-05-15T09:20:10Z",
           author: {
@@ -166,6 +180,8 @@ export default function AdminArticles() {
           status: "published",
           keywords: "social media, marketing",
           userId: 4,
+          publishedUrl: "https://example.com/social-media-marketing-tips",
+          creditsUsed: 4,
           createdAt: "2023-05-18T13:45:30Z",
           updatedAt: "2023-05-18T14:30:20Z",
           author: {
@@ -180,6 +196,8 @@ export default function AdminArticles() {
           status: "deleted",
           keywords: "email marketing, e-commerce",
           userId: 5,
+          publishedUrl: null,
+          creditsUsed: 0,
           createdAt: "2023-05-20T11:10:05Z",
           updatedAt: "2023-05-20T16:25:15Z",
           author: {
@@ -195,6 +213,8 @@ export default function AdminArticles() {
           status: "published",
           keywords: "voice search, optimization",
           userId: 3,
+          publishedUrl: "https://example.com/voice-search-optimization-guide",
+          creditsUsed: 5,
           createdAt: "2023-05-22T08:30:40Z",
           updatedAt: "2023-05-22T09:45:25Z",
           author: {
