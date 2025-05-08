@@ -219,33 +219,33 @@ export default function CreateContent() {
           <CardContent className="p-6">
             <Tabs defaultValue="keywords" className="w-full">
               <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-                <div className="w-full md:w-64 bg-gray-50 rounded-lg">
+                <div className="w-full md:w-64 bg-gray-50 dark:bg-gray-800 rounded-lg">
                   <TabsList className="grid w-full grid-cols-2 md:grid-cols-1 h-auto bg-transparent">
-                    <TabsTrigger value="keywords" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white data-[state=active]:shadow rounded-md">
+                    <TabsTrigger value="keywords" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <KeyRound className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.keywords")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="outline" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white data-[state=active]:shadow rounded-md">
+                    <TabsTrigger value="outline" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <List className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.outline")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="content" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white data-[state=active]:shadow rounded-md">
+                    <TabsTrigger value="content" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <FileText className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.content")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="style" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white data-[state=active]:shadow rounded-md">
+                    <TabsTrigger value="style" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <PaintBucket className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.style")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="format" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white data-[state=active]:shadow rounded-md">
+                    <TabsTrigger value="format" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <AlignJustify className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.format")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="media" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white data-[state=active]:shadow rounded-md">
+                    <TabsTrigger value="media" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <Image className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.media")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="links" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white data-[state=active]:shadow rounded-md">
+                    <TabsTrigger value="links" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <LinkIcon className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.links")}</span>
                     </TabsTrigger>
@@ -256,8 +256,8 @@ export default function CreateContent() {
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                       <TabsContent value="keywords" className="mt-0 border rounded-lg p-4">
-                        <h3 className="text-lg font-medium mb-2">{t("dashboard.create.keywords.title")}</h3>
-                        <p className="text-sm text-gray-500 mb-6">{t("dashboard.create.keywords.description")}</p>
+                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.keywords.title")}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.keywords.description")}</p>
                         
                         <div className="space-y-4">
                           <FormField
@@ -278,7 +278,7 @@ export default function CreateContent() {
                           />
                           
                           <div>
-                            <Label htmlFor="mainKeyword">{t("dashboard.create.keywords.mainKeyword")} <span className="text-red-500">*</span></Label>
+                            <Label htmlFor="mainKeyword" className="text-gray-700 dark:text-gray-200">{t("dashboard.create.keywords.mainKeyword")} <span className="text-red-500">*</span></Label>
                             <Input 
                               id="mainKeyword"
                               placeholder={t("dashboard.create.keywords.mainKeywordPlaceholder")}
@@ -293,28 +293,56 @@ export default function CreateContent() {
                           </div>
                           
                           <div>
-                            <Label htmlFor="secondaryKeyword">{t("dashboard.create.keywords.secondaryKeyword")}</Label>
+                            <Label htmlFor="secondaryKeyword" className="text-gray-700 dark:text-gray-200">{t("dashboard.create.keywords.secondaryKeyword")}</Label>
                             <div className="flex mt-1">
                               <Input 
                                 id="secondaryKeyword"
                                 placeholder={t("dashboard.create.keywords.secondaryKeywordPlaceholder")}
                                 className="flex-1"
                               />
-                              <Button type="button" variant="outline" size="sm" className="ml-2">
+                              <Button 
+                                type="button" 
+                                variant="outline" 
+                                size="sm" 
+                                className="ml-2 bg-blue-500 text-white hover:bg-blue-600"
+                                onClick={() => {
+                                  const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
+                                  const secondaryKeyword = (document.getElementById("secondaryKeyword") as HTMLInputElement).value;
+                                  if (secondaryKeyword) {
+                                    currentKeywords.push(secondaryKeyword);
+                                    form.setValue("keywords", currentKeywords.join(","));
+                                    (document.getElementById("secondaryKeyword") as HTMLInputElement).value = "";
+                                  }
+                                }}
+                              >
                                 {t("dashboard.create.keywords.addNew")}
                               </Button>
                             </div>
                           </div>
                           
                           <div>
-                            <Label htmlFor="relatedKeyword">{t("dashboard.create.keywords.relatedKeyword")}</Label>
+                            <Label htmlFor="relatedKeyword" className="text-gray-700 dark:text-gray-200">{t("dashboard.create.keywords.relatedKeyword")}</Label>
                             <div className="flex mt-1">
                               <Input 
                                 id="relatedKeyword"
                                 placeholder={t("dashboard.create.keywords.relatedKeywordPlaceholder")}
                                 className="flex-1"
                               />
-                              <Button type="button" variant="outline" size="sm" className="ml-2">
+                              <Button 
+                                type="button" 
+                                variant="outline" 
+                                size="sm" 
+                                className="ml-2 bg-blue-500 text-white hover:bg-blue-600"
+                                onClick={() => {
+                                  const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
+                                  const relatedKeyword = (document.getElementById("relatedKeyword") as HTMLInputElement).value;
+                                  if (relatedKeyword) {
+                                    currentKeywords.push(relatedKeyword);
+                                    form.setValue("keywords", currentKeywords.join(","));
+                                    (document.getElementById("relatedKeyword") as HTMLInputElement).value = "";
+                                  }
+                                }}
+                              >
                                 {t("dashboard.create.keywords.addNew")}
                               </Button>
                             </div>
