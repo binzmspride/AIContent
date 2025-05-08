@@ -428,14 +428,14 @@ export default function AdminArticles() {
   return (
     <>
       <Head>
-        <title>{t("admin.articles.title") || "Quản lý bài viết"} - {t("common.appName") || "SEO AI Writer"}</title>
+        <title>{t("admin.articlesManagement.title") || "Quản lý bài viết"} - {t("common.appName") || "SEO AI Writer"}</title>
       </Head>
       
-      <AdminLayout title={t("admin.articles.title") || "Quản lý bài viết"}>
+      <AdminLayout title={t("admin.articlesManagement.title") || "Quản lý bài viết"}>
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">{t("admin.articles.title") || "Quản lý bài viết"}</h1>
-            <p className="text-muted-foreground">{t("admin.articles.description") || "Xem và quản lý tất cả bài viết trong hệ thống"}</p>
+            <h1 className="text-2xl font-bold">{t("admin.articlesManagement.title") || "Quản lý bài viết"}</h1>
+            <p className="text-muted-foreground">{t("admin.articlesManagement.description") || "Xem và quản lý tất cả bài viết trong hệ thống"}</p>
           </div>
           <div className="flex items-center space-x-2">
             <div className="relative">
