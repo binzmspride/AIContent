@@ -382,7 +382,7 @@ export default function PerformanceInsights() {
                   <TableCell colSpan={4} className="text-center">Loading...</TableCell>
                 </TableRow>
               ) : (
-                performance?.endpointPerformance.map((endpoint, index) => (
+                performance?.endpointPerformance?.map((endpoint, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">
                       {endpoint.endpoint}

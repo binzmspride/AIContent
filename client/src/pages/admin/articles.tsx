@@ -287,9 +287,9 @@ export default function AdminArticles() {
         if (sortField === "title") {
           compareResult = a.title.localeCompare(b.title);
         } else if (sortField === "createdAt") {
-          compareResult = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          compareResult = new Date(a.createdAt as string).getTime() - new Date(b.createdAt as string).getTime();
         } else if (sortField === "updatedAt") {
-          compareResult = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+          compareResult = new Date(a.updatedAt as string).getTime() - new Date(b.updatedAt as string).getTime();
         }
         
         return sortOrder === "asc" ? compareResult : -compareResult;
