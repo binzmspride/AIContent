@@ -24,7 +24,28 @@ const translations: TranslationsType = {
   vi: {
     admin: {
       adminPanel: "Quản trị viên",
-      adminDashboard: "Bảng điều khiển quản trị"
+      adminDashboard: "Bảng điều khiển quản trị",
+      
+      performanceMetrics: {
+        title: "Số liệu hiệu suất",
+        responseTime: "Thời gian phản hồi",
+        responseTimeHistory: "Lịch sử thời gian phản hồi",
+        requestRate: "Tỷ lệ yêu cầu",
+        cpuUsage: "Sử dụng CPU",
+        memoryUsage: "Sử dụng bộ nhớ",
+        diskUsage: "Sử dụng ổ đĩa",
+        errorRate: "Tỷ lệ lỗi",
+        averageMs: "Trung bình (ms)",
+        p95: "p95",
+        p99: "p99"
+      },
+      
+      stats: {
+        totalUsers: "Tổng số người dùng",
+        totalArticles: "Tổng số bài viết",
+        totalCredits: "Tổng số tín dụng",
+        totalRevenue: "Tổng doanh thu"
+      }
     },
     
     common: {
@@ -321,7 +342,28 @@ const translations: TranslationsType = {
   en: {
     admin: {
       adminPanel: "Admin Panel",
-      adminDashboard: "Admin Dashboard"
+      adminDashboard: "Admin Dashboard",
+      
+      performanceMetrics: {
+        title: "Performance Metrics",
+        responseTime: "Response Time",
+        responseTimeHistory: "Response Time History",
+        requestRate: "Request Rate",
+        cpuUsage: "CPU Usage",
+        memoryUsage: "Memory Usage",
+        diskUsage: "Disk Usage",
+        errorRate: "Error Rate",
+        averageMs: "Average (ms)",
+        p95: "p95",
+        p99: "p99"
+      },
+      
+      stats: {
+        totalUsers: "Total Users",
+        totalArticles: "Total Articles",
+        totalCredits: "Total Credits",
+        totalRevenue: "Total Revenue"
+      }
     },
     
     common: {
