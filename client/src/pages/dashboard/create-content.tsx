@@ -1056,7 +1056,7 @@ export default function CreateContent() {
                             </Label>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
                               <div 
-                                className={`border rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 ${form.watch('aiModel') === 'chatgpt' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
+                                className={`border rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'chatgpt' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
                                 onClick={() => form.setValue('aiModel', 'chatgpt')}
                               >
                                 <div className="flex items-center justify-center h-16">
@@ -1070,7 +1070,7 @@ export default function CreateContent() {
                               </div>
                               
                               <div 
-                                className={`border rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 ${form.watch('aiModel') === 'gemini' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
+                                className={`border rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'gemini' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
                                 onClick={() => form.setValue('aiModel', 'gemini')}
                               >
                                 <div className="flex items-center justify-center h-16">
@@ -1084,7 +1084,7 @@ export default function CreateContent() {
                               </div>
                               
                               <div 
-                                className={`border rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 ${form.watch('aiModel') === 'claude' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
+                                className={`border rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'claude' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
                                 onClick={() => form.setValue('aiModel', 'claude')}
                               >
                                 <div className="flex items-center justify-center h-16">
