@@ -441,7 +441,7 @@ export default function AdminArticles() {
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={t("admin.articles.search") || "Tìm kiếm bài viết..."}
+                placeholder={t("admin.articlesManagement.search") || "Tìm kiếm bài viết..."}
                 className="pl-8 w-full sm:w-[250px]"
                 value={searchQuery}
                 onChange={handleSearch}
@@ -449,13 +449,13 @@ export default function AdminArticles() {
             </div>
             <Select value={statusFilter} onValueChange={handleStatusFilterChange}>
               <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder={t("admin.articles.filterByStatus") || "Lọc theo trạng thái"} />
+                <SelectValue placeholder={t("common.filter") || "Lọc theo trạng thái"} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("admin.articles.allStatuses") || "Tất cả trạng thái"}</SelectItem>
-                <SelectItem value="published">{t("admin.articles.statusPublished") || "Đã xuất bản"}</SelectItem>
-                <SelectItem value="draft">{t("admin.articles.statusDraft") || "Bản nháp"}</SelectItem>
-                <SelectItem value="deleted">{t("admin.articles.statusDeleted") || "Đã xóa"}</SelectItem>
+                <SelectItem value="all">{t("admin.articlesManagement.allStatuses") || "Tất cả trạng thái"}</SelectItem>
+                <SelectItem value="published">{t("common.published") || "Đã xuất bản"}</SelectItem>
+                <SelectItem value="draft">{t("common.draft") || "Bản nháp"}</SelectItem>
+                <SelectItem value="deleted">{t("common.deleted") || "Đã xóa"}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -463,9 +463,9 @@ export default function AdminArticles() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t("admin.articles.allArticles") || "Tất cả bài viết"}</CardTitle>
+            <CardTitle>{t("admin.articlesManagement.allArticles") || "Tất cả bài viết"}</CardTitle>
             <CardDescription>
-              {t("admin.articles.totalCount") || "Tổng số:"} {articlesData?.total || 0} {t("admin.articles.articles") || "bài viết"}
+              {t("admin.articlesManagement.totalCount") || "Tổng số:"} {articlesData?.total || 0} {t("admin.articlesManagement.articles") || "bài viết"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -475,17 +475,17 @@ export default function AdminArticles() {
                   <TableHead>ID</TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort("title")}>
                     <div className="flex items-center">
-                      {t("admin.articles.title") || "Tiêu đề"}
+                      {t("common.title") || "Tiêu đề"}
                       {sortField === "title" && (
                         <ArrowUpDown className={`ml-2 h-4 w-4 ${sortOrder === "asc" ? "transform rotate-180" : ""}`} />
                       )}
                     </div>
                   </TableHead>
-                  <TableHead>{t("admin.articles.author") || "Tác giả"}</TableHead>
-                  <TableHead>{t("admin.articles.status") || "Trạng thái"}</TableHead>
+                  <TableHead>{t("admin.articlesManagement.author") || "Tác giả"}</TableHead>
+                  <TableHead>{t("common.status") || "Trạng thái"}</TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort("createdAt")}>
                     <div className="flex items-center">
-                      {t("admin.articles.createdAt") || "Ngày tạo"}
+                      {t("admin.articlesManagement.createdAt") || "Ngày tạo"}
                       {sortField === "createdAt" && (
                         <ArrowUpDown className={`ml-2 h-4 w-4 ${sortOrder === "asc" ? "transform rotate-180" : ""}`} />
                       )}
@@ -493,7 +493,7 @@ export default function AdminArticles() {
                   </TableHead>
                   <TableHead className="cursor-pointer" onClick={() => handleSort("updatedAt")}>
                     <div className="flex items-center">
-                      {t("admin.articles.updatedAt") || "Cập nhật lần cuối"}
+                      {t("admin.articlesManagement.updatedAt") || "Cập nhật lần cuối"}
                       {sortField === "updatedAt" && (
                         <ArrowUpDown className={`ml-2 h-4 w-4 ${sortOrder === "asc" ? "transform rotate-180" : ""}`} />
                       )}
@@ -545,23 +545,23 @@ export default function AdminArticles() {
                               {t("admin.common.edit") || "Chỉnh sửa"}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuLabel>{t("admin.articles.changeStatus") || "Đổi trạng thái"}</DropdownMenuLabel>
+                            <DropdownMenuLabel>{t("common.changeStatus") || "Đổi trạng thái"}</DropdownMenuLabel>
                             {article.status !== "published" && (
                               <DropdownMenuItem onClick={() => handleChangeStatus(article.id, "published")}>
                                 <Check className="mr-2 h-4 w-4 text-green-600" />
-                                {t("admin.articles.publish") || "Xuất bản"}
+                                {t("common.publish") || "Xuất bản"}
                               </DropdownMenuItem>
                             )}
                             {article.status !== "draft" && (
                               <DropdownMenuItem onClick={() => handleChangeStatus(article.id, "draft")}>
                                 <FileText className="mr-2 h-4 w-4 text-yellow-600" />
-                                {t("admin.articles.markAsDraft") || "Đánh dấu là bản nháp"}
+                                {t("common.markAsDraft") || "Đánh dấu là bản nháp"}
                               </DropdownMenuItem>
                             )}
                             {article.status !== "deleted" && (
                               <DropdownMenuItem onClick={() => handleChangeStatus(article.id, "deleted")}>
                                 <X className="mr-2 h-4 w-4 text-red-600" />
-                                {t("admin.articles.markAsDeleted") || "Đánh dấu là đã xóa"}
+                                {t("common.markAsDeleted") || "Đánh dấu là đã xóa"}
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
@@ -577,7 +577,7 @@ export default function AdminArticles() {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-10">
-                      {t("admin.articles.noArticles") || "Không tìm thấy bài viết nào"}
+                      {t("admin.articlesManagement.noArticles") || "Không tìm thấy bài viết nào"}
                     </TableCell>
                   </TableRow>
                 )}
@@ -634,9 +634,9 @@ export default function AdminArticles() {
         <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
           <DialogContent className="sm:max-w-[650px] max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{t("admin.articles.viewArticle") || "Chi tiết bài viết"}</DialogTitle>
+              <DialogTitle>{t("admin.articlesManagement.view") || "Chi tiết bài viết"}</DialogTitle>
               <DialogDescription>
-                {t("admin.articles.viewArticleDescription") || "Thông tin chi tiết của bài viết"}
+                {t("common.articleDetails") || "Thông tin chi tiết của bài viết"}
               </DialogDescription>
             </DialogHeader>
             
@@ -647,14 +647,14 @@ export default function AdminArticles() {
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
                     <span>ID: {selectedArticle.id}</span>
                     <span>•</span>
-                    <span>{t("admin.articles.author") || "Tác giả"}: {selectedArticle.author.fullName || selectedArticle.author.username}</span>
+                    <span>{t("admin.articlesManagement.author") || "Tác giả"}: {selectedArticle.author.fullName || selectedArticle.author.username}</span>
                     <span>•</span>
                     <span>{getStatusBadge(selectedArticle.status)}</span>
                   </div>
                 </div>
                 
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("admin.articles.keywords") || "Từ khóa"}</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("common.keywords") || "Từ khóa"}</h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedArticle.keywords?.split(',').map((keyword, index) => (
                       <Badge key={index} variant="secondary">
@@ -665,7 +665,7 @@ export default function AdminArticles() {
                 </div>
                 
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("admin.articles.content") || "Nội dung"}</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("common.content") || "Nội dung"}</h3>
                   <div className="p-4 border rounded-lg bg-muted/30 text-sm whitespace-pre-wrap">
                     {selectedArticle.content}
                   </div>
@@ -673,11 +673,11 @@ export default function AdminArticles() {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("admin.articles.createdAt") || "Ngày tạo"}</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("admin.articlesManagement.createdAt") || "Ngày tạo"}</h3>
                     <p>{formatDate(selectedArticle.createdAt)}</p>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("admin.articles.updatedAt") || "Cập nhật lần cuối"}</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-1">{t("admin.articlesManagement.updatedAt") || "Cập nhật lần cuối"}</h3>
                     <p>{formatDate(selectedArticle.updatedAt)}</p>
                   </div>
                 </div>
@@ -700,18 +700,18 @@ export default function AdminArticles() {
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DialogContent className="sm:max-w-[450px]">
             <DialogHeader>
-              <DialogTitle>{t("admin.articles.deleteArticle") || "Xóa bài viết"}</DialogTitle>
+              <DialogTitle>{t("admin.articlesManagement.delete") || "Xóa bài viết"}</DialogTitle>
               <DialogDescription>
-                {t("admin.articles.deleteArticleDescription") || "Bạn có chắc chắn muốn xóa vĩnh viễn bài viết này? Hành động này không thể hoàn tác."}
+                {t("common.deleteConfirmation") || "Bạn có chắc chắn muốn xóa vĩnh viễn bài viết này? Hành động này không thể hoàn tác."}
               </DialogDescription>
             </DialogHeader>
             
             {selectedArticle && (
               <div className="py-4">
-                <p><strong>{t("admin.articles.title") || "Tiêu đề"}:</strong> {selectedArticle.title}</p>
-                <p><strong>{t("admin.articles.author") || "Tác giả"}:</strong> {selectedArticle.author.fullName || selectedArticle.author.username}</p>
-                <p><strong>{t("admin.articles.status") || "Trạng thái"}:</strong> {selectedArticle.status}</p>
-                <p><strong>{t("admin.articles.createdAt") || "Ngày tạo"}:</strong> {formatDate(selectedArticle.createdAt)}</p>
+                <p><strong>{t("common.title") || "Tiêu đề"}:</strong> {selectedArticle.title}</p>
+                <p><strong>{t("admin.articlesManagement.author") || "Tác giả"}:</strong> {selectedArticle.author.fullName || selectedArticle.author.username}</p>
+                <p><strong>{t("common.status") || "Trạng thái"}:</strong> {selectedArticle.status}</p>
+                <p><strong>{t("admin.articlesManagement.createdAt") || "Ngày tạo"}:</strong> {formatDate(selectedArticle.createdAt)}</p>
               </div>
             )}
             
