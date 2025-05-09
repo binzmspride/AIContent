@@ -195,6 +195,14 @@ export default function CreateContent() {
   });
 
   const onSubmit = (data: FormValues) => {
+    console.log("onSubmit triggered", data);
+    
+    // Hiển thị thông báo khi nhấn nút
+    toast({
+      title: "Đang xử lý...",
+      description: "Hệ thống đang xử lý yêu cầu của bạn"
+    });
+    
     if ((user?.credits || 0) < 1) {
       toast({
         title: "Không đủ credits",
