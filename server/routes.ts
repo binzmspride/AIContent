@@ -245,13 +245,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`Sending content request to webhook: ${webhookUrl}`);
         console.log('Webhook payload:', JSON.stringify(webhookPayload, null, 2));
         
-        const webhookResponse = await fetch(webhookUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(webhookPayload),
-        });
+        // Kiểm tra webhook URL có thể truy cập được không trước khi gửi request
+        // Nếu webhookUrl không hoạt động, trả về dữ liệu ví dụ để phát triển
+        let webhookResponse;
+        try {
+          webhookResponse = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(webhookPayload),
+          });
+        } catch (fetchError) {
+          console.error('Error connecting to webhook:', fetchError);
+          
+          // Trong môi trường phát triển, trả về dữ liệu mẫu nếu webhook không hoạt động
+          if (isDevelopment) {
+            console.log('Development mode: returning mock data due to webhook error');
+            
+            // Giả lập phản hồi webhook thành công
+            const mockResponse = {
+              title: contentRequest.title || `Bài viết về ${contentRequest.keywords}`,
+              content: `<h1>Nội dung mẫu về ${contentRequest.keywords}</h1><p>Đây là nội dung mẫu được tạo ra khi webhook không hoạt động. Trong môi trường thực, nội dung này sẽ được tạo ra bởi AI dựa trên các thông số bạn đã cấu hình.</p><h2>Các từ khóa</h2><p>${contentRequest.keywords}</p>`,
+              keywords: contentRequest.keywords.split(','),
+              creditsUsed: creditsNeeded,
+              metrics: {
+                generationTimeMs: 1500,
+                wordCount: 150
+              }
+            };
+            
+            // Trừ credits
+            await storage.subtractUserCredits(userId, creditsNeeded, 'Content generation');
+            
+            return res.json({
+              success: true,
+              data: mockResponse
+            });
+          } else {
+            throw new Error('Cannot connect to webhook service');
+          }
+        }
         
         console.log(`Webhook response status: ${webhookResponse.status}`);
         
