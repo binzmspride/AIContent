@@ -669,7 +669,7 @@ export default function AdminSettings() {
                           name="contactEmail"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>{t("admin.settings.contactEmail") || "Email liên hệ"}</FormLabel>
+                              <FormLabel>{t("admin.settingsPage.contactEmail") || "Email liên hệ"}</FormLabel>
                               <FormControl>
                                 <Input placeholder="contact@example.com" {...field} />
                               </FormControl>
@@ -683,7 +683,7 @@ export default function AdminSettings() {
                           name="supportEmail"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>{t("admin.settings.supportEmail") || "Email hỗ trợ"}</FormLabel>
+                              <FormLabel>{t("admin.settingsPage.supportEmail") || "Email hỗ trợ"}</FormLabel>
                               <FormControl>
                                 <Input placeholder="support@example.com" {...field} />
                               </FormControl>
@@ -701,10 +701,10 @@ export default function AdminSettings() {
                             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                               <div className="space-y-0.5">
                                 <FormLabel className="text-base">
-                                  {t("admin.settings.enableNewUsers") || "Cho phép đăng ký mới"}
+                                  {t("admin.settingsPage.enableNewUsers") || "Cho phép đăng ký mới"}
                                 </FormLabel>
                                 <FormDescription>
-                                  {t("admin.settings.enableNewUsersDescription") || "Cho phép người dùng mới đăng ký tài khoản"}
+                                  {t("admin.settingsPage.enableNewUsersDescription") || "Cho phép người dùng mới đăng ký tài khoản"}
                                 </FormDescription>
                               </div>
                               <FormControl>
@@ -724,10 +724,10 @@ export default function AdminSettings() {
                             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                               <div className="space-y-0.5">
                                 <FormLabel className="text-base">
-                                  {t("admin.settings.enableArticleCreation") || "Cho phép tạo bài viết"}
+                                  {t("admin.settingsPage.enableArticleCreation") || "Cho phép tạo bài viết"}
                                 </FormLabel>
                                 <FormDescription>
-                                  {t("admin.settings.enableArticleCreationDescription") || "Cho phép người dùng tạo bài viết mới"}
+                                  {t("admin.settingsPage.enableArticleCreationDescription") || "Cho phép người dùng tạo bài viết mới"}
                                 </FormDescription>
                               </div>
                               <FormControl>
@@ -747,10 +747,10 @@ export default function AdminSettings() {
                             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                               <div className="space-y-0.5">
                                 <FormLabel className="text-base">
-                                  {t("admin.settings.enableAutoPublish") || "Cho phép tự động xuất bản"}
+                                  {t("admin.settingsPage.enableAutoPublish") || "Cho phép tự động xuất bản"}
                                 </FormLabel>
                                 <FormDescription>
-                                  {t("admin.settings.enableAutoPublishDescription") || "Cho phép tự động xuất bản bài viết đến các kênh đã kết nối"}
+                                  {t("admin.settingsPage.enableAutoPublishDescription") || "Cho phép tự động xuất bản bài viết đến các kênh đã kết nối"}
                                 </FormDescription>
                               </div>
                               <FormControl>
@@ -771,10 +771,10 @@ export default function AdminSettings() {
                               <div className="space-y-0.5">
                                 <FormLabel className="text-base flex items-center">
                                   <AlertCircle className="h-4 w-4 mr-2 text-yellow-600" />
-                                  {t("admin.settings.maintenanceMode") || "Chế độ bảo trì"}
+                                  {t("admin.settingsPage.maintenanceMode") || "Chế độ bảo trì"}
                                 </FormLabel>
                                 <FormDescription>
-                                  {t("admin.settings.maintenanceModeDescription") || "Kích hoạt chế độ bảo trì, chỉ admin mới truy cập được"}
+                                  {t("admin.settingsPage.maintenanceModeDescription") || "Kích hoạt chế độ bảo trì, chỉ admin mới truy cập được"}
                                 </FormDescription>
                               </div>
                               <FormControl>
@@ -873,12 +873,12 @@ export default function AdminSettings() {
                         name="aiContextLength"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t("admin.settings.aiContextLength") || "Độ dài ngữ cảnh (tokens)"}</FormLabel>
+                            <FormLabel>{t("admin.settingsPage.aiContextLength") || "Độ dài ngữ cảnh (tokens)"}</FormLabel>
                             <FormControl>
                               <Input type="number" min="1000" max="100000" step="1000" {...field} />
                             </FormControl>
                             <FormDescription>
-                              {t("admin.settings.aiContextLengthDescription") || "Số lượng tokens tối đa cho mỗi yêu cầu AI"}
+                              {t("admin.settingsPage.aiContextLengthDescription") || "Số lượng tokens tối đa cho mỗi yêu cầu AI"}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -890,19 +890,19 @@ export default function AdminSettings() {
                         name="systemPromptPrefix"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t("admin.settings.systemPromptPrefix") || "Prefix cho System Prompt"}</FormLabel>
+                            <FormLabel>{t("admin.settingsPage.systemPromptPrefix") || "Prefix cho System Prompt"}</FormLabel>
                             <FormControl>
                               <Input {...field} />
                             </FormControl>
                             <FormDescription>
-                              {t("admin.settings.systemPromptPrefixDescription") || "Hướng dẫn mặc định được thêm vào tất cả các yêu cầu AI"}
+                              {t("admin.settingsPage.systemPromptPrefixDescription") || "Hướng dẫn mặc định được thêm vào tất cả các yêu cầu AI"}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                       
-                      <h3 className="text-lg font-medium pt-6 border-t mt-6">{t("admin.settings.creditSettings") || "Cài đặt credits"}</h3>
+                      <h3 className="text-lg font-medium pt-6 border-t mt-6">{t("admin.settingsPage.creditSettings") || "Cài đặt credits"}</h3>
                       
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <FormField
@@ -910,12 +910,12 @@ export default function AdminSettings() {
                           name="defaultUserCredits"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>{t("admin.settings.defaultUserCredits") || "Credits mặc định"}</FormLabel>
+                              <FormLabel>{t("admin.settingsPage.defaultUserCredits") || "Credits mặc định"}</FormLabel>
                               <FormControl>
                                 <Input type="number" min="0" {...field} />
                               </FormControl>
                               <FormDescription>
-                                {t("admin.settings.defaultUserCreditsDescription") || "Credits cấp cho người dùng mới"}
+                                {t("admin.settingsPage.defaultUserCreditsDescription") || "Credits cấp cho người dùng mới"}
                               </FormDescription>
                               <FormMessage />
                             </FormItem>
