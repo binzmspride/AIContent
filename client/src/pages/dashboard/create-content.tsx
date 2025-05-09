@@ -350,7 +350,7 @@ export default function CreateContent() {
                       <LinkIcon className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.links")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="dashboard.create.tabs.knowledge" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
+                    <TabsTrigger value="knowledge" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <BookOpenText className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.knowledge")}</span>
                     </TabsTrigger>
@@ -1013,7 +1013,7 @@ export default function CreateContent() {
                         </div>
                       </TabsContent>
                       
-                      <TabsContent value="dashboard.create.tabs.knowledge" className="mt-0 border rounded-lg p-4">
+                      <TabsContent value="knowledge" className="mt-0 border rounded-lg p-4">
                         <div className="flex items-start pb-2">
                           <BookOpenText className="h-6 w-6 text-blue-500 mr-2 flex-shrink-0 mt-1" />
                           <div>
