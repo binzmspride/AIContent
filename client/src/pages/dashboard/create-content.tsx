@@ -94,6 +94,12 @@ const formSchema = z.object({
   useWebResearch: z.boolean().default(false),
   refSources: z.string().optional(),
   aiModel: z.enum(["chatgpt", "gemini", "claude"]).optional(),
+  linkItems: z.array(
+    z.object({
+      keyword: z.string().optional(),
+      url: z.string().optional()
+    })
+  ).default([]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -113,6 +119,9 @@ export default function CreateContent() {
   const [outlineItems, setOutlineItems] = useState<OutlineItem[]>([]);
   const [currentHeadingText, setCurrentHeadingText] = useState("");
   const [currentHeadingLevel, setCurrentHeadingLevel] = useState<'h2' | 'h3' | 'h4'>('h2');
+  
+  // Khởi tạo linkItems ban đầu
+  const [isLinkItemsInitialized, setIsLinkItemsInitialized] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -135,6 +144,7 @@ export default function CreateContent() {
       useWebResearch: false,
       refSources: "",
       aiModel: "chatgpt",
+      linkItems: [],
     },
   });
 
@@ -294,6 +304,17 @@ export default function CreateContent() {
     // Cập nhật prompt
     const outlineText = convertOutlineToText(updatedItems);
     form.setValue('prompt', outlineText);
+  };
+  
+  // Khởi tạo liên kết đầu tiên khi vào tab liên kết
+  const initializeLinkItems = () => {
+    if (!isLinkItemsInitialized) {
+      const currentItems = form.getValues("linkItems") || [];
+      if (currentItems.length === 0) {
+        form.setValue("linkItems", [{ keyword: "", url: "" }]);
+      }
+      setIsLinkItemsInitialized(true);
+    }
   };
 
   return (
@@ -1058,24 +1079,75 @@ export default function CreateContent() {
                         
                         <div className="space-y-6">
                           <div>
-                            <h4 className="font-medium mb-2">Danh sách liên kết</h4>
+                            <h4 className="font-medium mb-2">
+                              Danh sách liên kết 
+                              <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
+                                ({form.watch("linkItems")?.length || 0}/5)
+                              </span>
+                            </h4>
                             
                             <div className="space-y-4">
-                              <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                  <Label htmlFor="keywordLink" className="mb-1 block">Từ khóa</Label>
-                                  <Input id="keywordLink" placeholder="Từ khóa" />
+                              {(form.getValues("linkItems") || []).map((_, index) => (
+                                <div key={index} className="grid grid-cols-2 gap-4 p-3 border rounded-md relative">
+                                  <div>
+                                    <Label htmlFor={`keyword-${index}`} className="mb-1 block">Từ khóa</Label>
+                                    <Input 
+                                      id={`keyword-${index}`} 
+                                      placeholder="Từ khóa"
+                                      value={form.getValues(`linkItems.${index}.keyword`) || ''}
+                                      onChange={(e) => {
+                                        const items = [...form.getValues("linkItems")];
+                                        if (items[index]) {
+                                          items[index].keyword = e.target.value;
+                                          form.setValue("linkItems", items);
+                                        }
+                                      }}
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label htmlFor={`link-${index}`} className="mb-1 block">Liên kết</Label>
+                                    <Input 
+                                      id={`link-${index}`} 
+                                      placeholder="Liên kết"
+                                      value={form.getValues(`linkItems.${index}.url`) || ''}
+                                      onChange={(e) => {
+                                        const items = [...form.getValues("linkItems")];
+                                        if (items[index]) {
+                                          items[index].url = e.target.value;
+                                          form.setValue("linkItems", items);
+                                        }
+                                      }}
+                                    />
+                                  </div>
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className="absolute top-2 right-2 h-6 w-6 text-gray-400 hover:text-red-500"
+                                    onClick={() => {
+                                      const items = (form.getValues("linkItems") || []).filter((_, i) => i !== index);
+                                      form.setValue("linkItems", items);
+                                    }}
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
                                 </div>
-                                <div>
-                                  <Label htmlFor="urlLink" className="mb-1 block">Liên kết</Label>
-                                  <Input id="urlLink" placeholder="Liên kết" />
-                                </div>
-                              </div>
+                              ))}
                               
                               <div className="flex justify-end">
                                 <Button 
                                   type="button" 
                                   className="bg-purple-500 hover:bg-purple-600 text-white"
+                                  disabled={(form.getValues("linkItems") || []).length >= 5}
+                                  onClick={() => {
+                                    const currentItems = form.getValues("linkItems") || [];
+                                    if (currentItems.length < 5) {
+                                      form.setValue("linkItems", [
+                                        ...currentItems,
+                                        { keyword: "", url: "" }
+                                      ]);
+                                    }
+                                  }}
                                 >
                                   <Plus className="h-4 w-4 mr-1" />
                                   Thêm liên kết
