@@ -48,6 +48,8 @@ import {
   KeyRound, 
   List, 
   FileText,
+  Book,
+  Paintbrush,
   BookOpenText, 
   PaintBucket, 
   AlignJustify,
@@ -895,8 +897,13 @@ export default function CreateContent() {
                       </TabsContent>
                       
                       <TabsContent value="style" className="mt-0 border rounded-lg p-4">
-                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.style.title")}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.style.description")}</p>
+                        <div className="flex items-start">
+                          <Paintbrush className="h-6 w-6 text-blue-500 mr-2 flex-shrink-0 mt-1" />
+                          <div>
+                            <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">Phong cách</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Tùy chỉnh phong cách của nội dung</p>
+                          </div>
+                        </div>
                         
                         <div className="space-y-4">
                           <FormField
@@ -904,7 +911,7 @@ export default function CreateContent() {
                             name="tone"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>{t("dashboard.create.form.contentTone")}</FormLabel>
+                                <FormLabel>Giọng điệu nội dung</FormLabel>
                                 <Select
                                   onValueChange={field.onChange}
                                   defaultValue={field.value}
@@ -1006,8 +1013,13 @@ export default function CreateContent() {
                       </TabsContent>
                       
                       <TabsContent value="knowledge" className="mt-0 border rounded-lg p-4">
-                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.knowledge.title")}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.knowledge.description")}</p>
+                        <div className="flex items-start">
+                          <Book className="h-6 w-6 text-blue-500 mr-2 flex-shrink-0 mt-1" />
+                          <div>
+                            <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.knowledge.title")}</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.knowledge.description")}</p>
+                          </div>
+                        </div>
                         
                         <div className="space-y-4">
                           <div className="flex items-start space-x-2">
