@@ -334,10 +334,7 @@ export default function CreateContent() {
                       <FileText className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.content")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="style" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
-                      <PaintBucket className="h-5 w-5 mr-2" />
-                      <span>Kiểu thức</span>
-                    </TabsTrigger>
+
                     <TabsTrigger value="format" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <AlignJustify className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.format")}</span>
@@ -349,6 +346,10 @@ export default function CreateContent() {
                     <TabsTrigger value="links" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <LinkIcon className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.links")}</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="knowledge" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
+                      <BookOpenText className="h-5 w-5 mr-2" />
+                      <span>Kiến thức</span>
                     </TabsTrigger>
 
                   </TabsList>
@@ -1007,6 +1008,85 @@ export default function CreateContent() {
                           <div className="text-center">
                             <p className="text-sm text-gray-500">{t("dashboard.create.links.comingSoon")}</p>
                           </div>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="knowledge" className="mt-0 border rounded-lg p-4">
+                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">Kiến thức chuyên môn</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Bổ sung các thông tin chuyên môn để làm giàu nội dung bài viết.</p>
+                        
+                        <div className="space-y-4">
+                          <FormField
+                            control={form.control}
+                            name="useWebResearch"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                  <FormLabel>Sử dụng nghiên cứu web</FormLabel>
+                                  <FormDescription>
+                                    Cho phép AI tìm kiếm thông tin trên web để bổ sung cho bài viết
+                                  </FormDescription>
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+                          
+                          <FormField
+                            control={form.control}
+                            name="refSources"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="font-medium">Nguồn tham khảo</FormLabel>
+                                <FormDescription>
+                                  Liệt kê các nguồn tham khảo sẽ được sử dụng (URL, tài liệu, ...)
+                                </FormDescription>
+                                <FormControl>
+                                  <Textarea
+                                    placeholder="https://example.com/article1&#10;https://example.com/research&#10;..."
+                                    className="h-24 resize-none"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          
+                          <FormField
+                            control={form.control}
+                            name="aiModel"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="font-medium">Mô hình AI</FormLabel>
+                                <FormDescription>
+                                  Chọn mô hình AI sẽ sử dụng để tạo nội dung
+                                </FormDescription>
+                                <Select 
+                                  onValueChange={field.onChange} 
+                                  defaultValue={field.value}
+                                  value={field.value}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Chọn mô hình AI" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="chatgpt">ChatGPT</SelectItem>
+                                    <SelectItem value="gemini">Gemini</SelectItem>
+                                    <SelectItem value="claude">Claude</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
                         </div>
                       </TabsContent>
                       
