@@ -416,16 +416,23 @@ export default function CreateContent() {
                         <div className="space-y-4">
                           <FormField
                             control={form.control}
-                            name="title"
+                            name="length"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>{t("dashboard.create.form.articleTitle")}</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="Enter a title for your article"
-                                    {...field}
-                                  />
-                                </FormControl>
+                                <FormLabel>Số từ</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Chọn số từ" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="short">Ngắn (~500 từ)</SelectItem>
+                                    <SelectItem value="medium">Trung bình (~1000 từ)</SelectItem>
+                                    <SelectItem value="long">Dài (~1500 từ)</SelectItem>
+                                    <SelectItem value="extra_long">Rất dài (~2000 từ)</SelectItem>
+                                  </SelectContent>
+                                </Select>
                                 <FormMessage />
                               </FormItem>
                             )}
@@ -773,6 +780,24 @@ export default function CreateContent() {
                         </div>
                         
                         <div className="space-y-6">
+                          {/* Tiêu đề bài viết */}
+                          <FormField
+                            control={form.control}
+                            name="title"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>{t("dashboard.create.form.articleTitle")}</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Nhập tiêu đề cho bài viết của bạn"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
                           {/* Ngôn ngữ */}
                           <div className="space-y-2">
                             <Label htmlFor="language" className="block text-sm font-medium">
