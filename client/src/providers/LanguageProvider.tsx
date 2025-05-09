@@ -50,7 +50,20 @@ const translations: TranslationsType = {
         totalCount: "Tổng số",
         users: "người dùng",
         joinDate: "Ngày tham gia",
-        noUsers: "Không tìm thấy người dùng nào"
+        noUsers: "Không tìm thấy người dùng nào",
+        adjustCredits: "Điều chỉnh credits",
+        adjustCreditsForUser: "Điều chỉnh credits cho người dùng",
+        currentCredits: "Số dư hiện tại",
+        adjustmentAmount: "Số lượng điều chỉnh",
+        adjustmentAmountDescription: "Nhập số dương để thêm credits, số âm để trừ credits",
+        adjustmentReason: "Lý do điều chỉnh",
+        adjustmentReasonPlaceholder: "Ví dụ: Khuyến mãi, hoàn tiền, điều chỉnh lỗi...",
+        assignPlan: "Gán gói dịch vụ",
+        assignPlanForUser: "Gán gói dịch vụ cho người dùng",
+        selectPlan: "Chọn gói dịch vụ",
+        selectPlanPlaceholder: "Chọn một gói dịch vụ",
+        customDuration: "Thời gian sử dụng tùy chỉnh (ngày)",
+        customDurationDescription: "Để trống để sử dụng thời gian mặc định của gói dịch vụ"
       },
       articlesManagement: {
         title: "Quản lý bài viết",
@@ -628,7 +641,20 @@ const translations: TranslationsType = {
         totalCount: "Total Count",
         users: "users",
         joinDate: "Join Date",
-        noUsers: "No users found"
+        noUsers: "No users found",
+        adjustCredits: "Adjust credits",
+        adjustCreditsForUser: "Adjust credits for user",
+        currentCredits: "Current balance",
+        adjustmentAmount: "Adjustment amount",
+        adjustmentAmountDescription: "Enter a positive number to add credits, negative to subtract",
+        adjustmentReason: "Adjustment reason",
+        adjustmentReasonPlaceholder: "Example: Promotion, refund, error correction...",
+        assignPlan: "Assign plan",
+        assignPlanForUser: "Assign plan to user",
+        selectPlan: "Select plan",
+        selectPlanPlaceholder: "Select a plan",
+        customDuration: "Custom duration (days)",
+        customDurationDescription: "Leave empty to use the default duration of the plan"
       },
       articlesManagement: {
         title: "Articles Management",
