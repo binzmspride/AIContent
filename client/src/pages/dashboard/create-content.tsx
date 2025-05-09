@@ -335,7 +335,10 @@ export default function CreateContent() {
                       <FileText className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.content")}</span>
                     </TabsTrigger>
-
+                    <TabsTrigger value="knowledge" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
+                      <BookOpenText className="h-5 w-5 mr-2" />
+                      <span>Kiến thức</span>
+                    </TabsTrigger>
                     <TabsTrigger value="format" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <AlignJustify className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.format")}</span>
@@ -347,10 +350,6 @@ export default function CreateContent() {
                     <TabsTrigger value="links" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <LinkIcon className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.links")}</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="knowledge" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
-                      <BookOpenText className="h-5 w-5 mr-2" />
-                      <span>Kiến thức</span>
                     </TabsTrigger>
 
                   </TabsList>
@@ -1030,9 +1029,9 @@ export default function CreateContent() {
                                 </FormControl>
                                 <div className="space-y-1 leading-none">
                                   <FormLabel>Sử dụng nghiên cứu web</FormLabel>
-                                  <FormDescription>
+                                  <p className="text-sm text-muted-foreground">
                                     Cho phép AI tìm kiếm thông tin trên web để bổ sung cho bài viết
-                                  </FormDescription>
+                                  </p>
                                 </div>
                               </FormItem>
                             )}
@@ -1044,9 +1043,9 @@ export default function CreateContent() {
                             render={({ field }) => (
                               <FormItem>
                                 <FormLabel className="font-medium">Nguồn tham khảo</FormLabel>
-                                <FormDescription>
+                                <p className="text-sm text-muted-foreground">
                                   Liệt kê các nguồn tham khảo sẽ được sử dụng (URL, tài liệu, ...)
-                                </FormDescription>
+                                </p>
                                 <FormControl>
                                   <Textarea
                                     placeholder="https://example.com/article1&#10;https://example.com/research&#10;..."
@@ -1065,9 +1064,9 @@ export default function CreateContent() {
                             render={({ field }) => (
                               <FormItem>
                                 <FormLabel className="font-medium">Mô hình AI</FormLabel>
-                                <FormDescription>
+                                <p className="text-sm text-muted-foreground">
                                   Chọn mô hình AI sẽ sử dụng để tạo nội dung
-                                </FormDescription>
+                                </p>
                                 <Select 
                                   onValueChange={field.onChange} 
                                   defaultValue={field.value}
