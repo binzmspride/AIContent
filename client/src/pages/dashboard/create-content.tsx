@@ -950,32 +950,6 @@ export default function CreateContent() {
                         <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Hệ thống sẽ định dạng cho bài viết của bạn.</p>
                         
                         <div className="space-y-6">
-                          <FormField
-                            control={form.control}
-                            name="length"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>{t("dashboard.create.form.contentLength")}</FormLabel>
-                                <Select
-                                  onValueChange={field.onChange}
-                                  defaultValue={field.value}
-                                >
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select content length" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="short">{t("dashboard.create.form.lengthOptions.short")}</SelectItem>
-                                    <SelectItem value="medium">{t("dashboard.create.form.lengthOptions.medium")}</SelectItem>
-                                    <SelectItem value="long">{t("dashboard.create.form.lengthOptions.long")}</SelectItem>
-                                    <SelectItem value="extra_long">{t("dashboard.create.form.lengthOptions.extraLong")}</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
                           
                           <FormField
                             control={form.control}
