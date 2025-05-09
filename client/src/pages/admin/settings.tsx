@@ -1439,7 +1439,7 @@ export default function AdminSettings() {
                 </CardContent>
                 <CardFooter className="border-t pt-6">
                   <p className="text-sm text-muted-foreground">
-                    {t("admin.settings.systemInfoFooter") || "Hệ thống được phát triển bởi SEO AI Writer Team. Để được hỗ trợ, vui lòng liên hệ support@example.com"}
+                    {t("admin.settingsPage.systemInfoFooter") || "Hệ thống được phát triển bởi SEO AI Writer Team. Để được hỗ trợ, vui lòng liên hệ support@example.com"}
                   </p>
                 </CardFooter>
               </Card>
