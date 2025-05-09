@@ -214,7 +214,7 @@ export function registerApiRoutes(app: Express) {
         });
       }
       
-      const { name, scopes, expiresAt } = req.body;
+      const { name, scopes } = req.body;
       
       if (!name) {
         return res.status(400).json({
@@ -238,7 +238,7 @@ export function registerApiRoutes(app: Express) {
         key,
         secret,
         scopes: apiScopes,
-        expiresAt: expiresAt ? new Date(expiresAt) : null,
+        // Bỏ trường expiresAt vì không có trong cơ sở dữ liệu
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -251,8 +251,8 @@ export function registerApiRoutes(app: Express) {
           name: newApiKey.name,
           key: newApiKey.key,
           secret: newApiKey.secret, // Only show secret on creation
-          scopes: newApiKey.scopes,
-          expiresAt: newApiKey.expiresAt
+          scopes: newApiKey.scopes
+          // Không trả về expiresAt vì không có trong DB
         },
         message: 'API key created successfully. The secret will only be shown once, please store it securely.'
       });
