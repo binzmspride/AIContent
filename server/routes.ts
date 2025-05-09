@@ -238,76 +238,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
           secret: webhookSecret, // Dùng để bảo mật webhook
         };
         
-        // Gọi webhook n8n
-        if (!isDevelopment) {
-          console.log(`Sending content request to webhook: ${webhookUrl}`);
-          const webhookResponse = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(webhookPayload),
-          });
-          
-          if (!webhookResponse.ok) {
-            throw new Error(`Webhook returned status: ${webhookResponse.status}`);
-          }
-          
-          // Xử lý phản hồi từ webhook
-          const webhookResult = await webhookResponse.json();
-          
-          // Trừ credits của người dùng
-          await storage.subtractUserCredits(userId, creditsNeeded, `Content generation: ${contentRequest.title}`);
-          
-          return res.json({ 
-            success: true, 
-            data: webhookResult 
-          });
+        // Gọi webhook n8n bất kể môi trường development hay production
+        console.log(`Sending content request to webhook: ${webhookUrl}`);
+        const webhookResponse = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookPayload),
+        });
+        
+        if (!webhookResponse.ok) {
+          throw new Error(`Webhook returned status: ${webhookResponse.status}`);
         }
+        
+        // Xử lý phản hồi từ webhook
+        const webhookResult = await webhookResponse.json();
+        
+        // Trong môi trường production hoặc test, trừ credits
+        if (!isDevelopment) {
+          await storage.subtractUserCredits(userId, creditsNeeded, `Content generation: ${contentRequest.title}`);
+        } else {
+          console.log(`DEV MODE: Would subtract ${creditsNeeded} credits for content generation`);
+        }
+        
+        return res.json({ 
+          success: true, 
+          data: webhookResult 
+        });
       } catch (webhookError) {
         console.error('Webhook error:', webhookError);
+        
+        // Trong trường hợp lỗi webhook, tạo phản hồi lỗi chi tiết hơn để người dùng có thể hiểu
         return res.status(500).json({
           success: false,
-          error: 'Error calling n8n webhook'
+          error: `Error calling n8n webhook: ${webhookError.message}. Please check the webhook URL and try again.`
         });
       }
-      
-      // Fallback for development or if webhook call fails
-      const mockResponse: GenerateContentResponse = {
-        title: contentRequest.title,
-        content: `<h1>${contentRequest.title}</h1>
-          <p>This is a placeholder for AI-generated content. In a real implementation, this would be generated based on the provided parameters using the n8n webhook.</p>
-          <h2>About this topic</h2>
-          <p>This content would be optimized for SEO with keywords: ${contentRequest.keywords}</p>
-          ${contentRequest.relatedKeywords ? `<p>Related keywords: ${contentRequest.relatedKeywords}</p>` : ''}
-          <h2>Content settings</h2>
-          <p>The content would be written in a ${contentRequest.tone} tone and would be approximately ${contentRequest.length === 'short' ? '500' : contentRequest.length === 'medium' ? '1000' : contentRequest.length === 'long' ? '1500' : '2000'} words long.</p>
-          <p>Language: ${contentRequest.language || 'Vietnamese'}, Country: ${contentRequest.country || 'Vietnam'}</p>
-          <p>Perspective: ${contentRequest.perspective || 'Auto'}, Complexity: ${contentRequest.complexity || 'Auto'}</p>
-          ${contentRequest.useWebResearch ? `<p>Web research: Enabled</p>` : ''}
-          ${contentRequest.refSources ? `<p>Reference sources: ${contentRequest.refSources}</p>` : ''}
-          ${contentRequest.aiModel ? `<p>AI model: ${contentRequest.aiModel}</p>` : ''}
-          ${contentRequest.imageSize ? `<p>Image size: ${contentRequest.imageSize}</p>` : ''}
-          <p>Custom prompt details: ${contentRequest.prompt}</p>`,
-        keywords: contentRequest.keywords.split(',').map(k => k.trim()),
-        creditsUsed: creditsNeeded,
-        metrics: {
-          generationTimeMs: 1500, // Giả lập thời gian tạo nội dung (1.5 giây)
-          wordCount: contentRequest.length === 'short' ? 500 : 
-                    contentRequest.length === 'medium' ? 1000 : 
-                    contentRequest.length === 'long' ? 1500 : 2000,
-          characterCount: contentRequest.length === 'short' ? 3000 : 
-                         contentRequest.length === 'medium' ? 6000 : 
-                         contentRequest.length === 'long' ? 9000 : 12000
-        }
-      };
-      
-      // Mock: trừ credits của người dùng trong môi trường phát triển
-      if (isDevelopment) {
-        await storage.subtractUserCredits(userId, creditsNeeded, `Content generation (Dev): ${contentRequest.title}`);
-      }
-      
-      res.json({ success: true, data: mockResponse });
     } catch (error) {
       console.error('Error generating content:', error);
       res.status(500).json({ success: false, error: 'Failed to generate content' });
