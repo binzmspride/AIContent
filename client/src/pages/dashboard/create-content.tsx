@@ -59,7 +59,11 @@ import {
   Link as LinkIcon,
   X,
   Plus,
-  Trash2
+  Trash2,
+  Bold,
+  Italic,
+  ListOrdered,
+  Heading2
 } from "lucide-react";
 import { GenerateContentRequest, GenerateContentResponse } from "@shared/types";
 import { copyToClipboard, downloadAsFile } from "@/lib/utils";
@@ -79,6 +83,9 @@ const formSchema = z.object({
     message: "Content description must be at least 10 characters.",
   }),
   addHeadings: z.boolean().default(true),
+  useBold: z.boolean().default(false),
+  useItalic: z.boolean().default(false),
+  useBullets: z.boolean().default(false),
   relatedKeywords: z.string().optional(),
   language: z.enum(["vietnamese", "english"]).optional(),
   country: z.enum(["vietnam", "us", "global"]).optional(),
@@ -117,6 +124,9 @@ export default function CreateContent() {
       tone: "conversational",
       prompt: "",
       addHeadings: true,
+      useBold: false,
+      useItalic: false,
+      useBullets: false,
       relatedKeywords: "",
       language: "vietnamese",
       country: "vietnam",
@@ -936,10 +946,10 @@ export default function CreateContent() {
                       </TabsContent>
                       
                       <TabsContent value="format" className="mt-0 border rounded-lg p-4">
-                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.format.title")}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.format.description")}</p>
+                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">Định dạng cho bài viết</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Hệ thống sẽ định dạng cho bài viết của bạn.</p>
                         
-                        <div className="space-y-4">
+                        <div className="space-y-6">
                           <FormField
                             control={form.control}
                             name="length"
@@ -967,27 +977,101 @@ export default function CreateContent() {
                             )}
                           />
                           
-                          <div className="flex items-start space-x-2">
-                            <FormField
-                              control={form.control}
-                              name="addHeadings"
-                              render={({ field }) => (
-                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4">
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value}
-                                      onCheckedChange={field.onChange}
-                                    />
-                                  </FormControl>
-                                  <div className="space-y-1 leading-none">
-                                    <FormLabel>
-                                      {t("dashboard.create.form.addHeadings")}
-                                    </FormLabel>
+                          <FormField
+                            control={form.control}
+                            name="useBold"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                <div className="flex items-center space-x-2">
+                                  <Bold className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                                  <div className="space-y-0.5">
+                                    <FormLabel className="text-base">In đậm</FormLabel>
+                                    <p className="text-sm text-muted-foreground">
+                                      Chúng tôi sẽ in đậm những từ khóa quan trọng trong bài viết của bạn.
+                                    </p>
                                   </div>
-                                </FormItem>
-                              )}
-                            />
-                          </div>
+                                </div>
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="useItalic"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                <div className="flex items-center space-x-2">
+                                  <Italic className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                                  <div className="space-y-0.5">
+                                    <FormLabel className="text-base">In nghiêng</FormLabel>
+                                    <p className="text-sm text-muted-foreground">
+                                      Chúng tôi sẽ sử dụng chữ in nghiêng để nhấn mạnh một cách tinh tế trong bài viết của bạn.
+                                    </p>
+                                  </div>
+                                </div>
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="useBullets"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                <div className="flex items-center space-x-2">
+                                  <ListOrdered className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                                  <div className="space-y-0.5">
+                                    <FormLabel className="text-base">Liệt kê</FormLabel>
+                                    <p className="text-sm text-muted-foreground">
+                                      Nếu bạn đồng ý, tôi sẽ dùng tạo liệt kê cho bạn
+                                    </p>
+                                  </div>
+                                </div>
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+                          
+                          <FormField
+                            control={form.control}
+                            name="addHeadings"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                <div className="flex items-center space-x-2">
+                                  <Heading2 className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                                  <div className="space-y-0.5">
+                                    <FormLabel className="text-base">{t("dashboard.create.form.addHeadings")}</FormLabel>
+                                    <p className="text-sm text-muted-foreground">
+                                      Tự động thêm các tiêu đề và phụ đề vào bài viết
+                                    </p>
+                                  </div>
+                                </div>
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
                         </div>
                       </TabsContent>
                       
