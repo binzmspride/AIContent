@@ -190,7 +190,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Generate content (mock API for now)
+  // Generate content with n8n webhook
   app.post('/api/dashboard/generate-content', async (req, res) => {
     try {
       if (!req.isAuthenticated()) {
@@ -214,8 +214,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // This would be replaced with actual AI content generation using n8n webhook
-      // For now, return mock content
+      // Đợi nếu đang chạy trong chế độ dev để không tiêu hao credits thực
+      const isDevelopment = process.env.NODE_ENV !== 'production';
+      
+      // Lấy URL webhook từ cơ sở dữ liệu
+      const webhookUrl = await storage.getSetting('notificationWebhookUrl');
+      const webhookSecret = await storage.getSetting('webhookSecret');
+      
+      if (!webhookUrl) {
+        return res.status(500).json({
+          success: false,
+          error: 'Webhook URL not configured. Please contact administrator.'
+        });
+      }
+      
+      try {
+        // Chuẩn bị payload để gửi đến webhook
+        const webhookPayload = {
+          ...contentRequest,
+          userId: userId,
+          username: req.user.username,
+          timestamp: new Date().toISOString(),
+          secret: webhookSecret, // Dùng để bảo mật webhook
+        };
+        
+        // Gọi webhook n8n
+        if (!isDevelopment) {
+          console.log(`Sending content request to webhook: ${webhookUrl}`);
+          const webhookResponse = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(webhookPayload),
+          });
+          
+          if (!webhookResponse.ok) {
+            throw new Error(`Webhook returned status: ${webhookResponse.status}`);
+          }
+          
+          // Xử lý phản hồi từ webhook
+          const webhookResult = await webhookResponse.json();
+          
+          // Trừ credits của người dùng
+          await storage.subtractUserCredits(userId, creditsNeeded, `Content generation: ${contentRequest.title}`);
+          
+          return res.json({ 
+            success: true, 
+            data: webhookResult 
+          });
+        }
+      } catch (webhookError) {
+        console.error('Webhook error:', webhookError);
+        return res.status(500).json({
+          success: false,
+          error: 'Error calling n8n webhook'
+        });
+      }
+      
+      // Fallback for development or if webhook call fails
       const mockResponse: GenerateContentResponse = {
         title: contentRequest.title,
         content: `<h1>${contentRequest.title}</h1>
@@ -245,8 +302,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       };
       
-      // In the real implementation, we would wait for the n8n webhook response
-      // and then create the article and subtract credits
+      // Mock: trừ credits của người dùng trong môi trường phát triển
+      if (isDevelopment) {
+        await storage.subtractUserCredits(userId, creditsNeeded, `Content generation (Dev): ${contentRequest.title}`);
+      }
       
       res.json({ success: true, data: mockResponse });
     } catch (error) {
