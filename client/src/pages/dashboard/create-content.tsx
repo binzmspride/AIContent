@@ -148,6 +148,7 @@ export default function CreateContent() {
       linkItems: [],
       imageSize: "medium",
     },
+    mode: "onSubmit",
   });
   
   // Effect para inicializar os itens de link quando carrega o componente
@@ -1451,8 +1452,13 @@ export default function CreateContent() {
                       
                       <div className="border-t pt-4 flex justify-end space-x-2">
                         <Button
-                          type="submit"
+                          type="button"
                           className="bg-blue-600 hover:bg-blue-700"
+                          onClick={() => {
+                            console.log("Button clicked");
+                            console.log("Form state:", form.formState);
+                            form.handleSubmit(onSubmit)();
+                          }}
                           disabled={generateContentMutation.isPending}
                         >
                           {generateContentMutation.isPending ? (
