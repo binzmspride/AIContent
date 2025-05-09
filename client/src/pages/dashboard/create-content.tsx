@@ -228,12 +228,12 @@ export default function CreateContent() {
       
     // Convert form data to GenerateContentRequest format
     const requestData: GenerateContentRequest = {
-      title: data.title,
+      title: data.title || '',
       contentType: data.contentType || 'blog',
       keywords: data.keywords,
       length: data.length,
       tone: data.tone,
-      prompt: data.prompt,
+      prompt: data.prompt || '',
       addHeadings: data.addHeadings,
       useBold: data.useBold,
       useItalic: data.useItalic,
@@ -491,7 +491,9 @@ export default function CreateContent() {
                           
                           {/* Từ khóa chính */}
                           <div>
-                            <Label htmlFor="mainKeyword" className="text-gray-700 dark:text-gray-200 mb-1 block">{t("dashboard.create.keywords.mainKeyword")} <span className="text-red-500">*</span></Label>
+                            <Label htmlFor="mainKeyword" className="text-gray-700 dark:text-gray-200 mb-1 block">
+                              {t("dashboard.create.keywords.mainKeyword")} <span className="text-red-500">*</span>
+                            </Label>
                             
                             {/* Trường input thông thường cho từ khóa chính */}
                             <Input 
