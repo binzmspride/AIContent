@@ -1017,7 +1017,7 @@ export default function CreateContent() {
                         <div className="flex items-start pb-2">
                           <BookOpenText className="h-6 w-6 text-blue-500 mr-2 flex-shrink-0 mt-1" />
                           <div>
-                            <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">Kiến thức cho bài viết</h3>
+                            <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.tabs.knowledge")}</h3>
                             <p className="text-sm text-gray-600 dark:text-gray-300">Hệ thống sẽ cung cấp kiến thức cho bài viết của bạn.</p>
                           </div>
                         </div>
@@ -1025,7 +1025,7 @@ export default function CreateContent() {
                         <div className="space-y-6 mt-4">
                           <div>
                             <div className="flex justify-between items-center mb-1">
-                              <h4 className="font-medium text-gray-900 dark:text-gray-100">Kết nối đến web</h4>
+                              <h4 className="font-medium text-gray-900 dark:text-gray-100">{t("dashboard.create.knowledge.webResearch")}</h4>
                               <FormField
                                 control={form.control}
                                 name="useWebResearch"
@@ -1041,11 +1041,11 @@ export default function CreateContent() {
                                 )}
                               />
                             </div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Chúng tôi sẽ tìm kiếm các chủ đề tương tự trên Google để tạo ra nội dung mới nhất.</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{t("dashboard.create.knowledge.webResearchDescription")}</p>
                           </div>
                           
                           <div>
-                            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">Nguồn tham khảo</h4>
+                            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">{t("dashboard.create.knowledge.refSources")}</h4>
                             <Input
                               id="refSources"
                               placeholder="https://matbao.net/"
@@ -1056,7 +1056,7 @@ export default function CreateContent() {
                           </div>
                           
                           <div>
-                            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Mô hình AI</h4>
+                            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">{t("dashboard.create.knowledge.aiModel")}</h4>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                               <div 
                                 className={`border rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'chatgpt' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
