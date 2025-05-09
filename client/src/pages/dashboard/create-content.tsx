@@ -70,18 +70,14 @@ import { copyToClipboard, downloadAsFile } from "@/lib/utils";
 import Head from "@/components/head";
 
 const formSchema = z.object({
-  title: z.string().min(5, {
-    message: "Title must be at least 5 characters.",
-  }),
+  title: z.string().optional(),
   contentType: z.enum(["blog", "product", "news", "social"]),
   keywords: z.string().min(3, {
-    message: "Keywords must be at least 3 characters.",
+    message: "Từ khóa phải có ít nhất 3 ký tự.",
   }),
   length: z.enum(["short", "medium", "long", "extra_long"]),
   tone: z.enum(["professional", "conversational", "informative", "persuasive", "humorous", "neutral"]),
-  prompt: z.string().min(10, {
-    message: "Content description must be at least 10 characters.",
-  }),
+  prompt: z.string().optional(),
   addHeadings: z.boolean().default(true),
   useBold: z.boolean().default(true),
   useItalic: z.boolean().default(true),
