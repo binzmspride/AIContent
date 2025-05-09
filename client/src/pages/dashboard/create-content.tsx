@@ -100,6 +100,7 @@ const formSchema = z.object({
       url: z.string().optional()
     })
   ).default([]),
+  imageSize: z.enum(["small", "medium", "large"]).default("medium"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -145,6 +146,7 @@ export default function CreateContent() {
       refSources: "",
       aiModel: "chatgpt",
       linkItems: [],
+      imageSize: "medium",
     },
   });
   
@@ -1176,11 +1178,110 @@ export default function CreateContent() {
                       </TabsContent>
                       
                       <TabsContent value="media" className="mt-0 border rounded-lg p-4">
-                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.media.title")}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.media.description")}</p>
-                        <div className="flex items-center justify-center h-40 border-2 border-dashed border-gray-300 rounded-lg">
-                          <div className="text-center">
-                            <p className="text-sm text-gray-500">{t("dashboard.create.media.comingSoon")}</p>
+                        <div className="flex items-center mb-2 text-gray-800 dark:text-gray-100">
+                          <Image className="h-5 w-5 mr-2" />
+                          <h3 className="text-lg font-medium">Hình ảnh cho bài viết</h3>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Quản lý cài đặt kích thước hình ảnh trong bài viết của bạn</p>
+                        
+                        <div className="space-y-6">
+                          <div>
+                            <h4 className="text-md font-medium mb-4">Kích thước hình ảnh</h4>
+                            
+                            <div className="grid grid-cols-1 gap-4">
+                              <FormField
+                                control={form.control}
+                                name="imageSize"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <div className="space-y-4">
+                                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                          <label 
+                                            className={`relative flex cursor-pointer rounded-lg border bg-white dark:bg-gray-800 p-4 shadow-sm focus:outline-none ${field.value === 'small' ? 'border-2 border-blue-500' : 'border-gray-200 dark:border-gray-700'}`}
+                                          >
+                                            <input
+                                              type="radio"
+                                              name="imageSize"
+                                              value="small"
+                                              className="sr-only"
+                                              checked={field.value === 'small'}
+                                              onChange={() => field.onChange('small')}
+                                            />
+                                            <span className="flex flex-1 items-center">
+                                              <span className="flex flex-col text-sm">
+                                                <span className="font-medium text-gray-900 dark:text-gray-100">Nhỏ (640×480)</span>
+                                              </span>
+                                            </span>
+                                            {field.value === 'small' && (
+                                              <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                                </svg>
+                                              </span>
+                                            )}
+                                          </label>
+                                        </div>
+                                        
+                                        <div>
+                                          <label 
+                                            className={`relative flex cursor-pointer rounded-lg border bg-white dark:bg-gray-800 p-4 shadow-sm focus:outline-none ${field.value === 'medium' ? 'border-2 border-blue-500' : 'border-gray-200 dark:border-gray-700'}`}
+                                          >
+                                            <input
+                                              type="radio"
+                                              name="imageSize"
+                                              value="medium"
+                                              className="sr-only"
+                                              checked={field.value === 'medium'}
+                                              onChange={() => field.onChange('medium')}
+                                            />
+                                            <span className="flex flex-1 items-center">
+                                              <span className="flex flex-col text-sm">
+                                                <span className="font-medium text-gray-900 dark:text-gray-100">Trung bình (1280×720)</span>
+                                              </span>
+                                            </span>
+                                            {field.value === 'medium' && (
+                                              <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                                </svg>
+                                              </span>
+                                            )}
+                                          </label>
+                                        </div>
+                                        
+                                        <div>
+                                          <label 
+                                            className={`relative flex cursor-pointer rounded-lg border bg-white dark:bg-gray-800 p-4 shadow-sm focus:outline-none ${field.value === 'large' ? 'border-2 border-blue-500' : 'border-gray-200 dark:border-gray-700'}`}
+                                          >
+                                            <input
+                                              type="radio"
+                                              name="imageSize"
+                                              value="large"
+                                              className="sr-only"
+                                              checked={field.value === 'large'}
+                                              onChange={() => field.onChange('large')}
+                                            />
+                                            <span className="flex flex-1 items-center">
+                                              <span className="flex flex-col text-sm">
+                                                <span className="font-medium text-gray-900">Lớn (1920×1080)</span>
+                                              </span>
+                                            </span>
+                                            {field.value === 'large' && (
+                                              <span className="absolute -right-1 -top-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                                                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                                </svg>
+                                              </span>
+                                            )}
+                                          </label>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
                           </div>
                         </div>
                       </TabsContent>
