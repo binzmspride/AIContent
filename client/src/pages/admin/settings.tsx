@@ -654,7 +654,7 @@ export default function AdminSettings() {
                         name="siteDescription"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t("admin.settings.siteDescription") || "Mô tả trang web"}</FormLabel>
+                            <FormLabel>{t("admin.settingsPage.siteDescription") || "Mô tả trang web"}</FormLabel>
                             <FormControl>
                               <Input placeholder="AI-powered SEO content generation platform" {...field} />
                             </FormControl>
@@ -810,9 +810,9 @@ export default function AdminSettings() {
             <TabsContent value="ai" className="mt-0 space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("admin.settings.ai") || "Cài đặt AI"}</CardTitle>
+                  <CardTitle>{t("admin.settingsPage.ai") || "Cài đặt AI"}</CardTitle>
                   <CardDescription>
-                    {t("admin.settings.aiDescription") || "Cấu hình các thông số cho AI và hệ thống credits"}
+                    {t("admin.settingsPage.aiDescription") || "Cấu hình các thông số cho AI và hệ thống credits"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -824,11 +824,11 @@ export default function AdminSettings() {
                           name="aiModel"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>{t("admin.settings.aiModel") || "Mô hình AI"}</FormLabel>
+                              <FormLabel>{t("admin.settingsPage.aiModel") || "Mô hình AI"}</FormLabel>
                               <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                   <SelectTrigger>
-                                    <SelectValue placeholder={t("admin.settings.selectAiModel") || "Chọn mô hình AI"} />
+                                    <SelectValue placeholder={t("admin.settingsPage.selectAiModel") || "Chọn mô hình AI"} />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
@@ -848,7 +848,7 @@ export default function AdminSettings() {
                           name="aiTemperature"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>{t("admin.settings.aiTemperature") || "Nhiệt độ AI"} ({field.value})</FormLabel>
+                              <FormLabel>{t("admin.settingsPage.aiTemperature") || "Nhiệt độ AI"} ({field.value})</FormLabel>
                               <FormControl>
                                 <Input 
                                   type="range" 
@@ -860,7 +860,7 @@ export default function AdminSettings() {
                                 />
                               </FormControl>
                               <FormDescription>
-                                {t("admin.settings.aiTemperatureDescription") || "Mức độ sáng tạo của AI (0: ít ngẫu nhiên, 1: nhiều ngẫu nhiên)"}
+                                {t("admin.settingsPage.aiTemperatureDescription") || "Mức độ sáng tạo của AI (0: ít ngẫu nhiên, 1: nhiều ngẫu nhiên)"}
                               </FormDescription>
                               <FormMessage />
                             </FormItem>
@@ -979,9 +979,9 @@ export default function AdminSettings() {
             <TabsContent value="email" className="mt-0 space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("admin.settings.email") || "Cài đặt email"}</CardTitle>
+                  <CardTitle>{t("admin.settingsPage.email") || "Cài đặt email"}</CardTitle>
                   <CardDescription>
-                    {t("admin.settings.emailDescription") || "Cấu hình máy chủ SMTP để gửi email thông báo"}
+                    {t("admin.settingsPage.emailDescription") || "Cấu hình máy chủ SMTP để gửi email thông báo"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -1130,9 +1130,9 @@ export default function AdminSettings() {
             <TabsContent value="api" className="mt-0 space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("admin.settings.api") || "Cài đặt API"}</CardTitle>
+                  <CardTitle>{t("admin.settingsPage.api") || "Cài đặt API"}</CardTitle>
                   <CardDescription>
-                    {t("admin.settings.apiDescription") || "Cấu hình kết nối với các dịch vụ API bên ngoài"}
+                    {t("admin.settingsPage.apiDescription") || "Cấu hình kết nối với các dịch vụ API bên ngoài"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -1245,9 +1245,9 @@ export default function AdminSettings() {
             <TabsContent value="webhook" className="mt-0 space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("admin.settings.webhook") || "Cài đặt webhook"}</CardTitle>
+                  <CardTitle>{t("admin.settingsPage.webhook") || "Cài đặt webhook"}</CardTitle>
                   <CardDescription>
-                    {t("admin.settings.webhookDescription") || "Cấu hình webhook cho n8n và các dịch vụ khác"}
+                    {t("admin.settingsPage.webhookDescription") || "Cấu hình webhook cho n8n và các dịch vụ khác"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -1343,9 +1343,9 @@ export default function AdminSettings() {
             <TabsContent value="system" className="mt-0 space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("admin.settings.systemInfo") || "Thông tin hệ thống"}</CardTitle>
+                  <CardTitle>{t("admin.settingsPage.systemInfo") || "Thông tin hệ thống"}</CardTitle>
                   <CardDescription>
-                    {t("admin.settings.systemInfoDescription") || "Xem thông tin và trạng thái của hệ thống"}
+                    {t("admin.settingsPage.systemInfoDescription") || "Xem thông tin và trạng thái của hệ thống"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
