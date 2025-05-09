@@ -688,9 +688,13 @@ export default function AdminUsers() {
                               <Edit className="mr-2 h-4 w-4" />
                               {t("admin.usersManagement.edit") || "Chỉnh sửa"}
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleAdjustCreditsClick(user)}>
                               <CreditCard className="mr-2 h-4 w-4" />
-                              {t("admin.usersManagement.addCredits") || "Thêm credits"}
+                              {t("admin.usersManagement.adjustCredits") || "Điều chỉnh credits"}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleAssignPlanClick(user)}>
+                              <Plus className="mr-2 h-4 w-4" />
+                              {t("admin.usersManagement.assignPlan") || "Gán gói dịch vụ"}
                             </DropdownMenuItem>
                             <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleDeleteClick(user)}>
                               <Trash className="mr-2 h-4 w-4" />
