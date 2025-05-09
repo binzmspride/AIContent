@@ -76,6 +76,27 @@ const translations: TranslationsType = {
       history: "Lịch sử",
       settings: "Cài đặt",
       
+      settingsPage: {
+        title: "Cài đặt",
+        general: "Cài đặt chung",
+        ai: "Cài đặt AI",
+        email: "Cài đặt Email",
+        api: "Tích hợp API",
+        webhook: "Webhook",
+        system: "Hệ thống",
+        systemStatus: "Trạng thái hệ thống",
+        version: "Phiên bản",
+        database: "Cơ sở dữ liệu",
+        lastBackup: "Sao lưu lần cuối",
+        backupNow: "Sao lưu ngay",
+        webhookDescription: "Cấu hình webhook cho n8n và các dịch vụ khác",
+        webhookSecret: "Khóa bí mật webhook",
+        webhookSecretDescription: "Khóa bí mật để xác thực webhook, bắt đầu bằng 'whsec_'",
+        notificationWebhook: "Webhook thông báo n8n",
+        notificationWebhookDescription: "URL webhook để nhận thông báo về sự kiện hệ thống",
+        availableWebhookEvents: "Sự kiện webhook có sẵn"
+      },
+      
       performanceMetrics: {
         title: "Số liệu hiệu suất",
         responseTime: "Thời gian phản hồi",
@@ -611,6 +632,27 @@ const translations: TranslationsType = {
       },
       history: "History",
       settings: "Settings",
+      
+      settingsPage: {
+        title: "Settings",
+        general: "General Settings",
+        ai: "AI Settings",
+        email: "Email Settings",
+        api: "API Integration",
+        webhook: "Webhook",
+        system: "System",
+        systemStatus: "System Status",
+        version: "Version",
+        database: "Database",
+        lastBackup: "Last Backup",
+        backupNow: "Backup Now",
+        webhookDescription: "Configure webhook for n8n and other services",
+        webhookSecret: "Webhook Secret",
+        webhookSecretDescription: "Secret key to authenticate webhooks, starting with 'whsec_'",
+        notificationWebhook: "n8n Notification Webhook",
+        notificationWebhookDescription: "Webhook URL to receive system events notifications",
+        availableWebhookEvents: "Available Webhook Events"
+      },
       
       performanceMetrics: {
         title: "Performance Metrics",
