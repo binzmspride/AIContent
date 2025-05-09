@@ -282,7 +282,7 @@ export function registerApiRoutes(app: Express) {
           key: apiKeys.key,
           scopes: apiKeys.scopes,
           isActive: apiKeys.isActive,
-          expiresAt: apiKeys.expiresAt,
+          // Không chọn expiresAt vì có thể không tồn tại cột này trong DB
           lastUsedAt: apiKeys.lastUsedAt,
           createdAt: apiKeys.createdAt
         })
@@ -337,13 +337,13 @@ export function registerApiRoutes(app: Express) {
       }
       
       // Update the API key
-      const { name, scopes, isActive, expiresAt } = req.body;
+      const { name, scopes, isActive } = req.body;
       const updateData: any = { updatedAt: new Date() };
       
       if (name !== undefined) updateData.name = name;
       if (scopes !== undefined) updateData.scopes = scopes;
       if (isActive !== undefined) updateData.isActive = isActive;
-      if (expiresAt !== undefined) updateData.expiresAt = expiresAt ? new Date(expiresAt) : null;
+      // Bỏ xử lý expiresAt vì không có cột này trong DB
       
       const [updatedKey] = await db
         .update(apiKeys)
@@ -359,7 +359,7 @@ export function registerApiRoutes(app: Express) {
           key: updatedKey.key,
           scopes: updatedKey.scopes,
           isActive: updatedKey.isActive,
-          expiresAt: updatedKey.expiresAt,
+          // Không trả về expiresAt vì không có cột này trong DB
           lastUsedAt: updatedKey.lastUsedAt,
           createdAt: updatedKey.createdAt,
           updatedAt: updatedKey.updatedAt
