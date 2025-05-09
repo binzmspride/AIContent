@@ -97,7 +97,7 @@ export function registerAdminRoutes(app: Express) {
         planId,
         startDate: new Date(),
         endDate: duration ? new Date(Date.now() + duration * 24 * 60 * 60 * 1000) : undefined,
-        status: "active"
+        isActive: true
       });
 
       // If it's a credit plan, add credits
