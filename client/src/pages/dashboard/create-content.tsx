@@ -1050,11 +1050,38 @@ export default function CreateContent() {
                       </TabsContent>
                       
                       <TabsContent value="links" className="mt-0 border rounded-lg p-4">
-                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.links.title")}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.links.description")}</p>
-                        <div className="flex items-center justify-center h-40 border-2 border-dashed border-gray-300 rounded-lg">
-                          <div className="text-center">
-                            <p className="text-sm text-gray-500">{t("dashboard.create.links.comingSoon")}</p>
+                        <div className="flex items-center mb-2 text-gray-800 dark:text-gray-100">
+                          <LinkIcon className="h-5 w-5 mr-2" />
+                          <h3 className="text-lg font-medium">Liên kết cho bài viết</h3>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Hệ thống sẽ tạo liên kết cho bài viết của bạn.</p>
+                        
+                        <div className="space-y-6">
+                          <div>
+                            <h4 className="font-medium mb-2">Danh sách liên kết</h4>
+                            
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <Label htmlFor="keywordLink" className="mb-1 block">Từ khóa</Label>
+                                  <Input id="keywordLink" placeholder="Từ khóa" />
+                                </div>
+                                <div>
+                                  <Label htmlFor="urlLink" className="mb-1 block">Liên kết</Label>
+                                  <Input id="urlLink" placeholder="Liên kết" />
+                                </div>
+                              </div>
+                              
+                              <div className="flex justify-end">
+                                <Button 
+                                  type="button" 
+                                  className="bg-purple-500 hover:bg-purple-600 text-white"
+                                >
+                                  <Plus className="h-4 w-4 mr-1" />
+                                  Thêm liên kết
+                                </Button>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </TabsContent>
