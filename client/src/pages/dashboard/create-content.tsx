@@ -204,6 +204,16 @@ export default function CreateContent() {
       description: "Hệ thống đang xử lý yêu cầu của bạn"
     });
     
+    // Kiểm tra từ khóa trước khi kiểm tra credits
+    if (!data.keywords || data.keywords.trim() === '') {
+      toast({
+        title: "Thiếu từ khóa",
+        description: "Vui lòng nhập ít nhất một từ khóa",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     if ((user?.credits || 0) < 1) {
       toast({
         title: "Không đủ credits",
@@ -218,15 +228,7 @@ export default function CreateContent() {
       ? data.linkItems.filter(item => item.keyword && item.url)
       : [];
     
-    // Check if keywords is empty
-    if (!data.keywords || data.keywords.trim() === '') {
-      toast({
-        title: "Thiếu từ khóa",
-        description: "Vui lòng nhập ít nhất một từ khóa",
-        variant: "destructive",
-      });
-      return;
-    }
+    // Đã kiểm tra keywords ở phía trên rồi
       
     // Convert form data to GenerateContentRequest format
     const requestData: GenerateContentRequest = {
@@ -1456,7 +1458,8 @@ export default function CreateContent() {
                           className="bg-blue-600 hover:bg-blue-700"
                           onClick={() => {
                             console.log("Button clicked");
-                            console.log("Form state:", form.formState);
+                            console.log("Form values:", form.getValues());
+                            console.log("Form errors:", form.formState.errors);
                             form.handleSubmit(onSubmit)();
                           }}
                           disabled={generateContentMutation.isPending}
