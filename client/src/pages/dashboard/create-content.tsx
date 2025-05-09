@@ -165,6 +165,12 @@ export default function CreateContent() {
 
   const generateContentMutation = useMutation({
     mutationFn: async (data: GenerateContentRequest) => {
+      // Hiển thị thông báo đang xử lý
+      toast({
+        title: "Đang tạo nội dung",
+        description: "Vui lòng đợi trong khi hệ thống tạo nội dung của bạn...",
+      });
+      
       const res = await apiRequest("POST", "/api/dashboard/generate-content", data);
       const responseData = await res.json();
       if (!responseData.success) {
@@ -175,13 +181,13 @@ export default function CreateContent() {
     onSuccess: (data) => {
       setGeneratedContent(data);
       toast({
-        title: "Content generated successfully",
-        description: `Used ${data.creditsUsed} credits`,
+        title: "Đã tạo nội dung thành công",
+        description: `Đã sử dụng ${data.creditsUsed} credits`,
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Failed to generate content",
+        title: "Không thể tạo nội dung",
         description: error.message,
         variant: "destructive",
       });
@@ -191,8 +197,8 @@ export default function CreateContent() {
   const onSubmit = (data: FormValues) => {
     if ((user?.credits || 0) < 1) {
       toast({
-        title: "Insufficient credits",
-        description: "Please purchase more credits to generate content",
+        title: "Không đủ credits",
+        description: "Vui lòng mua thêm credits để tạo nội dung",
         variant: "destructive",
       });
       return;
@@ -206,8 +212,8 @@ export default function CreateContent() {
     // Check if keywords is empty
     if (!data.keywords || data.keywords.trim() === '') {
       toast({
-        title: "Missing keywords",
-        description: "Please enter at least one keyword",
+        title: "Thiếu từ khóa",
+        description: "Vui lòng nhập ít nhất một từ khóa",
         variant: "destructive",
       });
       return;
@@ -246,14 +252,14 @@ export default function CreateContent() {
       copyToClipboard(generatedContent.content)
         .then(() => {
           toast({
-            title: "Copied to clipboard",
-            description: "Content has been copied to clipboard",
+            title: "Đã sao chép vào clipboard",
+            description: "Nội dung đã được sao chép vào clipboard",
           });
         })
         .catch(() => {
           toast({
-            title: "Failed to copy",
-            description: "Could not copy content to clipboard",
+            title: "Không thể sao chép",
+            description: "Không thể sao chép nội dung vào clipboard",
             variant: "destructive",
           });
         });
@@ -267,12 +273,22 @@ export default function CreateContent() {
         `${generatedContent.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.html`,
         "text/html"
       );
+      
+      toast({
+        title: "Đã tải xuống",
+        description: "Nội dung đã được tải xuống thành công",
+      });
     }
   };
 
   const handleSaveArticle = async () => {
     if (generatedContent) {
       try {
+        toast({
+          title: "Đang lưu bài viết",
+          description: "Vui lòng đợi trong khi hệ thống lưu bài viết của bạn...",
+        });
+        
         await apiRequest("POST", "/api/dashboard/articles", {
           title: generatedContent.title,
           content: generatedContent.content,
@@ -281,13 +297,13 @@ export default function CreateContent() {
         });
         
         toast({
-          title: "Article saved",
-          description: "Article has been saved successfully",
+          title: "Đã lưu bài viết",
+          description: "Bài viết đã được lưu thành công",
         });
       } catch (error) {
         toast({
-          title: "Failed to save article",
-          description: "Could not save the article",
+          title: "Không thể lưu bài viết",
+          description: "Không thể lưu bài viết, vui lòng thử lại sau",
           variant: "destructive",
         });
       }
