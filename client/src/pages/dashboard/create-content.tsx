@@ -147,6 +147,19 @@ export default function CreateContent() {
       linkItems: [],
     },
   });
+  
+  // Effect para inicializar os itens de link quando carrega o componente
+  useEffect(() => {
+    const tabs = document.querySelectorAll('[role="tab"]');
+    const linksTab = Array.from(tabs).find(tab => tab.textContent?.includes('Liên kết'));
+    
+    // Adiciona um listener ao tab de links
+    linksTab?.addEventListener('click', initializeLinkItems);
+    
+    return () => {
+      linksTab?.removeEventListener('click', initializeLinkItems);
+    };
+  }, []);
 
   const generateContentMutation = useMutation({
     mutationFn: async (data: GenerateContentRequest) => {
@@ -309,7 +322,7 @@ export default function CreateContent() {
   // Khởi tạo liên kết đầu tiên khi vào tab liên kết
   const initializeLinkItems = () => {
     if (!isLinkItemsInitialized) {
-      const currentItems = form.getValues("linkItems") || [];
+      const currentItems = form.watch("linkItems") || [];
       if (currentItems.length === 0) {
         form.setValue("linkItems", [{ keyword: "", url: "" }]);
       }
@@ -1070,7 +1083,11 @@ export default function CreateContent() {
                         </div>
                       </TabsContent>
                       
-                      <TabsContent value="links" className="mt-0 border rounded-lg p-4">
+                      <TabsContent 
+                        value="links" 
+                        className="mt-0 border rounded-lg p-4"
+                        onSelect={initializeLinkItems}
+                      >
                         <div className="flex items-center mb-2 text-gray-800 dark:text-gray-100">
                           <LinkIcon className="h-5 w-5 mr-2" />
                           <h3 className="text-lg font-medium">Liên kết cho bài viết</h3>
@@ -1087,16 +1104,16 @@ export default function CreateContent() {
                             </h4>
                             
                             <div className="space-y-4">
-                              {(form.getValues("linkItems") || []).map((_, index) => (
+                              {(form.watch("linkItems") || []).map((item, index) => (
                                 <div key={index} className="grid grid-cols-2 gap-4 p-3 border rounded-md relative">
                                   <div>
                                     <Label htmlFor={`keyword-${index}`} className="mb-1 block">Từ khóa</Label>
                                     <Input 
                                       id={`keyword-${index}`} 
                                       placeholder="Từ khóa"
-                                      value={form.getValues(`linkItems.${index}.keyword`) || ''}
+                                      value={item.keyword || ''}
                                       onChange={(e) => {
-                                        const items = [...form.getValues("linkItems")];
+                                        const items = [...form.watch("linkItems")];
                                         if (items[index]) {
                                           items[index].keyword = e.target.value;
                                           form.setValue("linkItems", items);
@@ -1109,9 +1126,9 @@ export default function CreateContent() {
                                     <Input 
                                       id={`link-${index}`} 
                                       placeholder="Liên kết"
-                                      value={form.getValues(`linkItems.${index}.url`) || ''}
+                                      value={item.url || ''}
                                       onChange={(e) => {
-                                        const items = [...form.getValues("linkItems")];
+                                        const items = [...form.watch("linkItems")];
                                         if (items[index]) {
                                           items[index].url = e.target.value;
                                           form.setValue("linkItems", items);
@@ -1125,7 +1142,7 @@ export default function CreateContent() {
                                     size="icon"
                                     className="absolute top-2 right-2 h-6 w-6 text-gray-400 hover:text-red-500"
                                     onClick={() => {
-                                      const items = (form.getValues("linkItems") || []).filter((_, i) => i !== index);
+                                      const items = (form.watch("linkItems") || []).filter((_, i) => i !== index);
                                       form.setValue("linkItems", items);
                                     }}
                                   >
@@ -1138,9 +1155,9 @@ export default function CreateContent() {
                                 <Button 
                                   type="button" 
                                   className="bg-purple-500 hover:bg-purple-600 text-white"
-                                  disabled={(form.getValues("linkItems") || []).length >= 5}
+                                  disabled={(form.watch("linkItems") || []).length >= 5}
                                   onClick={() => {
-                                    const currentItems = form.getValues("linkItems") || [];
+                                    const currentItems = form.watch("linkItems") || [];
                                     if (currentItems.length < 5) {
                                       form.setValue("linkItems", [
                                         ...currentItems,
