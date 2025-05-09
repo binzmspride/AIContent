@@ -350,10 +350,7 @@ export default function CreateContent() {
                       <LinkIcon className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.links")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="knowledge" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
-                      <BookOpenText className="h-5 w-5 mr-2" />
-                      <span>{t("dashboard.create.tabs.knowledge")}</span>
-                    </TabsTrigger>
+
                   </TabsList>
                 </div>
                 
@@ -1013,90 +1010,7 @@ export default function CreateContent() {
                         </div>
                       </TabsContent>
                       
-                      <TabsContent value="knowledge" className="mt-0 border rounded-lg p-4">
-                        <div className="flex items-start pb-2">
-                          <BookOpenText className="h-6 w-6 text-blue-500 mr-2 flex-shrink-0 mt-1" />
-                          <div>
-                            <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.tabs.knowledge")}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-300">Hệ thống sẽ cung cấp kiến thức cho bài viết của bạn.</p>
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-6 mt-4">
-                          <div>
-                            <div className="flex justify-between items-center mb-1">
-                              <h4 className="font-medium text-gray-900 dark:text-gray-100">{t("dashboard.create.knowledge.webResearch")}</h4>
-                              <FormField
-                                control={form.control}
-                                name="useWebResearch"
-                                render={({ field }) => (
-                                  <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                                    <FormControl>
-                                      <Switch
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                      />
-                                    </FormControl>
-                                  </FormItem>
-                                )}
-                              />
-                            </div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">{t("dashboard.create.knowledge.webResearchDescription")}</p>
-                          </div>
-                          
-                          <div>
-                            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">{t("dashboard.create.knowledge.refSources")}</h4>
-                            <Input
-                              id="refSources"
-                              placeholder="https://matbao.net/"
-                              value={form.watch('refSources') || ''}
-                              onChange={(e) => form.setValue('refSources', e.target.value)}
-                              className="w-full"
-                            />
-                          </div>
-                          
-                          <div>
-                            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">{t("dashboard.create.knowledge.aiModel")}</h4>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                              <div 
-                                className={`border rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'chatgpt' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
-                                onClick={() => form.setValue('aiModel', 'chatgpt')}
-                              >
-                                <img 
-                                  src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" 
-                                  alt="ChatGPT" 
-                                  className="h-8 mx-auto mb-2"
-                                />
-                                <p className="font-medium">ChatGPT</p>
-                              </div>
-                              
-                              <div 
-                                className={`border rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'gemini' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
-                                onClick={() => form.setValue('aiModel', 'gemini')}
-                              >
-                                <img 
-                                  src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/gemini_2.max-1000x1000.png" 
-                                  alt="Gemini" 
-                                  className="h-8 mx-auto mb-2"
-                                />
-                                <p className="font-medium">Gemini</p>
-                              </div>
-                              
-                              <div 
-                                className={`border rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'claude' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
-                                onClick={() => form.setValue('aiModel', 'claude')}
-                              >
-                                <img 
-                                  src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Claude_logo.svg" 
-                                  alt="Claude" 
-                                  className="h-8 mx-auto mb-2"
-                                />
-                                <p className="font-medium">Claude</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </TabsContent>
+
                       
                       <div className="border-t pt-4 flex justify-end space-x-2">
                         <Button
