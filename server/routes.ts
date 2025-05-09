@@ -192,6 +192,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Generate content with n8n webhook
   app.post('/api/dashboard/generate-content', async (req, res) => {
+    console.log('=== GENERATE CONTENT API CALLED ===');
     try {
       if (!req.isAuthenticated()) {
         return res.status(401).json({ success: false, error: 'Not authenticated' });
@@ -221,6 +222,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const webhookUrl = await storage.getSetting('notificationWebhookUrl');
       const webhookSecret = await storage.getSetting('webhookSecret');
       
+      console.log('Webhook URL from database:', webhookUrl);
+      console.log('Webhook Secret from database:', webhookSecret ? '(exists)' : '(not set)');
+      
       if (!webhookUrl) {
         return res.status(500).json({
           success: false,
@@ -238,8 +242,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Không gửi webhook secret vì bạn không sử dụng nó
         };
         
-        // Gọi webhook n8n bất kể môi trường development hay production
         console.log(`Sending content request to webhook: ${webhookUrl}`);
+        console.log('Webhook payload:', JSON.stringify(webhookPayload, null, 2));
+        
         const webhookResponse = await fetch(webhookUrl, {
           method: 'POST',
           headers: {
@@ -248,12 +253,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           body: JSON.stringify(webhookPayload),
         });
         
+        console.log(`Webhook response status: ${webhookResponse.status}`);
+        
         if (!webhookResponse.ok) {
           throw new Error(`Webhook returned status: ${webhookResponse.status}`);
         }
         
         // Xử lý phản hồi từ webhook
-        const webhookResult = await webhookResponse.json();
+        const responseText = await webhookResponse.text();
+        console.log('Webhook response text:', responseText);
+        
+        let webhookResult;
+        try {
+          webhookResult = JSON.parse(responseText);
+          console.log('Parsed webhook result:', webhookResult);
+        } catch (parseError) {
+          console.error('Failed to parse webhook response as JSON:', parseError);
+          throw new Error('Invalid JSON response from webhook');
+        }
         
         // Trong môi trường production hoặc test, trừ credits
         if (!isDevelopment) {
