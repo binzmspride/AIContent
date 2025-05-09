@@ -1002,5 +1002,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Webhook settings API (update webhook settings)
+  app.patch('/api/admin/settings/webhook', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          error: 'Admin access required' 
+        });
+      }
+
+      const { webhookSecret, notificationWebhookUrl } = req.body;
+      
+      // Validate webhookSecret if provided and not empty
+      if (webhookSecret !== undefined) {
+        if (webhookSecret.trim() !== '' && !webhookSecret.startsWith('whsec_')) {
+          return res.status(400).json({ 
+            success: false, 
+            error: 'Webhook secret must start with whsec_' 
+          });
+        }
+        
+        // Save webhook settings (including empty string to clear it)
+        await storage.setSetting('webhookSecret', webhookSecret, 'webhook');
+      }
+      
+      // Xử lý cập nhật notificationWebhookUrl, cả khi có giá trị và khi rỗng
+      if (notificationWebhookUrl !== undefined) {
+        // Kiểm tra URL nếu không rỗng
+        if (notificationWebhookUrl.trim() !== '') {
+          try {
+            new URL(notificationWebhookUrl);
+          } catch (e) {
+            return res.status(400).json({
+              success: false,
+              error: 'Invalid webhook URL format'
+            });
+          }
+        }
+        
+        // Lưu URL webhook (kể cả khi là chuỗi rỗng để xóa webhook)
+        await storage.setSetting('notificationWebhookUrl', notificationWebhookUrl, 'webhook');
+      }
+      
+      res.json({ 
+        success: true, 
+        message: 'Webhook settings updated successfully' 
+      });
+    } catch (error) {
+      console.error('Error updating webhook settings:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Internal server error' 
+      });
+    }
+  });
+
   return httpServer;
 }
