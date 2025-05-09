@@ -1285,12 +1285,12 @@ export default function AdminSettings() {
                         name="notificationWebhookUrl"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t("admin.settings.notificationWebhook") || "Webhook thông báo (n8n)"}</FormLabel>
+                            <FormLabel>{t("admin.settingsPage.notificationWebhook") || "Webhook thông báo (n8n)"}</FormLabel>
                             <FormControl>
                               <Input placeholder="https://hooks.n8n.cloud/webhook/..." {...field} value={field.value || ""} />
                             </FormControl>
                             <FormDescription>
-                              {t("admin.settings.notificationWebhookDescription") || "URL webhook để nhận thông báo về sự kiện hệ thống"}
+                              {t("admin.settingsPage.notificationWebhookDescription") || "URL webhook để nhận thông báo về sự kiện hệ thống"}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -1298,7 +1298,7 @@ export default function AdminSettings() {
                       />
                       
                       <div className="rounded-md border p-4 mt-6 bg-muted/50">
-                        <h3 className="text-sm font-medium mb-2">{t("admin.settings.availableWebhookEvents") || "Sự kiện webhook có sẵn"}</h3>
+                        <h3 className="text-sm font-medium mb-2">{t("admin.settingsPage.availableWebhookEvents") || "Sự kiện webhook có sẵn"}</h3>
                         <div className="space-y-2 text-sm">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                             <div className="flex items-start">
@@ -1352,12 +1352,12 @@ export default function AdminSettings() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <h3 className="text-sm font-medium text-muted-foreground">{t("admin.settings.version") || "Phiên bản"}</h3>
+                        <h3 className="text-sm font-medium text-muted-foreground">{t("admin.settingsPage.version") || "Phiên bản"}</h3>
                         <p className="text-base font-medium">{settings?.version || "1.0.0"}</p>
                       </div>
                       
                       <div className="space-y-2">
-                        <h3 className="text-sm font-medium text-muted-foreground">{t("admin.settings.database") || "Cơ sở dữ liệu"}</h3>
+                        <h3 className="text-sm font-medium text-muted-foreground">{t("admin.settingsPage.database") || "Cơ sở dữ liệu"}</h3>
                         <p className={`text-base font-medium flex items-center ${
                           settings?.dbStatus === "online" 
                             ? "text-green-600" 
@@ -1383,7 +1383,7 @@ export default function AdminSettings() {
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <h3 className="text-sm font-medium text-muted-foreground">{t("admin.settings.lastBackup") || "Sao lưu gần đây"}</h3>
+                        <h3 className="text-sm font-medium text-muted-foreground">{t("admin.settingsPage.lastBackup") || "Sao lưu gần đây"}</h3>
                         <p className="text-base font-medium">
                           {settings?.lastBackup 
                             ? format(new Date(settings.lastBackup), "dd/MM/yyyy HH:mm") 
@@ -1392,13 +1392,13 @@ export default function AdminSettings() {
                       </div>
                       
                       <div className="space-y-2">
-                        <h3 className="text-sm font-medium text-muted-foreground">{t("admin.settings.environment") || "Môi trường"}</h3>
+                        <h3 className="text-sm font-medium text-muted-foreground">{t("admin.settingsPage.environment") || "Môi trường"}</h3>
                         <p className="text-base font-medium">Production</p>
                       </div>
                     </div>
                     
                     <div className="rounded-md border p-4 mt-4">
-                      <h3 className="text-sm font-medium mb-2">{t("admin.settings.systemActions") || "Thao tác hệ thống"}</h3>
+                      <h3 className="text-sm font-medium mb-2">{t("admin.settingsPage.systemActions") || "Thao tác hệ thống"}</h3>
                       <div className="flex flex-wrap gap-2">
                         <Button
                           variant="outline"
@@ -1409,8 +1409,8 @@ export default function AdminSettings() {
                         >
                           <Database className="h-4 w-4 mr-2" />
                           {triggerBackupMutation.isPending 
-                            ? (t("admin.settings.backingUp") || "Đang sao lưu...") 
-                            : (t("admin.settings.backupNow") || "Sao lưu ngay")}
+                            ? (t("admin.settingsPage.backingUp") || "Đang sao lưu...") 
+                            : (t("admin.settingsPage.backupNow") || "Sao lưu ngay")}
                         </Button>
                         
                         <Button
@@ -1419,13 +1419,13 @@ export default function AdminSettings() {
                           className="flex items-center"
                         >
                           <RefreshCw className="h-4 w-4 mr-2" />
-                          {t("admin.settings.refreshSystemInfo") || "Làm mới thông tin"}
+                          {t("admin.settingsPage.refreshSystemInfo") || "Làm mới thông tin"}
                         </Button>
                       </div>
                     </div>
                     
                     <div className="rounded-md border p-4 mt-4 bg-muted/50">
-                      <h3 className="text-sm font-medium mb-2">{t("admin.settings.systemLog") || "Nhật ký hệ thống"}</h3>
+                      <h3 className="text-sm font-medium mb-2">{t("admin.settingsPage.systemLog") || "Nhật ký hệ thống"}</h3>
                       <div className="bg-muted rounded-md p-2 max-h-40 overflow-y-auto text-xs font-mono">
                         <p>[2023-06-05 08:30:00] System backup completed successfully</p>
                         <p>[2023-06-05 07:45:12] User registration spike detected (15 new users in 5 minutes)</p>
