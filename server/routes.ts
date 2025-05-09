@@ -235,7 +235,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           userId: userId,
           username: req.user.username,
           timestamp: new Date().toISOString(),
-          secret: webhookSecret, // Dùng để bảo mật webhook
+          // Không gửi webhook secret vì bạn không sử dụng nó
         };
         
         // Gọi webhook n8n bất kể môi trường development hay production
@@ -266,13 +266,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           success: true, 
           data: webhookResult 
         });
-      } catch (webhookError) {
+      } catch (error) {
+        const webhookError = error as Error;
         console.error('Webhook error:', webhookError);
         
         // Trong trường hợp lỗi webhook, tạo phản hồi lỗi chi tiết hơn để người dùng có thể hiểu
         return res.status(500).json({
           success: false,
-          error: `Error calling n8n webhook: ${webhookError.message}. Please check the webhook URL and try again.`
+          error: `Error calling n8n webhook: ${webhookError.message || 'Unknown error'}. Please check the webhook URL and try again.`
         });
       }
     } catch (error) {
