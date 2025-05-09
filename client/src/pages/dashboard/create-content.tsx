@@ -198,11 +198,16 @@ export default function CreateContent() {
       return;
     }
 
-    // Đặt relatedKeywords vào request
+    // Đặt relatedKeywords vào request và xử lý linkItems
+    const filteredLinkItems = data.linkItems
+      ? data.linkItems.filter(item => item.keyword && item.url)
+      : [];
+      
     const requestData: GenerateContentRequest = {
       ...data,
       // Đảm bảo relatedKeywords là chuỗi rỗng nếu không có giá trị
-      relatedKeywords: data.relatedKeywords || ""
+      relatedKeywords: data.relatedKeywords || "",
+      linkItems: filteredLinkItems as any // Ép kiểu để phù hợp với GenerateContentRequest
     };
 
     generateContentMutation.mutate(requestData);
