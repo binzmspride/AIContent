@@ -350,7 +350,7 @@ export default function CreateContent() {
                       <LinkIcon className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.links")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="knowledge" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
+                    <TabsTrigger value="dashboard.create.tabs.knowledge" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <BookOpenText className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.knowledge")}</span>
                     </TabsTrigger>
@@ -1013,7 +1013,7 @@ export default function CreateContent() {
                         </div>
                       </TabsContent>
                       
-                      <TabsContent value="knowledge" className="mt-0 border rounded-lg p-4">
+                      <TabsContent value="dashboard.create.tabs.knowledge" className="mt-0 border rounded-lg p-4">
                         <div className="flex items-start pb-2">
                           <BookOpenText className="h-6 w-6 text-blue-500 mr-2 flex-shrink-0 mt-1" />
                           <div>
@@ -1059,45 +1059,39 @@ export default function CreateContent() {
                             <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">{t("dashboard.create.knowledge.aiModel")}</h4>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                               <div 
-                                className={`border rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'chatgpt' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
+                                className={`border rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'chatgpt' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
                                 onClick={() => form.setValue('aiModel', 'chatgpt')}
                               >
-                                <div className="flex items-center justify-center h-16">
-                                  <img 
-                                    src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" 
-                                    alt="ChatGPT" 
-                                    className="h-10"
-                                  />
-                                </div>
-                                <p className="mt-2 font-medium">ChatGPT</p>
+                                <img 
+                                  src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg" 
+                                  alt="ChatGPT" 
+                                  className="h-8 mx-auto mb-2"
+                                />
+                                <p className="font-medium">ChatGPT</p>
                               </div>
                               
                               <div 
-                                className={`border rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'gemini' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
+                                className={`border rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'gemini' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
                                 onClick={() => form.setValue('aiModel', 'gemini')}
                               >
-                                <div className="flex items-center justify-center h-16">
-                                  <img 
-                                    src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/gemini_2.max-1000x1000.png" 
-                                    alt="Gemini" 
-                                    className="h-10"
-                                  />
-                                </div>
-                                <p className="mt-2 font-medium">Gemini</p>
+                                <img 
+                                  src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/gemini_2.max-1000x1000.png" 
+                                  alt="Gemini" 
+                                  className="h-8 mx-auto mb-2"
+                                />
+                                <p className="font-medium">Gemini</p>
                               </div>
                               
                               <div 
-                                className={`border rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'claude' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
+                                className={`border rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'claude' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
                                 onClick={() => form.setValue('aiModel', 'claude')}
                               >
-                                <div className="flex items-center justify-center h-16">
-                                  <img 
-                                    src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Claude_logo.svg" 
-                                    alt="Claude" 
-                                    className="h-10"
-                                  />
-                                </div>
-                                <p className="mt-2 font-medium">Claude</p>
+                                <img 
+                                  src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Claude_logo.svg" 
+                                  alt="Claude" 
+                                  className="h-8 mx-auto mb-2"
+                                />
+                                <p className="font-medium">Claude</p>
                               </div>
                             </div>
                           </div>
