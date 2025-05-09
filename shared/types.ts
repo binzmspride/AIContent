@@ -22,6 +22,11 @@ export interface GenerateContentRequest {
   useWebResearch?: boolean; // Cho phép AI tìm kiếm thông tin trên web
   refSources?: string; // Nguồn tham khảo cụ thể
   aiModel?: 'chatgpt' | 'gemini' | 'claude'; // Mô hình AI sử dụng
+  useBold?: boolean; // Sử dụng định dạng in đậm
+  useItalic?: boolean; // Sử dụng định dạng in nghiêng
+  useBullets?: boolean; // Sử dụng định dạng danh sách
+  linkItems?: Array<{ keyword?: string; url?: string }>; // Danh sách liên kết
+  imageSize?: 'small' | 'medium' | 'large'; // Kích thước hình ảnh
 }
 
 export interface ContentGenerationMetrics {

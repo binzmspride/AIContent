@@ -1264,7 +1264,7 @@ export default function CreateContent() {
                                             />
                                             <span className="flex flex-1 items-center">
                                               <span className="flex flex-col text-sm">
-                                                <span className="font-medium text-gray-900">Lớn (1920×1080)</span>
+                                                <span className="font-medium text-gray-900 dark:text-gray-100">Lớn (1920×1080)</span>
                                               </span>
                                             </span>
                                             {field.value === 'large' && (

@@ -230,6 +230,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ${contentRequest.useWebResearch ? `<p>Web research: Enabled</p>` : ''}
           ${contentRequest.refSources ? `<p>Reference sources: ${contentRequest.refSources}</p>` : ''}
           ${contentRequest.aiModel ? `<p>AI model: ${contentRequest.aiModel}</p>` : ''}
+          ${contentRequest.imageSize ? `<p>Image size: ${contentRequest.imageSize}</p>` : ''}
           <p>Custom prompt details: ${contentRequest.prompt}</p>`,
         keywords: contentRequest.keywords.split(',').map(k => k.trim()),
         creditsUsed: creditsNeeded,
