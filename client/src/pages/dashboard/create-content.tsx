@@ -336,7 +336,7 @@ export default function CreateContent() {
                     </TabsTrigger>
                     <TabsTrigger value="style" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <PaintBucket className="h-5 w-5 mr-2" />
-                      <span>{t("dashboard.create.tabs.style")}</span>
+                      <span>Kiểu thức</span>
                     </TabsTrigger>
                     <TabsTrigger value="format" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <AlignJustify className="h-5 w-5 mr-2" />
