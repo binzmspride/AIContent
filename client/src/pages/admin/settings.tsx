@@ -151,52 +151,11 @@ export default function AdminSettings() {
   const { data: settingsResponse, isLoading } = useQuery<{ success: boolean, data: SystemSettings }>({
     queryKey: ["/api/admin/settings"],
     queryFn: async () => {
-      // Mock data until API is available
-      const mockSettings: SystemSettings = {
-        siteName: "SEO AI Writer",
-        siteDescription: "AI-powered SEO content generation platform",
-        contactEmail: "contact@example.com",
-        supportEmail: "support@example.com",
-        
-        enableNewUsers: true,
-        enableArticleCreation: true,
-        enableAutoPublish: false,
-        maintenanceMode: false,
-        
-        aiModel: "gpt-3.5-turbo",
-        aiTemperature: 0.7,
-        aiContextLength: 4000,
-        systemPromptPrefix: "Create SEO-friendly content that is engaging and valuable to readers while optimizing for search engines.",
-        
-        defaultUserCredits: 50,
-        creditCostPerArticle: 10,
-        creditCostPerImage: 5,
-        
-        smtpServer: "smtp.example.com",
-        smtpPort: 587,
-        smtpUsername: "noreply@example.com",
-        smtpPassword: "password123",
-        emailSender: "SEO AI Writer <noreply@example.com>",
-        appBaseUrl: "http://localhost:5000",
-        
-        openaiApiKey: "sk-*************************************",
-        claudeApiKey: "",
-        wordpressApiUrl: "https://yourblog.com/wp-json/wp/v2",
-        wordpressApiUser: "admin",
-        wordpressApiKey: "xxxx xxxx xxxx xxxx xxxx xxxx",
-        
-        webhookSecret: "whsec_********************************",
-        notificationWebhookUrl: "https://hooks.n8n.cloud/webhook/12345-abcdef-67890",
-        
-        version: "1.2.4",
-        lastBackup: "2023-06-05T08:30:00Z",
-        dbStatus: "online",
-      };
-      
-      return {
-        success: true,
-        data: mockSettings
-      };
+      const response = await fetch('/api/admin/settings');
+      if (!response.ok) {
+        throw new Error(`Error fetching settings: ${response.statusText}`);
+      }
+      return await response.json();
     },
   });
 

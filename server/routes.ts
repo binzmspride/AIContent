@@ -606,6 +606,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ========== Admin API ==========
+  // Get all system settings
+  app.get('/api/admin/settings', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+      
+      // Lấy các cài đặt từ các category khác nhau
+      const generalSettings = await storage.getSettingsByCategory('general');
+      const aiSettings = await storage.getSettingsByCategory('ai');
+      const emailSettings = await storage.getSettingsByCategory('email');
+      const apiSettings = await storage.getSettingsByCategory('api');
+      const webhookSettings = await storage.getSettingsByCategory('webhook');
+      
+      const smtpConfig = await storage.getSmtpSettings();
+      const appBaseUrl = await storage.getSetting('appBaseUrl');
+      
+      // Kết hợp tất cả cài đặt vào một đối tượng
+      const allSettings = {
+        // General settings
+        siteName: generalSettings.siteName || "SEO AI Writer",
+        siteDescription: generalSettings.siteDescription || "AI-powered SEO content generation platform",
+        contactEmail: generalSettings.contactEmail || "contact@example.com",
+        supportEmail: generalSettings.supportEmail || "support@example.com",
+        
+        enableNewUsers: generalSettings.enableNewUsers === 'true',
+        enableArticleCreation: generalSettings.enableArticleCreation === 'true',
+        enableAutoPublish: generalSettings.enableAutoPublish === 'true',
+        maintenanceMode: generalSettings.maintenanceMode === 'true',
+        
+        // AI settings
+        aiModel: aiSettings.aiModel || "gpt-3.5-turbo",
+        aiTemperature: parseFloat(aiSettings.aiTemperature || "0.7"),
+        aiContextLength: parseInt(aiSettings.aiContextLength || "4000"),
+        systemPromptPrefix: aiSettings.systemPromptPrefix || "",
+        
+        defaultUserCredits: parseInt(aiSettings.defaultUserCredits || "50"),
+        creditCostPerArticle: parseInt(aiSettings.creditCostPerArticle || "10"),
+        creditCostPerImage: parseInt(aiSettings.creditCostPerImage || "5"),
+        
+        // Email settings
+        smtpServer: smtpConfig?.smtpServer || "",
+        smtpPort: smtpConfig?.smtpPort || 587,
+        smtpUsername: smtpConfig?.smtpUsername || "",
+        smtpPassword: smtpConfig?.smtpPassword || "",
+        emailSender: smtpConfig?.emailSender || "",
+        appBaseUrl: appBaseUrl || "http://localhost:5000",
+        
+        // API integration settings
+        openaiApiKey: apiSettings.openaiApiKey || "",
+        claudeApiKey: apiSettings.claudeApiKey || "",
+        wordpressApiUrl: apiSettings.wordpressApiUrl || "",
+        wordpressApiUser: apiSettings.wordpressApiUser || "",
+        wordpressApiKey: apiSettings.wordpressApiKey || "",
+        
+        // Webhook settings
+        webhookSecret: webhookSettings.webhookSecret || "",
+        notificationWebhookUrl: webhookSettings.notificationWebhookUrl || "",
+        
+        // System info
+        version: "1.0.0",
+        lastBackup: new Date().toISOString(),
+        dbStatus: "online",
+      };
+      
+      res.json({ 
+        success: true, 
+        data: allSettings 
+      });
+    } catch (error) {
+      console.error('Error fetching system settings:', error);
+      res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+  });
+  
   // Get all users
   app.get('/api/admin/users', async (req, res) => {
     try {
