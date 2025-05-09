@@ -13,9 +13,14 @@ export async function apiRequest(
   data?: unknown | undefined,
 ): Promise<Response> {
   try {
-    console.log(`API Request: ${method} ${url}`, data);
+    // Tạo URL đầy đủ với cổng 5000 nếu đây là yêu cầu API
+    const fullUrl = url.startsWith('/api') 
+      ? `http://localhost:5000${url}` 
+      : url;
     
-    const res = await fetch(url, {
+    console.log(`API Request: ${method} ${fullUrl}`, data);
+    
+    const res = await fetch(fullUrl, {
       method,
       headers: data ? { "Content-Type": "application/json" } : {},
       body: data ? JSON.stringify(data) : undefined,
@@ -49,7 +54,13 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey[0] as string, {
+    // Tạo URL đầy đủ với cổng 5000 nếu đây là yêu cầu API
+    const url = queryKey[0] as string;
+    const fullUrl = url.startsWith('/api')
+      ? `http://localhost:5000${url}`
+      : url;
+      
+    const res = await fetch(fullUrl, {
       credentials: "include",
     });
 

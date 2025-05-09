@@ -109,6 +109,23 @@ async function seed() {
     } else {
       console.log("Storage plans already exist, skipping");
     }
+    
+    // Tạo cài đặt hệ thống mặc định cho webhook nếu chưa có
+    const webhookSetting = await db.query.systemSettings.findFirst({
+      where: eq(schema.systemSettings.key, 'notificationWebhookUrl')
+    });
+    
+    if (!webhookSetting) {
+      console.log("Creating default webhook settings...");
+      await db.insert(schema.systemSettings).values({
+        key: 'notificationWebhookUrl',
+        value: 'https://n8n-demo.example.com/webhook/seo-ai-content', // Mặc định cho webhook
+        category: 'integration'
+      });
+      console.log("Default webhook settings created");
+    } else {
+      console.log("Webhook settings already exist, skipping");
+    }
 
     console.log("Database seeding completed successfully");
   } catch (error) {
