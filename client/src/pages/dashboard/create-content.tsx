@@ -502,7 +502,8 @@ export default function CreateContent() {
                               className="mt-1"
                               value={form.watch("keywords").split(",")[0] || ""}
                               onChange={(e) => {
-                                const mainKeyword = e.target.value.trim();
+                                // Không trim giá trị để cho phép nhập dấu cách
+                                const mainKeyword = e.target.value;
                                 const currentKeywords = form.watch("keywords").split(",").filter(Boolean);
                                 const secondaryKeywords = currentKeywords.length > 1 ? currentKeywords.slice(1) : [];
                                 const newKeywords = mainKeyword 

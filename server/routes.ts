@@ -201,6 +201,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.id;
       const contentRequest = req.body as GenerateContentRequest;
       
+      // Đảm bảo từ khóa được trim để tránh vấn đề với dấu cách ở đầu/cuối
+      contentRequest.keywords = contentRequest.keywords.trim();
+      
       // Determine credits needed based on content length
       let creditsNeeded = 1;
       if (contentRequest.length === 'long') creditsNeeded = 2;
