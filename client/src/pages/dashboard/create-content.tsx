@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -1013,60 +1014,50 @@ export default function CreateContent() {
                       </TabsContent>
                       
                       <TabsContent value="knowledge" className="mt-0 border rounded-lg p-4">
-                        <div className="flex items-start">
-                          <Book className="h-6 w-6 text-blue-500 mr-2 flex-shrink-0 mt-1" />
+                        <div className="flex items-start pb-2">
+                          <BookOpenText className="h-6 w-6 text-blue-500 mr-2 flex-shrink-0 mt-1" />
                           <div>
-                            <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.knowledge.title")}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.knowledge.description")}</p>
+                            <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">Kiến thức cho bài viết</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">Hệ thống sẽ cung cấp kiến thức cho bài viết của bạn.</p>
                           </div>
                         </div>
                         
-                        <div className="space-y-4">
-                          <div className="flex items-start space-x-2">
-                            <FormField
-                              control={form.control}
-                              name="useWebResearch"
-                              render={({ field }) => (
-                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4">
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value}
-                                      onCheckedChange={field.onChange}
-                                    />
-                                  </FormControl>
-                                  <div className="space-y-1 leading-none">
-                                    <FormLabel>
-                                      {t("dashboard.create.knowledge.webResearch")}
-                                    </FormLabel>
-                                    <p className="text-sm text-muted-foreground">
-                                      {t("dashboard.create.knowledge.webResearchDescription")}
-                                    </p>
-                                  </div>
-                                </FormItem>
-                              )}
+                        <div className="space-y-6 mt-4">
+                          <div>
+                            <div className="flex justify-between items-center mb-1">
+                              <h4 className="font-medium text-gray-900 dark:text-gray-100">Kết nối đến web</h4>
+                              <FormField
+                                control={form.control}
+                                name="useWebResearch"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                                    <FormControl>
+                                      <Switch
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                      />
+                                    </FormControl>
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Chúng tôi sẽ tìm kiếm các chủ đề tương tự trên Google để tạo ra nội dung mới nhất.</p>
+                          </div>
+                          
+                          <div>
+                            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">Nguồn tham khảo</h4>
+                            <Input
+                              id="refSources"
+                              placeholder="https://matbao.net/"
+                              value={form.watch('refSources') || ''}
+                              onChange={(e) => form.setValue('refSources', e.target.value)}
+                              className="w-full"
                             />
                           </div>
                           
-                          <div className="space-y-2">
-                            <Label htmlFor="refSources" className="block text-sm font-medium">
-                              {t("dashboard.create.knowledge.refSources")}
-                            </Label>
-                            <div className="flex flex-col space-y-2">
-                              <Input
-                                id="refSources"
-                                placeholder="https://matbao.net/"
-                                value={form.watch('refSources') || ''}
-                                onChange={(e) => form.setValue('refSources', e.target.value)}
-                                className="w-full"
-                              />
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2 mt-6">
-                            <Label className="block text-sm font-medium">
-                              {t("dashboard.create.knowledge.aiModel")}
-                            </Label>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
+                          <div>
+                            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">Mô hình AI</h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                               <div 
                                 className={`border rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 ${(form.watch('aiModel') || 'chatgpt') === 'chatgpt' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700'}`}
                                 onClick={() => form.setValue('aiModel', 'chatgpt')}
