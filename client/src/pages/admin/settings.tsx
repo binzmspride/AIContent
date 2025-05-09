@@ -927,12 +927,12 @@ export default function AdminSettings() {
                           name="creditCostPerArticle"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>{t("admin.settings.creditCostPerArticle") || "Chi phí cho bài viết"}</FormLabel>
+                              <FormLabel>{t("admin.settingsPage.creditCostPerArticle") || "Chi phí cho bài viết"}</FormLabel>
                               <FormControl>
                                 <Input type="number" min="1" {...field} />
                               </FormControl>
                               <FormDescription>
-                                {t("admin.settings.creditCostPerArticleDescription") || "Số credits cần thiết cho mỗi bài viết"}
+                                {t("admin.settingsPage.creditCostPerArticleDescription") || "Số credits cần thiết cho mỗi bài viết"}
                               </FormDescription>
                               <FormMessage />
                             </FormItem>
@@ -944,12 +944,12 @@ export default function AdminSettings() {
                           name="creditCostPerImage"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>{t("admin.settings.creditCostPerImage") || "Chi phí cho hình ảnh"}</FormLabel>
+                              <FormLabel>{t("admin.settingsPage.creditCostPerImage") || "Chi phí cho hình ảnh"}</FormLabel>
                               <FormControl>
                                 <Input type="number" min="1" {...field} />
                               </FormControl>
                               <FormDescription>
-                                {t("admin.settings.creditCostPerImageDescription") || "Số credits cần thiết cho mỗi hình ảnh"}
+                                {t("admin.settingsPage.creditCostPerImageDescription") || "Số credits cần thiết cho mỗi hình ảnh"}
                               </FormDescription>
                               <FormMessage />
                             </FormItem>
@@ -1138,19 +1138,19 @@ export default function AdminSettings() {
                 <CardContent>
                   <Form {...apiForm}>
                     <form onSubmit={apiForm.handleSubmit(onApiSubmit)} className="space-y-4">
-                      <h3 className="text-lg font-medium">{t("admin.settings.aiApiKeys") || "Khóa API cho AI"}</h3>
+                      <h3 className="text-lg font-medium">{t("admin.settingsPage.aiApiKeys") || "Khóa API cho AI"}</h3>
                       
                       <FormField
                         control={apiForm.control}
                         name="openaiApiKey"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t("admin.settings.openaiApiKey") || "OpenAI API Key"}</FormLabel>
+                            <FormLabel>{t("admin.settingsPage.openaiApiKey") || "OpenAI API Key"}</FormLabel>
                             <FormControl>
                               <Input type="password" placeholder="sk-..." {...field} />
                             </FormControl>
                             <FormDescription>
-                              {t("admin.settings.openaiApiKeyDescription") || "API Key cho OpenAI GPT (bắt đầu bằng 'sk-')"}
+                              {t("admin.settingsPage.openaiApiKeyDescription") || "API Key cho OpenAI GPT (bắt đầu bằng 'sk-')"}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -1162,31 +1162,31 @@ export default function AdminSettings() {
                         name="claudeApiKey"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t("admin.settings.claudeApiKey") || "Claude API Key (Anthropic)"}</FormLabel>
+                            <FormLabel>{t("admin.settingsPage.claudeApiKey") || "Claude API Key (Anthropic)"}</FormLabel>
                             <FormControl>
                               <Input type="password" placeholder="sk-ant-..." {...field} value={field.value || ""} />
                             </FormControl>
                             <FormDescription>
-                              {t("admin.settings.claudeApiKeyDescription") || "API Key cho Anthropic Claude (tùy chọn)"}
+                              {t("admin.settingsPage.claudeApiKeyDescription") || "API Key cho Anthropic Claude (tùy chọn)"}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                       
-                      <h3 className="text-lg font-medium pt-6 border-t mt-6">{t("admin.settings.wordpressSettings") || "Cài đặt WordPress"}</h3>
+                      <h3 className="text-lg font-medium pt-6 border-t mt-6">{t("admin.settingsPage.wordpressSettings") || "Cài đặt WordPress"}</h3>
                       
                       <FormField
                         control={apiForm.control}
                         name="wordpressApiUrl"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t("admin.settings.wordpressApiUrl") || "WordPress API URL"}</FormLabel>
+                            <FormLabel>{t("admin.settingsPage.wordpressApiUrl") || "WordPress API URL"}</FormLabel>
                             <FormControl>
                               <Input placeholder="https://yourblog.com/wp-json/wp/v2" {...field} value={field.value || ""} />
                             </FormControl>
                             <FormDescription>
-                              {t("admin.settings.wordpressApiUrlDescription") || "URL gốc API WordPress của bạn"}
+                              {t("admin.settingsPage.wordpressApiUrlDescription") || "URL gốc API WordPress của bạn"}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -1199,7 +1199,7 @@ export default function AdminSettings() {
                           name="wordpressApiUser"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>{t("admin.settings.wordpressApiUser") || "WordPress Username"}</FormLabel>
+                              <FormLabel>{t("admin.settingsPage.wordpressApiUser") || "WordPress Username"}</FormLabel>
                               <FormControl>
                                 <Input placeholder="admin" {...field} value={field.value || ""} />
                               </FormControl>
@@ -1213,7 +1213,7 @@ export default function AdminSettings() {
                           name="wordpressApiKey"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>{t("admin.settings.wordpressApiKey") || "WordPress Application Password"}</FormLabel>
+                              <FormLabel>{t("admin.settingsPage.wordpressApiKey") || "WordPress Application Password"}</FormLabel>
                               <FormControl>
                                 <Input type="password" placeholder="xxxx xxxx xxxx xxxx" {...field} value={field.value || ""} />
                               </FormControl>
@@ -1258,7 +1258,7 @@ export default function AdminSettings() {
                         name="webhookSecret"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t("admin.settings.webhookSecret") || "Webhook Secret"}</FormLabel>
+                            <FormLabel>{t("admin.settingsPage.webhookSecret") || "Webhook Secret"}</FormLabel>
                             <div className="flex space-x-2">
                               <FormControl>
                                 <Input type="password" {...field} />
@@ -1273,7 +1273,7 @@ export default function AdminSettings() {
                               </Button>
                             </div>
                             <FormDescription>
-                              {t("admin.settings.webhookSecretDescription") || "Khóa bí mật để xác thực webhook, bắt đầu bằng 'whsec_'"}
+                              {t("admin.settingsPage.webhookSecretDescription") || "Khóa bí mật để xác thực webhook, bắt đầu bằng 'whsec_'"}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
