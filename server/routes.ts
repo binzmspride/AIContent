@@ -1154,6 +1154,114 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Admin API route for adjusting user credits
+  app.post('/api/admin/users/:id/credits', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+      
+      const userId = parseInt(req.params.id);
+      const { amount, description } = req.body;
+      
+      if (typeof amount !== 'number' || isNaN(amount)) {
+        return res.status(400).json({ success: false, error: 'Số lượng credits không hợp lệ' });
+      }
+      
+      // Lấy thông tin người dùng hiện tại
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ success: false, error: 'Không tìm thấy người dùng' });
+      }
+      
+      // Thực hiện thêm hoặc trừ credits tùy thuộc vào giá trị amount
+      let updatedCredits;
+      if (amount >= 0) {
+        // Nếu amount dương, thêm credits
+        updatedCredits = await storage.addUserCredits(userId, amount, undefined, description || 'Credits điều chỉnh bởi quản trị viên');
+      } else {
+        // Nếu amount âm, trừ credits
+        try {
+          updatedCredits = await storage.subtractUserCredits(userId, Math.abs(amount), description || 'Credits điều chỉnh bởi quản trị viên');
+        } catch (error) {
+          return res.status(400).json({ success: false, error: 'Số dư credits không đủ' });
+        }
+      }
+      
+      res.json({
+        success: true,
+        data: {
+          userId,
+          currentCredits: updatedCredits,
+          adjustment: amount
+        }
+      });
+    } catch (error) {
+      console.error('Error adjusting user credits:', error);
+      res.status(500).json({ success: false, error: 'Không thể điều chỉnh credits' });
+    }
+  });
+  
+  // Admin API route for assigning a plan to a user
+  app.post('/api/admin/users/:id/plans', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+      
+      const userId = parseInt(req.params.id);
+      const { planId, duration } = req.body;
+      
+      if (!planId || typeof planId !== 'number') {
+        return res.status(400).json({ success: false, error: 'ID gói dịch vụ không hợp lệ' });
+      }
+      
+      // Kiểm tra người dùng tồn tại
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ success: false, error: 'Không tìm thấy người dùng' });
+      }
+      
+      // Kiểm tra gói dịch vụ tồn tại
+      const plan = await storage.getPlan(planId);
+      if (!plan) {
+        return res.status(404).json({ success: false, error: 'Không tìm thấy gói dịch vụ' });
+      }
+      
+      // Tính toán ngày bắt đầu và kết thúc
+      const startDate = new Date();
+      let endDate = null;
+      
+      if (plan.duration || duration) {
+        endDate = new Date();
+        // Ưu tiên sử dụng duration từ request, nếu không có thì sử dụng duration của plan
+        const durationDays = duration || plan.duration;
+        endDate.setDate(endDate.getDate() + durationDays);
+      }
+      
+      // Tạo gói cho người dùng
+      const userPlan = await storage.createUserPlan({
+        userId,
+        planId,
+        startDate,
+        endDate,
+        isActive: true,
+        usedStorage: 0
+      });
+      
+      res.status(201).json({
+        success: true,
+        data: {
+          ...userPlan,
+          plan
+        }
+      });
+    } catch (error) {
+      console.error('Error assigning plan to user:', error);
+      res.status(500).json({ success: false, error: 'Không thể gán gói dịch vụ cho người dùng' });
+    }
+  });
 
   return httpServer;
 }
