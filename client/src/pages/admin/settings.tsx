@@ -527,10 +527,10 @@ export default function AdminSettings() {
   return (
     <>
       <Head>
-        <title>{t("admin.settings.title") || "Cài đặt hệ thống"} - {t("common.appName") || "SEO AI Writer"}</title>
+        <title>{t("admin.settingsPage.title") || "Cài đặt hệ thống"} - {t("common.appName") || "SEO AI Writer"}</title>
       </Head>
       
-      <AdminLayout title={t("admin.settings.title") || "Cài đặt hệ thống"}>
+      <AdminLayout title={t("admin.settingsPage.title") || "Cài đặt hệ thống"}>
         <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6">
           {/* Settings navigation */}
           <div className="space-y-6">
@@ -545,27 +545,27 @@ export default function AdminSettings() {
                   <TabsList className="flex flex-col h-auto items-stretch">
                     <TabsTrigger value="general" className="justify-start">
                       <Globe className="h-4 w-4 mr-2" />
-                      {t("admin.settings.general") || "Cài đặt chung"}
+                      {t("admin.settingsPage.general") || "Cài đặt chung"}
                     </TabsTrigger>
                     <TabsTrigger value="ai" className="justify-start">
                       <Sparkles className="h-4 w-4 mr-2" />
-                      {t("admin.settings.ai") || "Cài đặt AI"}
+                      {t("admin.settingsPage.ai") || "Cài đặt AI"}
                     </TabsTrigger>
                     <TabsTrigger value="email" className="justify-start">
                       <Mail className="h-4 w-4 mr-2" />
-                      {t("admin.settings.email") || "Cài đặt email"}
+                      {t("admin.settingsPage.email") || "Cài đặt email"}
                     </TabsTrigger>
                     <TabsTrigger value="api" className="justify-start">
                       <KeyRound className="h-4 w-4 mr-2" />
-                      {t("admin.settings.api") || "Cài đặt API"}
+                      {t("admin.settingsPage.api") || "Cài đặt API"}
                     </TabsTrigger>
                     <TabsTrigger value="webhook" className="justify-start">
                       <Webhook className="h-4 w-4 mr-2" />
-                      {t("admin.settings.webhook") || "Cài đặt webhook"}
+                      {t("admin.settingsPage.webhook") || "Webhook"}
                     </TabsTrigger>
                     <TabsTrigger value="system" className="justify-start">
                       <Server className="h-4 w-4 mr-2" />
-                      {t("admin.settings.system") || "Thông tin hệ thống"}
+                      {t("admin.settingsPage.system") || "Hệ thống"}
                     </TabsTrigger>
                   </TabsList>
                 </Tabs>
@@ -575,21 +575,21 @@ export default function AdminSettings() {
             {/* System status card */}
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">{t("admin.settings.systemStatus") || "Trạng thái hệ thống"}</CardTitle>
+                <CardTitle className="text-sm font-medium">{t("admin.settingsPage.systemStatus") || "Trạng thái hệ thống"}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t("admin.settings.version") || "Phiên bản"}</span>
+                  <span className="text-muted-foreground">{t("admin.settingsPage.version") || "Phiên bản"}</span>
                   <span className="font-medium">{settings?.version || "1.0.0"}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t("admin.settings.database") || "Cơ sở dữ liệu"}</span>
+                  <span className="text-muted-foreground">{t("admin.settingsPage.database") || "Cơ sở dữ liệu"}</span>
                   <span className={`font-medium ${settings?.dbStatus === "online" ? "text-green-600" : settings?.dbStatus === "limited" ? "text-yellow-600" : "text-red-600"}`}>
                     {settings?.dbStatus === "online" ? "Online" : settings?.dbStatus === "limited" ? "Limited" : "Offline"}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{t("admin.settings.lastBackup") || "Sao lưu gần đây"}</span>
+                  <span className="text-muted-foreground">{t("admin.settingsPage.lastBackup") || "Sao lưu gần đây"}</span>
                   <span className="font-medium">
                     {settings?.lastBackup ? format(new Date(settings.lastBackup), "dd/MM/yyyy HH:mm") : "N/A"}
                   </span>
@@ -604,8 +604,8 @@ export default function AdminSettings() {
                   >
                     <Database className="h-4 w-4 mr-2" />
                     {triggerBackupMutation.isPending 
-                      ? (t("admin.settings.backingUp") || "Đang sao lưu...") 
-                      : (t("admin.settings.backupNow") || "Sao lưu ngay")}
+                      ? (t("admin.settingsPage.backingUp") || "Đang sao lưu...") 
+                      : (t("admin.settingsPage.backupNow") || "Sao lưu ngay")}
                   </Button>
                 </div>
               </CardContent>
@@ -627,9 +627,9 @@ export default function AdminSettings() {
             <TabsContent value="general" className="mt-0 space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("admin.settings.general") || "Cài đặt chung"}</CardTitle>
+                  <CardTitle>{t("admin.settingsPage.general") || "Cài đặt chung"}</CardTitle>
                   <CardDescription>
-                    {t("admin.settings.generalDescription") || "Cấu hình các thông tin chung của ứng dụng"}
+                    {t("admin.settingsPage.generalDescription") || "Cấu hình các thông tin chung của ứng dụng"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -640,7 +640,7 @@ export default function AdminSettings() {
                         name="siteName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>{t("admin.settings.siteName") || "Tên trang web"}</FormLabel>
+                            <FormLabel>{t("admin.settingsPage.siteName") || "Tên trang web"}</FormLabel>
                             <FormControl>
                               <Input placeholder="SEO AI Writer" {...field} />
                             </FormControl>
