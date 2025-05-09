@@ -353,13 +353,13 @@ export default function CreateContent() {
                       <AlignJustify className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.format")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="media" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
-                      <Image className="h-5 w-5 mr-2" />
-                      <span>{t("dashboard.create.tabs.media")}</span>
-                    </TabsTrigger>
                     <TabsTrigger value="links" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
                       <LinkIcon className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.links")}</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="media" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
+                      <Image className="h-5 w-5 mr-2" />
+                      <span>{t("dashboard.create.tabs.media")}</span>
                     </TabsTrigger>
 
                   </TabsList>
@@ -1049,22 +1049,22 @@ export default function CreateContent() {
                         </div>
                       </TabsContent>
                       
-                      <TabsContent value="media" className="mt-0 border rounded-lg p-4">
-                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.media.title")}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.media.description")}</p>
-                        <div className="flex items-center justify-center h-40 border-2 border-dashed border-gray-300 rounded-lg">
-                          <div className="text-center">
-                            <p className="text-sm text-gray-500">{t("dashboard.create.media.comingSoon")}</p>
-                          </div>
-                        </div>
-                      </TabsContent>
-                      
                       <TabsContent value="links" className="mt-0 border rounded-lg p-4">
                         <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.links.title")}</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.links.description")}</p>
                         <div className="flex items-center justify-center h-40 border-2 border-dashed border-gray-300 rounded-lg">
                           <div className="text-center">
                             <p className="text-sm text-gray-500">{t("dashboard.create.links.comingSoon")}</p>
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      <TabsContent value="media" className="mt-0 border rounded-lg p-4">
+                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.media.title")}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.media.description")}</p>
+                        <div className="flex items-center justify-center h-40 border-2 border-dashed border-gray-300 rounded-lg">
+                          <div className="text-center">
+                            <p className="text-sm text-gray-500">{t("dashboard.create.media.comingSoon")}</p>
                           </div>
                         </div>
                       </TabsContent>
