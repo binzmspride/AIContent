@@ -70,6 +70,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Head from "@/components/head";
+import { AdjustCreditsDialog, AssignPlanDialog } from "./user-dialogs";
 
 // Define form schema
 const userFormSchema = z.object({
@@ -290,146 +291,18 @@ export default function AdminUsers() {
   };
 
   // Get status badge
-  // Form schema for adjusting credits
-  const adjustCreditsSchema = z.object({
-    amount: z.number()
-      .refine(val => val !== 0, "Số lượng credits không thể bằng 0"),
-    description: z.string().optional(),
-  });
-  
-  type AdjustCreditsFormValues = z.infer<typeof adjustCreditsSchema>;
-  
-  // Form schema for assigning a plan
-  const assignPlanSchema = z.object({
-    planId: z.number({ required_error: "Vui lòng chọn gói dịch vụ" }),
-    duration: z.number().optional(),
-  });
-  
-  type AssignPlanFormValues = z.infer<typeof assignPlanSchema>;
-  
-  // For credits adjustment
+  // For dialogs
   const [isAdjustCreditsDialogOpen, setIsAdjustCreditsDialogOpen] = useState(false);
-  const adjustCreditsForm = useForm<AdjustCreditsFormValues>({
-    resolver: zodResolver(adjustCreditsSchema),
-    defaultValues: {
-      amount: 0,
-      description: "",
-    }
-  });
-  
-  // For plan assignment
   const [isAssignPlanDialogOpen, setIsAssignPlanDialogOpen] = useState(false);
-  const assignPlanForm = useForm<AssignPlanFormValues>({
-    resolver: zodResolver(assignPlanSchema),
-    defaultValues: {
-      planId: undefined,
-      duration: undefined,
-    }
-  });
-  
-  // Fetch plans for the assign plan dialog
-  const { data: plansResponse } = useQuery<{ success: boolean, data: { plans: Array<{ id: number, name: string, type: string, value: number, duration: number | null }> } }>({
-    queryKey: ["/api/admin/plans"],
-    queryFn: async () => {
-      const response = await fetch('/api/admin/plans');
-      if (!response.ok) {
-        throw new Error('Failed to fetch plans');
-      }
-      return await response.json();
-    },
-    enabled: isAssignPlanDialogOpen, // Only fetch when dialog is open
-  });
-  
-  // Adjust credits mutation
-  const adjustCreditsMutation = useMutation({
-    mutationFn: async ({ userId, amount, description }: { userId: number, amount: number, description?: string }) => {
-      const res = await apiRequest("POST", `/api/admin/users/${userId}/credits`, {
-        amount,
-        description
-      });
-      return res.json();
-    },
-    onSuccess: (data) => {
-      toast({
-        title: "Thành công",
-        description: `Credits đã được điều chỉnh. Số dư hiện tại: ${data.data.currentCredits}`,
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
-      setIsAdjustCreditsDialogOpen(false);
-      adjustCreditsForm.reset();
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Lỗi",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-  
-  // Assign plan mutation
-  const assignPlanMutation = useMutation({
-    mutationFn: async ({ userId, planId, duration }: { userId: number, planId: number, duration?: number }) => {
-      const res = await apiRequest("POST", `/api/admin/users/${userId}/plans`, {
-        planId,
-        duration
-      });
-      return res.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Thành công",
-        description: "Gói dịch vụ đã được gán cho người dùng",
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
-      setIsAssignPlanDialogOpen(false);
-      assignPlanForm.reset();
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Lỗi",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
   
   const handleAdjustCreditsClick = (user: User) => {
     setSelectedUser(user);
-    adjustCreditsForm.reset({
-      amount: 0,
-      description: "",
-    });
     setIsAdjustCreditsDialogOpen(true);
   };
   
   const handleAssignPlanClick = (user: User) => {
     setSelectedUser(user);
-    assignPlanForm.reset({
-      planId: undefined,
-      duration: undefined,
-    });
     setIsAssignPlanDialogOpen(true);
-  };
-  
-  const onAdjustCreditsSubmit = (data: AdjustCreditsFormValues) => {
-    if (selectedUser) {
-      adjustCreditsMutation.mutate({
-        userId: selectedUser.id,
-        amount: data.amount,
-        description: data.description
-      });
-    }
-  };
-  
-  const onAssignPlanSubmit = (data: AssignPlanFormValues) => {
-    if (selectedUser) {
-      assignPlanMutation.mutate({
-        userId: selectedUser.id,
-        planId: data.planId,
-        duration: data.duration
-      });
-    }
   };
   
   const getStatusBadge = (status: string) => {
@@ -1040,6 +913,20 @@ export default function AdminUsers() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Adjust Credits Dialog */}
+        <AdjustCreditsDialog 
+          isOpen={isAdjustCreditsDialogOpen} 
+          onOpenChange={setIsAdjustCreditsDialogOpen} 
+          user={selectedUser} 
+        />
+        
+        {/* Assign Plan Dialog */}
+        <AssignPlanDialog 
+          isOpen={isAssignPlanDialogOpen} 
+          onOpenChange={setIsAssignPlanDialogOpen} 
+          user={selectedUser} 
+        />
       </AdminLayout>
     </>
   );
