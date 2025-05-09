@@ -202,14 +202,42 @@ export default function CreateContent() {
     const filteredLinkItems = data.linkItems
       ? data.linkItems.filter(item => item.keyword && item.url)
       : [];
+    
+    // Check if keywords is empty
+    if (!data.keywords || data.keywords.trim() === '') {
+      toast({
+        title: "Missing keywords",
+        description: "Please enter at least one keyword",
+        variant: "destructive",
+      });
+      return;
+    }
       
+    // Convert form data to GenerateContentRequest format
     const requestData: GenerateContentRequest = {
-      ...data,
-      // Đảm bảo relatedKeywords là chuỗi rỗng nếu không có giá trị
+      title: data.title,
+      contentType: data.contentType || 'blog',
+      keywords: data.keywords,
+      length: data.length,
+      tone: data.tone,
+      prompt: data.prompt,
+      addHeadings: data.addHeadings,
+      useBold: data.useBold,
+      useItalic: data.useItalic,
+      useBullets: data.useBullets,
       relatedKeywords: data.relatedKeywords || "",
-      linkItems: filteredLinkItems as any // Ép kiểu để phù hợp với GenerateContentRequest
+      language: data.language || 'vietnamese',
+      country: data.country || 'vietnam',
+      perspective: data.perspective || 'auto',
+      complexity: data.complexity || 'auto',
+      useWebResearch: data.useWebResearch || false,
+      refSources: data.refSources || "",
+      aiModel: data.aiModel || 'chatgpt',
+      linkItems: filteredLinkItems,
+      imageSize: data.imageSize || 'medium'
     };
 
+    console.log('Sending content generation request:', requestData);
     generateContentMutation.mutate(requestData);
   };
 
