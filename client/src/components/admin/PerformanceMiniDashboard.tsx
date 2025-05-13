@@ -94,50 +94,7 @@ export default function PerformanceMiniDashboard() {
         </Card>
       </div>
       
-      {/* Mini Response Time Chart */}
-      <Card>
-        <CardHeader className="py-3">
-          <CardTitle className="text-sm font-medium">
-            {t("admin.performanceMetrics.responseTimeHistory") || "Lịch sử thời gian phản hồi"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="h-40 py-2">
-          {isLoadingPerformance ? (
-            <div className="flex items-center justify-center h-full">
-              <p>Loading...</p>
-            </div>
-          ) : (
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={performance && performance.responseTimeHistory ? performance.responseTimeHistory.slice(-12) : []}
-                margin={{
-                  top: 5,
-                  right: 5,
-                  left: 0,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="timestamp" 
-                  tickFormatter={(value) => {
-                    const date = new Date(value);
-                    return `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
-                  }}
-                  tick={{fontSize: 10}}
-                  interval="preserveStartEnd"
-                />
-                <YAxis tick={{fontSize: 10}} />
-                <Tooltip 
-                  labelFormatter={(value) => typeof value === 'string' ? formatDate(value) : value}
-                  formatter={(value) => [`${value}ms`, ""]}
-                />
-                <Area type="monotone" dataKey="average" name="Avg" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />
-              </AreaChart>
-            </ResponsiveContainer>
-          )}
-        </CardContent>
-      </Card>
+      {/* Removed chart component to fix ResizeObserver errors */}
     </div>
   );
 }
