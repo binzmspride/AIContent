@@ -387,16 +387,16 @@ export default function PerformanceInsights() {
                     <TableCell className="font-medium">
                       {endpoint.endpoint}
                     </TableCell>
-                    <TableCell>{endpoint.count.toLocaleString()}</TableCell>
+                    <TableCell>{typeof endpoint.count === 'number' ? endpoint.count.toLocaleString() : endpoint.count}</TableCell>
                     <TableCell>
                       <div className="flex items-center">
-                        <span className={endpoint.averageTime > 500 ? "text-red-500" : endpoint.averageTime > 200 ? "text-amber-500" : "text-green-500"}>
+                        <span className={typeof endpoint.averageTime === 'number' ? (endpoint.averageTime > 500 ? "text-red-500" : endpoint.averageTime > 200 ? "text-amber-500" : "text-green-500") : ""}>
                           {endpoint.averageTime}ms
                         </span>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={endpoint.errorRate > 5 ? "destructive" : endpoint.errorRate > 2 ? "outline" : "secondary"}>
+                      <Badge variant={typeof endpoint.errorRate === 'number' ? (endpoint.errorRate > 5 ? "destructive" : endpoint.errorRate > 2 ? "outline" : "secondary") : "secondary"}>
                         {endpoint.errorRate}%
                       </Badge>
                     </TableCell>
