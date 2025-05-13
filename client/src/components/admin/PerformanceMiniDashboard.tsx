@@ -151,7 +151,7 @@ export default function PerformanceMiniDashboard() {
                 />
                 <YAxis tick={{fontSize: 10}} />
                 <Tooltip 
-                  labelFormatter={(value) => formatDate(value)}
+                  labelFormatter={(value) => typeof value === 'string' ? formatDate(value) : value}
                   formatter={(value) => [`${value}ms`, ""]}
                 />
                 <Area type="monotone" dataKey="average" name="Avg" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />

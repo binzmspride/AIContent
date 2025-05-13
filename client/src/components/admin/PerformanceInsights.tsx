@@ -257,7 +257,7 @@ export default function PerformanceInsights() {
                     />
                     <YAxis />
                     <Tooltip 
-                      labelFormatter={(value) => formatDate(value)}
+                      labelFormatter={(value) => typeof value === 'string' ? formatDate(value) : value}
                       formatter={(value) => [`${value}ms`, ""]}
                     />
                     <Legend />
@@ -302,7 +302,7 @@ export default function PerformanceInsights() {
                     />
                     <YAxis />
                     <Tooltip 
-                      labelFormatter={(value) => formatDate(value)}
+                      labelFormatter={(value) => typeof value === 'string' ? formatDate(value) : value}
                       formatter={(value) => [value, ""]}
                     />
                     <Legend />
