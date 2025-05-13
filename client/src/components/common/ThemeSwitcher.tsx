@@ -9,7 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useLanguage } from "@/hooks/use-language";
 
 interface ThemeSwitcherProps {
   variant?: "default" | "outline" | "ghost" | "icon";
@@ -26,7 +25,6 @@ export function ThemeSwitcher({
 }: ThemeSwitcherProps) {
   const { theme, resolvedTheme, setTheme, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const { t } = useLanguage();
 
   // Sau khi component mount mới hiển thị để tránh hydration mismatch
   useEffect(() => {
@@ -67,8 +65,8 @@ export function ThemeSwitcher({
         {showLabels && (
           <span>
             {resolvedTheme === "light" 
-              ? t("common.darkMode") 
-              : t("common.lightMode")}
+              ? "Chế độ tối" 
+              : "Chế độ sáng"}
           </span>
         )}
       </div>
@@ -119,15 +117,15 @@ export function ThemeSwitcher({
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")} className="gap-2">
           <Sun className="h-4 w-4" />
-          <span>{t("common.lightMode")}</span>
+          <span>Chế độ sáng</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")} className="gap-2">
           <Moon className="h-4 w-4" />
-          <span>{t("common.darkMode")}</span>
+          <span>Chế độ tối</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")} className="gap-2">
           <Computer className="h-4 w-4" />
-          <span>{t("common.systemTheme")}</span>
+          <span>Theo hệ thống</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
