@@ -91,8 +91,8 @@ export default function Credits() {
     },
     onSuccess: (data) => {
       toast({
-        title: "Purchase successful",
-        description: `You have purchased ${data.data.amount} credits`,
+        title: "Mua thành công",
+        description: `Bạn đã mua ${data.data.amount} tín dụng`,
       });
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/credits/history"] });
@@ -100,7 +100,7 @@ export default function Credits() {
     },
     onError: (error: Error) => {
       toast({
-        title: "Purchase failed",
+        title: "Mua không thành công",
         description: error.message,
         variant: "destructive",
       });
@@ -136,10 +136,10 @@ export default function Credits() {
             <CardContent>
               <div className="text-4xl font-bold text-primary-600">
                 {user?.credits || 0}
-                <span className="ml-2 text-lg text-secondary-500">credits</span>
+                <span className="ml-2 text-lg text-secondary-500">tín dụng</span>
               </div>
               <p className="mt-2 text-sm text-secondary-500">
-                Use credits to generate SEO content. Each content generation costs 1-3 credits depending on length.
+                Sử dụng tín dụng để tạo nội dung SEO. Mỗi lần tạo nội dung tốn 1-3 tín dụng tùy thuộc vào độ dài.
               </p>
             </CardContent>
           </Card>
@@ -183,7 +183,7 @@ export default function Credits() {
           <TabsContent value="packages">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {isLoadingPlans ? (
-                <div className="col-span-3 text-center py-10">Loading plans...</div>
+                <div className="col-span-3 text-center py-10">Đang tải gói dịch vụ...</div>
               ) : (
                 plans?.map((plan) => (
                   <Card key={plan.id} className={plan.name.includes("Nâng Cao") ? "border-2 border-accent-500" : ""}>
@@ -203,13 +203,13 @@ export default function Credits() {
                       <ul className="space-y-2">
                         <li className="flex items-start">
                           <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
-                          <span>{plan.value} {t("landing.pricing.features.credits")}</span>
+                          <span>{plan.value} tín dụng</span>
                         </li>
                         <li className="flex items-start">
                           <Check className="h-5 w-5 text-green-500 mt-0.5 mr-2 flex-shrink-0" />
                           <span>
                             ~{plan.name.includes("Cơ Bản") ? "1000" : 
-                               plan.name.includes("Nâng Cao") ? "1500" : "2000"} {t("landing.pricing.features.wordsPerCredit")}
+                               plan.name.includes("Nâng Cao") ? "1500" : "2000"} từ/tín dụng
                           </span>
                         </li>
                         <li className="flex items-start">
