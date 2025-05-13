@@ -29,6 +29,16 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -47,7 +57,8 @@ import {
   ExternalLink, 
   Pencil, 
   AlertCircle, 
-  KeyRound, 
+  KeyRound,
+  Globe,
   List, 
   FileText,
   Book,
