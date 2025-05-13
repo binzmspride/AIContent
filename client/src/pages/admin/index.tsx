@@ -107,16 +107,7 @@ export default function AdminDashboard() {
       
       <AdminLayout title={t("admin.dashboard")}>
         {/* Performance Mini Dashboard */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>
-              {t("admin.performanceMetrics.title") || "Performance Insights"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <PerformanceMiniDashboard />
-          </CardContent>
-        </Card>
+{/* Temporarily removed PerformanceMiniDashboard to fix errors */}
         
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
