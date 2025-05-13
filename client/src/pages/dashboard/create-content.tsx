@@ -404,6 +404,41 @@ export default function CreateContent() {
       setIsLinkItemsInitialized(true);
     }
   };
+  
+  // Xử lý khi lưu nội dung từ dialog
+  const handleSaveEditedContent = () => {
+    if (generatedContent) {
+      // Cập nhật nội dung đã chỉnh sửa vào generatedContent
+      setGeneratedContent({
+        ...generatedContent,
+        title: editedTitle,
+        content: editedContent
+      });
+      
+      // Đóng dialog
+      setIsContentDialogOpen(false);
+      
+      toast({
+        title: "Đã cập nhật nội dung",
+        description: "Nội dung đã được cập nhật thành công",
+      });
+    }
+  };
+
+  // Xử lý khi xuất bản nội dung
+  const handlePublishContent = () => {
+    // Lưu nội dung đã chỉnh sửa
+    handleSaveEditedContent();
+    
+    // Hiển thị thông báo
+    toast({
+      title: "Đang xuất bản nội dung",
+      description: "Nội dung đang được xuất bản...",
+    });
+    
+    // TODO: Thực hiện xuất bản nội dung lên website
+    // Đây là phần sẽ triển khai sau khi có API xuất bản
+  };
 
   return (
     <>
@@ -1562,6 +1597,75 @@ export default function CreateContent() {
             </Tabs>
           </CardContent>
         </Card>
+        
+        {/* Dialog for editing content */}
+        <Dialog open={isContentDialogOpen} onOpenChange={setIsContentDialogOpen}>
+          <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Chỉnh sửa nội dung</DialogTitle>
+              <DialogDescription>
+                Chỉnh sửa nội dung đã tạo và lưu hoặc xuất bản lên website của bạn.
+              </DialogDescription>
+            </DialogHeader>
+            
+            {/* Title editing */}
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="title">Tiêu đề</Label>
+                <Input 
+                  id="title" 
+                  value={editedTitle} 
+                  onChange={(e) => setEditedTitle(e.target.value)} 
+                  className="w-full"
+                />
+              </div>
+              
+              {/* Content editing */}
+              <div className="grid gap-2">
+                <Label htmlFor="content">Nội dung</Label>
+                <Textarea 
+                  id="content" 
+                  value={editedContent} 
+                  onChange={(e) => setEditedContent(e.target.value)} 
+                  className="min-h-[300px]"
+                />
+              </div>
+            </div>
+            
+            <DialogFooter className="flex flex-col sm:flex-row gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => setIsContentDialogOpen(false)}
+                className="sm:order-1"
+              >
+                Hủy
+              </Button>
+              
+              <Button 
+                onClick={handleSaveEditedContent}
+                className="sm:order-2"
+              >
+                Lưu thay đổi
+              </Button>
+              
+              <Button 
+                onClick={handleSaveArticle}
+                variant="secondary"
+                className="sm:order-3"
+              >
+                Lưu bài viết
+              </Button>
+              
+              <Button 
+                onClick={handlePublishContent}
+                variant="default"
+                className="sm:order-4 bg-accent-500 hover:bg-accent-600"
+              >
+                Xuất bản lên website
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </DashboardLayout>
     </>
   );
