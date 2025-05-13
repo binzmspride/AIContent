@@ -10,12 +10,17 @@ export function formatDate(date: Date | string | null | undefined): string {
   if (!date) return '';
   
   try {
+    // Phòng trường hợp date là number hoặc object khác
+    if (typeof date !== 'string' && !(date instanceof Date)) {
+      return String(date);
+    }
+    
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     return dateObj instanceof Date && !isNaN(dateObj.getTime())
       ? format(dateObj, 'dd/MM/yyyy')
-      : '';
+      : String(date);
   } catch {
-    return '';
+    return String(date);
   }
 }
 
@@ -23,37 +28,73 @@ export function formatDateTime(date: Date | string | null | undefined): string {
   if (!date) return '';
   
   try {
+    // Phòng trường hợp date là number hoặc object khác
+    if (typeof date !== 'string' && !(date instanceof Date)) {
+      return String(date);
+    }
+    
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     return dateObj instanceof Date && !isNaN(dateObj.getTime())
       ? format(dateObj, 'dd/MM/yyyy HH:mm')
-      : '';
+      : String(date);
   } catch {
-    return '';
+    return String(date);
   }
 }
 
-export function formatCurrency(amount: number, locale: string = 'vi-VN', currency: string = 'VND'): string {
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(amount);
+export function formatCurrency(amount: number | string | null | undefined, locale: string = 'vi-VN', currency: string = 'VND'): string {
+  if (amount === null || amount === undefined) return '';
+  
+  try {
+    // Convert string to number if needed
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    
+    // Check if it's a valid number
+    if (typeof numAmount !== 'number' || isNaN(numAmount)) {
+      return String(amount);
+    }
+    
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(numAmount);
+  } catch {
+    return String(amount);
+  }
 }
 
-export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 Bytes';
+export function formatFileSize(bytes: number | string | null | undefined): string {
+  if (bytes === null || bytes === undefined) return '0 Bytes';
 
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  try {
+    // Convert string to number if needed
+    const numBytes = typeof bytes === 'string' ? parseFloat(bytes) : bytes;
+    
+    // Check if it's a valid number
+    if (typeof numBytes !== 'number' || isNaN(numBytes)) {
+      return String(bytes);
+    }
+    
+    if (numBytes === 0) return '0 Bytes';
+    
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(numBytes) / Math.log(k));
+    
+    return parseFloat((numBytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  } catch {
+    return String(bytes);
+  }
 }
 
-export function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength) + '...';
+export function truncateText(text: string | null | undefined, maxLength: number): string {
+  if (!text) return '';
+  
+  const strText = String(text);
+  if (strText.length <= maxLength) return strText;
+  return strText.slice(0, maxLength) + '...';
 }
 
 export async function copyToClipboard(text: string): Promise<boolean> {
