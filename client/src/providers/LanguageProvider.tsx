@@ -22,6 +22,7 @@ interface LanguageContextType {
 // Hardcoded translations for essential UI elements
 const translations: TranslationsType = {
   vi: {
+
     admin: {
       adminPanel: "Quản trị viên",
       adminDashboard: "Bảng điều khiển quản trị",
