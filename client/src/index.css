@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fix for ResizeObserver errors */
+.recharts-wrapper {
+  display: none !important;
+}
+
 @layer base {
   :root {
     /* Bảng màu mới đẹp và hiện đại */
