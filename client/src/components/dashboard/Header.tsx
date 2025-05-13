@@ -97,7 +97,7 @@ export function Header() {
           <Link href="/dashboard/credits">
             <div className="text-secondary-500 dark:text-secondary-200 bg-secondary-100 dark:bg-secondary-800 px-3 py-1 rounded-full text-sm font-medium flex items-center hover:bg-secondary-200 dark:hover:bg-secondary-700 transition-colors cursor-pointer">
               <Coins className="h-4 w-4 mr-1 text-accent-500" />
-              <span>{user?.credits || 0}</span>
+              <span>{user?.credits || 0} tín dụng</span>
             </div>
           </Link>
         </div>

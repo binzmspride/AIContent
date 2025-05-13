@@ -260,7 +260,7 @@ export default function Credits() {
               <CardContent>
                 <Table>
                   <TableCaption>
-                    {isLoadingHistory ? "Loading transaction history..." : "Your credit transaction history"}
+                    {isLoadingHistory ? "Đang tải lịch sử giao dịch..." : "Lịch sử giao dịch tín dụng của bạn"}
                   </TableCaption>
                   <TableHeader>
                     <TableRow>
@@ -272,11 +272,11 @@ export default function Credits() {
                   <TableBody>
                     {isLoadingHistory ? (
                       <TableRow>
-                        <TableCell colSpan={3} className="text-center">Loading...</TableCell>
+                        <TableCell colSpan={3} className="text-center">Đang tải...</TableCell>
                       </TableRow>
                     ) : creditHistory?.transactions.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={3} className="text-center">No transactions found</TableCell>
+                        <TableCell colSpan={3} className="text-center">Không tìm thấy giao dịch nào</TableCell>
                       </TableRow>
                     ) : (
                       creditHistory?.transactions.map((transaction) => (
@@ -284,7 +284,7 @@ export default function Credits() {
                           <TableCell>{formatDate(transaction.createdAt)}</TableCell>
                           <TableCell>{transaction.description}</TableCell>
                           <TableCell className={`text-right font-medium ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {transaction.amount > 0 ? '+' : ''}{transaction.amount}
+                            {transaction.amount > 0 ? '+' : ''}{transaction.amount} tín dụng
                           </TableCell>
                         </TableRow>
                       ))
@@ -298,17 +298,17 @@ export default function Credits() {
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage <= 1 || isLoadingHistory}
                 >
-                  Previous
+                  Trước
                 </Button>
                 <span className="text-sm text-muted-foreground">
-                  Page {currentPage} of {creditHistory?.pagination.totalPages || 1}
+                  Trang {currentPage} / {creditHistory?.pagination.totalPages || 1}
                 </span>
                 <Button
                   variant="outline"
                   onClick={() => setCurrentPage((prev) => prev + 1)}
                   disabled={(currentPage >= (creditHistory?.pagination.totalPages || 1)) || isLoadingHistory}
                 >
-                  Next
+                  Sau
                 </Button>
               </CardFooter>
             </Card>
