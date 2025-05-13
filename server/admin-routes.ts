@@ -157,67 +157,38 @@ export function registerAdminRoutes(app: Express) {
     try {
       const timeRange = req.query.timeRange as string || "24h";
       
-      // Generate sample performance data
-      // This would normally come from a monitoring service or database
-      const now = new Date();
-      
-      // Determine date range based on timeRange parameter
-      let startDate;
-      switch (timeRange) {
-        case "6h": startDate = subHours(now, 6); break;
-        case "12h": startDate = subHours(now, 12); break;
-        case "7d": startDate = subDays(now, 7); break;
-        case "30d": startDate = subDays(now, 30); break;
-        case "24h":
-        default: startDate = subHours(now, 24); break;
-      }
-
-      // Generate sample performance data
-      const responseTimeHistory = generateTimeSeriesData(startDate, now, (date) => ({
-        timestamp: date.toISOString(),
-        average: Math.floor(Math.random() * 50) + 70,
-        p95: Math.floor(Math.random() * 50) + 120,
-        p99: Math.floor(Math.random() * 50) + 170
-      }));
-
-      const requestsHistory = generateTimeSeriesData(startDate, now, (date) => ({
-        timestamp: date.toISOString(),
-        total: Math.floor(Math.random() * 100) + 400,
-        errors: Math.floor(Math.random() * 10) + 1
-      }));
-
-      const resourceUsageHistory = generateTimeSeriesData(startDate, now, (date) => ({
-        timestamp: date.toISOString(),
-        cpu: Math.floor(Math.random() * 40) + 20,
-        memory: Math.floor(Math.random() * 30) + 40,
-        disk: Math.floor(Math.random() * 20) + 30
-      }));
-
-      // Calculate current metrics based on the latest data
-      const latestResponseTime = responseTimeHistory[responseTimeHistory.length - 1];
-      const latestRequests = requestsHistory[requestsHistory.length - 1];
-      const latestResources = resourceUsageHistory[resourceUsageHistory.length - 1];
-
+      // Create a simple response with static data
       const performanceData = {
-        // Current stats
-        averageResponseTime: latestResponseTime.average,
-        p95ResponseTime: latestResponseTime.p95,
-        p99ResponseTime: latestResponseTime.p99,
+        averageResponseTime: 145,
+        p95ResponseTime: 210,
+        p99ResponseTime: 350,
+        totalRequests: 12500,
+        requestsPerMinute: 35,
+        errorRate: 1.2,
+        cpuUsage: 45,
+        memoryUsage: 62,
+        diskUsage: 38,
         
-        totalRequests: requestsHistory.reduce((sum, item) => sum + item.total, 0),
-        requestsPerMinute: Math.floor(latestRequests.total / 60),
-        errorRate: Math.round((latestRequests.errors / latestRequests.total) * 100 * 10) / 10,
+        responseTimeHistory: Array(24).fill(0).map((_, i) => ({
+          timestamp: new Date(Date.now() - (23 - i) * 3600000).toISOString(),
+          average: 100 + Math.floor(Math.random() * 100),
+          p95: 150 + Math.floor(Math.random() * 100),
+          p99: 200 + Math.floor(Math.random() * 150)
+        })),
         
-        cpuUsage: latestResources.cpu,
-        memoryUsage: latestResources.memory,
-        diskUsage: latestResources.disk,
+        requestsHistory: Array(24).fill(0).map((_, i) => ({
+          timestamp: new Date(Date.now() - (23 - i) * 3600000).toISOString(),
+          total: 400 + Math.floor(Math.random() * 200),
+          errors: 2 + Math.floor(Math.random() * 8)
+        })),
         
-        // Historical data
-        responseTimeHistory,
-        requestsHistory,
-        resourceUsageHistory,
+        resourceUsageHistory: Array(24).fill(0).map((_, i) => ({
+          timestamp: new Date(Date.now() - (23 - i) * 3600000).toISOString(),
+          cpu: 30 + Math.floor(Math.random() * 30),
+          memory: 40 + Math.floor(Math.random() * 30),
+          disk: 30 + Math.floor(Math.random() * 20)
+        })),
         
-        // Endpoint performance
         endpointPerformance: [
           {
             endpoint: "/api/content/generate",
@@ -251,7 +222,6 @@ export function registerAdminRoutes(app: Express) {
           }
         ],
         
-        // Time range used for this data
         timeRange: timeRange
       };
 
@@ -267,37 +237,4 @@ export function registerAdminRoutes(app: Express) {
       });
     }
   });
-}
-
-// Helper function to generate time series data
-function generateTimeSeriesData(startDate: Date, endDate: Date, dataGenerator: (date: Date) => any) {
-  const data = [];
-  const interval = getIntervalFromDateRange(startDate, endDate);
-  
-  let currentDate = new Date(startDate);
-  while (currentDate <= endDate) {
-    data.push(dataGenerator(new Date(currentDate)));
-    currentDate = addTimeInterval(currentDate, interval);
-  }
-  
-  return data;
-}
-
-// Determine appropriate interval based on date range
-function getIntervalFromDateRange(startDate: Date, endDate: Date) {
-  const diffHours = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
-  
-  if (diffHours <= 12) return { minutes: 30 };
-  if (diffHours <= 24) return { hours: 1 };
-  if (diffHours <= 24 * 7) return { hours: 6 };
-  return { days: 1 };
-}
-
-// Add time interval to a date
-function addTimeInterval(date: Date, interval: { minutes?: number, hours?: number, days?: number }) {
-  const newDate = new Date(date);
-  if (interval.minutes) newDate.setMinutes(date.getMinutes() + interval.minutes);
-  if (interval.hours) newDate.setHours(date.getHours() + interval.hours);
-  if (interval.days) newDate.setDate(date.getDate() + interval.days);
-  return newDate;
 }
