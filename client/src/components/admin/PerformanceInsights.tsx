@@ -239,7 +239,7 @@ export default function PerformanceInsights() {
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
-                    data={performance?.responseTimeHistory || []}
+                    data={performance && performance.responseTimeHistory ? performance.responseTimeHistory : []}
                     margin={{
                       top: 5,
                       right: 30,
@@ -284,7 +284,7 @@ export default function PerformanceInsights() {
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart
-                    data={performance?.requestsHistory || []}
+                    data={performance && performance.requestsHistory ? performance.requestsHistory : []}
                     margin={{
                       top: 5,
                       right: 30,
@@ -328,7 +328,7 @@ export default function PerformanceInsights() {
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart
-                    data={performance?.resourceUsageHistory || []}
+                    data={performance && performance.resourceUsageHistory ? performance.resourceUsageHistory : []}
                     margin={{
                       top: 5,
                       right: 30,
@@ -382,7 +382,7 @@ export default function PerformanceInsights() {
                   <TableCell colSpan={4} className="text-center">Loading...</TableCell>
                 </TableRow>
               ) : (
-                performance?.endpointPerformance?.map((endpoint, index) => (
+                (performance && performance.endpointPerformance ? performance.endpointPerformance : []).map((endpoint, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">
                       {endpoint.endpoint}
