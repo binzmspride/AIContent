@@ -1,22 +1,32 @@
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Computer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/providers/ThemeProvider";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useLanguage } from "@/hooks/use-language";
 
 interface ThemeSwitcherProps {
   variant?: "default" | "outline" | "ghost" | "icon";
   showLabels?: boolean;
   className?: string;
+  showDropdown?: boolean;
 }
 
 export function ThemeSwitcher({
   variant = "default",
   showLabels = false,
   className = "",
+  showDropdown = true,
 }: ThemeSwitcherProps) {
-  const { resolvedTheme, toggleTheme } = useTheme();
+  const { theme, resolvedTheme, setTheme, toggleTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const { t } = useLanguage();
 
   // Sau khi component mount mới hiển thị để tránh hydration mismatch
   useEffect(() => {
@@ -27,34 +37,99 @@ export function ThemeSwitcher({
     return null;
   }
 
-  return (
-    <Button
-      variant={variant === "icon" ? "ghost" : variant}
-      size={variant === "icon" ? "icon" : "default"}
-      onClick={toggleTheme}
-      aria-label={`Switch to ${resolvedTheme === "light" ? "dark" : "light"} mode`}
-      className={`relative overflow-hidden ${className}`}
-    >
+  // Hiệu ứng gradient cho nút chuyển đổi
+  const getGradientColor = () => {
+    if (resolvedTheme === "light") {
+      return "hsl(var(--theme-switcher-light) / 0.2)";
+    } else {
+      return "hsl(var(--theme-switcher-dark) / 0.2)";
+    }
+  };
+  
+  // Hiệu ứng đổi màu khi hover
+  const getHoverGradientColor = () => {
+    if (resolvedTheme === "light") {
+      return "hsl(var(--theme-switcher-light) / 0.3)";
+    } else {
+      return "hsl(var(--theme-switcher-dark) / 0.3)";
+    }
+  };
+
+  // Nút chuyển đổi đơn giản
+  const themeButtonContent = (
+    <>
       <div className="relative z-10 flex items-center gap-2">
         {resolvedTheme === "light" ? (
           <Moon className={showLabels ? "h-4 w-4" : "h-5 w-5"} />
         ) : (
           <Sun className={showLabels ? "h-4 w-4" : "h-5 w-5"} />
         )}
-        {showLabels && <span>{resolvedTheme === "light" ? "Dark mode" : "Light mode"}</span>}
+        {showLabels && (
+          <span>
+            {resolvedTheme === "light" 
+              ? t("common.darkMode") 
+              : t("common.lightMode")}
+          </span>
+        )}
       </div>
       
-      {/* Hiệu ứng chuyển đổi */}
+      {/* Hiệu ứng gradient */}
       <motion.div
-        className="absolute inset-0 rounded bg-gradient-to-br"
+        className="absolute inset-0 rounded-md"
         initial={false}
         animate={{
-          backgroundColor: resolvedTheme === "light" 
-            ? "rgba(59, 130, 246, 0.1)" 
-            : "rgba(234, 179, 8, 0.1)",
+          backgroundColor: getGradientColor(),
         }}
-        transition={{ duration: 0.6 }}
+        whileHover={{
+          backgroundColor: getHoverGradientColor(),
+        }}
+        transition={{ duration: 0.3 }}
       />
-    </Button>
+    </>
+  );
+
+  // Nếu không sử dụng dropdown menu
+  if (!showDropdown) {
+    return (
+      <Button
+        variant={variant === "icon" ? "ghost" : variant}
+        size={variant === "icon" ? "icon" : "default"}
+        onClick={toggleTheme}
+        aria-label={`Switch to ${resolvedTheme === "light" ? "dark" : "light"} mode`}
+        className={`relative overflow-hidden ${className}`}
+      >
+        {themeButtonContent}
+      </Button>
+    );
+  }
+
+  // Dropdown menu cho phép chọn nhiều chế độ
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant={variant === "icon" ? "ghost" : variant}
+          size={variant === "icon" ? "icon" : "default"}
+          aria-label="Toggle theme"
+          className={`relative overflow-hidden ${className}`}
+        >
+          {themeButtonContent}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme("light")} className="gap-2">
+          <Sun className="h-4 w-4" />
+          <span>{t("common.lightMode")}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")} className="gap-2">
+          <Moon className="h-4 w-4" />
+          <span>{t("common.darkMode")}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")} className="gap-2">
+          <Computer className="h-4 w-4" />
+          <span>{t("common.systemTheme")}</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
