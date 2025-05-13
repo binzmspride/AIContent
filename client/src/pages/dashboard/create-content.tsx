@@ -127,6 +127,9 @@ export default function CreateContent() {
   const [outlineItems, setOutlineItems] = useState<OutlineItem[]>([]);
   const [currentHeadingText, setCurrentHeadingText] = useState("");
   const [currentHeadingLevel, setCurrentHeadingLevel] = useState<'h2' | 'h3' | 'h4'>('h2');
+  const [isContentDialogOpen, setIsContentDialogOpen] = useState(false);
+  const [editedContent, setEditedContent] = useState("");
+  const [editedTitle, setEditedTitle] = useState("");
   
   // Khởi tạo linkItems ban đầu
   const [isLinkItemsInitialized, setIsLinkItemsInitialized] = useState(false);
@@ -188,9 +191,12 @@ export default function CreateContent() {
     },
     onSuccess: (data) => {
       setGeneratedContent(data);
+      setEditedContent(data.content);
+      setEditedTitle(data.title || '');
+      setIsContentDialogOpen(true);
       toast({
         title: "Đã tạo nội dung thành công",
-        description: `Đã sử dụng ${data.creditsUsed} credits`,
+        description: `Đã sử dụng ${data.creditsUsed} tín dụng`,
       });
     },
     onError: (error: Error) => {
@@ -308,8 +314,8 @@ export default function CreateContent() {
         });
         
         await apiRequest("POST", "/api/dashboard/articles", {
-          title: generatedContent.title,
-          content: generatedContent.content,
+          title: editedTitle || generatedContent.title,
+          content: editedContent || generatedContent.content,
           keywords: generatedContent.keywords.join(", "),
           creditsUsed: generatedContent.creditsUsed,
         });
