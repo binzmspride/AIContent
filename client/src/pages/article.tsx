@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLanguage } from "@/hooks/use-language";
-import { ArrowLeft, Calendar, Tag, User } from "lucide-react";
+import { ArrowLeft, Calendar, Tag } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import Head from "@/components/head";
 import { Article as ArticleType } from "@shared/schema";
@@ -29,11 +29,11 @@ const Article = () => {
         <div className="mb-8">
           <Button
             variant="ghost"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/")}
             className="mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {t("common.goBack")}
+            Quay lại
           </Button>
           <Skeleton className="h-10 w-3/4 mb-4" />
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-6">
@@ -64,13 +64,13 @@ const Article = () => {
     return (
       <div className="container max-w-4xl mx-auto px-4 py-8">
         <Head>
-          <title>{t("article.notFound")} - {t("common.appName")}</title>
+          <title>Không tìm thấy bài viết - SEO AI Writer</title>
         </Head>
         <div className="text-center py-12">
-          <h1 className="text-3xl font-bold text-red-500 mb-4">{t("article.notFoundTitle")}</h1>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">{t("article.notFoundDescription")}</p>
+          <h1 className="text-3xl font-bold text-red-500 mb-4">Không tìm thấy bài viết</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">Bài viết không tồn tại hoặc đã bị xóa</p>
           <Button onClick={() => navigate("/")}>
-            {t("common.backToHome")}
+            Quay về trang chủ
           </Button>
         </div>
       </div>
@@ -80,7 +80,7 @@ const Article = () => {
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8">
       <Head>
-        <title>{article.title} - {t("common.appName")}</title>
+        <title>{article.title} - SEO AI Writer</title>
         <meta name="description" content={article.content.replace(/<[^>]*>/g, '').substring(0, 160)} />
         <meta name="keywords" content={article.keywords || ''} />
       </Head>
@@ -88,11 +88,11 @@ const Article = () => {
       <div className="mb-8">
         <Button
           variant="ghost"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/")}
           className="mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          {t("common.goBack")}
+          Quay lại
         </Button>
         
         <h1 className="text-3xl md:text-4xl font-bold mb-4">{article.title}</h1>

@@ -136,16 +136,9 @@ const EditArticle = () => {
     "image",
   ];
 
-  // If loading, show skeleton loader
   if (isLoading) {
     return (
-      <DashboardLayout
-        title={t("dashboard.editArticle.title")}
-        description={t("dashboard.editArticle.description")}
-      >
-        <Head>
-          <title>{t("dashboard.editArticle.pageTitle")} - {t("common.appName")}</title>
-        </Head>
+      <DashboardLayout>
         <div className="space-y-6">
           <Card>
             <CardHeader>
@@ -179,24 +172,17 @@ const EditArticle = () => {
     );
   }
 
-  // If article not found, show error
   if (!isLoading && !articleData?.success) {
     return (
-      <DashboardLayout
-        title={t("dashboard.editArticle.title")}
-        description={t("dashboard.editArticle.description")}
-      >
-        <Head>
-          <title>{t("dashboard.editArticle.pageTitle")} - {t("common.appName")}</title>
-        </Head>
+      <DashboardLayout>
         <Card className="border-destructive">
           <CardHeader>
-            <CardTitle className="text-destructive">{t("dashboard.editArticle.notFoundTitle")}</CardTitle>
-            <CardDescription>{t("dashboard.editArticle.notFoundDescription")}</CardDescription>
+            <CardTitle className="text-destructive">Bài viết không tồn tại</CardTitle>
+            <CardDescription>Không tìm thấy bài viết hoặc bạn không có quyền truy cập</CardDescription>
           </CardHeader>
           <CardFooter>
             <Button onClick={() => setLocation("/dashboard/my-articles")}>
-              {t("common.goBack")}
+              Quay lại danh sách
             </Button>
           </CardFooter>
         </Card>
@@ -205,27 +191,21 @@ const EditArticle = () => {
   }
 
   return (
-    <DashboardLayout
-      title={t("dashboard.editArticle.title")}
-      description={t("dashboard.editArticle.description")}
-    >
-      <Head>
-        <title>{t("dashboard.editArticle.pageTitle")} - {t("common.appName")}</title>
-      </Head>
+    <DashboardLayout>
       <form onSubmit={handleSubmit}>
         <Card>
           <CardHeader>
-            <CardTitle>{t("dashboard.editArticle.formTitle")}</CardTitle>
+            <CardTitle>Chỉnh sửa bài viết</CardTitle>
             <CardDescription>
-              {t("dashboard.editArticle.formDescription")}
+              Cập nhật nội dung và thông tin bài viết của bạn
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="title">{t("dashboard.editArticle.titleLabel")}</Label>
+              <Label htmlFor="title">Tiêu đề</Label>
               <Input
                 id="title"
-                placeholder={t("dashboard.editArticle.titlePlaceholder")}
+                placeholder="Nhập tiêu đề bài viết"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
@@ -233,7 +213,7 @@ const EditArticle = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="content">{t("dashboard.editArticle.contentLabel")}</Label>
+              <Label htmlFor="content">Nội dung</Label>
               <div className={`bg-white dark:bg-gray-950 transition-all ${isSubmitting ? 'opacity-50' : ''}`}>
                 <ReactQuill
                   theme="snow"
@@ -241,34 +221,34 @@ const EditArticle = () => {
                   onChange={setContent}
                   modules={modules}
                   formats={formats}
-                  placeholder={t("dashboard.editArticle.contentPlaceholder")}
+                  placeholder="Nhập nội dung bài viết"
                   className="h-72 mb-12 rounded-md border"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="keywords">{t("dashboard.editArticle.keywordsLabel")}</Label>
+              <Label htmlFor="keywords">Từ khóa</Label>
               <Input
                 id="keywords"
-                placeholder={t("dashboard.editArticle.keywordsPlaceholder")}
+                placeholder="Nhập từ khóa, phân cách bằng dấu phẩy"
                 value={keywords}
                 onChange={(e) => setKeywords(e.target.value)}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="status">{t("dashboard.editArticle.statusLabel")}</Label>
+              <Label htmlFor="status">Trạng thái</Label>
               <Select
                 value={status}
                 onValueChange={(value) => setStatus(value as "draft" | "published")}
               >
                 <SelectTrigger id="status">
-                  <SelectValue placeholder={t("dashboard.editArticle.statusPlaceholder")} />
+                  <SelectValue placeholder="Chọn trạng thái" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="draft">{t("dashboard.editArticle.statusDraft")}</SelectItem>
-                  <SelectItem value="published">{t("dashboard.editArticle.statusPublished")}</SelectItem>
+                  <SelectItem value="draft">Bản nháp</SelectItem>
+                  <SelectItem value="published">Đã xuất bản</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -279,10 +259,10 @@ const EditArticle = () => {
               onClick={() => setLocation("/dashboard/my-articles")}
               type="button"
             >
-              {t("common.cancel")}
+              Hủy
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? t("common.saving") : t("common.saveChanges")}
+              {isSubmitting ? "Đang lưu..." : "Lưu thay đổi"}
             </Button>
           </CardFooter>
         </Card>
