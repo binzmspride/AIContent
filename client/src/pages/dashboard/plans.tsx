@@ -124,23 +124,23 @@ export default function Plans() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Storage Plan */}
                 <div className="border rounded-md p-4">
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Storage Plan</h3>
+                  <h3 className="text-lg font-semibold text-black dark:text-white mb-2">Storage Plan</h3>
                   {activeStoragePlan ? (
                     <div className="space-y-3">
                       <div>
-                        <h4 className="text-base font-medium text-foreground">{activeStoragePlan.plan.name}</h4>
-                        <p className="text-sm text-muted-foreground">{activeStoragePlan.plan.description}</p>
+                        <h4 className="text-base font-medium text-black dark:text-white">{activeStoragePlan.plan.name}</h4>
+                        <p className="text-sm text-black dark:text-white">{activeStoragePlan.plan.description}</p>
                         
                         <div className="mt-3 flex items-center">
-                          <Calendar className="h-5 w-5 text-muted-foreground mr-2" />
-                          <span className="text-sm text-muted-foreground">
+                          <Calendar className="h-5 w-5 text-black dark:text-white mr-2" />
+                          <span className="text-sm text-black dark:text-white">
                             {t("dashboard.plans.expiresOn")}: {formatDate(activeStoragePlan.endDate)}
                           </span>
                         </div>
                       </div>
                       
                       <div className="space-y-2">
-                        <p className="text-sm font-medium text-foreground">Storage Usage</p>
+                        <p className="text-sm font-medium text-black dark:text-white">Storage Usage</p>
                         <div className="relative pt-1">
                           <div className="overflow-hidden h-2 text-xs flex rounded bg-primary-200">
                             <div 
@@ -153,7 +153,7 @@ export default function Plans() {
                               className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary"
                             ></div>
                           </div>
-                          <p className="text-xs text-muted-foreground mt-1">
+                          <p className="text-xs text-black dark:text-white mt-1">
                             {formatFileSize(activeStoragePlan.usedStorage)} of {formatFileSize(activeStoragePlan.plan.value)} used
                             ({Math.round((activeStoragePlan.usedStorage / activeStoragePlan.plan.value) * 100)}%)
                           </p>
@@ -161,9 +161,9 @@ export default function Plans() {
                       </div>
                       
                       <div className="flex items-center justify-between mt-4">
-                        <div className="text-xl font-bold text-foreground">
+                        <div className="text-xl font-bold text-black dark:text-white">
                           {formatCurrency(activeStoragePlan.plan.price)}
-                          <span className="text-sm font-normal text-muted-foreground">/month</span>
+                          <span className="text-sm font-normal text-black dark:text-white">/month</span>
                         </div>
                         
                         <div className="space-x-2">
@@ -192,39 +192,39 @@ export default function Plans() {
 
                 {/* Credit Plan */}
                 <div className="border rounded-md p-4">
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Credit Plan</h3>
+                  <h3 className="text-lg font-semibold text-black dark:text-white mb-2">Credit Plan</h3>
                   {activeCreditPlan ? (
                     <div className="space-y-3">
                       <div>
-                        <h4 className="text-base font-medium text-foreground">{activeCreditPlan.plan.name}</h4>
-                        <p className="text-sm text-muted-foreground">{activeCreditPlan.plan.description}</p>
+                        <h4 className="text-base font-medium text-black dark:text-white">{activeCreditPlan.plan.name}</h4>
+                        <p className="text-sm text-black dark:text-white">{activeCreditPlan.plan.description}</p>
                         
                         <div className="mt-3 flex items-center">
-                          <Calendar className="h-5 w-5 text-muted-foreground mr-2" />
-                          <span className="text-sm text-muted-foreground">
+                          <Calendar className="h-5 w-5 text-black dark:text-white mr-2" />
+                          <span className="text-sm text-black dark:text-white">
                             {t("dashboard.plans.expiresOn")}: {formatDate(activeCreditPlan.endDate)}
                           </span>
                         </div>
                       </div>
                       
                       <div className="space-y-2">
-                        <p className="text-sm font-medium text-foreground">Credit Amount</p>
+                        <p className="text-sm font-medium text-black dark:text-white">Credit Amount</p>
                         <div className="relative pt-1">
                           <div className="overflow-hidden h-2 text-xs flex rounded bg-primary-200">
                             <div 
                               className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary w-full"
                             ></div>
                           </div>
-                          <p className="text-xs text-muted-foreground mt-1">
+                          <p className="text-xs text-black dark:text-white mt-1">
                             {activeCreditPlan.plan.value} credits available
                           </p>
                         </div>
                       </div>
                       
                       <div className="flex items-center justify-between mt-4">
-                        <div className="text-xl font-bold text-foreground">
+                        <div className="text-xl font-bold text-black dark:text-white">
                           {formatCurrency(activeCreditPlan.plan.price)}
-                          <span className="text-sm font-normal text-muted-foreground">{activeCreditPlan.plan.duration ? "/month" : ""}</span>
+                          <span className="text-sm font-normal text-black dark:text-white">{activeCreditPlan.plan.duration ? "/month" : ""}</span>
                         </div>
                         
                         <div className="space-x-2">
@@ -236,9 +236,9 @@ export default function Plans() {
                     </div>
                   ) : (
                     <div className="text-center py-4">
-                      <AlertCircle className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                      <h3 className="text-base font-medium text-foreground mb-2">No active credit plan</h3>
-                      <p className="text-muted-foreground max-w-md mx-auto mb-4 text-sm">
+                      <AlertCircle className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
+                      <h3 className="text-base font-medium text-black dark:text-white mb-2">No active credit plan</h3>
+                      <p className="text-black dark:text-white max-w-md mx-auto mb-4 text-sm">
                         You don't have an active credit plan. Purchase credits to generate content.
                       </p>
                       <Button size="sm" asChild>
