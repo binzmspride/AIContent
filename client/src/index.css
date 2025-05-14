@@ -5,6 +5,49 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Thêm các class màu sắc cho chế độ sáng và tối */
+.light {
+  --text-color: #000000;
+  --background-color: #ffffff;
+}
+
+.dark {
+  --text-color: #ffffff;
+  --background-color: #1a1a1a;
+}
+
+/* Đảm bảo văn bản có màu phù hợp ở cả hai chế độ */
+.card, 
+.dialog-content, 
+.card-header,
+.card-title,
+.dialog-title,
+.dialog-description,
+.dialog-footer button,
+.tabs-content,
+.plan-card,
+.plan-features {
+  color: #000000 !important;
+}
+
+/* Thêm các class để đảm bảo màu sắc cho chế độ sáng */
+.h1, .h2, .h3, .h4, .h5, .h6, 
+h1, h2, h3, h4, h5, h6, 
+p, span, div, li, button, td, th, 
+input, select, textarea, label, 
+.text-black, 
+[data-theme="light"] * {
+  color: #000000;
+}
+
+/* Đảm bảo nội dung trong popup và dialog hiển thị rõ ràng */
+[role="dialog"] *,
+.popover *,
+.dialog *,
+.alert-dialog * {
+  color: #000000;
+}
+
 /* Fix for ResizeObserver errors */
 .recharts-wrapper {
   display: none !important;

@@ -416,7 +416,6 @@ const translations: TranslationsType = {
       insights: "Thông tin chi tiết",
       myArticles: "Bài viết của tôi",
       createContent: "Tạo nội dung",
-      plans: "Gói dịch vụ",
       plans: {
         currentPlan: "Gói Dịch Vụ Hiện Tại",
         creditPackages: "Gói Tín Dụng",
