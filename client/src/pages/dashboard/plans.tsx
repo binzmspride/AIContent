@@ -208,22 +208,15 @@ export default function Plans() {
                       </div>
                       
                       <div className="space-y-2">
-                        <p className="text-sm font-medium text-foreground">Credit Usage</p>
+                        <p className="text-sm font-medium text-foreground">Credit Amount</p>
                         <div className="relative pt-1">
                           <div className="overflow-hidden h-2 text-xs flex rounded bg-primary-200">
                             <div 
-                              style={{ 
-                                width: `${Math.min(
-                                  (activeCreditPlan.usedCredits / activeCreditPlan.plan.value) * 100, 
-                                  100
-                                )}%` 
-                              }} 
-                              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary"
+                              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary w-full"
                             ></div>
                           </div>
                           <p className="text-xs text-muted-foreground mt-1">
-                            {activeCreditPlan.usedCredits} of {activeCreditPlan.plan.value} credits used
-                            ({Math.round((activeCreditPlan.usedCredits / activeCreditPlan.plan.value) * 100)}%)
+                            {activeCreditPlan.plan.value} credits available
                           </p>
                         </div>
                       </div>
