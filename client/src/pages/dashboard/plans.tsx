@@ -124,7 +124,7 @@ export default function Plans() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Storage Plan */}
                 <div className="border rounded-md p-4">
-                  <h3 className="text-lg font-semibold text-black dark:text-white mb-2">Storage Plan</h3>
+                  <h3 className="text-lg font-semibold text-black dark:text-white mb-2">Gói Lưu Trữ</h3>
                   {activeStoragePlan ? (
                     <div className="space-y-3">
                       <div>
@@ -140,7 +140,7 @@ export default function Plans() {
                       </div>
                       
                       <div className="space-y-2">
-                        <p className="text-sm font-medium text-black dark:text-white">Storage Usage</p>
+                        <p className="text-sm font-medium text-black dark:text-white">Lưu Trữ Đã Dùng</p>
                         <div className="relative pt-1">
                           <div className="overflow-hidden h-2 text-xs flex rounded bg-primary-200">
                             <div 
@@ -154,7 +154,7 @@ export default function Plans() {
                             ></div>
                           </div>
                           <p className="text-xs text-black dark:text-white mt-1">
-                            {formatFileSize(activeStoragePlan.usedStorage)} of {formatFileSize(activeStoragePlan.plan.value)} used
+                            {formatFileSize(activeStoragePlan.usedStorage)} trên {formatFileSize(activeStoragePlan.plan.value)} đã sử dụng
                             ({Math.round((activeStoragePlan.usedStorage / activeStoragePlan.plan.value) * 100)}%)
                           </p>
                         </div>
@@ -178,13 +178,13 @@ export default function Plans() {
                     </div>
                   ) : (
                     <div className="text-center py-4">
-                      <AlertCircle className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                      <h3 className="text-base font-medium text-foreground mb-2">No active storage plan</h3>
-                      <p className="text-muted-foreground max-w-md mx-auto mb-4 text-sm">
-                        You don't have an active storage plan. Subscribe to a plan to store your articles.
+                      <AlertCircle className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
+                      <h3 className="text-base font-medium text-black dark:text-white mb-2">Không có gói lưu trữ nào hoạt động</h3>
+                      <p className="text-black dark:text-white max-w-md mx-auto mb-4 text-sm">
+                        Bạn không có gói lưu trữ nào đang hoạt động. Đăng ký một gói để lưu trữ bài viết của bạn.
                       </p>
                       <Button size="sm" onClick={() => document.getElementById('storage-plans-tab')?.click()}>
-                        View Storage Plans
+                        Xem Gói Lưu Trữ
                       </Button>
                     </div>
                   )}
@@ -192,7 +192,7 @@ export default function Plans() {
 
                 {/* Credit Plan */}
                 <div className="border rounded-md p-4">
-                  <h3 className="text-lg font-semibold text-black dark:text-white mb-2">Credit Plan</h3>
+                  <h3 className="text-lg font-semibold text-black dark:text-white mb-2">Gói Tín Dụng</h3>
                   {activeCreditPlan ? (
                     <div className="space-y-3">
                       <div>
@@ -208,7 +208,7 @@ export default function Plans() {
                       </div>
                       
                       <div className="space-y-2">
-                        <p className="text-sm font-medium text-black dark:text-white">Credit Amount</p>
+                        <p className="text-sm font-medium text-black dark:text-white">Số Lượng Tín Dụng</p>
                         <div className="relative pt-1">
                           <div className="overflow-hidden h-2 text-xs flex rounded bg-primary-200">
                             <div 
@@ -216,7 +216,7 @@ export default function Plans() {
                             ></div>
                           </div>
                           <p className="text-xs text-black dark:text-white mt-1">
-                            {activeCreditPlan.plan.value} credits available
+                            {activeCreditPlan.plan.value} tín dụng có sẵn
                           </p>
                         </div>
                       </div>
@@ -229,7 +229,7 @@ export default function Plans() {
                         
                         <div className="space-x-2">
                           <Button variant="outline" size="sm" asChild>
-                            <a href="/dashboard/credits">Buy More</a>
+                            <a href="/dashboard/credits">Mua Thêm</a>
                           </Button>
                         </div>
                       </div>
@@ -237,12 +237,12 @@ export default function Plans() {
                   ) : (
                     <div className="text-center py-4">
                       <AlertCircle className="h-8 w-8 text-black dark:text-white mx-auto mb-2" />
-                      <h3 className="text-base font-medium text-black dark:text-white mb-2">No active credit plan</h3>
+                      <h3 className="text-base font-medium text-black dark:text-white mb-2">Không có gói tín dụng nào hoạt động</h3>
                       <p className="text-black dark:text-white max-w-md mx-auto mb-4 text-sm">
-                        You don't have an active credit plan. Purchase credits to generate content.
+                        Bạn không có gói tín dụng nào đang hoạt động. Mua tín dụng để tạo nội dung.
                       </p>
                       <Button size="sm" asChild>
-                        <a href="/dashboard/credits">Go to Credits</a>
+                        <a href="/dashboard/credits">Đến Trang Tín Dụng</a>
                       </Button>
                     </div>
                   )}
