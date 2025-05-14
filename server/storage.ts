@@ -234,33 +234,44 @@ class DatabaseStorage implements IStorage {
   async getArticlesByUser(userId: number, page: number = 1, limit: number = 10, status?: string): Promise<{ articles: schema.Article[], total: number }> {
     const offset = (page - 1) * limit;
     
-    // Xác định điều kiện WHERE dựa trên trạng thái
+    // Tạo câu truy vấn cơ bản
+    let query = db.query.articles;
+    
+    // Xác định hàm WHERE
     let whereCondition;
     
     if (status) {
-      whereCondition = (article: typeof schema.articles.$inferSelect) => 
-        and(
-          eq(article.userId, userId),
-          eq(article.status, status)
-        );
+      whereCondition = ({ userId: userIdCol, status: statusCol }) => 
+        and(eq(userIdCol, userId), eq(statusCol, status as any));
     } else {
-      whereCondition = (article: typeof schema.articles.$inferSelect) => 
-        eq(article.userId, userId);
+      whereCondition = ({ userId: userIdCol }) => eq(userIdCol, userId);
     }
     
-    // Truy vấn lấy bài viết với điều kiện đã xác định
-    const articles = await db.query.articles.findMany({
+    // Lấy bài viết với điều kiện WHERE
+    const articles = await query.findMany({
       where: whereCondition,
       limit,
       offset,
-      orderBy: [desc(schema.articles.createdAt)]
+      orderBy: [desc(schema.articles.createdAt)],
     });
     
-    // Đếm tổng số bài viết thỏa mãn điều kiện
-    const [{ count }] = await db
+    // Đếm tổng số bài viết
+    let countQuery = db
       .select({ count: sql`count(*)`.mapWith(Number) })
-      .from(schema.articles)
-      .where(whereConditions);
+      .from(schema.articles);
+    
+    if (status) {
+      countQuery = countQuery.where(
+        and(
+          eq(schema.articles.userId, userId),
+          eq(schema.articles.status, status as any)
+        )
+      );
+    } else {
+      countQuery = countQuery.where(eq(schema.articles.userId, userId));
+    }
+    
+    const [{ count }] = await countQuery;
     
     return { articles, total: count };
   }

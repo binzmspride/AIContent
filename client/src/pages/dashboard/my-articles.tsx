@@ -62,7 +62,13 @@ export default function MyArticles() {
     isLoading,
     refetch,
   } = useQuery<{ articles: Article[], pagination: { total: number; page: number; limit: number; totalPages: number } }>({
-    queryKey: ["/api/dashboard/articles", { page: currentPage, limit: 10, status: statusFilter !== "all" ? statusFilter : undefined }],
+    queryKey: ["/api/dashboard/articles", { 
+      page: currentPage, 
+      limit: 10, 
+      status: statusFilter !== "all" ? statusFilter : undefined 
+    }],
+    refetchOnMount: true,
+    refetchOnWindowFocus: true
   });
 
   // Delete article mutation
@@ -163,7 +169,7 @@ export default function MyArticles() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => window.open(`/article/${article.id}`, '_blank')}>
+              <DropdownMenuItem onClick={() => window.open(`/article/${article.id}` || '', '_blank')}>
                 <Eye className="mr-2 h-4 w-4" />
                 <span>View</span>
               </DropdownMenuItem>
@@ -172,14 +178,12 @@ export default function MyArticles() {
                 <span>Copy Content</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href={`/dashboard/edit-article/${article.id}`}>
-                  <a className="flex items-center cursor-pointer w-full">
-                    <Edit className="mr-2 h-4 w-4" />
-                    <span>Edit</span>
-                  </a>
-                </Link>
-              </DropdownMenuItem>
+              <Link href={`/dashboard/edit-article/${article.id}`}>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Edit className="mr-2 h-4 w-4" />
+                  <span>Edit</span>
+                </DropdownMenuItem>
+              </Link>
               {article.status === "draft" && (
                 <DropdownMenuItem onClick={() => handleDeleteClick(article.id)}>
                   <Trash2 className="mr-2 h-4 w-4" />
@@ -187,7 +191,7 @@ export default function MyArticles() {
                 </DropdownMenuItem>
               )}
               {article.publishedUrl && (
-                <DropdownMenuItem onClick={() => window.open(article.publishedUrl, '_blank')}>
+                <DropdownMenuItem onClick={() => window.open(article.publishedUrl || '', '_blank')}>
                   <ExternalLink className="mr-2 h-4 w-4" />
                   <span>View Published</span>
                 </DropdownMenuItem>
@@ -210,9 +214,21 @@ export default function MyArticles() {
     { value: "twitter", label: t("dashboard.articles.statuses.twitter") },
   ];
 
+  // Refetch khi thay đổi trang hoặc bộ lọc
   useEffect(() => {
     refetch();
   }, [currentPage, statusFilter, refetch]);
+  
+  // Hiển thị trạng thái đang tải
+  if (isLoading) {
+    return (
+      <DashboardLayout title={t("dashboard.myArticles")}>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <>
@@ -254,12 +270,51 @@ export default function MyArticles() {
           </Link>
         </div>
 
-        <DataTable
-          columns={columns}
-          data={articlesData?.articles || []}
-          searchColumn="title"
-          searchPlaceholder={t("dashboard.articles.search")}
-        />
+        {articlesData?.articles && articlesData.articles.length > 0 ? (
+          <DataTable
+            columns={columns}
+            data={articlesData.articles}
+            searchColumn="title"
+            searchPlaceholder={t("dashboard.articles.search")}
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center p-10 text-center rounded-lg border border-dashed border-gray-300 bg-gray-50/50 dark:border-gray-600 dark:bg-gray-800/50">
+            <div className="mb-4">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-12 w-12 text-gray-400 dark:text-gray-500" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={1.5} 
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+              {statusFilter !== "all" 
+                ? t("dashboard.articles.noArticlesWithFilter") 
+                : t("dashboard.articles.noArticles")}
+            </h3>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 max-w-md">
+              {statusFilter !== "all" 
+                ? t("dashboard.articles.tryDifferentFilter") 
+                : t("dashboard.articles.createFirstArticle")}
+            </p>
+            <div className="mt-6">
+              <Link href="/dashboard/create-content">
+                <Button>
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  {t("dashboard.articles.newArticle")}
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
 
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DialogContent>
