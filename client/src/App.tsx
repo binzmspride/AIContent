@@ -19,6 +19,8 @@ import Plans from "@/pages/dashboard/plans";
 import Connections from "@/pages/dashboard/connections";
 import Settings from "@/pages/dashboard/settings";
 import ApiKeys from "@/pages/dashboard/api-keys";
+import EditArticle from "@/pages/dashboard/edit-article";
+import Article from "@/pages/article";
 import VerifyEmail from "@/pages/verify-email";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
@@ -48,11 +50,13 @@ function Router() {
       <ProtectedRoute path="/dashboard" component={Dashboard} />
       <ProtectedRoute path="/dashboard/create-content" component={CreateContent} />
       <ProtectedRoute path="/dashboard/my-articles" component={MyArticles} />
+      <ProtectedRoute path="/dashboard/edit-article/:id" component={EditArticle} />
       <ProtectedRoute path="/dashboard/credits" component={Credits} />
       <ProtectedRoute path="/dashboard/plans" component={Plans} />
       <ProtectedRoute path="/dashboard/connections" component={Connections} />
       <ProtectedRoute path="/dashboard/api-keys" component={ApiKeys} />
       <ProtectedRoute path="/dashboard/settings" component={Settings} />
+      <Route path="/article/:id" component={Article} />
       
       {/* Admin routes */}
       <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} />
