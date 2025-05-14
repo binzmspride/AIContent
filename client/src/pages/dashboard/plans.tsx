@@ -119,7 +119,7 @@ export default function Plans() {
           </CardHeader>
           <CardContent>
             {isLoadingUserPlans ? (
-              <div className="text-center py-4">Loading your plan details...</div>
+              <div className="text-center py-4">Đang tải thông tin gói dịch vụ của bạn...</div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Storage Plan */}
@@ -262,7 +262,7 @@ export default function Plans() {
           <TabsContent value="storage">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {isLoadingStoragePlans ? (
-                <div className="col-span-3 text-center py-10">Loading plans...</div>
+                <div className="col-span-3 text-center py-10">Đang tải gói dịch vụ...</div>
               ) : (
                 storagePlans?.map((plan) => (
                   <Card key={plan.id}>
