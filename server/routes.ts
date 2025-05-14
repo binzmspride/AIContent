@@ -158,6 +158,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ success: false, error: 'Failed to fetch articles' });
     }
   });
+  
+  // Lấy thông tin chi tiết bài viết (cho xem)
+  app.get('/api/articles/:id', async (req, res) => {
+    try {
+      const articleId = parseInt(req.params.id);
+      
+      if (isNaN(articleId)) {
+        return res.status(400).json({ success: false, error: 'ID bài viết không hợp lệ' });
+      }
+      
+      const article = await storage.getArticle(articleId);
+      
+      if (!article) {
+        return res.status(404).json({ success: false, error: 'Không tìm thấy bài viết' });
+      }
+      
+      // Kiểm tra quyền - chỉ người viết và admin mới có thể xem
+      if (req.isAuthenticated()) {
+        // Người dùng đã đăng nhập
+        if (req.user.id !== article.userId && req.user.role !== 'admin') {
+          return res.status(403).json({ success: false, error: 'Bạn không có quyền xem bài viết này' });
+        }
+      } else if (article.status !== 'published') {
+        // Nếu không đăng nhập, chỉ xem được bài viết đã xuất bản
+        return res.status(403).json({ success: false, error: 'Bài viết này chưa được xuất bản' });
+      }
+      
+      res.json({ success: true, data: article });
+    } catch (error) {
+      console.error('Error fetching article:', error);
+      res.status(500).json({ success: false, error: 'Lỗi khi lấy thông tin bài viết' });
+    }
+  });
+  
+  // Lấy thông tin chi tiết bài viết (cho chỉnh sửa)
+  app.get('/api/dashboard/articles/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Vui lòng đăng nhập' });
+      }
+      
+      const articleId = parseInt(req.params.id);
+      const userId = req.user.id;
+      
+      if (isNaN(articleId)) {
+        return res.status(400).json({ success: false, error: 'ID bài viết không hợp lệ' });
+      }
+      
+      const article = await storage.getArticle(articleId);
+      
+      if (!article) {
+        return res.status(404).json({ success: false, error: 'Không tìm thấy bài viết' });
+      }
+      
+      // Kiểm tra quyền - chỉ người viết và admin mới có thể chỉnh sửa
+      if (article.userId !== userId && req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Bạn không có quyền chỉnh sửa bài viết này' });
+      }
+      
+      res.json({ success: true, data: article });
+    } catch (error) {
+      console.error('Error fetching article for edit:', error);
+      res.status(500).json({ success: false, error: 'Lỗi khi lấy thông tin bài viết' });
+    }
+  });
+  
+  // Cập nhật bài viết
+  app.patch('/api/dashboard/articles/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Vui lòng đăng nhập' });
+      }
+      
+      const articleId = parseInt(req.params.id);
+      const userId = req.user.id;
+      
+      if (isNaN(articleId)) {
+        return res.status(400).json({ success: false, error: 'ID bài viết không hợp lệ' });
+      }
+      
+      const article = await storage.getArticle(articleId);
+      
+      if (!article) {
+        return res.status(404).json({ success: false, error: 'Không tìm thấy bài viết' });
+      }
+      
+      // Kiểm tra quyền - chỉ người viết và admin mới có thể chỉnh sửa
+      if (article.userId !== userId && req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Bạn không có quyền chỉnh sửa bài viết này' });
+      }
+      
+      // Cập nhật dữ liệu bài viết
+      const { title, content, keywords, status } = req.body;
+      const updatedArticle = await storage.updateArticle(articleId, {
+        title,
+        content,
+        keywords,
+        status,
+        updatedAt: new Date()
+      });
+      
+      res.json({ success: true, data: updatedArticle });
+    } catch (error) {
+      console.error('Error updating article:', error);
+      res.status(500).json({ success: false, error: 'Lỗi khi cập nhật bài viết' });
+    }
+  });
 
   // Create or update article
   app.post('/api/dashboard/articles', async (req, res) => {
