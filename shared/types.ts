@@ -41,6 +41,7 @@ export interface GenerateContentResponse {
   keywords: string[];
   creditsUsed: number;
   metrics: ContentGenerationMetrics;
+  articleId?: number; // ID của bài viết đã lưu trong database
 }
 
 // WordPress connection types

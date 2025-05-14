@@ -190,14 +190,40 @@ export default function CreateContent() {
       }
       return responseData.data as GenerateContentResponse;
     },
-    onSuccess: (data) => {
-      setGeneratedContent(data);
+    onSuccess: async (data) => {
+      // Lưu bài viết ngay khi tạo thành công
+      try {
+        // Lưu nội dung vào database
+        const saveResponse = await apiRequest("POST", "/api/dashboard/articles", {
+          title: data.title,
+          content: data.content,
+          keywords: data.keywords.join(", "),
+          creditsUsed: data.creditsUsed,
+        });
+        
+        const savedArticle = await saveResponse.json();
+        
+        // Cập nhật trạng thái với ID bài viết đã lưu
+        if (savedArticle.success && savedArticle.data) {
+          setGeneratedContent({
+            ...data,
+            articleId: savedArticle.data.id // Lưu ID bài viết để cập nhật sau này
+          });
+        } else {
+          setGeneratedContent(data);
+        }
+      } catch (error) {
+        console.error("Không thể lưu bài viết tự động:", error);
+        setGeneratedContent(data);
+      }
+      
       setEditedContent(data.content);
       setEditedTitle(data.title || '');
       setIsContentDialogOpen(true);
+      
       toast({
         title: "Đã tạo nội dung thành công",
-        description: `Đã sử dụng ${data.creditsUsed} tín dụng`,
+        description: `Đã sử dụng ${data.creditsUsed} tín dụng và lưu bài viết tự động`,
       });
     },
     onError: (error: Error) => {
@@ -314,20 +340,39 @@ export default function CreateContent() {
           description: "Vui lòng đợi trong khi hệ thống lưu bài viết của bạn...",
         });
         
-        // Lưu nội dung với format HTML từ ReactQuill
-        await apiRequest("POST", "/api/dashboard/articles", {
+        // Kiểm tra xem bài viết đã tồn tại chưa
+        const articlePayload = {
           title: editedTitle || generatedContent.title,
           content: editedContent || generatedContent.content,
           keywords: generatedContent.keywords.join(", "),
           creditsUsed: generatedContent.creditsUsed,
-        });
+        };
+        
+        // Nếu đã có ID bài viết, thì gửi lên để cập nhật bài viết cũ
+        if (generatedContent.articleId) {
+          articlePayload['id'] = generatedContent.articleId;
+        }
+        
+        // Gửi request lưu hoặc cập nhật bài viết
+        const response = await apiRequest("POST", "/api/dashboard/articles", articlePayload);
+        const result = await response.json();
         
         // Đóng dialog sau khi lưu thành công
         setIsContentDialogOpen(false);
         
+        // Cập nhật ID bài viết nếu là bài viết mới
+        if (result.success && result.data && !generatedContent.articleId) {
+          setGeneratedContent({
+            ...generatedContent,
+            articleId: result.data.id
+          });
+        }
+        
         toast({
-          title: "Đã lưu bài viết",
-          description: "Bài viết đã được lưu thành công",
+          title: generatedContent.articleId ? "Đã cập nhật bài viết" : "Đã lưu bài viết",
+          description: generatedContent.articleId ? 
+            "Bài viết đã được cập nhật thành công" : 
+            "Bài viết đã được lưu thành công",
         });
       } catch (error) {
         toast({

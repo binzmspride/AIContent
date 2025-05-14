@@ -158,7 +158,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create article
+  // Create or update article
   app.post('/api/dashboard/articles', async (req, res) => {
     try {
       if (!req.isAuthenticated()) {
@@ -166,8 +166,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const userId = req.user.id;
-      const { title, content, keywords, creditsUsed = 1 } = req.body;
+      const { id, title, content, keywords, creditsUsed = 1 } = req.body;
       
+      // Nếu có id, kiểm tra xem bài viết đã tồn tại chưa
+      if (id) {
+        // Kiểm tra bài viết có thuộc về người dùng này không
+        const existingArticle = await storage.getArticle(id);
+        if (existingArticle && existingArticle.userId === userId) {
+          // Cập nhật bài viết
+          const updatedArticle = await storage.updateArticle(id, {
+            title,
+            content,
+            keywords,
+            updatedAt: new Date()
+          });
+          
+          return res.status(200).json({ success: true, data: updatedArticle });
+        }
+      }
+      
+      // Tạo bài viết mới nếu không có id hoặc bài viết không tồn tại
       // Check if user has enough credits
       const userCredits = await storage.getUserCredits(userId);
       if (userCredits < creditsUsed) {
@@ -189,8 +207,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(201).json({ success: true, data: article });
     } catch (error) {
-      console.error('Error creating article:', error);
-      res.status(500).json({ success: false, error: 'Failed to create article' });
+      console.error('Error creating/updating article:', error);
+      res.status(500).json({ success: false, error: 'Failed to create/update article' });
     }
   });
 
