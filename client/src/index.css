@@ -17,35 +17,63 @@
 }
 
 /* Đảm bảo văn bản có màu phù hợp ở cả hai chế độ */
-.card, 
-.dialog-content, 
-.card-header,
-.card-title,
-.dialog-title,
-.dialog-description,
-.dialog-footer button,
-.tabs-content,
-.plan-card,
-.plan-features {
-  color: #000000 !important;
-}
+/* Style này đã được thay thế bởi CSS cụ thể cho từng theme */
 
 /* Thêm các class để đảm bảo màu sắc cho chế độ sáng */
+/* Màu chữ theo chế độ sáng/tối */
+:root,
+[data-theme="light"],
+.light {
+  --text-color: #000000;
+}
+
+.dark,
+[data-theme="dark"] {
+  --text-color: #ffffff;
+}
+
+/* Text mặc định theo theme */
 .h1, .h2, .h3, .h4, .h5, .h6, 
 h1, h2, h3, h4, h5, h6, 
 p, span, div, li, button, td, th, 
-input, select, textarea, label, 
-.text-black, 
-[data-theme="light"] * {
+input, select, textarea, label {
+  color: var(--text-color);
+}
+
+/* Text trong light mode */
+:root .card, 
+:root .dialog-content, 
+:root .card-header,
+:root .card-title,
+:root .dialog-title,
+:root .dialog-description,
+:root .dialog-footer button,
+:root .tabs-content,
+:root .plan-card,
+:root .plan-features,
+:root [role="dialog"] *,
+:root .popover *,
+:root .dialog *,
+:root .alert-dialog * {
   color: #000000;
 }
 
-/* Đảm bảo nội dung trong popup và dialog hiển thị rõ ràng */
-[role="dialog"] *,
-.popover *,
-.dialog *,
-.alert-dialog * {
-  color: #000000;
+/* Text trong dark mode */
+.dark .card, 
+.dark .dialog-content, 
+.dark .card-header,
+.dark .card-title,
+.dark .dialog-title,
+.dark .dialog-description,
+.dark .dialog-footer button,
+.dark .tabs-content,
+.dark .plan-card,
+.dark .plan-features,
+.dark [role="dialog"] *,
+.dark .popover *,
+.dark .dialog *,
+.dark .alert-dialog * {
+  color: #ffffff;
 }
 
 /* Fix for ResizeObserver errors */
