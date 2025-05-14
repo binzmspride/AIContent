@@ -76,6 +76,29 @@ input, select, textarea, label {
   color: #ffffff;
 }
 
+/* Đảm bảo nút hiển thị rõ ràng ở chế độ sáng */
+:root .primary, 
+:root .bg-primary,
+:root button.primary,
+:root button.bg-primary,
+:root button[data-variant="default"],
+:root [data-variant="default"],
+:root button:not([data-variant="outline"]),
+:root button.btn-primary {
+  color: white !important;
+  border: 1px solid transparent;
+  background-color: #3182ce !important;
+}
+
+:root button[data-variant="outline"],
+:root [data-variant="outline"],
+:root .btn-outline,
+:root button.variant-outline {
+  color: #333 !important;
+  border: 1px solid #333 !important;
+  background-color: transparent !important;
+}
+
 /* Fix for ResizeObserver errors */
 .recharts-wrapper {
   display: none !important;
