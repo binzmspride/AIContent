@@ -95,9 +95,14 @@ export default function Plans() {
     }
   };
 
-  // Get active storage plan
+  // Get active plans
   const activeStoragePlan = userPlans?.userPlans?.find(
     up => up.plan.type === 'storage' && up.isActive
+  );
+  
+  // Get active credit plan
+  const activeCreditPlan = userPlans?.userPlans?.find(
+    up => up.plan.type === 'credit' && up.isActive
   );
 
   return (
@@ -115,69 +120,140 @@ export default function Plans() {
           <CardContent>
             {isLoadingUserPlans ? (
               <div className="text-center py-4">Loading your plan details...</div>
-            ) : activeStoragePlan ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold">{activeStoragePlan.plan.name}</h3>
-                  <p className="text-sm text-secondary-500">{activeStoragePlan.plan.description}</p>
-                  
-                  <div className="mt-4 flex items-center">
-                    <Calendar className="h-5 w-5 text-secondary-500 mr-2" />
-                    <span className="text-sm text-secondary-500">
-                      {t("dashboard.plans.expiresOn")}: {formatDate(activeStoragePlan.endDate)}
-                    </span>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium">Storage Usage</p>
-                    <div className="relative pt-1">
-                      <div className="overflow-hidden h-2 text-xs flex rounded bg-primary-200">
-                        <div 
-                          style={{ 
-                            width: `${Math.min(
-                              (activeStoragePlan.usedStorage / activeStoragePlan.plan.value) * 100, 
-                              100
-                            )}%` 
-                          }} 
-                          className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary-500"
-                        ></div>
-                      </div>
-                      <p className="text-xs text-secondary-500 mt-1">
-                        {formatFileSize(activeStoragePlan.usedStorage)} of {formatFileSize(activeStoragePlan.plan.value)} used
-                        ({Math.round((activeStoragePlan.usedStorage / activeStoragePlan.plan.value) * 100)}%)
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex flex-col justify-center items-end">
-                  <div className="text-2xl font-bold text-primary-600">
-                    {formatCurrency(activeStoragePlan.plan.price)}
-                    <span className="text-sm font-normal text-secondary-500">/month</span>
-                  </div>
-                  
-                  <div className="mt-4 space-x-2">
-                    <Button variant="outline">
-                      {t("dashboard.plans.renew")}
-                    </Button>
-                    <Button>
-                      {t("dashboard.plans.upgrade")}
-                    </Button>
-                  </div>
-                </div>
-              </div>
             ) : (
-              <div className="text-center py-10">
-                <AlertCircle className="h-10 w-10 text-secondary-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-secondary-900 mb-2">No active storage plan</h3>
-                <p className="text-secondary-500 max-w-md mx-auto mb-6">
-                  You don't have an active storage plan. Subscribe to a plan to store your articles.
-                </p>
-                <Button onClick={() => document.getElementById('storage-plans-tab')?.click()}>
-                  View Storage Plans
-                </Button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Storage Plan */}
+                <div className="border rounded-md p-4">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Storage Plan</h3>
+                  {activeStoragePlan ? (
+                    <div className="space-y-3">
+                      <div>
+                        <h4 className="text-base font-medium text-foreground">{activeStoragePlan.plan.name}</h4>
+                        <p className="text-sm text-muted-foreground">{activeStoragePlan.plan.description}</p>
+                        
+                        <div className="mt-3 flex items-center">
+                          <Calendar className="h-5 w-5 text-muted-foreground mr-2" />
+                          <span className="text-sm text-muted-foreground">
+                            {t("dashboard.plans.expiresOn")}: {formatDate(activeStoragePlan.endDate)}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-foreground">Storage Usage</p>
+                        <div className="relative pt-1">
+                          <div className="overflow-hidden h-2 text-xs flex rounded bg-primary-200">
+                            <div 
+                              style={{ 
+                                width: `${Math.min(
+                                  (activeStoragePlan.usedStorage / activeStoragePlan.plan.value) * 100, 
+                                  100
+                                )}%` 
+                              }} 
+                              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary"
+                            ></div>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {formatFileSize(activeStoragePlan.usedStorage)} of {formatFileSize(activeStoragePlan.plan.value)} used
+                            ({Math.round((activeStoragePlan.usedStorage / activeStoragePlan.plan.value) * 100)}%)
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between mt-4">
+                        <div className="text-xl font-bold text-foreground">
+                          {formatCurrency(activeStoragePlan.plan.price)}
+                          <span className="text-sm font-normal text-muted-foreground">/month</span>
+                        </div>
+                        
+                        <div className="space-x-2">
+                          <Button variant="outline" size="sm">
+                            {t("dashboard.plans.renew")}
+                          </Button>
+                          <Button size="sm">
+                            {t("dashboard.plans.upgrade")}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-4">
+                      <AlertCircle className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                      <h3 className="text-base font-medium text-foreground mb-2">No active storage plan</h3>
+                      <p className="text-muted-foreground max-w-md mx-auto mb-4 text-sm">
+                        You don't have an active storage plan. Subscribe to a plan to store your articles.
+                      </p>
+                      <Button size="sm" onClick={() => document.getElementById('storage-plans-tab')?.click()}>
+                        View Storage Plans
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Credit Plan */}
+                <div className="border rounded-md p-4">
+                  <h3 className="text-lg font-semibold text-foreground mb-2">Credit Plan</h3>
+                  {activeCreditPlan ? (
+                    <div className="space-y-3">
+                      <div>
+                        <h4 className="text-base font-medium text-foreground">{activeCreditPlan.plan.name}</h4>
+                        <p className="text-sm text-muted-foreground">{activeCreditPlan.plan.description}</p>
+                        
+                        <div className="mt-3 flex items-center">
+                          <Calendar className="h-5 w-5 text-muted-foreground mr-2" />
+                          <span className="text-sm text-muted-foreground">
+                            {t("dashboard.plans.expiresOn")}: {formatDate(activeCreditPlan.endDate)}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-foreground">Credit Usage</p>
+                        <div className="relative pt-1">
+                          <div className="overflow-hidden h-2 text-xs flex rounded bg-primary-200">
+                            <div 
+                              style={{ 
+                                width: `${Math.min(
+                                  (activeCreditPlan.usedCredits / activeCreditPlan.plan.value) * 100, 
+                                  100
+                                )}%` 
+                              }} 
+                              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-primary"
+                            ></div>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {activeCreditPlan.usedCredits} of {activeCreditPlan.plan.value} credits used
+                            ({Math.round((activeCreditPlan.usedCredits / activeCreditPlan.plan.value) * 100)}%)
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between mt-4">
+                        <div className="text-xl font-bold text-foreground">
+                          {formatCurrency(activeCreditPlan.plan.price)}
+                          <span className="text-sm font-normal text-muted-foreground">{activeCreditPlan.plan.duration ? "/month" : ""}</span>
+                        </div>
+                        
+                        <div className="space-x-2">
+                          <Button variant="outline" size="sm" asChild>
+                            <a href="/dashboard/credits">Buy More</a>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-4">
+                      <AlertCircle className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                      <h3 className="text-base font-medium text-foreground mb-2">No active credit plan</h3>
+                      <p className="text-muted-foreground max-w-md mx-auto mb-4 text-sm">
+                        You don't have an active credit plan. Purchase credits to generate content.
+                      </p>
+                      <Button size="sm" asChild>
+                        <a href="/dashboard/credits">Go to Credits</a>
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </CardContent>
