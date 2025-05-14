@@ -1230,18 +1230,25 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
       let value: any = translations[language];
 
       for (const k of keys) {
-        if (value === undefined) return key;
+        if (value === undefined || value[k] === undefined) {
+          // Nếu không tìm thấy, trả về phần cuối của key để dễ đọc
+          return keys[keys.length - 1].replace(/([A-Z])/g, ' $1').trim();
+        }
         value = value[k];
       }
 
       if (typeof value === 'string') {
         return value;
+      } else {
+        // Nếu value không phải string (có thể là object), trả về phần cuối của key
+        return keys[keys.length - 1].replace(/([A-Z])/g, ' $1').trim();
       }
     } catch (error) {
       console.error(`Translation error for key: ${key}`, error);
+      // Trả về phần cuối của key với định dạng cải thiện khi có lỗi
+      const lastKey = key.split('.').pop() || '';
+      return lastKey.replace(/([A-Z])/g, ' $1').trim();
     }
-
-    return key;
   };
 
   return (
