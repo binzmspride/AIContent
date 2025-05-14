@@ -61,7 +61,18 @@ export default function MyArticles() {
     data: articlesData,
     isLoading,
     refetch,
-  } = useQuery<{ articles: Article[], pagination: { total: number; page: number; limit: number; totalPages: number } }>({
+  } = useQuery<{
+    success: boolean;
+    data: {
+      articles: Article[];
+      pagination: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+      };
+    };
+  }>({
     queryKey: ["/api/dashboard/articles", { 
       page: currentPage, 
       limit: 10, 
@@ -222,6 +233,10 @@ export default function MyArticles() {
   // Debug purpose
   useEffect(() => {
     console.log("Articles data:", articlesData);
+    // Hiển thị log cho biết nếu có dữ liệu
+    if (articlesData?.success && articlesData?.data?.articles) {
+      console.log("Articles array:", articlesData.data.articles, "Length:", articlesData.data.articles.length);
+    }
   }, [articlesData]);
   
   // Hiển thị trạng thái đang tải
@@ -275,10 +290,10 @@ export default function MyArticles() {
           </Link>
         </div>
 
-        {articlesData?.articles && articlesData.articles.length > 0 ? (
+        {articlesData?.data?.articles && articlesData.data.articles.length > 0 ? (
           <DataTable
             columns={columns}
-            data={articlesData.articles}
+            data={articlesData.data.articles}
             searchColumn="title"
             searchPlaceholder={t("dashboard.articles.search")}
           />
