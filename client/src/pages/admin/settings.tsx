@@ -246,6 +246,14 @@ export default function AdminSettings() {
       wordpressApiKey: settings?.wordpressApiKey || "",
     },
   });
+  
+  // Trial plan settings form
+  const trialPlanForm = useForm<TrialPlanSettingsValues>({
+    resolver: zodResolver(trialPlanSettingsSchema),
+    defaultValues: {
+      trialPlanId: trialPlanResponse?.success ? String(trialPlanResponse.data?.id) : "",
+    },
+  });
 
   const webhookForm = useForm<WebhookSettingsValues>({
     resolver: zodResolver(webhookSettingsSchema),
