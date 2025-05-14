@@ -42,6 +42,40 @@ export async function registerUser(userData: InsertUser): Promise<{
       isVerified: false
     });
 
+    // Lấy ID của gói dùng thử từ system settings
+    const trialPlanIdSetting = await storage.getSetting('trial_plan_id');
+    if (trialPlanIdSetting) {
+      const trialPlanId = parseInt(trialPlanIdSetting);
+      
+      // Kiểm tra gói dùng thử tồn tại
+      const trialPlan = await storage.getPlan(trialPlanId);
+      if (trialPlan) {
+        // Gán gói dùng thử cho người dùng
+        const now = new Date();
+        const endDate = trialPlan.duration 
+          ? new Date(now.getTime() + trialPlan.duration * 24 * 60 * 60 * 1000)
+          : null;
+          
+        await storage.createUserPlan({
+          userId: user.id,
+          planId: trialPlanId,
+          startDate: now,
+          endDate: endDate || undefined,
+          isActive: true
+        });
+        
+        // Cộng credit từ gói dùng thử
+        if (trialPlan.value > 0) {
+          await storage.addUserCredits(
+            user.id, 
+            Number(trialPlan.value), 
+            trialPlanId,
+            `Credits từ gói dùng thử`
+          );
+        }
+      }
+    }
+
     // Gửi email xác thực
     const verificationUrl = `${appConfig.baseUrl}/verify-email?token=${verificationToken}`;
     const emailTemplate = getVerificationEmailTemplate({

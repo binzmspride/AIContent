@@ -7,6 +7,92 @@ import { format, subHours, subDays } from "date-fns";
  * Registers admin routes for admin panel functionality
  */
 export function registerAdminRoutes(app: Express) {
+  // Lấy cấu hình gói dùng thử
+  app.get("/api/admin/trial-plan", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const trialPlanIdSetting = await storage.getSetting('trial_plan_id');
+      if (!trialPlanIdSetting) {
+        return res.status(404).json({
+          success: false,
+          error: "Trial plan configuration not found"
+        });
+      }
+
+      const trialPlanId = parseInt(trialPlanIdSetting);
+      const trialPlan = await storage.getPlan(trialPlanId);
+
+      if (!trialPlan) {
+        return res.status(404).json({
+          success: false,
+          error: "Trial plan not found"
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: trialPlan
+      });
+    } catch (error) {
+      console.error("Error getting trial plan:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
+
+  // Cập nhật cấu hình gói dùng thử
+  app.patch("/api/admin/trial-plan", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const { planId } = req.body;
+      
+      if (!planId || isNaN(parseInt(planId))) {
+        return res.status(400).json({
+          success: false,
+          error: "Invalid plan ID"
+        });
+      }
+
+      const plan = await storage.getPlan(parseInt(planId));
+      if (!plan) {
+        return res.status(404).json({
+          success: false,
+          error: "Plan not found"
+        });
+      }
+
+      // Cập nhật cấu hình
+      await storage.setSetting('trial_plan_id', planId.toString(), 'plans');
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          message: "Trial plan configuration updated successfully",
+          plan
+        }
+      });
+    } catch (error) {
+      console.error("Error updating trial plan configuration:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
   // Credit adjustment
   app.post("/api/admin/users/:id/credits", async (req: Request, res: Response) => {
     if (!req.isAuthenticated() || req.user.role !== "admin") {
