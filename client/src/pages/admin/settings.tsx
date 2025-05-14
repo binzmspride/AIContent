@@ -86,6 +86,8 @@ interface SystemSettings {
   version: string;
   lastBackup: string;
   dbStatus: "online" | "limited" | "offline";
+  // Trial plan
+  trialPlanId?: string;
 }
 
 // General settings form schema
@@ -136,11 +138,17 @@ const webhookSettingsSchema = z.object({
   notificationWebhookUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
 });
 
+// Trial plan settings schema
+const trialPlanSettingsSchema = z.object({
+  trialPlanId: z.string().min(1, "Please select a trial plan"),
+});
+
 type GeneralSettingsValues = z.infer<typeof generalSettingsSchema>;
 type AiSettingsValues = z.infer<typeof aiSettingsSchema>;
 type EmailSettingsValues = z.infer<typeof emailSettingsSchema>;
 type ApiSettingsValues = z.infer<typeof apiSettingsSchema>;
 type WebhookSettingsValues = z.infer<typeof webhookSettingsSchema>;
+type TrialPlanSettingsValues = z.infer<typeof trialPlanSettingsSchema>;
 
 export default function AdminSettings() {
   const { t } = useLanguage();
@@ -154,6 +162,33 @@ export default function AdminSettings() {
       const response = await fetch('/api/admin/settings');
       if (!response.ok) {
         throw new Error(`Error fetching settings: ${response.statusText}`);
+      }
+      return await response.json();
+    },
+  });
+  
+  // Fetch trial plan info
+  const { data: trialPlanResponse, isLoading: isLoadingTrialPlan } = useQuery<{ success: boolean, data: any }>({
+    queryKey: ["/api/admin/trial-plan"],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/trial-plan');
+      if (!response.ok) {
+        if (response.status === 404) {
+          return { success: false, data: null };
+        }
+        throw new Error(`Error fetching trial plan: ${response.statusText}`);
+      }
+      return await response.json();
+    },
+  });
+  
+  // Fetch all plans for trial plan selection
+  const { data: plansResponse, isLoading: isLoadingPlans } = useQuery<{ success: boolean, data: any[] }>({
+    queryKey: ["/api/plans"],
+    queryFn: async () => {
+      const response = await fetch('/api/plans');
+      if (!response.ok) {
+        throw new Error(`Error fetching plans: ${response.statusText}`);
       }
       return await response.json();
     },
