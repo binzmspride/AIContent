@@ -163,7 +163,7 @@ export default function Plans() {
                       <div className="flex items-center justify-between mt-4">
                         <div className="text-xl font-bold text-black dark:text-white">
                           {formatCurrency(activeStoragePlan.plan.price)}
-                          <span className="text-sm font-normal text-black dark:text-white">/month</span>
+                          <span className="text-sm font-normal text-black dark:text-white">/tháng</span>
                         </div>
                         
                         <div className="space-x-2">
@@ -224,7 +224,7 @@ export default function Plans() {
                       <div className="flex items-center justify-between mt-4">
                         <div className="text-xl font-bold text-black dark:text-white">
                           {formatCurrency(activeCreditPlan.plan.price)}
-                          <span className="text-sm font-normal text-black dark:text-white">{activeCreditPlan.plan.duration ? "/month" : ""}</span>
+                          <span className="text-sm font-normal text-black dark:text-white">{activeCreditPlan.plan.duration ? "/tháng" : ""}</span>
                         </div>
                         
                         <div className="space-x-2">
@@ -269,7 +269,7 @@ export default function Plans() {
                     <CardHeader className="bg-secondary-700 text-white">
                       <CardTitle>{plan.name}</CardTitle>
                       <CardDescription className="text-white/90">
-                        {formatCurrency(plan.price)}<span className="text-sm">/month</span>
+                        {formatCurrency(plan.price)}<span className="text-sm">/tháng</span>
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="pt-6">
@@ -367,12 +367,12 @@ export default function Plans() {
 
           <TabsContent value="credit">
             <div className="text-center mb-6">
-              <h3 className="text-lg font-medium">Credit Packages</h3>
+              <h3 className="text-lg font-medium">Gói Tín Dụng</h3>
               <p className="text-secondary-500">
-                To purchase credit packages, please visit the Credits page
+                Để mua gói tín dụng, vui lòng truy cập trang Tín Dụng
               </p>
               <Button className="mt-4" asChild>
-                <a href="/dashboard/credits">Go to Credits</a>
+                <a href="/dashboard/credits">Đến Trang Tín Dụng</a>
               </Button>
             </div>
           </TabsContent>
@@ -382,9 +382,9 @@ export default function Plans() {
         <Dialog open={isPurchaseDialogOpen} onOpenChange={setIsPurchaseDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Confirm Subscription</DialogTitle>
+              <DialogTitle>Xác Nhận Đăng Ký</DialogTitle>
               <DialogDescription>
-                You are about to subscribe to the {selectedPlan?.name} for {formatCurrency(selectedPlan?.price || 0)}/month.
+                Bạn sắp đăng ký gói {selectedPlan?.name} với giá {formatCurrency(selectedPlan?.price || 0)}/tháng.
               </DialogDescription>
             </DialogHeader>
             
@@ -400,9 +400,9 @@ export default function Plans() {
               <div className="flex items-center gap-4">
                 <CreditCard className="h-10 w-10 text-secondary-600" />
                 <div>
-                  <h3 className="font-medium">Recurring Payment</h3>
+                  <h3 className="font-medium">Thanh Toán Định Kỳ</h3>
                   <p className="text-sm text-muted-foreground">
-                    Your card will be charged {formatCurrency(selectedPlan?.price || 0)} monthly
+                    Thẻ của bạn sẽ được thanh toán {formatCurrency(selectedPlan?.price || 0)} hàng tháng
                   </p>
                 </div>
               </div>
@@ -410,9 +410,9 @@ export default function Plans() {
               <div className="flex items-center gap-4">
                 <ShieldCheck className="h-10 w-10 text-green-600" />
                 <div>
-                  <h3 className="font-medium">Cancel Anytime</h3>
+                  <h3 className="font-medium">Hủy Bất Cứ Lúc Nào</h3>
                   <p className="text-sm text-muted-foreground">
-                    You can cancel your subscription at any time
+                    Bạn có thể hủy đăng ký của mình bất cứ lúc nào
                   </p>
                 </div>
               </div>
@@ -423,13 +423,13 @@ export default function Plans() {
                 variant="outline" 
                 onClick={() => setIsPurchaseDialogOpen(false)}
               >
-                Cancel
+                Hủy
               </Button>
               <Button 
                 onClick={confirmPurchase}
                 disabled={purchasePlanMutation.isPending}
               >
-                {purchasePlanMutation.isPending ? "Processing..." : "Subscribe Now"}
+                {purchasePlanMutation.isPending ? "Đang xử lý..." : "Đăng Ký Ngay"}
               </Button>
             </DialogFooter>
           </DialogContent>
