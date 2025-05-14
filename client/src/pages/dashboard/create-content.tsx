@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import ReactQuill from 'react-quill';
 import {
   Select,
   SelectContent,
@@ -313,12 +314,16 @@ export default function CreateContent() {
           description: "Vui lòng đợi trong khi hệ thống lưu bài viết của bạn...",
         });
         
+        // Lưu nội dung với format HTML từ ReactQuill
         await apiRequest("POST", "/api/dashboard/articles", {
           title: editedTitle || generatedContent.title,
           content: editedContent || generatedContent.content,
           keywords: generatedContent.keywords.join(", "),
           creditsUsed: generatedContent.creditsUsed,
         });
+        
+        // Đóng dialog sau khi lưu thành công
+        setIsContentDialogOpen(false);
         
         toast({
           title: "Đã lưu bài viết",
@@ -412,7 +417,7 @@ export default function CreateContent() {
       setGeneratedContent({
         ...generatedContent,
         title: editedTitle,
-        content: editedContent
+        content: editedContent // ReactQuill trả về HTML
       });
       
       // Đóng dialog
@@ -1604,7 +1609,8 @@ export default function CreateContent() {
             <DialogHeader>
               <DialogTitle>Chỉnh sửa nội dung</DialogTitle>
               <DialogDescription>
-                Chỉnh sửa nội dung đã tạo và lưu hoặc xuất bản lên website của bạn.
+                Sử dụng trình soạn thảo để định dạng nội dung trước khi lưu hoặc xuất bản lên website của bạn.
+                Thanh công cụ phía trên cho phép bạn thêm định dạng, liên kết và hình ảnh.
               </DialogDescription>
             </DialogHeader>
             
@@ -1620,15 +1626,27 @@ export default function CreateContent() {
                 />
               </div>
               
-              {/* Content editing */}
+              {/* Content editing with rich text editor */}
               <div className="grid gap-2">
                 <Label htmlFor="content">Nội dung</Label>
-                <Textarea 
-                  id="content" 
-                  value={editedContent} 
-                  onChange={(e) => setEditedContent(e.target.value)} 
-                  className="min-h-[300px]"
-                />
+                <div className="quill-editor-container">
+                  <ReactQuill 
+                    theme="snow"
+                    value={editedContent} 
+                    onChange={setEditedContent}
+                    modules={{
+                      toolbar: [
+                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        ['link', 'image'],
+                        ['clean']
+                      ],
+                    }}
+                  />
+                </div>
               </div>
             </div>
             

@@ -1,3 +1,6 @@
+/* Nhập ReactQuill CSS */
+@import 'react-quill/dist/quill.snow.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,6 +8,37 @@
 /* Fix for ResizeObserver errors */
 .recharts-wrapper {
   display: none !important;
+}
+
+/* Custom styling for Quill editor */
+.ql-editor {
+  min-height: 200px;
+  font-family: inherit;
+}
+
+.ql-container {
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.ql-toolbar {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  background-color: #f9fafb;
+}
+
+.dark .ql-toolbar {
+  background-color: hsl(var(--muted));
+  border-color: hsl(var(--border));
+}
+
+.dark .ql-container {
+  border-color: hsl(var(--border));
+}
+
+.dark .ql-editor {
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
 }
 
 @layer base {
