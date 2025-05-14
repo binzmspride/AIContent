@@ -24,7 +24,7 @@ export interface IStorage {
   
   // Article management
   getArticle(id: number): Promise<schema.Article | null>;
-  getArticlesByUser(userId: number, page: number, limit: number): Promise<{ articles: schema.Article[], total: number }>;
+  getArticlesByUser(userId: number, page: number, limit: number, status?: string): Promise<{ articles: schema.Article[], total: number }>;
   createArticle(article: schema.InsertArticle): Promise<schema.Article>;
   updateArticle(id: number, data: Partial<schema.Article>): Promise<schema.Article | null>;
   deleteArticle(id: number): Promise<boolean>;

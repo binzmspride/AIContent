@@ -20,7 +20,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Article } from "@shared/schema";
-import Head from "@/components/head";
 
 const EditArticle = () => {
   const { t } = useLanguage();
@@ -71,16 +70,16 @@ const EditArticle = () => {
     },
     onSuccess: () => {
       toast({
-        title: t("dashboard.editArticle.successTitle"),
-        description: t("dashboard.editArticle.successMessage"),
+        title: "Cập nhật thành công",
+        description: "Bài viết đã được cập nhật"
       });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/articles"] });
       setLocation("/dashboard/my-articles");
     },
     onError: (error: Error) => {
       toast({
-        title: t("dashboard.editArticle.errorTitle"),
-        description: error.message || t("dashboard.editArticle.errorMessage"),
+        title: "Lỗi cập nhật",
+        description: error.message || "Có lỗi xảy ra khi cập nhật bài viết",
         variant: "destructive",
       });
       setIsSubmitting(false);
@@ -93,8 +92,8 @@ const EditArticle = () => {
 
     if (!title.trim() || !content.trim()) {
       toast({
-        title: t("dashboard.editArticle.validationTitle"),
-        description: t("dashboard.editArticle.validationMessage"),
+        title: "Thiếu thông tin",
+        description: "Vui lòng nhập tiêu đề và nội dung bài viết",
         variant: "destructive",
       });
       setIsSubmitting(false);
