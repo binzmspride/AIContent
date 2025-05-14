@@ -417,6 +417,14 @@ const translations: TranslationsType = {
       myArticles: "Bài viết của tôi",
       createContent: "Tạo nội dung",
       plans: "Gói dịch vụ",
+      plans: {
+        currentPlan: "Gói Dịch Vụ Hiện Tại",
+        creditPackages: "Gói Tín Dụng",
+        storagePackages: "Gói Lưu Trữ",
+        expiresOn: "Hết hạn vào",
+        upgrade: "Nâng cấp",
+        renew: "Gia hạn"
+      },
       connections: "Kết nối",
       credits: "Tín dụng",
       settings: "Cài đặt",
