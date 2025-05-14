@@ -102,9 +102,9 @@ export function registerApiRoutes(app: Express) {
         // Parse pagination parameters
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
-        const offset = (page - 1) * limit;
+        const status = req.query.status as string | undefined;
         
-        const articleResults = await storage.getArticlesByUser(userId, page, limit);
+        const articleResults = await storage.getArticlesByUser(userId, page, limit, status);
         
         res.json({
           success: true,

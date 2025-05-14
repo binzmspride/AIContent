@@ -231,20 +231,36 @@ class DatabaseStorage implements IStorage {
     return article || null;
   }
   
-  async getArticlesByUser(userId: number, page: number = 1, limit: number = 10): Promise<{ articles: schema.Article[], total: number }> {
+  async getArticlesByUser(userId: number, page: number = 1, limit: number = 10, status?: string): Promise<{ articles: schema.Article[], total: number }> {
     const offset = (page - 1) * limit;
     
+    // Xác định điều kiện WHERE dựa trên trạng thái
+    let whereCondition;
+    
+    if (status) {
+      whereCondition = (article: typeof schema.articles.$inferSelect) => 
+        and(
+          eq(article.userId, userId),
+          eq(article.status, status)
+        );
+    } else {
+      whereCondition = (article: typeof schema.articles.$inferSelect) => 
+        eq(article.userId, userId);
+    }
+    
+    // Truy vấn lấy bài viết với điều kiện đã xác định
     const articles = await db.query.articles.findMany({
-      where: eq(schema.articles.userId, userId),
+      where: whereCondition,
       limit,
       offset,
       orderBy: [desc(schema.articles.createdAt)]
     });
     
+    // Đếm tổng số bài viết thỏa mãn điều kiện
     const [{ count }] = await db
       .select({ count: sql`count(*)`.mapWith(Number) })
       .from(schema.articles)
-      .where(eq(schema.articles.userId, userId));
+      .where(whereConditions);
     
     return { articles, total: count };
   }
