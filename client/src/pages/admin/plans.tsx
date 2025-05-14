@@ -61,6 +61,13 @@ const planFormSchema = z.object({
 
 type PlanFormValues = z.infer<typeof planFormSchema>;
 
+// Trial Plan schema
+const trialPlanSchema = z.object({
+  planId: z.string().min(1, "Plan ID is required"),
+});
+
+type TrialPlanFormValues = z.infer<typeof trialPlanSchema>;
+
 export default function AdminPlans() {
   const { t } = useLanguage();
   const { toast } = useToast();
@@ -68,11 +75,27 @@ export default function AdminPlans() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isTrialPlanDialogOpen, setIsTrialPlanDialogOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
 
   // Fetch plans
   const { data: plansResponse, isLoading: isLoadingPlans } = useQuery<{success: boolean, data: Plan[]}>({
     queryKey: ["/api/plans"],
+  });
+  
+  // Fetch trial plan info
+  const { data: trialPlanResponse, isLoading: isLoadingTrialPlan } = useQuery<{ success: boolean, data: Plan }>({
+    queryKey: ["/api/admin/trial-plan"],
+    queryFn: async () => {
+      const response = await fetch('/api/admin/trial-plan');
+      if (!response.ok) {
+        if (response.status === 404) {
+          return { success: false, data: null };
+        }
+        throw new Error(`Error fetching trial plan: ${response.statusText}`);
+      }
+      return await response.json();
+    },
   });
   
   const plans = plansResponse?.data || [];
@@ -104,6 +127,15 @@ export default function AdminPlans() {
       price: 0,
       value: 0,
       duration: undefined,
+    },
+  });
+  
+  // Form for trial plan settings
+  const trialPlanForm = useForm<TrialPlanFormValues>({
+    resolver: zodResolver(trialPlanSchema),
+    defaultValues: {
+      planId: trialPlanResponse?.success && trialPlanResponse.data ? 
+        String(trialPlanResponse.data.id) : "",
     },
   });
 
@@ -177,6 +209,31 @@ export default function AdminPlans() {
       });
     },
   });
+  
+  // Trial plan mutation
+  const updateTrialPlanMutation = useMutation({
+    mutationFn: async (data: TrialPlanFormValues) => {
+      const res = await apiRequest("PATCH", "/api/admin/trial-plan", {
+        planId: data.planId
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Trial plan updated",
+        description: "The trial plan has been updated successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/trial-plan"] });
+      setIsTrialPlanDialogOpen(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to update trial plan",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   const onAddSubmit = (data: PlanFormValues) => {
     createPlanMutation.mutate(data);
@@ -186,6 +243,10 @@ export default function AdminPlans() {
     if (selectedPlan) {
       updatePlanMutation.mutate({ id: selectedPlan.id, data });
     }
+  };
+  
+  const onTrialPlanSubmit = (data: TrialPlanFormValues) => {
+    updateTrialPlanMutation.mutate(data);
   };
 
   const handleEditClick = (plan: Plan) => {
@@ -227,157 +288,234 @@ export default function AdminPlans() {
             </TabsList>
           </Tabs>
           
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="flex items-center">
-                <Plus className="mr-2 h-4 w-4" />
-                Add New Plan
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[550px]">
-              <DialogHeader>
-                <DialogTitle>Add New Plan</DialogTitle>
-                <DialogDescription>
-                  Create a new plan for users to purchase. Click save when you're done.
-                </DialogDescription>
-              </DialogHeader>
-              
-              <Form {...addForm}>
-                <form onSubmit={addForm.handleSubmit(onAddSubmit)} className="space-y-4">
-                  <FormField
-                    control={addForm.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Plan Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g. Basic Plan" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <FormField
-                    control={addForm.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Brief description of the plan" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <div className="grid grid-cols-2 gap-4">
+          <div className="space-x-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsTrialPlanDialogOpen(true)}
+            >
+              Configure Trial Plan
+            </Button>
+            
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="flex items-center">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add New Plan
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[550px]">
+                <DialogHeader>
+                  <DialogTitle>Add New Plan</DialogTitle>
+                  <DialogDescription>
+                    Create a new plan for users to purchase. Click save when you're done.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <Form {...addForm}>
+                  <form onSubmit={addForm.handleSubmit(onAddSubmit)} className="space-y-4">
                     <FormField
                       control={addForm.control}
-                      name="type"
+                      name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Type</FormLabel>
-                          <Select 
-                            onValueChange={field.onChange} 
-                            defaultValue={field.value}
-                          >
+                          <FormLabel>Plan Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. Basic Plan" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={addForm.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Brief description of the plan" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={addForm.control}
+                        name="type"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Type</FormLabel>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select a plan type" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="credit">Credit</SelectItem>
+                                <SelectItem value="storage">Storage</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={addForm.control}
+                        name="price"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Price (VND)</FormLabel>
                             <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a plan type" />
-                              </SelectTrigger>
+                              <Input type="number" {...field} min={0} step={1000} />
                             </FormControl>
-                            <SelectContent>
-                              <SelectItem value="credit">Credit</SelectItem>
-                              <SelectItem value="storage">Storage</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     
-                    <FormField
-                      control={addForm.control}
-                      name="price"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Price (VND)</FormLabel>
-                          <FormControl>
-                            <Input type="number" {...field} min={0} step={1000} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={addForm.control}
-                      name="value"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {addForm.watch("type") === "credit" ? "Credits" : "Storage (MB)"}
-                          </FormLabel>
-                          <FormControl>
-                            <Input type="number" {...field} min={1} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={addForm.control}
+                        name="value"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {addForm.watch("type") === "credit" ? "Credits" : "Storage (MB)"}
+                            </FormLabel>
+                            <FormControl>
+                              <Input type="number" {...field} min={1} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={addForm.control}
+                        name="duration"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Duration (days)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                {...field} 
+                                min={1}
+                                value={field.value || ""} 
+                                onChange={(e) => {
+                                  const value = e.target.value === "" ? undefined : parseInt(e.target.value);
+                                  field.onChange(value);
+                                }}
+                                placeholder="Leave empty for one-time"
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Leave empty for one-time purchase
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     
-                    <FormField
-                      control={addForm.control}
-                      name="duration"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Duration (days)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              {...field} 
-                              min={1}
-                              value={field.value || ""} 
-                              onChange={(e) => {
-                                const value = e.target.value === "" ? undefined : parseInt(e.target.value);
-                                field.onChange(value);
-                              }}
-                              placeholder="Leave empty for one-time"
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            Leave empty for one-time purchase
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  
-                  <DialogFooter>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={() => setIsAddDialogOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button 
-                      type="submit"
-                      disabled={createPlanMutation.isPending}
-                    >
-                      {createPlanMutation.isPending ? "Creating..." : "Create Plan"}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
+                    <DialogFooter>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => setIsAddDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button 
+                        type="submit"
+                        disabled={createPlanMutation.isPending}
+                      >
+                        {createPlanMutation.isPending ? "Creating..." : "Create Plan"}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
+        
+        {/* Trial Plan Dialog */}
+        <Dialog open={isTrialPlanDialogOpen} onOpenChange={setIsTrialPlanDialogOpen}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Configure Trial Plan</DialogTitle>
+              <DialogDescription>
+                Set which plan should be given to new users as a trial plan
+              </DialogDescription>
+            </DialogHeader>
+            
+            <Form {...trialPlanForm}>
+              <form onSubmit={trialPlanForm.handleSubmit(onTrialPlanSubmit)} className="space-y-4">
+                <FormField
+                  control={trialPlanForm.control}
+                  name="planId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Trial Plan</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        value={field.value || undefined}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a plan" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {creditPlans.map((plan) => (
+                            <SelectItem key={plan.id} value={String(plan.id)}>
+                              {plan.name} ({plan.value} credits)
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        {trialPlanResponse?.success && trialPlanResponse.data ? (
+                          <span>Current trial plan: <strong>{trialPlanResponse.data.name}</strong></span>
+                        ) : (
+                          <span>No trial plan is currently configured</span>
+                        )}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsTrialPlanDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={updateTrialPlanMutation.isPending}
+                  >
+                    {updateTrialPlanMutation.isPending ? "Updating..." : "Update Trial Plan"}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
         
         <Card>
           <CardHeader>
@@ -404,30 +542,54 @@ export default function AdminPlans() {
                   <TableRow>
                     <TableCell colSpan={8} className="text-center">Loading plans...</TableCell>
                   </TableRow>
-                ) : (activeTab === "credit" ? creditPlans : storagePlans).length === 0 ? (
+                ) : activeTab === "credit" ? (
+                  creditPlans.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={8} className="text-center">No credit plans found</TableCell>
+                    </TableRow>
+                  ) : (
+                    creditPlans.map((plan) => (
+                      <TableRow key={plan.id}>
+                        <TableCell>{plan.id}</TableCell>
+                        <TableCell>{plan.name}</TableCell>
+                        <TableCell>{plan.description || "-"}</TableCell>
+                        <TableCell>{plan.value} credits</TableCell>
+                        <TableCell>{formatCurrency(plan.price)}</TableCell>
+                        <TableCell>{plan.duration ? `${plan.duration} days` : "One-time"}</TableCell>
+                        <TableCell>{formatDate(new Date(plan.createdAt))}</TableCell>
+                        <TableCell className="text-right">
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            onClick={() => handleEditClick(plan)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            onClick={() => handleDeleteClick(plan)}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )
+                ) : storagePlans.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center">No plans found</TableCell>
+                    <TableCell colSpan={8} className="text-center">No storage plans found</TableCell>
                   </TableRow>
                 ) : (
-                  (activeTab === "credit" ? creditPlans : storagePlans).map((plan) => (
+                  storagePlans.map((plan) => (
                     <TableRow key={plan.id}>
                       <TableCell>{plan.id}</TableCell>
-                      <TableCell className="font-medium">{plan.name}</TableCell>
+                      <TableCell>{plan.name}</TableCell>
                       <TableCell>{plan.description || "-"}</TableCell>
-                      <TableCell>
-                        {plan.type === "credit" 
-                          ? `${plan.value} credits` 
-                          : `${plan.value.toLocaleString()} MB`
-                        }
-                      </TableCell>
+                      <TableCell>{plan.value} MB</TableCell>
                       <TableCell>{formatCurrency(plan.price)}</TableCell>
-                      <TableCell>
-                        {plan.duration 
-                          ? `${plan.duration} days` 
-                          : "One-time"
-                        }
-                      </TableCell>
-                      <TableCell>{formatDate(plan.createdAt)}</TableCell>
+                      <TableCell>{plan.duration ? `${plan.duration} days` : "One-time"}</TableCell>
+                      <TableCell>{formatDate(new Date(plan.createdAt))}</TableCell>
                       <TableCell className="text-right">
                         <Button 
                           variant="ghost" 
@@ -485,7 +647,7 @@ export default function AdminPlans() {
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Input placeholder="Brief description of the plan" {...field} value={field.value || ""} />
+                        <Input placeholder="Brief description of the plan" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -493,31 +655,6 @@ export default function AdminPlans() {
                 />
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={editForm.control}
-                    name="type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Type</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a plan type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="credit">Credit</SelectItem>
-                            <SelectItem value="storage">Storage</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
                   <FormField
                     control={editForm.control}
                     name="price"
@@ -531,9 +668,7 @@ export default function AdminPlans() {
                       </FormItem>
                     )}
                   />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
+                  
                   <FormField
                     control={editForm.control}
                     name="value"
@@ -549,34 +684,34 @@ export default function AdminPlans() {
                       </FormItem>
                     )}
                   />
-                  
-                  <FormField
-                    control={editForm.control}
-                    name="duration"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Duration (days)</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            {...field} 
-                            min={1}
-                            value={field.value || ""} 
-                            onChange={(e) => {
-                              const value = e.target.value === "" ? undefined : parseInt(e.target.value);
-                              field.onChange(value);
-                            }}
-                            placeholder="Leave empty for one-time"
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          Leave empty for one-time purchase
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
+                
+                <FormField
+                  control={editForm.control}
+                  name="duration"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Duration (days)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          min={1}
+                          value={field.value || ""} 
+                          onChange={(e) => {
+                            const value = e.target.value === "" ? undefined : parseInt(e.target.value);
+                            field.onChange(value);
+                          }}
+                          placeholder="Leave empty for one-time"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Leave empty for one-time purchase
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 
                 <DialogFooter>
                   <Button 
@@ -598,11 +733,11 @@ export default function AdminPlans() {
           </DialogContent>
         </Dialog>
         
-        {/* Delete Confirmation Dialog */}
+        {/* Delete Plan Dialog */}
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-          <DialogContent className="sm:max-w-[450px]">
+          <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Confirm Deletion</DialogTitle>
+              <DialogTitle>Delete Plan</DialogTitle>
               <DialogDescription>
                 Are you sure you want to delete this plan? This action cannot be undone.
               </DialogDescription>
@@ -612,6 +747,7 @@ export default function AdminPlans() {
               <div className="py-4">
                 <p><strong>Name:</strong> {selectedPlan.name}</p>
                 <p><strong>Type:</strong> {selectedPlan.type}</p>
+                <p><strong>Value:</strong> {selectedPlan.value} {selectedPlan.type === "credit" ? "credits" : "MB"}</p>
                 <p><strong>Price:</strong> {formatCurrency(selectedPlan.price)}</p>
               </div>
             )}
