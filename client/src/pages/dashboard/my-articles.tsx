@@ -219,6 +219,11 @@ export default function MyArticles() {
     refetch();
   }, [currentPage, statusFilter, refetch]);
   
+  // Debug purpose
+  useEffect(() => {
+    console.log("Articles data:", articlesData);
+  }, [articlesData]);
+  
   // Hiển thị trạng thái đang tải
   if (isLoading) {
     return (
