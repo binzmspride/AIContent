@@ -236,7 +236,7 @@ export default function AuthPage() {
               {t("common.or")}{" "}
               <button
                 onClick={() => setActiveTab(activeTab === "login" ? "register" : "login")}
-                className="font-medium text-primary hover:text-primary/80 focus:outline-none"
+                className="font-medium text-slate-200 hover:text-primary focus:outline-none underline"
               >
                 {activeTab === "login" ? t("auth.login.switchToRegister") : t("auth.register.switchToLogin")}
               </button>
@@ -245,9 +245,9 @@ export default function AuthPage() {
             <div className="mt-8">
               <div className="bg-slate-800/50 backdrop-blur-sm py-8 px-6 shadow-lg rounded-xl border border-slate-700/50">
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="grid w-full grid-cols-2 mb-6 p-1 gap-4">
-                    <TabsTrigger value="login" className="px-6 py-3">{t("nav.login")}</TabsTrigger>
-                    <TabsTrigger value="register" className="px-6 py-3">{t("nav.register")}</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-2 mb-6 p-1 gap-2">
+                    <TabsTrigger value="login" className="px-2 py-2">{t("nav.login")}</TabsTrigger>
+                    <TabsTrigger value="register" className="px-2 py-2">{t("nav.register")}</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="login" className="mt-0">
