@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -1399,6 +1400,136 @@ export default function AdminSettings() {
                         >
                           <Save className="h-4 w-4 mr-2" />
                           {updateWebhookSettingsMutation.isPending 
+                            ? (t("common.saving") || "Đang lưu...") 
+                            : (t("common.saveChanges") || "Lưu thay đổi")}
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            {/* Firebase Settings */}
+            <TabsContent value="firebase" className="mt-0 space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t("admin.settingsPage.firebase") || "Cài đặt Firebase"}</CardTitle>
+                  <CardDescription>
+                    {t("admin.settingsPage.firebaseDescription") || "Cấu hình Firebase để cho phép đăng nhập bằng Google/Facebook"}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Form {...firebaseForm}>
+                    <form onSubmit={firebaseForm.handleSubmit(onFirebaseSubmit)} className="space-y-4">
+                      <div className="space-y-4">
+                        <FormField
+                          control={firebaseForm.control}
+                          name="firebaseApiKey"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>{t("admin.settingsPage.firebaseApiKey") || "Firebase API Key"}</FormLabel>
+                              <FormControl>
+                                <Input placeholder="AIzaSyB..." {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={firebaseForm.control}
+                          name="firebaseProjectId"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>{t("admin.settingsPage.firebaseProjectId") || "Firebase Project ID"}</FormLabel>
+                              <FormControl>
+                                <Input placeholder="your-project-id" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={firebaseForm.control}
+                          name="firebaseAppId"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>{t("admin.settingsPage.firebaseAppId") || "Firebase App ID"}</FormLabel>
+                              <FormControl>
+                                <Input placeholder="1:12345:web:abcdef" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <FormField
+                          control={firebaseForm.control}
+                          name="enableGoogleAuth"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  {t("admin.settingsPage.enableGoogleAuth") || "Cho phép đăng nhập Google"}
+                                </FormLabel>
+                                <FormDescription>
+                                  {t("admin.settingsPage.enableGoogleAuthDescription") || "Cho phép người dùng đăng nhập bằng tài khoản Google"}
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={firebaseForm.control}
+                          name="enableFacebookAuth"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  {t("admin.settingsPage.enableFacebookAuth") || "Cho phép đăng nhập Facebook"}
+                                </FormLabel>
+                                <FormDescription>
+                                  {t("admin.settingsPage.enableFacebookAuthDescription") || "Cho phép người dùng đăng nhập bằng tài khoản Facebook"}
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
+                      <Alert className="mt-4">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>{t("admin.settingsPage.firebaseAlert") || "Lưu ý về cấu hình Firebase"}</AlertTitle>
+                        <AlertDescription>
+                          {t("admin.settingsPage.firebaseAlertDescription") || "Đảm bảo đã thêm domain của ứng dụng này vào danh sách domain được phép trong cài đặt Firebase Authentication."}
+                        </AlertDescription>
+                      </Alert>
+                      
+                      <div className="pt-4 border-t mt-6">
+                        <Button 
+                          type="submit" 
+                          className="flex items-center"
+                          disabled={updateFirebaseSettingsMutation.isPending || !firebaseForm.formState.isDirty}
+                        >
+                          <Save className="h-4 w-4 mr-2" />
+                          {updateFirebaseSettingsMutation.isPending 
                             ? (t("common.saving") || "Đang lưu...") 
                             : (t("common.saveChanges") || "Lưu thay đổi")}
                         </Button>
