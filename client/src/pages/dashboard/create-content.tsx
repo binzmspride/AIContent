@@ -350,7 +350,7 @@ export default function CreateContent() {
         
         // Nếu đã có ID bài viết, thì gửi lên để cập nhật bài viết cũ
         if (generatedContent.articleId) {
-          articlePayload['id'] = generatedContent.articleId;
+          (articlePayload as any)['id'] = generatedContent.articleId;
         }
         
         // Gửi request lưu hoặc cập nhật bài viết
@@ -684,7 +684,7 @@ export default function CreateContent() {
                                 type="button" 
                                 variant="outline" 
                                 size="sm" 
-                                className="ml-2 bg-blue-500 text-white hover:bg-blue-600"
+                                className="ml-2 bg-primary text-white hover:bg-primary/90 dark:bg-primary dark:text-white dark:hover:bg-primary/90"
                                 disabled={getSecondaryKeywordCount() >= 3}
                                 onClick={() => {
                                   const input = document.getElementById("secondaryKeyword") as HTMLInputElement;
@@ -747,7 +747,7 @@ export default function CreateContent() {
                               <Input 
                                 id="relatedKeyword"
                                 placeholder={t("dashboard.create.keywords.relatedKeywordPlaceholder")}
-                                className="flex-1"
+                                className="flex-1 border-slate-300 dark:border-slate-700 focus:border-primary dark:focus:border-primary"
                                 disabled={(form.watch("relatedKeywords") || "").split(",").filter(Boolean).length >= 3}
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') {
@@ -769,7 +769,7 @@ export default function CreateContent() {
                                 type="button" 
                                 variant="outline" 
                                 size="sm" 
-                                className="ml-2 bg-blue-500 text-white hover:bg-blue-600"
+                                className="ml-2 bg-primary text-white hover:bg-primary/90 dark:bg-primary dark:text-white dark:hover:bg-primary/90"
                                 disabled={(form.watch("relatedKeywords") || "").split(",").filter(Boolean).length >= 3}
                                 onClick={() => {
                                   const input = document.getElementById("relatedKeyword") as HTMLInputElement;
