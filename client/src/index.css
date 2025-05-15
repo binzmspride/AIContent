@@ -432,9 +432,9 @@ input, select, textarea, label {
   }
   
   [role="tab"][data-state="active"] {
-    background-color: hsl(var(--primary));
+    background-color: transparent;
     color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     animation: tabActivate 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 
@@ -492,11 +492,11 @@ input, select, textarea, label {
   }
   
   [role="tab"][data-state="active"]::after {
-    width: 90%;
+    width: 100%;
     opacity: 1;
-    background-color: white;
+    background-color: hsl(var(--primary));
     height: 3px;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 8px rgba(0, 136, 255, 0.3);
   }
 
   .btn:before,
