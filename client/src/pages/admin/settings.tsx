@@ -456,6 +456,28 @@ export default function AdminSettings() {
       });
     },
   });
+  
+  // Update Firebase settings mutation
+  const updateFirebaseSettingsMutation = useMutation({
+    mutationFn: async (data: FirebaseSettingsValues) => {
+      const res = await apiRequest("PATCH", "/api/admin/settings/firebase", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Thành công",
+        description: "Cài đặt Firebase đã được cập nhật",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/settings"] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Lỗi",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   // Test email settings mutation
   const testEmailSettingsMutation = useMutation({
@@ -519,6 +541,10 @@ export default function AdminSettings() {
 
   const onWebhookSubmit = (data: WebhookSettingsValues) => {
     updateWebhookSettingsMutation.mutate(data);
+  };
+  
+  const onFirebaseSubmit = (data: FirebaseSettingsValues) => {
+    updateFirebaseSettingsMutation.mutate(data);
   };
 
   const [testEmailAddress, setTestEmailAddress] = useState("");
