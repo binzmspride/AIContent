@@ -131,6 +131,22 @@ input, select, textarea, label {
   color: #e2e8f0;
 }
 
+.content-tabitem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  padding: 1rem;
+  background-color: #f8fafc;
+}
+
+.dark .content-tabitem {
+  border-color: #334155;
+  background-color: #0f172a;
+}
+
 /* Đảm bảo nút hiển thị rõ ràng ở chế độ sáng */
 :root .primary, 
 :root .bg-primary,

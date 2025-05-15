@@ -820,7 +820,7 @@ export default function CreateContent() {
                         </div>
                       </TabsContent>
                       
-                      <TabsContent value="outline" className="mt-0 border rounded-lg p-4">
+                      <TabsContent value="outline" className="mt-0 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
                         <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.outline.title")}</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.outline.description")}</p>
                         
@@ -1167,7 +1167,7 @@ export default function CreateContent() {
                         </div>
                       </TabsContent>
                       
-                      <TabsContent value="format" className="mt-0 border rounded-lg p-4">
+                      <TabsContent value="format" className="mt-0 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
                         <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">Định dạng cho bài viết</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Hệ thống sẽ định dạng cho bài viết của bạn.</p>
                         
@@ -1249,9 +1249,9 @@ export default function CreateContent() {
                             control={form.control}
                             name="addHeadings"
                             render={({ field }) => (
-                              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <FormItem className="content-tabitem">
                                 <div className="flex items-center space-x-2">
-                                  <Heading2 className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                                  <Heading2 className="h-5 w-5 text-primary" />
                                   <div className="space-y-0.5">
                                     <FormLabel className="text-base">{t("dashboard.create.form.addHeadings")}</FormLabel>
                                     <p className="text-sm text-muted-foreground">
@@ -1472,7 +1472,7 @@ export default function CreateContent() {
                         </div>
                       </TabsContent>
                       
-                      <TabsContent value="knowledge" className="mt-0 border rounded-lg p-4">
+                      <TabsContent value="knowledge" className="mt-0 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
                         <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">Kiến thức chuyên môn</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Bổ sung các thông tin chuyên môn để làm giàu nội dung bài viết.</p>
                         
