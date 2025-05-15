@@ -617,8 +617,8 @@ export default function CreateContent() {
                           </div>
                           
                           {/* Từ khóa phụ */}
-                          <div>
-                            <Label htmlFor="secondaryKeyword" className="text-gray-700 dark:text-gray-200 mb-1 block">
+                          <div className="content-form-field">
+                            <Label htmlFor="secondaryKeyword" className="content-form-label block">
                               {t("dashboard.create.keywords.secondaryKeyword")}
                               <span className="ml-1 text-sm text-gray-500 dark:text-gray-400">
                                 ({getSecondaryKeywordCount()}/3)
@@ -655,7 +655,7 @@ export default function CreateContent() {
                               <Input 
                                 id="secondaryKeyword"
                                 placeholder={t("dashboard.create.keywords.secondaryKeywordPlaceholder")}
-                                className="flex-1"
+                                className="flex-1 border-slate-300 dark:border-slate-700 focus:border-primary dark:focus:border-primary"
                                 disabled={getSecondaryKeywordCount() >= 3}
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') {
