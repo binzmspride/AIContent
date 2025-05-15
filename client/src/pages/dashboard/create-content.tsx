@@ -867,7 +867,7 @@ export default function CreateContent() {
                                       value={item.text}
                                       onChange={(e) => handleUpdateOutlineItem(item.id, { text: e.target.value })}
                                       placeholder={t("dashboard.create.outline.headingPlaceholder")} 
-                                      className="h-10"
+                                      className="h-10 border-slate-300 dark:border-slate-700 focus:border-primary dark:focus:border-primary"
                                     />
                                   </div>
                                   <Button 
@@ -908,7 +908,7 @@ export default function CreateContent() {
                                   value={currentHeadingText}
                                   onChange={(e) => setCurrentHeadingText(e.target.value)}
                                   placeholder={t("dashboard.create.outline.headingPlaceholder")} 
-                                  className="h-10"
+                                  className="h-10 border-slate-300 dark:border-slate-700 focus:border-primary dark:focus:border-primary"
                                 />
                               </div>
                             </div>
@@ -926,7 +926,7 @@ export default function CreateContent() {
                         </div>
                       </TabsContent>
                       
-                      <TabsContent value="content" className="mt-0 border rounded-lg p-4">
+                      <TabsContent value="content" className="mt-0 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
                         <div className="flex items-start">
                           <FileText className="h-6 w-6 text-blue-500 mr-2 flex-shrink-0 mt-1" />
                           <div>
@@ -1553,10 +1553,10 @@ export default function CreateContent() {
                       
 
                       
-                      <div className="border-t pt-4 flex justify-end space-x-2">
+                      <div className="border-t border-slate-200 dark:border-slate-700 pt-6 flex justify-end space-x-3 mt-4">
                         <Button
                           type="button"
-                          className="bg-blue-600 hover:bg-blue-700"
+                          className="bg-primary hover:bg-primary/90 dark:bg-primary dark:text-white dark:hover:bg-primary/90"
                           onClick={() => {
                             console.log("Button clicked");
                             console.log("Form values:", form.getValues());
