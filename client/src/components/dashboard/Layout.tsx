@@ -23,7 +23,7 @@ export function DashboardLayout({ children, title }: DashboardLayoutProps) {
         
         <main className="flex-1 overflow-auto p-4 md:p-6">
           {title && (
-            <h1 className="text-2xl font-bold text-secondary-900 dark:text-secondary-100 mb-6">
+            <h1 className="text-2xl font-bold text-secondary-900 dark:text-white mb-6">
               {title}
             </h1>
           )}
