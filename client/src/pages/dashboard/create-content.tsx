@@ -99,7 +99,7 @@ const formSchema = z.object({
   country: z.enum(["vietnam", "us", "global"]).optional(),
   perspective: z.enum(["auto", "first", "second", "third"]).optional(),
   complexity: z.enum(["auto", "basic", "intermediate", "advanced"]).optional(),
-  useWebResearch: z.boolean().default(false),
+  useWebResearch: z.boolean().default(true),
   refSources: z.string().optional(),
   aiModel: z.enum(["chatgpt", "gemini", "claude"]).optional(),
   linkItems: z.array(
@@ -153,7 +153,7 @@ export default function CreateContent() {
       country: "vietnam",
       perspective: "auto",
       complexity: "auto",
-      useWebResearch: false,
+      useWebResearch: true,
       refSources: "",
       aiModel: "chatgpt",
       linkItems: [],
@@ -1481,15 +1481,16 @@ export default function CreateContent() {
                             control={form.control}
                             name="useWebResearch"
                             render={({ field }) => (
-                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-slate-50 dark:bg-slate-800">
                                 <FormControl>
                                   <Checkbox
                                     checked={field.value}
                                     onCheckedChange={field.onChange}
+                                    defaultChecked={true}
                                   />
                                 </FormControl>
                                 <div className="space-y-1 leading-none">
-                                  <FormLabel>Sử dụng nghiên cứu web</FormLabel>
+                                  <FormLabel className="font-medium">Sử dụng nghiên cứu web</FormLabel>
                                   <p className="text-sm text-muted-foreground">
                                     Cho phép AI tìm kiếm thông tin trên web để bổ sung cho bài viết
                                   </p>
