@@ -245,9 +245,9 @@ export default function AuthPage() {
             <div className="mt-8">
               <div className="bg-slate-800/50 backdrop-blur-sm py-8 px-6 shadow-lg rounded-xl border border-slate-700/50">
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="grid w-full grid-cols-2 mb-6 p-1 gap-2">
-                    <TabsTrigger value="login" className="px-2 py-2">{t("nav.login")}</TabsTrigger>
-                    <TabsTrigger value="register" className="px-2 py-2">{t("nav.register")}</TabsTrigger>
+                  <TabsList className="w-full flex justify-between mb-6 p-1 rounded-lg bg-slate-700/50 border border-slate-600/50">
+                    <TabsTrigger value="login" className="flex-1 px-3 py-2 rounded-md text-slate-100 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-none">{t("nav.login")}</TabsTrigger>
+                    <TabsTrigger value="register" className="flex-1 px-3 py-2 rounded-md text-slate-100 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-none">{t("nav.register")}</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="login" className="mt-0">
