@@ -22,6 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
 import Head from "@/components/head";
 import { signInWithGoogle, signInWithFacebook } from "@/lib/firebase";
+import { queryClient } from "@/lib/queryClient";
 
 // Login form schema
 const loginSchema = z.object({
@@ -111,7 +112,9 @@ export default function AuthPage() {
   // Google OAuth handler
   const handleGoogleLogin = async () => {
     try {
+      setIsProcessingOAuth(true);
       await signInWithGoogle();
+      // If successful, the page will redirect to dashboard via useEffect
     } catch (error) {
       console.error("Google login error:", error);
       toast({
@@ -119,13 +122,16 @@ export default function AuthPage() {
         description: t("auth.login.googleError") || "Failed to login with Google",
         variant: "destructive",
       });
+      setIsProcessingOAuth(false);
     }
   };
 
   // Facebook OAuth handler
   const handleFacebookLogin = async () => {
     try {
+      setIsProcessingOAuth(true);
       await signInWithFacebook();
+      // If successful, the page will redirect to dashboard via useEffect
     } catch (error) {
       console.error("Facebook login error:", error);
       toast({
@@ -133,10 +139,58 @@ export default function AuthPage() {
         description: t("auth.login.facebookError") || "Failed to login with Facebook",
         variant: "destructive",
       });
+      setIsProcessingOAuth(false);
     }
   };
+  
+  // Handle auth redirect on page load
+  useEffect(() => {
+    const checkAuthRedirect = async () => {
+      try {
+        // Import here to avoid circular dependencies
+        const { handleAuthRedirect } = await import("@/lib/firebase");
+        const result = await handleAuthRedirect();
+        
+        // If we got a result, that means the user was redirected and authenticated
+        if (result && result.success && result.data) {
+          // Update the auth state which will trigger the navigation to dashboard
+          queryClient.setQueryData(["/api/user"], result.data);
+        }
+      } catch (error) {
+        console.error("Auth redirect error:", error);
+        toast({
+          title: t("auth.login.error") || "Error",
+          description: t("auth.login.redirectError") || "Failed to complete authentication",
+          variant: "destructive",
+        });
+      }
+    };
+    
+    // Run the redirect check
+    checkAuthRedirect();
+  }, [t]);
 
   const { toast } = useToast();
+  const [isProcessingOAuth, setIsProcessingOAuth] = useState(false);
+  
+  // Check for initialization errors on mount
+  useEffect(() => {
+    const checkFirebaseInitialization = async () => {
+      try {
+        // Just import to trigger initialization
+        await import("@/lib/firebase");
+      } catch (error) {
+        console.error("Failed to initialize Firebase:", error);
+        toast({
+          title: "Configuration Error",
+          description: "Social login is not configured correctly. Please try traditional login methods.",
+          variant: "destructive",
+        });
+      }
+    };
+    
+    checkFirebaseInitialization();
+  }, []);
 
   return (
     <>
@@ -377,14 +431,48 @@ export default function AuthPage() {
                   </div>
 
                   <div className="mt-6 grid grid-cols-2 gap-3">
-                    <Button variant="outline" className="w-full bg-transparent text-slate-200 border-slate-700 hover:bg-slate-700/50">
-                      <FaGoogle className="mr-2 h-4 w-4" />
-                      Google
+                    <Button 
+                      variant="outline" 
+                      className="w-full bg-transparent text-slate-200 border-slate-700 hover:bg-slate-700/50"
+                      onClick={handleGoogleLogin}
+                      disabled={isProcessingOAuth || loginMutation.isPending || registerMutation.isPending}
+                    >
+                      {isProcessingOAuth ? (
+                        <span className="flex items-center">
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          {t("common.processing") || "Processing..."}
+                        </span>
+                      ) : (
+                        <>
+                          <FaGoogle className="mr-2 h-4 w-4" />
+                          Google
+                        </>
+                      )}
                     </Button>
 
-                    <Button variant="outline" className="w-full bg-transparent text-slate-200 border-slate-700 hover:bg-slate-700/50">
-                      <FaFacebook className="mr-2 h-4 w-4" />
-                      Facebook
+                    <Button 
+                      variant="outline" 
+                      className="w-full bg-transparent text-slate-200 border-slate-700 hover:bg-slate-700/50"
+                      onClick={handleFacebookLogin}
+                      disabled={isProcessingOAuth || loginMutation.isPending || registerMutation.isPending}
+                    >
+                      {isProcessingOAuth ? (
+                        <span className="flex items-center">
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          {t("common.processing") || "Processing..."}
+                        </span>
+                      ) : (
+                        <>
+                          <FaFacebook className="mr-2 h-4 w-4" />
+                          Facebook
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
