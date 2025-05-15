@@ -896,16 +896,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const { users, total } = await storage.listUsers(page, limit);
       
-      // Remove passwords from response
-      const usersWithoutPasswords = users.map(user => {
+      // Remove passwords and get user plans
+      const usersWithPlans = await Promise.all(users.map(async user => {
         const { password, ...userWithoutPassword } = user;
-        return userWithoutPassword;
-      });
+        
+        // Get user's active plans
+        const userPlans = await storage.getUserPlans(user.id);
+        const activePlans = userPlans.filter(up => up.isActive);
+        
+        // Format plan info for display
+        const planInfo = activePlans.length > 0 
+          ? activePlans.map(up => up.plan.name).join(', ')
+          : 'Không có gói';
+        
+        return {
+          ...userWithoutPassword,
+          planInfo
+        };
+      }));
       
       res.json({
         success: true,
         data: {
-          users: usersWithoutPasswords,
+          users: usersWithPlans,
           pagination: {
             page,
             limit,
