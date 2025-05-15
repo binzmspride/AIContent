@@ -236,7 +236,7 @@ export default function AuthPage() {
               {t("common.or")}{" "}
               <button
                 onClick={() => setActiveTab(activeTab === "login" ? "register" : "login")}
-                className="font-medium text-slate-200 hover:text-primary focus:outline-none underline"
+                className="font-medium text-slate-200 hover:text-primary focus:outline-none"
               >
                 {activeTab === "login" ? t("auth.login.switchToRegister") : t("auth.register.switchToLogin")}
               </button>
