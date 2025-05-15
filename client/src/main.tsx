@@ -3,14 +3,8 @@ import App from "./App";
 import "./index.css";
 import "./disable-runtime-errors";
 
-// Chặn hiển thị lỗi ResizeObserver trong runtime error plugin
-window.__RUNTIME_ERROR_FILTER_FN = (error: Error) => {
-  // Trả về true nếu muốn lọc bỏ lỗi (không hiển thị)
-  // Trả về false nếu muốn hiển thị lỗi
-  if (!error || !error.message) return false;
-  return error.message.includes('ResizeObserver loop') || 
-         error.message.includes('ResizeObserver is not defined');
-};
+// Tệp disable-runtime-errors.js đã có đầy đủ các phương pháp
+// xử lý lỗi ResizeObserver bằng một cách mạnh mẽ
 
 // Ngăn chặn hiển thị lỗi ResizeObserver trong console
 const originalError = window.console.error;
