@@ -389,6 +389,103 @@ input, select, textarea, label {
     @apply font-heading;
   }
 
+  /* Button micro-interactions */
+  .button-hover-effect, 
+  .btn,
+  a[role="button"],
+  .button-interactive {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s ease;
+    transform: translateY(0);
+  }
+
+  .button-hover-effect:hover, 
+  .btn:hover,
+  a[role="button"]:hover,
+  .button-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .button-hover-effect:active, 
+  .btn:active,
+  a[role="button"]:active,
+  .button-interactive:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .btn:before,
+  a[role="button"]:before,
+  .button-interactive:before,
+  .button-hover-effect:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: width 0.5s, height 0.5s, opacity 0.5s;
+    pointer-events: none;
+  }
+
+  .btn:hover:before,
+  a[role="button"]:hover:before,
+  .button-interactive:hover:before,
+  .button-hover-effect:hover:before {
+    width: 300%;
+    height: 300%;
+    opacity: 0.3;
+    animation: rippleEffect 0.8s ease-out;
+  }
+  
+  @keyframes rippleEffect {
+    0% {
+      width: 0;
+      height: 0;
+      opacity: 0.5;
+    }
+    100% {
+      width: 300%;
+      height: 300%;
+      opacity: 0;
+    }
+  }
+  
+  /* Button focus ring animation */
+  .btn:focus:not(:focus-visible),
+  a[role="button"]:focus:not(:focus-visible),
+  .button-interactive:focus:not(:focus-visible),
+  .button-hover-effect:focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  .btn:focus-visible,
+  a[role="button"]:focus-visible,
+  .button-interactive:focus-visible,
+  .button-hover-effect:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--primary));
+    animation: pulseFocus 1.5s infinite;
+  }
+  
+  @keyframes pulseFocus {
+    0% {
+      box-shadow: 0 0 0 0 hsl(var(--primary), 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 4px hsl(var(--primary), 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 hsl(var(--primary), 0);
+    }
+  }
+
   .bg-gradient-primary {
     @apply bg-gradient-to-r from-primary to-primary/80;
   }

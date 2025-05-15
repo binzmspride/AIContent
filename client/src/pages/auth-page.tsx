@@ -310,7 +310,7 @@ export default function AuthPage() {
 
                         <Button
                           type="submit"
-                          className="w-full bg-primary hover:bg-primary/90"
+                          className="w-full bg-primary hover:bg-primary/90 button-hover-effect"
                           disabled={loginMutation.isPending}
                         >
                           {loginMutation.isPending ? t("common.loading") : t("auth.login.submit")}
