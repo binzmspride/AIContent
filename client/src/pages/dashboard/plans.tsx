@@ -121,7 +121,7 @@ export default function Plans() {
             {isLoadingUserPlans ? (
               <div className="text-center py-4">Đang tải thông tin gói dịch vụ của bạn...</div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Storage Plan */}
                 <div className="border rounded-md p-4">
                   <h3 className="text-lg font-semibold text-black dark:text-white mb-2">Gói Lưu Trữ</h3>
