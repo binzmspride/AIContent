@@ -82,6 +82,12 @@ interface SystemSettings {
   // Webhook settings
   webhookSecret: string;
   notificationWebhookUrl: string;
+  // Firebase settings
+  firebaseApiKey: string;
+  firebaseProjectId: string;
+  firebaseAppId: string;
+  enableGoogleAuth: boolean;
+  enableFacebookAuth: boolean;
   // System info
   version: string;
   lastBackup: string;
@@ -136,6 +142,15 @@ const apiSettingsSchema = z.object({
 const webhookSettingsSchema = z.object({
   webhookSecret: z.string().min(10, "Webhook secret must be at least 10 characters"),
   notificationWebhookUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+});
+
+// Firebase settings form schema
+const firebaseSettingsSchema = z.object({
+  firebaseApiKey: z.string().min(1, "Firebase API key is required"),
+  firebaseProjectId: z.string().min(1, "Firebase Project ID is required"),
+  firebaseAppId: z.string().min(1, "Firebase App ID is required"), 
+  enableGoogleAuth: z.boolean(),
+  enableFacebookAuth: z.boolean(),
 });
 
 // Trial plan settings schema
