@@ -78,9 +78,9 @@ input, select, textarea, label {
 
 /* Cải thiện giao diện trong trang tạo nội dung */
 .create-content-tabs .tabs-list {
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  padding: 4px;
+  background-color: #1e293b;
+  border-radius: 12px;
+  padding: 8px;
 }
 
 .create-content-tabs .tab-trigger {
@@ -88,21 +88,29 @@ input, select, textarea, label {
   font-weight: 500;
   transition: all 0.2s ease;
   border-radius: 6px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  color: #e2e8f0;
 }
 
 .create-content-tabs .tab-trigger[data-state="active"] {
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-  color: #1976d2;
+  background-color: #2563eb;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  color: white;
 }
 
-.dark .create-content-tabs .tabs-list {
-  background-color: #1e293b;
+.light .create-content-tabs .tabs-list {
+  background-color: #f8f9fa;
 }
 
-.dark .create-content-tabs .tab-trigger[data-state="active"] {
-  background-color: #0f172a;
-  color: #60a5fa;
+.light .create-content-tabs .tab-trigger {
+  color: #475569;
+}
+
+.light .create-content-tabs .tab-trigger[data-state="active"] {
+  background-color: #2563eb;
+  color: white;
 }
 
 .create-content-card {

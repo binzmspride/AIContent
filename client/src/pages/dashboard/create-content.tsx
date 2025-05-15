@@ -526,7 +526,7 @@ export default function CreateContent() {
             <Tabs defaultValue="keywords" className="w-full create-content-tabs">
               <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6">
                 <div className="w-full md:w-64">
-                  <TabsList className="grid w-full grid-cols-2 md:grid-cols-1 h-auto tabs-list">
+                  <TabsList className="grid w-full grid-cols-1 h-auto tabs-list">
                     <TabsTrigger value="keywords" className="flex items-center justify-start tab-trigger">
                       <KeyRound className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.keywords")}</span>
