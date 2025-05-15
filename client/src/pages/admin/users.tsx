@@ -510,6 +510,7 @@ export default function AdminUsers() {
                   <TableHead>{t("admin.usersManagement.email") || "Email"}</TableHead>
                   <TableHead>{t("admin.usersManagement.role") || "Vai trò"}</TableHead>
                   <TableHead>{t("admin.usersManagement.status") || "Trạng thái"}</TableHead>
+                  <TableHead>{t("admin.usersManagement.servicePlan") || "Gói dịch vụ"}</TableHead>
                   <TableHead>{t("admin.usersManagement.joinDate") || "Ngày tham gia"}</TableHead>
                   <TableHead className="text-right">{t("common.admin.common.actions") || "Thao tác"}</TableHead>
                 </TableRow>
@@ -517,7 +518,7 @@ export default function AdminUsers() {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-10">
+                    <TableCell colSpan={9} className="text-center py-10">
                       {t("common.loading") || "Đang tải..."}
                     </TableCell>
                   </TableRow>
@@ -537,6 +538,11 @@ export default function AdminUsers() {
                       </TableCell>
                       <TableCell>
                         {getStatusBadge("active")}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-200">
+                          {(user as any).planInfo}
+                        </Badge>
                       </TableCell>
                       <TableCell>{formatDate(user.createdAt)}</TableCell>
                       <TableCell className="text-right">
@@ -580,7 +586,7 @@ export default function AdminUsers() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-10">
+                    <TableCell colSpan={9} className="text-center py-10">
                       {t("admin.usersManagement.noUsers") || "Không tìm thấy người dùng nào"}
                     </TableCell>
                   </TableRow>
