@@ -164,6 +164,7 @@ type EmailSettingsValues = z.infer<typeof emailSettingsSchema>;
 type ApiSettingsValues = z.infer<typeof apiSettingsSchema>;
 type WebhookSettingsValues = z.infer<typeof webhookSettingsSchema>;
 type TrialPlanSettingsValues = z.infer<typeof trialPlanSettingsSchema>;
+type FirebaseSettingsValues = z.infer<typeof firebaseSettingsSchema>;
 
 export default function AdminSettings() {
   const { t } = useLanguage();
@@ -277,6 +278,18 @@ export default function AdminSettings() {
       notificationWebhookUrl: settings?.notificationWebhookUrl || "",
     },
   });
+  
+  // Firebase settings form
+  const firebaseForm = useForm<FirebaseSettingsValues>({
+    resolver: zodResolver(firebaseSettingsSchema),
+    defaultValues: {
+      firebaseApiKey: settings?.firebaseApiKey || "",
+      firebaseProjectId: settings?.firebaseProjectId || "",
+      firebaseAppId: settings?.firebaseAppId || "",
+      enableGoogleAuth: settings?.enableGoogleAuth || false,
+      enableFacebookAuth: settings?.enableFacebookAuth || false,
+    },
+  });
 
   // Update settings when data is loaded
   useEffect(() => {
@@ -322,6 +335,14 @@ export default function AdminSettings() {
       webhookForm.reset({
         webhookSecret: settings.webhookSecret,
         notificationWebhookUrl: settings.notificationWebhookUrl || "",
+      });
+      
+      firebaseForm.reset({
+        firebaseApiKey: settings.firebaseApiKey || "",
+        firebaseProjectId: settings.firebaseProjectId || "",
+        firebaseAppId: settings.firebaseAppId || "",
+        enableGoogleAuth: settings.enableGoogleAuth || false,
+        enableFacebookAuth: settings.enableFacebookAuth || false,
       });
     }
   }, [settings]);
@@ -579,6 +600,12 @@ export default function AdminSettings() {
                     <TabsTrigger value="webhook" className="justify-start">
                       <Webhook className="h-4 w-4 mr-2" />
                       {t("admin.settingsPage.webhook") || "Webhook"}
+                    </TabsTrigger>
+                    <TabsTrigger value="firebase" className="justify-start">
+                      <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3.89 15.673L6.255.461A.542.542 0 0 1 7.27.289L9.813 5.06 3.89 15.673zm16.795 3.691L18.433 5.365a.54.54 0 0 0-.918-.295l-14.2 14.294 7.857 4.428a1.62 1.62 0 0 0 1.587 0l7.926-4.428zM14.3 7.148l-1.82-3.482a.542.542 0 0 0-.96 0L3.53 17.984 14.3 7.148z" />
+                      </svg>
+                      {t("admin.settingsPage.firebase") || "Firebase"}
                     </TabsTrigger>
                     <TabsTrigger value="system" className="justify-start">
                       <Server className="h-4 w-4 mr-2" />
