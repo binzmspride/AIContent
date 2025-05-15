@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/providers/LanguageProvider";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { FloatingThemeIndicator } from "@/components/common/FloatingThemeIndicator";
+import { useEffect } from "react";
 
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/home-page";
@@ -76,6 +77,35 @@ function Router() {
 }
 
 function App() {
+  // Ngăn chặn lỗi ResizeObserver được hiển thị trong overlay
+  useEffect(() => {
+    const originalConsoleError = console.error;
+    console.error = (...args) => {
+      if (
+        typeof args[0] === 'object' && 
+        args[0]?.message?.includes?.('ResizeObserver loop')
+      ) {
+        return;
+      }
+      originalConsoleError(...args);
+    };
+    
+    // Xử lý lỗi window level để ngăn hiển thị lỗi ResizeObserver
+    const errorHandler = (event: ErrorEvent) => {
+      if (event.error?.message?.includes('ResizeObserver loop')) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+    
+    window.addEventListener('error', errorHandler);
+    
+    return () => {
+      console.error = originalConsoleError;
+      window.removeEventListener('error', errorHandler);
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
