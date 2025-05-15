@@ -539,19 +539,19 @@ export default function CreateContent() {
                       <FileText className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.content")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="knowledge" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
+                    <TabsTrigger value="knowledge" className="flex items-center justify-start tab-trigger">
                       <BookOpenText className="h-5 w-5 mr-2" />
                       <span>Kiến thức</span>
                     </TabsTrigger>
-                    <TabsTrigger value="format" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
+                    <TabsTrigger value="format" className="flex items-center justify-start tab-trigger">
                       <AlignJustify className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.format")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="links" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
+                    <TabsTrigger value="links" className="flex items-center justify-start tab-trigger">
                       <LinkIcon className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.links")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="media" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
+                    <TabsTrigger value="media" className="flex items-center justify-start tab-trigger">
                       <Image className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.media")}</span>
                     </TabsTrigger>
@@ -562,17 +562,17 @@ export default function CreateContent() {
                 <div className="flex-1">
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                      <TabsContent value="keywords" className="mt-0 border rounded-lg p-4">
+                      <TabsContent value="keywords" className="mt-0 border rounded-lg p-6 border-slate-200 dark:border-slate-700">
                         <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.keywords.title")}</h3>
                         <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.keywords.description")}</p>
                         
-                        <div className="space-y-4">
+                        <div className="space-y-6">
                           <FormField
                             control={form.control}
                             name="length"
                             render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Số từ</FormLabel>
+                              <FormItem className="content-form-field">
+                                <FormLabel className="content-form-label">Số từ</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                   <FormControl>
                                     <SelectTrigger>
@@ -592,8 +592,8 @@ export default function CreateContent() {
                           />
                           
                           {/* Từ khóa chính */}
-                          <div>
-                            <Label htmlFor="mainKeyword" className="text-gray-700 dark:text-gray-200 mb-1 block">
+                          <div className="content-form-field">
+                            <Label htmlFor="mainKeyword" className="content-form-label block">
                               {t("dashboard.create.keywords.mainKeyword")} <span className="text-red-500">*</span>
                             </Label>
                             
@@ -601,7 +601,7 @@ export default function CreateContent() {
                             <Input 
                               id="mainKeyword"
                               placeholder={t("dashboard.create.keywords.mainKeywordPlaceholder")}
-                              className="mt-1"
+                              className="mt-1 border-slate-300 dark:border-slate-700 focus:border-primary dark:focus:border-primary"
                               value={form.watch("keywords").split(",")[0] || ""}
                               onChange={(e) => {
                                 // Không trim giá trị để cho phép nhập dấu cách
