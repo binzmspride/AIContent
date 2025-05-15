@@ -12,8 +12,17 @@
       [plugin\:runtime-error-plugin] {
         display: none !important;
         visibility: hidden !important;
+        z-index: -9999 !important;
+        position: fixed !important;
+        top: -9999px !important;
+        left: -9999px !important;
+        width: 0 !important;
+        height: 0 !important;
+        opacity: 0 !important;
       }
     </style>
+    <!-- Script sửa lỗi ResizeObserver - được tải trước tất cả các script khác -->
+    <script src="/fix-resize-observer.js"></script>
   </head>
   <body>
     <div id="root"></div>
@@ -27,6 +36,11 @@
         return error.message.includes('ResizeObserver loop') || 
                error.message.includes('ResizeObserver is not defined');
       };
+      
+      // Gọi hàm ẩn overlay lỗi
+      if (window.__HIDE_ALL_ERROR_OVERLAYS) {
+        window.__HIDE_ALL_ERROR_OVERLAYS();
+      }
     </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>

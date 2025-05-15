@@ -4,6 +4,8 @@
 // CẢNH BÁO: Script này có thể ẩn một số lỗi cần debug trong quá trình phát triển
 // Tuy nhiên nó rất hữu ích để ngăn chặn thông báo lỗi ResizeObserver gây phiền nhiễu
 
+// Phiên bản 1.0.3 - Sửa lỗi xử lý SVG elements và các loại className khác nhau
+
 (function() {
   // Giải pháp cực đoan: Ghi đè hoàn toàn ResizeObserver
   if (window.ResizeObserver) {
@@ -82,8 +84,16 @@
     // Xóa các phần tử có class chứa error-overlay
     const overlayElements = document.querySelectorAll('[class*="overlay"]');
     overlayElements.forEach(el => {
-      if (el.className.includes('error') || el.className.includes('overlay')) {
-        el.style.display = 'none';
+      // Kiểm tra nếu className là string (không phải SVGAnimatedString hoặc đối tượng khác)
+      if (el.className && typeof el.className === 'string') {
+        if (el.className.includes('error') || el.className.includes('overlay')) {
+          el.style.display = 'none';
+        }
+      } else if (el.className && el.className.baseVal) {
+        // Xử lý cho SVG elements có className.baseVal thay vì className string
+        if (el.className.baseVal.includes('error') || el.className.baseVal.includes('overlay')) {
+          el.style.display = 'none';
+        }
       }
     });
   }
@@ -133,11 +143,20 @@
         mutation.addedNodes.forEach(function(node) {
           if (node.nodeType === 1) {
             // Kiểm tra tất cả các trường hợp có thể là thông báo lỗi
-            if ((node.hasAttribute && node.hasAttribute('plugin:runtime-error-plugin')) ||
-                (node.className && 
-                 (node.className.includes('error') || 
-                  node.className.includes('overlay')))) {
+            if (node.hasAttribute && node.hasAttribute('plugin:runtime-error-plugin')) {
               hasErrorElements = true;
+            } else if (node.className) {
+              // Kiểm tra className khác nhau tùy theo loại phần tử
+              if (typeof node.className === 'string') {
+                if (node.className.includes('error') || node.className.includes('overlay')) {
+                  hasErrorElements = true;
+                }
+              } else if (node.className.baseVal) {
+                // Xử lý cho SVG elements
+                if (node.className.baseVal.includes('error') || node.className.baseVal.includes('overlay')) {
+                  hasErrorElements = true;
+                }
+              }
             }
           }
         });
