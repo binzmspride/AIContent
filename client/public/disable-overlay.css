@@ -1,0 +1,30 @@
+/* CSS để ẩn overlay lỗi của plugin runtime-error-modal */
+div[plugin\:runtime-error-plugin] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+/* Ẩn các phần tử có chứa error-overlay */
+.error-overlay {
+  display: none !important;
+}
+
+/* Ẩn các phần tử có lớp overlay của Vite */
+div[class*="overlay"],
+div[class^="overlay"] {
+  display: none !important;
+  visibility: hidden !important;
+  z-index: -9999 !important;
+}

@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
+import "./disable-runtime-errors";
 
 // Chặn hiển thị lỗi ResizeObserver trong runtime error plugin
 window.__RUNTIME_ERROR_FILTER_FN = (error: Error) => {
