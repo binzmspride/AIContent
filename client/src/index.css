@@ -92,12 +92,51 @@ input, select, textarea, label {
   display: flex;
   align-items: center;
   color: #e2e8f0;
+  position: relative;
+  overflow: hidden;
+}
+
+.create-content-tabs .tab-trigger:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(3px);
+}
+
+.create-content-tabs .tab-trigger::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background-color: #3b82f6;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.create-content-tabs .tab-trigger:hover::before {
+  opacity: 1;
 }
 
 .create-content-tabs .tab-trigger[data-state="active"] {
   background-color: #2563eb;
   box-shadow: 0 2px 4px rgba(0,0,0,0.15);
   color: white;
+  transform: translateX(5px);
+  animation: selectTab 0.3s ease;
+}
+
+@keyframes selectTab {
+  0% {
+    transform: translateX(0);
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(5px);
+    opacity: 1;
+  }
 }
 
 .light .create-content-tabs .tabs-list {
