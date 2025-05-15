@@ -234,12 +234,12 @@ export default function AuthPage() {
             </h2>
             <p className="mt-2 text-center text-sm text-slate-400">
               {t("common.or")}{" "}
-              <button
+              <span
                 onClick={() => setActiveTab(activeTab === "login" ? "register" : "login")}
-                className="font-medium text-white hover:text-primary focus:outline-none transition-colors"
+                className="font-medium text-white hover:text-primary cursor-pointer transition-colors"
               >
                 {activeTab === "login" ? t("auth.login.switchToRegister") : t("auth.register.switchToLogin")}
-              </button>
+              </span>
             </p>
             
             <div className="mt-8">
