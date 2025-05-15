@@ -521,21 +521,21 @@ export default function CreateContent() {
           <p className="text-sm text-gray-500 mb-4">{t("dashboard.create.subtitle")}</p>
         </div>
         
-        <Card>
+        <Card className="create-content-card">
           <CardContent className="p-6">
-            <Tabs defaultValue="keywords" className="w-full">
-              <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-                <div className="w-full md:w-64 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <TabsList className="grid w-full grid-cols-2 md:grid-cols-1 h-auto bg-transparent">
-                    <TabsTrigger value="keywords" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
+            <Tabs defaultValue="keywords" className="w-full create-content-tabs">
+              <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6">
+                <div className="w-full md:w-64">
+                  <TabsList className="grid w-full grid-cols-2 md:grid-cols-1 h-auto tabs-list">
+                    <TabsTrigger value="keywords" className="flex items-center justify-start tab-trigger">
                       <KeyRound className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.keywords")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="outline" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
+                    <TabsTrigger value="outline" className="flex items-center justify-start tab-trigger">
                       <List className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.outline")}</span>
                     </TabsTrigger>
-                    <TabsTrigger value="content" className="flex items-center justify-start px-4 py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow rounded-md text-gray-700 dark:text-gray-200">
+                    <TabsTrigger value="content" className="flex items-center justify-start tab-trigger">
                       <FileText className="h-5 w-5 mr-2" />
                       <span>{t("dashboard.create.tabs.content")}</span>
                     </TabsTrigger>
