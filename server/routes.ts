@@ -19,6 +19,7 @@ import { promisify } from "util";
 import { updateSmtpConfig, testSmtpConnection, updateAppBaseUrl } from "./email-service";
 import { registerApiRoutes } from "./api-routes";
 import { registerAdminRoutes } from "./admin-routes";
+import { getFirebaseConfig, verifyFirebaseToken, findUserByFirebaseAuth, createUserFromFirebase } from "./firebase-auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
@@ -1220,7 +1221,145 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Test email API
+  // Firebase Config API - Get Firebase configuration
+  app.get('/api/firebase/config', async (req, res) => {
+    try {
+      const config = await getFirebaseConfig();
+      
+      if (!config) {
+        return res.status(404).json({
+          success: false,
+          error: 'Firebase configuration not found'
+        });
+      }
+      
+      res.json({
+        success: true,
+        data: config
+      });
+    } catch (error) {
+      console.error('Error getting Firebase config:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to get Firebase config' 
+      });
+    }
+  });
+  
+  // Firebase Auth API - Handle Firebase authentication
+  app.post('/api/auth/firebase', async (req, res) => {
+    try {
+      const { idToken, email, displayName, photoURL } = req.body;
+      
+      if (!idToken || !email) {
+        return res.status(400).json({
+          success: false,
+          error: 'Firebase ID token and email are required'
+        });
+      }
+      
+      // Xác thực token Firebase
+      const firebaseUser = await verifyFirebaseToken(idToken, {
+        email,
+        displayName,
+        photoURL
+      });
+      
+      if (!firebaseUser) {
+        return res.status(401).json({
+          success: false,
+          error: 'Invalid Firebase token'
+        });
+      }
+      
+      // Tìm người dùng hiện có
+      let user = await findUserByFirebaseAuth(email, firebaseUser.firebaseId);
+      
+      // Nếu người dùng không tồn tại, tạo người dùng mới
+      if (!user) {
+        user = await createUserFromFirebase(firebaseUser);
+        
+        if (!user) {
+          return res.status(500).json({
+            success: false,
+            error: 'Failed to create user from Firebase auth'
+          });
+        }
+      }
+      
+      // Đăng nhập người dùng
+      req.login(user, (err) => {
+        if (err) {
+          console.error('Error logging in Firebase user:', err);
+          return res.status(500).json({
+            success: false,
+            error: 'Failed to login'
+          });
+        }
+        
+        // Trả về thông tin người dùng (không bao gồm mật khẩu)
+        const { password, ...userWithoutPassword } = user;
+        
+        res.json({
+          success: true,
+          data: userWithoutPassword
+        });
+      });
+    } catch (error) {
+      console.error('Error in Firebase authentication:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Authentication failed'
+      });
+    }
+  });
+  
+  // Firebase settings API (update Firebase settings)
+  app.patch('/api/admin/settings/firebase', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ 
+          success: false, 
+          error: 'Admin access required' 
+        });
+      }
+
+      const { 
+        firebaseApiKey, 
+        firebaseProjectId, 
+        firebaseAppId, 
+        enableGoogleAuth, 
+        enableFacebookAuth 
+      } = req.body;
+      
+      // Validate required fields
+      if (!firebaseApiKey || !firebaseProjectId || !firebaseAppId) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'All Firebase configuration fields are required' 
+        });
+      }
+      
+      // Save Firebase settings
+      await storage.setSetting('firebaseApiKey', firebaseApiKey, 'firebase');
+      await storage.setSetting('firebaseProjectId', firebaseProjectId, 'firebase');
+      await storage.setSetting('firebaseAppId', firebaseAppId, 'firebase');
+      await storage.setSetting('enableGoogleAuth', String(enableGoogleAuth), 'firebase');
+      await storage.setSetting('enableFacebookAuth', String(enableFacebookAuth), 'firebase');
+      
+      res.json({
+        success: true,
+        message: 'Firebase settings updated successfully'
+      });
+    } catch (error) {
+      console.error('Error updating Firebase settings:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to update Firebase settings' 
+      });
+    }
+  });
+  
   app.post('/api/admin/settings/email/test', async (req, res) => {
     try {
       if (!req.isAuthenticated() || req.user.role !== 'admin') {

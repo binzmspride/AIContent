@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "@/hooks/use-toast";
 import {
   Form,
   FormControl,
@@ -20,6 +21,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FaFacebook, FaGoogle } from "react-icons/fa";
 import Head from "@/components/head";
+import { signInWithGoogle, signInWithFacebook } from "@/lib/firebase";
 
 // Login form schema
 const loginSchema = z.object({
@@ -105,6 +107,36 @@ export default function AuthPage() {
       fullName: data.fullName,
     });
   };
+
+  // Google OAuth handler
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast({
+        title: t("auth.login.error") || "Error",
+        description: t("auth.login.googleError") || "Failed to login with Google",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Facebook OAuth handler
+  const handleFacebookLogin = async () => {
+    try {
+      await signInWithFacebook();
+    } catch (error) {
+      console.error("Facebook login error:", error);
+      toast({
+        title: t("auth.login.error") || "Error",
+        description: t("auth.login.facebookError") || "Failed to login with Facebook",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const { toast } = useToast();
 
   return (
     <>
