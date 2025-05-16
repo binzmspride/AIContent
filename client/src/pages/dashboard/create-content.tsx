@@ -82,7 +82,6 @@ import { copyToClipboard, downloadAsFile } from "@/lib/utils";
 import Head from "@/components/head";
 
 const formSchema = z.object({
-  title: z.string().optional(),
   contentType: z.enum(["blog", "product", "news", "social"]),
   keywords: z.string().min(3, {
     message: "Từ khóa phải có ít nhất 3 ký tự.",
@@ -936,23 +935,6 @@ export default function CreateContent() {
                         </div>
                         
                         <div className="space-y-6">
-                          {/* Tiêu đề bài viết */}
-                          <FormField
-                            control={form.control}
-                            name="title"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>{t("dashboard.create.form.articleTitle")}</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="Nhập tiêu đề cho bài viết của bạn"
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
 
                           {/* Ngôn ngữ */}
                           <div className="space-y-2">
