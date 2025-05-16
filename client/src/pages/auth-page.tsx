@@ -63,13 +63,23 @@ export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<string>("login");
-
+  const [isVerified, setIsVerified] = useState(false);
+  
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
       navigate("/dashboard");
     }
   }, [user, navigate]);
+  
+  // Kiểm tra xác thực email thành công
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('verified') === 'true') {
+      setIsVerified(true);
+      // Thông báo sẽ được hiển thị ở lần render tiếp theo khi toast khả dụng
+    }
+  }, []);
 
   // Login form
   const loginForm = useForm<LoginFormValues>({
@@ -170,8 +180,8 @@ export default function AuthPage() {
     checkAuthRedirect();
   }, [t]);
 
-  const { toast } = useToast();
   const [isProcessingOAuth, setIsProcessingOAuth] = useState(false);
+  const { toast } = useToast();
   
   // Check for initialization errors on mount
   useEffect(() => {

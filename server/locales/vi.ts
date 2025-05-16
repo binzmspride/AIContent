@@ -1,4 +1,67 @@
 export const vi = {
+  // Auth
+  auth: {
+    login: {
+      title: "Đăng nhập",
+      username: "Tên đăng nhập hoặc email",
+      password: "Mật khẩu",
+      rememberMe: "Ghi nhớ đăng nhập",
+      forgotPassword: "Quên mật khẩu?",
+      loginButton: "Đăng nhập",
+      noAccount: "Chưa có tài khoản?",
+      createAccount: "Tạo tài khoản mới",
+      switchToRegister: "Đăng ký ngay"
+    },
+    register: {
+      title: "Đăng ký",
+      username: "Tên đăng nhập",
+      email: "Email",
+      password: "Mật khẩu",
+      confirmPassword: "Xác nhận mật khẩu",
+      fullName: "Họ và tên",
+      registerButton: "Đăng ký",
+      hasAccount: "Đã có tài khoản?",
+      switchToLogin: "Đăng nhập"
+    },
+    verify: {
+      title: "Xác thực tài khoản",
+      verifying: "Đang xác thực tài khoản của bạn...",
+      success: "Tài khoản của bạn đã được xác thực thành công!",
+      failure: "Không thể xác thực tài khoản của bạn.",
+      noToken: "Không tìm thấy token xác thực trong URL.",
+      unknownError: "Đã xảy ra lỗi không xác định trong quá trình xác thực.",
+      serverError: "Lỗi máy chủ khi xác thực email.",
+      loginButton: "Đăng nhập vào tài khoản",
+      backToLogin: "Quay lại trang đăng nhập"
+    },
+    forgotPassword: {
+      title: "Quên mật khẩu",
+      email: "Email",
+      submitButton: "Gửi liên kết đặt lại mật khẩu",
+      backToLogin: "Quay lại đăng nhập",
+      instructions: "Nhập email của bạn và chúng tôi sẽ gửi cho bạn một liên kết để đặt lại mật khẩu.",
+      success: "Liên kết đặt lại mật khẩu đã được gửi đến email của bạn."
+    },
+    resetPassword: {
+      title: "Đặt lại mật khẩu",
+      newPassword: "Mật khẩu mới",
+      confirmPassword: "Xác nhận mật khẩu mới",
+      submitButton: "Đặt lại mật khẩu",
+      success: "Mật khẩu của bạn đã được đặt lại thành công.",
+      error: "Đã xảy ra lỗi khi đặt lại mật khẩu.",
+      linkExpired: "Liên kết đặt lại mật khẩu đã hết hạn hoặc không hợp lệ."
+    },
+    errors: {
+      invalidCredentials: "Tên đăng nhập hoặc mật khẩu không chính xác.",
+      userNotFound: "Không tìm thấy tài khoản với email này.",
+      usernameTaken: "Tên đăng nhập đã được sử dụng.",
+      emailTaken: "Email đã được sử dụng.",
+      passwordMismatch: "Xác nhận mật khẩu không khớp.",
+      weakPassword: "Mật khẩu không đủ mạnh.",
+      serverError: "Đã xảy ra lỗi máy chủ. Vui lòng thử lại sau.",
+      invalidToken: "Token không hợp lệ hoặc đã hết hạn."
+    },
+  },
   // Time
   time: {
     day: "Ngày",
