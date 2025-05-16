@@ -29,6 +29,9 @@ export function Sidebar() {
   const { t } = useLanguage();
   const { user, logoutMutation } = useAuth();
   const [location] = useLocation();
+  
+  // Debug để kiểm tra thông tin người dùng
+  console.log("User info in Sidebar:", user);
 
   const links: SidebarLink[] = [
     {
