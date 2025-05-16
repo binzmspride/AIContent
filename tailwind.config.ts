@@ -6,8 +6,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Poppins", "Inter", "sans-serif"],
-        heading: ["Montserrat", "Inter", "sans-serif"],
+        sans: ["Roboto", "Noto Sans", "Open Sans", "Inter", "sans-serif"],
+        heading: ["Montserrat", "Roboto Slab", "Merriweather", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
       },
       borderRadius: {
