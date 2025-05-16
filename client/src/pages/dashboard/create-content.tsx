@@ -129,7 +129,7 @@ export default function CreateContent() {
   const [currentHeadingLevel, setCurrentHeadingLevel] = useState<'h2' | 'h3' | 'h4'>('h2');
   const [isContentDialogOpen, setIsContentDialogOpen] = useState(false);
   const [editedContent, setEditedContent] = useState("");
-  const [editedTitle, setEditedTitle] = useState("");
+  // Đã xóa trường tiêu đề theo yêu cầu
   
   // Khởi tạo linkItems ban đầu
   const [isLinkItemsInitialized, setIsLinkItemsInitialized] = useState(false);
@@ -216,7 +216,6 @@ export default function CreateContent() {
       }
       
       setEditedContent(data.content);
-      setEditedTitle(data.title || '');
       setIsContentDialogOpen(true);
       
       toast({
@@ -340,7 +339,7 @@ export default function CreateContent() {
         
         // Kiểm tra xem bài viết đã tồn tại chưa
         const articlePayload = {
-          title: editedTitle || generatedContent.title,
+          title: generatedContent.title || '',
           content: editedContent || generatedContent.content,
           keywords: generatedContent.keywords.join(", "),
           creditsUsed: generatedContent.creditsUsed,
@@ -459,7 +458,7 @@ export default function CreateContent() {
       // Cập nhật nội dung đã chỉnh sửa vào generatedContent
       setGeneratedContent({
         ...generatedContent,
-        title: editedTitle,
+        title: generatedContent.title,
         content: editedContent // ReactQuill trả về HTML
       });
       
@@ -1641,17 +1640,7 @@ export default function CreateContent() {
               </DialogDescription>
             </DialogHeader>
             
-            {/* Title editing */}
             <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="title">Tiêu đề</Label>
-                <Input 
-                  id="title" 
-                  value={editedTitle} 
-                  onChange={(e) => setEditedTitle(e.target.value)} 
-                  className="w-full"
-                />
-              </div>
               
               {/* Content editing with rich text editor */}
               <div className="grid gap-2">
