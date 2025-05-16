@@ -10,7 +10,8 @@ export const vi = {
       loginButton: "Đăng nhập",
       noAccount: "Chưa có tài khoản?",
       createAccount: "Tạo tài khoản mới",
-      switchToRegister: "Đăng ký ngay"
+      switchToRegister: "Đăng ký ngay",
+      verifiedSuccess: "Tài khoản của bạn đã được xác thực. Vui lòng đăng nhập để bắt đầu."
     },
     register: {
       title: "Đăng ký",

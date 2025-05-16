@@ -64,6 +64,7 @@ export default function AuthPage() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<string>("login");
   const [isVerified, setIsVerified] = useState(false);
+  const { toast } = useToast();
   
   // Redirect if already logged in
   useEffect(() => {
@@ -77,9 +78,18 @@ export default function AuthPage() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('verified') === 'true') {
       setIsVerified(true);
-      // Thông báo sẽ được hiển thị ở lần render tiếp theo khi toast khả dụng
+      
+      // Hiển thị thông báo xác thực thành công
+      toast({
+        title: t("auth.verify.success"),
+        description: t("auth.login.verifiedSuccess"),
+        variant: "default",
+      });
+      
+      // Tự động chuyển sang tab đăng nhập
+      setActiveTab("login");
     }
-  }, []);
+  }, [t, toast, setActiveTab]);
 
   // Login form
   const loginForm = useForm<LoginFormValues>({
@@ -181,7 +191,6 @@ export default function AuthPage() {
   }, [t]);
 
   const [isProcessingOAuth, setIsProcessingOAuth] = useState(false);
-  const { toast } = useToast();
   
   // Check for initialization errors on mount
   useEffect(() => {
