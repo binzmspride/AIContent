@@ -109,7 +109,7 @@ export function Sidebar() {
           ))}
           
           {/* Chỉ hiển thị menu Quản trị viên cho tài khoản có role=admin */}
-          {user?.role === "admin" && (
+          {user && typeof user === 'object' && 'role' in user && user.role === "admin" && (
             <li>
               <Link 
                 href="/admin"
