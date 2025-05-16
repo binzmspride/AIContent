@@ -178,8 +178,11 @@ export function setupAuth(app: Express) {
         });
       }
       
-      // Chuyển hướng người dùng đến trang đăng nhập với thông báo thành công
-      return res.redirect('/auth?verified=true');
+      // Trả về phản hồi thành công dưới dạng JSON
+      return res.status(200).json({
+        success: true,
+        message: "Email đã được xác thực thành công"
+      });
     } catch (error) {
       console.error("Email verification error:", error);
       return res.status(500).json({
