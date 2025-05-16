@@ -39,6 +39,9 @@ export interface IStorage {
   // Plan management
   getPlans(type?: schema.PlanType): Promise<schema.Plan[]>;
   getPlan(id: number): Promise<schema.Plan | null>;
+  createPlan(plan: schema.InsertPlan): Promise<schema.Plan>;
+  updatePlan(id: number, data: Partial<schema.Plan>): Promise<schema.Plan | null>;
+  deletePlan(id: number): Promise<boolean>;
   getUserPlans(userId: number): Promise<(schema.UserPlan & { plan: schema.Plan })[]>;
   createUserPlan(userPlan: schema.InsertUserPlan): Promise<schema.UserPlan>;
   

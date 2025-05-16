@@ -220,13 +220,149 @@ export function registerAdminRoutes(app: Express) {
       const plans = await storage.getPlans();
       return res.status(200).json({ 
         success: true, 
-        data: { plans } 
+        data: plans 
       });
     } catch (error) {
       console.error("Error getting plans:", error);
       return res.status(500).json({ 
         success: false, 
         error: "Failed to get plans" 
+      });
+    }
+  });
+  
+  // Create a new plan
+  app.post("/api/admin/plans", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const { name, description, type, price, value, duration } = req.body;
+      
+      // Basic validation
+      if (!name || !type || price === undefined || value === undefined) {
+        return res.status(400).json({
+          success: false,
+          error: "Missing required fields. Name, type, price and value are required."
+        });
+      }
+      
+      // Create plan
+      const plan = await storage.createPlan({
+        name,
+        description,
+        type,
+        price,
+        value,
+        duration
+      });
+      
+      return res.status(201).json({
+        success: true,
+        data: plan
+      });
+    } catch (error) {
+      console.error("Error creating plan:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Failed to create plan"
+      });
+    }
+  });
+  
+  // Update an existing plan
+  app.patch("/api/admin/plans/:id", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const planId = parseInt(req.params.id);
+      const { name, description, type, price, value, duration } = req.body;
+      
+      // Check if plan exists
+      const existingPlan = await storage.getPlan(planId);
+      if (!existingPlan) {
+        return res.status(404).json({
+          success: false,
+          error: "Plan not found"
+        });
+      }
+      
+      // Update plan
+      const updatedPlan = await storage.updatePlan(planId, {
+        name,
+        description,
+        type,
+        price,
+        value,
+        duration
+      });
+      
+      return res.status(200).json({
+        success: true,
+        data: updatedPlan
+      });
+    } catch (error) {
+      console.error("Error updating plan:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Failed to update plan"
+      });
+    }
+  });
+  
+  // Delete a plan
+  app.delete("/api/admin/plans/:id", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const planId = parseInt(req.params.id);
+      
+      // Check if plan exists
+      const existingPlan = await storage.getPlan(planId);
+      if (!existingPlan) {
+        return res.status(404).json({
+          success: false,
+          error: "Plan not found"
+        });
+      }
+      
+      // Check if this is the trial plan
+      const trialPlanIdSetting = await storage.getSetting('trial_plan_id');
+      if (trialPlanIdSetting && parseInt(trialPlanIdSetting) === planId) {
+        return res.status(400).json({
+          success: false,
+          error: "Cannot delete the plan that is currently set as the trial plan. Please change the trial plan first."
+        });
+      }
+      
+      // Delete plan
+      await storage.deletePlan(planId);
+      
+      return res.status(200).json({
+        success: true,
+        data: {
+          message: "Plan deleted successfully"
+        }
+      });
+    } catch (error) {
+      console.error("Error deleting plan:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Failed to delete plan"
       });
     }
   });
