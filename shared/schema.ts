@@ -9,6 +9,9 @@ export const articleStatusEnum = pgEnum('article_status', ['draft', 'published',
 export const planTypeEnum = pgEnum('plan_type', ['credit', 'storage']);
 export const connectionTypeEnum = pgEnum('connection_type', ['wordpress', 'facebook', 'tiktok', 'twitter']);
 
+// Enum types for TypeScript
+export type PlanType = 'credit' | 'storage';
+
 // Users table
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),

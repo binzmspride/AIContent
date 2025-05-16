@@ -340,7 +340,7 @@ class DatabaseStorage implements IStorage {
   async getPlans(type?: schema.PlanType): Promise<schema.Plan[]> {
     if (type) {
       return db.query.plans.findMany({
-        where: eq(schema.plans.type, type)
+        where: eq(schema.plans.type, type as any)
       });
     }
     return db.query.plans.findMany();
@@ -351,6 +351,58 @@ class DatabaseStorage implements IStorage {
       where: eq(schema.plans.id, id)
     });
     return plan || null;
+  }
+  
+  async createPlan(plan: schema.InsertPlan): Promise<schema.Plan> {
+    try {
+      const [newPlan] = await db.insert(schema.plans)
+        .values({
+          ...plan,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      return newPlan;
+    } catch (error) {
+      console.error('Error creating plan:', error);
+      throw error;
+    }
+  }
+  
+  async updatePlan(id: number, data: Partial<schema.Plan>): Promise<schema.Plan | null> {
+    try {
+      const [updatedPlan] = await db.update(schema.plans)
+        .set({
+          ...data,
+          updatedAt: new Date()
+        })
+        .where(eq(schema.plans.id, id))
+        .returning();
+      return updatedPlan || null;
+    } catch (error) {
+      console.error('Error updating plan:', error);
+      return null;
+    }
+  }
+  
+  async deletePlan(id: number): Promise<boolean> {
+    try {
+      // Check if plan is used in any user plan
+      const userPlansWithThisPlan = await db.query.userPlans.findMany({
+        where: eq(schema.userPlans.planId, id)
+      });
+      
+      if (userPlansWithThisPlan.length > 0) {
+        throw new Error('Cannot delete plan that is assigned to users');
+      }
+      
+      await db.delete(schema.plans)
+        .where(eq(schema.plans.id, id));
+      return true;
+    } catch (error) {
+      console.error('Error deleting plan:', error);
+      throw error;
+    }
   }
   
   async getUserPlans(userId: number): Promise<(schema.UserPlan & { plan: schema.Plan })[]> {
