@@ -105,15 +105,18 @@ export function Sidebar() {
             </li>
           ))}
           
-          <li>
-            <Link 
-              href="/admin"
-              className="flex items-center py-3 px-4 rounded-md text-sm font-semibold transition-colors text-white dark:text-white hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
-            >
-              <LayoutDashboard className="h-5 w-5 mr-3" />
-              {t("admin.adminPanel")}
-            </Link>
-          </li>
+          {/* Chỉ hiển thị menu Quản trị viên cho tài khoản có role=admin */}
+          {user?.role === "admin" && (
+            <li>
+              <Link 
+                href="/admin"
+                className="flex items-center py-3 px-4 rounded-md text-sm font-semibold transition-colors text-white dark:text-white hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
+              >
+                <LayoutDashboard className="h-5 w-5 mr-3" />
+                {t("admin.adminPanel")}
+              </Link>
+            </li>
+          )}
         </ul>
       </nav>
       
