@@ -21,19 +21,19 @@ export function Features() {
   const mainFeatures = [
     {
       icon: <Bot className="h-6 w-6" />,
-      color: "from-blue-500 to-indigo-600",
+      color: "from-primary to-primary-600",
       title: "Tạo nội dung AI tự động",
       description: "Hệ thống AI tiên tiến tự động phân tích và tạo nội dung chất lượng cao với giọng điệu phù hợp."
     },
     {
       icon: <Search className="h-6 w-6" />,
-      color: "from-orange-500 to-amber-600",
+      color: "from-accent to-accent-600",
       title: "Tối ưu hóa SEO chuyên sâu",
       description: "Phân tích từ khóa và tối ưu nội dung dựa trên thuật toán tìm kiếm mới nhất của Google."
     },
     {
       icon: <Share2 className="h-6 w-6" />,
-      color: "from-emerald-500 to-green-600",
+      color: "from-cyan-500 to-blue-600",
       title: "Tích hợp đa nền tảng",
       description: "Xuất bản nội dung liền mạch sang WordPress, Facebook, TikTok và các kênh khác."
     }
@@ -84,13 +84,13 @@ export function Features() {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
-          <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary-600 text-sm font-medium mb-4">
+          <div className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4 border border-primary/20 shadow-sm">
             Các tính năng nổi bật
           </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-secondary-900 to-secondary-700 bg-clip-text text-transparent font-heading">
+          <h2 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-primary-800 to-primary-600 bg-clip-text text-transparent font-heading">
             {t("landing.features.title")}
           </h2>
-          <p className="mt-4 max-w-2xl text-xl text-secondary-600 mx-auto">
+          <p className="mt-4 max-w-2xl text-xl text-primary-900/70 mx-auto">
             {t("landing.features.subtitle")}
           </p>
         </div>
@@ -129,26 +129,26 @@ export function Features() {
         </div>
 
         {/* Secondary features in a grid */}
-        <div className="bg-white rounded-3xl shadow-lg p-8 border border-gray-100">
-          <h3 className="text-2xl font-bold text-secondary-800 mb-8 text-center">
+        <div className="bg-white rounded-3xl shadow-lg p-8 border border-primary/10">
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-900 to-primary-700 bg-clip-text text-transparent mb-8 text-center font-heading">
             Tất cả những gì bạn cần để tạo nội dung chất lượng
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {additionalFeatures.map((feature, index) => (
               <div 
                 key={index} 
-                className="flex p-4 hover:bg-gray-50 rounded-xl transition-colors"
+                className="flex p-4 hover:bg-primary-50/30 rounded-xl transition-all duration-300 hover:scale-[1.02]"
               >
                 <div className="mr-4 flex-shrink-0">
-                  <div className="w-10 h-10 rounded-lg bg-primary-50 flex items-center justify-center text-primary-600">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary-700 shadow-sm">
                     {feature.icon}
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-base font-semibold text-secondary-900">
+                  <h4 className="text-base font-semibold text-primary-900">
                     {feature.title}
                   </h4>
-                  <p className="mt-1 text-sm text-secondary-600">
+                  <p className="mt-1 text-sm text-primary-700/80">
                     {feature.description}
                   </p>
                 </div>
@@ -159,14 +159,14 @@ export function Features() {
           <div className="mt-10 text-center">
             <a 
               href="#" 
-              className="inline-flex items-center text-primary-600 font-medium hover:text-primary-700"
+              className="inline-flex items-center px-5 py-2.5 rounded-full bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-all duration-300 border border-primary/20 hover:shadow-md"
               onClick={(e) => {
                 e.preventDefault();
                 document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
               Khám phá tất cả tính năng 
-              <svg className="ml-1 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </a>
