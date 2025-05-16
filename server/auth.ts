@@ -67,11 +67,11 @@ export function setupAuth(app: Express) {
           return done(null, false, { message: 'Tên đăng nhập hoặc mật khẩu không chính xác' });
         }
         
-        // Kiểm tra tài khoản đã xác thực email chưa (trừ tài khoản admin)
-        if (user.role !== 'admin' && !user.isVerified) {
-          console.log(`User not verified: ${user.username}`);
-          return done(null, false, { message: 'Tài khoản chưa được xác thực. Vui lòng kiểm tra email để xác thực tài khoản.' });
-        }
+        // Tạm thời bỏ qua kiểm tra xác thực email
+        // if (user.role !== 'admin' && !user.isVerified) {
+        //   console.log(`User not verified: ${user.username}`);
+        //   return done(null, false, { message: 'Tài khoản chưa được xác thực. Vui lòng kiểm tra email để xác thực tài khoản.' });
+        // }
         
         console.log(`User found: ${user.username}, checking password...`);
         
@@ -147,10 +147,29 @@ export function setupAuth(app: Express) {
 
       // Trả về thành công nhưng không đăng nhập tự động
       // Người dùng cần xác thực email trước
-      return res.status(201).json({
-        success: true,
-        message: "Đăng ký thành công. Vui lòng kiểm tra email của bạn để xác thực tài khoản."
-      });
+      // Tự động xác thực tài khoản ngay khi đăng ký thành công (tính năng tạm thời)
+      if (result.user) {
+        await storage.updateUser(result.user.id, {
+          isVerified: true,
+          verificationToken: null,
+          verificationTokenExpiry: null
+        });
+        
+        // Đăng nhập người dùng ngay sau khi đăng ký
+        req.login(result.user, (err) => {
+          if (err) return next(err);
+          return res.status(201).json({
+            success: true,
+            message: "Đăng ký thành công. Bạn đã được đăng nhập tự động.",
+            data: result.user
+          });
+        });
+      } else {
+        return res.status(201).json({
+          success: true,
+          message: "Đăng ký thành công."
+        });
+      }
     } catch (error) {
       console.error("Registration error:", error);
       next(error);
