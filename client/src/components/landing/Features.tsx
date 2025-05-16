@@ -11,165 +11,264 @@ import {
   Globe,
   Zap,
   FileText,
-  CheckCircle2
+  CheckCircle2,
+  LucideIcon,
+  Newspaper,
+  BarChart4,
+  LayoutTemplate,
+  MessageSquare,
+  Megaphone,
+  Hash,
+  ArrowRight,
+  Code
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+interface FeatureCardProps {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  iconColor: string;
+  bgColor: string;
+  index: number;
+}
+
+function FeatureCard({ title, description, icon: Icon, iconColor, bgColor, index }: FeatureCardProps) {
+  return (
+    <div className={cn(
+      "rounded-xl p-8 h-full",
+      "border border-gray-200 dark:border-gray-700",
+      "bg-white dark:bg-gray-800/50",
+      "transition-all duration-300 hover:shadow-lg",
+      "hover:-translate-y-1",
+    )}>
+      <div className={cn(
+        "w-14 h-14 rounded-xl flex items-center justify-center mb-6",
+        bgColor
+      )}>
+        <Icon className={cn("h-7 w-7", iconColor)} />
+      </div>
+      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+        {title}
+      </h3>
+      <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+        {description}
+      </p>
+      <div className="border-t border-gray-100 dark:border-gray-700 pt-4">
+        <div className="flex items-start text-sm text-gray-600 dark:text-gray-300">
+          <span className="font-medium">Lợi ích nổi bật:</span>
+        </div>
+        <ul className="mt-2 space-y-2">
+          {[1, 2, 3].map(i => (
+            <li key={i} className="flex items-start text-sm">
+              <CheckCircle2 className="h-4 w-4 text-green-500 dark:text-green-400 mr-2 mt-0.5 flex-shrink-0" />
+              <span className="text-gray-600 dark:text-gray-300">
+                {
+                  index === 0 ? [
+                    "Tiết kiệm thời gian soạn thảo",
+                    "Tăng chất lượng nội dung",
+                    "Tự động đề xuất cải thiện"
+                  ][i-1] :
+                  index === 1 ? [
+                    "Cải thiện thứ hạng trên Google",
+                    "Phân tích đối thủ cạnh tranh",
+                    "Đề xuất từ khóa tối ưu"
+                  ][i-1] :
+                  [
+                    "Xuất bản với 1 click",
+                    "Quản lý nội dung tập trung",
+                    "Phân tích hiệu suất đăng bài"
+                  ][i-1]
+                }
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
 
 export function Features() {
   const { t } = useLanguage();
   
   const mainFeatures = [
     {
-      icon: <Bot className="h-6 w-6" />,
-      color: "from-primary to-primary-600",
+      icon: Bot,
+      iconColor: "text-blue-50 dark:text-blue-100",
+      bgColor: "bg-gradient-to-br from-blue-500 to-indigo-600",
       title: "Tạo nội dung AI tự động",
-      description: "Hệ thống AI tiên tiến tự động phân tích và tạo nội dung chất lượng cao với giọng điệu phù hợp."
+      description: "Hệ thống AI tiên tiến tự động phân tích và tạo nội dung chất lượng cao với giọng điệu phù hợp cho mọi ngành nghề."
     },
     {
-      icon: <Search className="h-6 w-6" />,
-      color: "from-accent to-accent-600",
+      icon: Search,
+      iconColor: "text-amber-50 dark:text-amber-100",
+      bgColor: "bg-gradient-to-br from-amber-500 to-orange-600", 
       title: "Tối ưu hóa SEO chuyên sâu",
-      description: "Phân tích từ khóa và tối ưu nội dung dựa trên thuật toán tìm kiếm mới nhất của Google."
+      description: "Phân tích từ khóa và tối ưu nội dung dựa trên thuật toán tìm kiếm mới nhất của Google để tăng thứ hạng trang web."
     },
     {
-      icon: <Share2 className="h-6 w-6" />,
-      color: "from-cyan-500 to-blue-600",
+      icon: Share2,
+      iconColor: "text-emerald-50 dark:text-emerald-100",
+      bgColor: "bg-gradient-to-br from-emerald-500 to-teal-600",
       title: "Tích hợp đa nền tảng",
-      description: "Xuất bản nội dung liền mạch sang WordPress, Facebook, TikTok và các kênh khác."
+      description: "Xuất bản nội dung liền mạch sang WordPress, Facebook, TikTok và các kênh xã hội khác chỉ với vài cú nhấp chuột."
     }
   ];
 
-  const additionalFeatures = [
+  const categories = [
     {
-      icon: <TrendingUp className="h-5 w-5" />,
-      title: "Phân tích hiệu suất",
-      description: "Theo dõi hiệu suất nội dung với các số liệu và phân tích thời gian thực."
+      title: "Tạo nội dung",
+      features: [
+        {
+          icon: Newspaper,
+          title: "Bài viết blog",
+          description: "Tạo bài viết blog chuyên nghiệp với cấu trúc tối ưu SEO"
+        },
+        {
+          icon: Megaphone,
+          title: "Nội dung mạng xã hội",
+          description: "Tạo nội dung hấp dẫn cho Facebook, Instagram và TikTok"
+        },
+        {
+          icon: MessageSquare,
+          title: "Email marketing",
+          description: "Tạo email chiến dịch chuyên nghiệp với tỷ lệ mở cao"
+        }
+      ]
     },
     {
-      icon: <Languages className="h-5 w-5" />,
-      title: "Hỗ trợ đa ngôn ngữ",
-      description: "Tạo nội dung bằng tiếng Việt và nhiều ngôn ngữ khác với độ chính xác cao."
+      title: "Tối ưu & Phân tích",
+      features: [
+        {
+          icon: Hash,
+          title: "Nghiên cứu từ khóa",
+          description: "Phân tích và đề xuất từ khóa có tiềm năng chuyển đổi cao"
+        },
+        {
+          icon: BarChart4,
+          title: "Phân tích hiệu suất",
+          description: "Theo dõi và phân tích hiệu quả của nội dung theo thời gian thực"
+        },
+        {
+          icon: Code,
+          title: "Tối ưu kỹ thuật",
+          description: "Tự động tối ưu cấu trúc và thẻ meta để tăng điểm SEO kỹ thuật"
+        }
+      ]
     },
     {
-      icon: <PanelTop className="h-5 w-5" />,
-      title: "Bảng điều khiển trực quan",
-      description: "Quản lý tất cả nội dung của bạn từ một giao diện người dùng đơn giản và trực quan."
-    },
-    {
-      icon: <FileText className="h-5 w-5" />,
-      title: "Thiết kế dựa trên mẫu",
-      description: "Đa dạng mẫu nội dung cho blog, bài đăng mạng xã hội và các định dạng khác."
-    },
-    {
-      icon: <Zap className="h-5 w-5" />,
-      title: "Tạo nội dung nhanh chóng",
-      description: "Tạo bài viết chỉ trong vài phút thay vì nhiều giờ soạn thảo thủ công."
-    },
-    {
-      icon: <Globe className="h-5 w-5" />,
-      title: "Kiểm tra toàn cầu",
-      description: "Kiểm tra nội dung cho các thị trường quốc tế với phân tích văn hóa cụ thể."
+      title: "Quản lý & Xuất bản",
+      features: [
+        {
+          icon: LayoutTemplate,
+          title: "Thư viện mẫu",
+          description: "Truy cập thư viện đa dạng mẫu nội dung chuyên nghiệp"
+        },
+        {
+          icon: Globe,
+          title: "Hỗ trợ đa ngôn ngữ",
+          description: "Tạo và tối ưu nội dung cho nhiều thị trường ngôn ngữ khác nhau"
+        },
+        {
+          icon: PanelTop,
+          title: "Bảng điều khiển",
+          description: "Quản lý tất cả nội dung và lịch xuất bản từ một giao diện"
+        }
+      ]
     }
   ];
 
   return (
-    <div id="features" className="py-20 bg-gradient-to-b from-white to-gray-50 overflow-hidden relative">
+    <div id="features" className="py-24 overflow-hidden bg-gray-50 dark:bg-gray-900">
       {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
-        <div className="absolute -right-5 -top-5 w-24 h-24 bg-primary/10 rounded-full"></div>
-        <div className="absolute left-1/4 top-1/3 w-36 h-36 bg-accent/5 rounded-full"></div>
-        <div className="absolute right-1/3 bottom-1/4 w-48 h-48 bg-primary/5 rounded-full"></div>
-        <div className="absolute -left-10 bottom-10 w-24 h-24 bg-secondary/10 rounded-full"></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute right-0 top-1/4 w-1/2 h-1/2 bg-gradient-radial from-primary/5 to-transparent rounded-full"></div>
+        <div className="absolute left-0 bottom-1/4 w-1/2 h-1/2 bg-gradient-radial from-accent/5 to-transparent rounded-full"></div>
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
-          <div className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4 border border-primary/20 shadow-sm">
-            Các tính năng nổi bật
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4 border border-primary/20 shadow-sm">
+            <Zap className="w-4 h-4 mr-2" />
+            Tính năng mạnh mẽ
           </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-primary-800 to-primary-600 bg-clip-text text-transparent font-heading">
+          
+          <h2 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-primary-800 to-primary-600 dark:from-primary-400 dark:to-primary-300 bg-clip-text text-transparent font-heading mb-4">
             {t("landing.features.title")}
           </h2>
-          <p className="mt-4 max-w-2xl text-xl text-primary-900/70 mx-auto">
+          
+          <p className="mt-4 max-w-2xl text-lg text-gray-600 dark:text-gray-300 mx-auto">
             {t("landing.features.subtitle")}
           </p>
         </div>
 
         {/* Main features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
           {mainFeatures.map((feature, index) => (
-            <div 
-              key={index} 
-              className="bg-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 group hover:-translate-y-1"
-            >
-              <div className={cn(
-                "w-14 h-14 rounded-xl mb-6 flex items-center justify-center bg-gradient-to-br text-white",
-                feature.color
-              )}>
-                {feature.icon}
-              </div>
-              <h3 className="text-xl font-bold text-secondary-900 group-hover:text-primary-600 transition-colors">
-                {feature.title}
-              </h3>
-              <p className="mt-3 text-secondary-600 leading-relaxed">
-                {feature.description}
-              </p>
-              <div className="mt-6 pt-4 border-t border-gray-100">
-                <ul className="space-y-2">
-                  {[1, 2, 3].map(i => (
-                    <li key={i} className="flex items-start text-sm">
-                      <CheckCircle2 className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-600">Tính năng mẫu {index+1}.{i}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+            <FeatureCard 
+              key={index}
+              title={feature.title}
+              description={feature.description}
+              icon={feature.icon}
+              iconColor={feature.iconColor}
+              bgColor={feature.bgColor}
+              index={index}
+            />
           ))}
         </div>
 
-        {/* Secondary features in a grid */}
-        <div className="bg-white rounded-3xl shadow-lg p-8 border border-primary/10">
-          <h3 className="text-2xl font-bold bg-gradient-to-r from-primary-900 to-primary-700 bg-clip-text text-transparent mb-8 text-center font-heading">
-            Tất cả những gì bạn cần để tạo nội dung chất lượng
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {additionalFeatures.map((feature, index) => (
-              <div 
-                key={index} 
-                className="flex p-4 hover:bg-primary-50/30 rounded-xl transition-all duration-300 hover:scale-[1.02]"
-              >
-                <div className="mr-4 flex-shrink-0">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center text-primary-700 shadow-sm">
-                    {feature.icon}
+        {/* Categorized features */}
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="p-8 md:p-10">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">
+              Tất cả những gì bạn cần để tạo nội dung tuyệt vời
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+              Công cụ toàn diện giúp bạn tạo, tối ưu và xuất bản nội dung chất lượng cao trên mọi nền tảng
+            </p>
+            
+            <div className="space-y-16">
+              {categories.map((category, idx) => (
+                <div key={idx}>
+                  <h4 className="text-lg font-semibold text-primary dark:text-primary-400 mb-6 border-b border-gray-100 dark:border-gray-700 pb-2">
+                    {category.title}
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {category.features.map((feature, featureIdx) => (
+                      <div 
+                        key={featureIdx} 
+                        className="p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-300 hover:border-primary/30 hover:-translate-y-1"
+                      >
+                        <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 text-primary dark:text-primary-400">
+                          <feature.icon className="w-6 h-6" />
+                        </div>
+                        <h5 className="font-semibold text-gray-900 dark:text-white mb-2">
+                          {feature.title}
+                        </h5>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                          {feature.description}
+                        </p>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div>
-                  <h4 className="text-base font-semibold text-primary-900">
-                    {feature.title}
-                  </h4>
-                  <p className="mt-1 text-sm text-primary-700/80">
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="mt-10 text-center">
-            <a 
-              href="#" 
-              className="inline-flex items-center px-5 py-2.5 rounded-full bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-all duration-300 border border-primary/20 hover:shadow-md"
-              onClick={(e) => {
-                e.preventDefault();
-                document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              Khám phá tất cả tính năng 
-              <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </a>
+              ))}
+            </div>
+            
+            <div className="mt-16 flex justify-center">
+              <a 
+                href="#pricing" 
+                className="inline-flex items-center px-6 py-3 rounded-full bg-primary/10 text-primary dark:bg-primary-900/30 dark:text-primary-400 font-medium hover:bg-primary/20 dark:hover:bg-primary-900/50 transition-all duration-300 border border-primary/20 dark:border-primary-800/50 hover:shadow-md group"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Xem các gói dịch vụ 
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </a>
+            </div>
           </div>
         </div>
       </div>
