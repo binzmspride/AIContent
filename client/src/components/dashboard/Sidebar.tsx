@@ -30,8 +30,13 @@ export function Sidebar() {
   const { user, logoutMutation } = useAuth();
   const [location] = useLocation();
   
+  // Lấy thông tin người dùng từ user object
+  // Phát hiện nếu user là một đối tượng có data trong nó (từ API response)
+  const userData = user && typeof user === 'object' && 'data' in user ? user.data : user;
+  
   // Debug để kiểm tra thông tin người dùng
   console.log("User info in Sidebar:", user);
+  console.log("Extracted userData:", userData);
 
   const links: SidebarLink[] = [
     {
@@ -108,18 +113,36 @@ export function Sidebar() {
             </li>
           ))}
           
-          {/* Chỉ hiển thị menu Quản trị viên cho tài khoản có role=admin */}
-          {user && typeof user === 'object' && 'role' in user && user.role === "admin" && (
-            <li>
-              <Link 
-                href="/admin"
-                className="flex items-center py-3 px-4 rounded-md text-sm font-semibold transition-colors text-white dark:text-white hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
-              >
-                <LayoutDashboard className="h-5 w-5 mr-3" />
-                {t("admin.adminPanel")}
-              </Link>
-            </li>
-          )}
+          {/* Tạo thủ công một component Link đến trang Admin dựa vào role */}
+          {(() => {
+            // Kiểm tra nếu user có tồn tại và có role là admin
+            const isAdmin = 
+              user && 
+              typeof user === 'object' && 
+              'role' in user && 
+              user.role === "admin";
+            
+            // Log thông tin để debug
+            console.log("Is admin?", isAdmin, "User role:", user?.role);
+            
+            // Chỉ hiện menu quản trị cho admin
+            if (isAdmin) {
+              return (
+                <li>
+                  <Link 
+                    href="/admin"
+                    className="flex items-center py-3 px-4 rounded-md text-sm font-semibold transition-colors text-white dark:text-white hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
+                  >
+                    <LayoutDashboard className="h-5 w-5 mr-3" />
+                    {t("admin.adminPanel")}
+                  </Link>
+                </li>
+              );
+            }
+            
+            // Không trả về gì nếu không phải admin
+            return null;
+          })()}
         </ul>
       </nav>
       
