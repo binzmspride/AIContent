@@ -7,7 +7,7 @@ export interface ApiResponse<T> {
 
 // Content generation types
 export interface GenerateContentRequest {
-  title: string;
+  title?: string; // Không bắt buộc nhập tiêu đề
   contentType: 'blog' | 'product' | 'news' | 'social';
   keywords: string;
   length: 'short' | 'medium' | 'long' | 'extra_long';

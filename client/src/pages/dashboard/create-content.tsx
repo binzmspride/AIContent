@@ -137,7 +137,6 @@ export default function CreateContent() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
       contentType: "blog",
       keywords: "",
       length: "medium",
@@ -271,7 +270,7 @@ export default function CreateContent() {
       
     // Convert form data to GenerateContentRequest format
     const requestData: GenerateContentRequest = {
-      title: data.title || '',
+      title: '', // Không dùng tiêu đề từ form nữa
       contentType: data.contentType || 'blog',
       keywords: data.keywords,
       length: data.length,
