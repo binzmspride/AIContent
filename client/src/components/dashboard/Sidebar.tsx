@@ -117,13 +117,13 @@ export function Sidebar() {
           {(() => {
             // Kiểm tra nếu user có tồn tại và có role là admin
             const isAdmin = 
-              user && 
-              typeof user === 'object' && 
-              'role' in user && 
-              user.role === "admin";
+              userData && 
+              typeof userData === 'object' && 
+              'role' in userData && 
+              userData.role === "admin";
             
             // Log thông tin để debug
-            console.log("Is admin?", isAdmin, "User role:", user?.role);
+            console.log("Is admin?", isAdmin, "User role:", userData?.role);
             
             // Chỉ hiện menu quản trị cho admin
             if (isAdmin) {
