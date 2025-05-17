@@ -149,30 +149,28 @@ export function Pricing() {
         {/* Plan selection tabs */}
         <div className="flex justify-center mb-12">
           <div className="bg-white dark:bg-gray-800 p-1 rounded-full shadow-lg inline-flex border border-gray-200 dark:border-gray-700">
-            <Button
-              variant="ghost"
+            <button
               onClick={() => setActiveTab('credit')}
               className={cn(
                 "px-8 py-3 rounded-full text-sm font-medium transition-all duration-200",
                 activeTab === 'credit' 
-                  ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-lg" 
-                  : "text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                  ? "bg-indigo-500 text-white shadow-lg" 
+                  : "bg-transparent text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
               )}
             >
               {t("landing.pricing.creditPlans")}
-            </Button>
-            <Button
-              variant="ghost"
+            </button>
+            <button
               onClick={() => setActiveTab('storage')}
               className={cn(
                 "px-8 py-3 rounded-full text-sm font-medium transition-all duration-200",
                 activeTab === 'storage' 
-                  ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg" 
-                  : "text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400"
+                  ? "bg-amber-500 text-white shadow-lg" 
+                  : "bg-transparent text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400"
               )}
             >
               {t("landing.pricing.storagePlans")}
-            </Button>
+            </button>
           </div>
         </div>
 
@@ -258,21 +256,20 @@ export function Pricing() {
                     ? `bg-gradient-to-r ${pkg.gradient} group-hover:shadow-lg`
                     : "bg-gray-50 dark:bg-gray-800/50"
                 )}>
-                  <Link href="/auth">
-                    <Button
-                      className={cn(
-                        "w-full py-6 rounded-xl text-base font-medium transition-all duration-300",
-                        pkg.isPopular
-                          ? "bg-white text-gray-900 hover:bg-gray-100"
-                          : `bg-gradient-to-r ${pkg.gradient} text-white hover:opacity-90`
-                      )}
-                    >
-                      {activeTab === 'credit' 
-                        ? t("landing.pricing.buyNow")
-                        : t("landing.pricing.subscribe")
-                      }
-                    </Button>
-                  </Link>
+                  <div 
+                    onClick={() => window.location.href = '/auth'}
+                    className={cn(
+                      "block w-full py-4 rounded-xl text-base font-medium text-center transition-all duration-300 cursor-pointer",
+                      pkg.isPopular
+                        ? "bg-white text-gray-900 hover:bg-gray-100"
+                        : `bg-gradient-to-r ${pkg.gradient} text-white hover:opacity-90`
+                    )}
+                  >
+                    {activeTab === 'credit' 
+                      ? t("landing.pricing.buyNow")
+                      : t("landing.pricing.subscribe")
+                    }
+                  </div>
                 </div>
               </div>
             </div>
