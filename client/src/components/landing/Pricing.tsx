@@ -1,6 +1,6 @@
 import { useLanguage } from "@/hooks/use-language";
 import { Button } from "@/components/ui/button";
-import { Check, Zap, Server, Crown, Sparkles, Star, Shield, Database, Award, Users, Clock } from "lucide-react";
+import { Check, CheckCircle, Zap, Server, Crown, Sparkles, Star, Shield, Database, Award, BarChart4 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "wouter";
 import { cn } from "@/lib/utils";
@@ -11,9 +11,9 @@ type PackageInfo = {
   icon: React.ReactNode;
   features: string[];
   isPopular: boolean;
-  color: string;
+  gradient: string;
+  badge?: string;
   period?: string;
-  highlightFeature?: string;
 };
 
 export function Pricing() {
@@ -24,8 +24,7 @@ export function Pricing() {
     {
       name: t("landing.pricing.packages.basic"),
       price: 500000,
-      icon: <Zap className="h-6 w-6" />,
-      highlightFeature: "50 credits",
+      icon: <Zap className="h-7 w-7 text-white" />,
       features: [
         `50 ${t("landing.pricing.features.credits")}`,
         `~1000 ${t("landing.pricing.features.wordsPerCredit")}`,
@@ -33,13 +32,13 @@ export function Pricing() {
         `${t("landing.pricing.features.support")} (${t("landing.pricing.features.supportEmail")})`
       ],
       isPopular: false,
-      color: "blue"
+      gradient: "from-blue-500 to-blue-600"
     },
     {
       name: t("landing.pricing.packages.advanced"),
       price: 900000,
-      icon: <Sparkles className="h-6 w-6" />,
-      highlightFeature: "100 credits",
+      icon: <Sparkles className="h-7 w-7 text-white" />,
+      badge: "Phổ biến nhất",
       features: [
         `100 ${t("landing.pricing.features.credits")}`,
         `~1500 ${t("landing.pricing.features.wordsPerCredit")}`,
@@ -48,13 +47,12 @@ export function Pricing() {
         `10% ${t("landing.pricing.features.saving")}`
       ],
       isPopular: true,
-      color: "accent"
+      gradient: "from-primary-500 to-primary-600"
     },
     {
       name: t("landing.pricing.packages.professional"),
       price: 2000000,
-      icon: <Crown className="h-6 w-6" />,
-      highlightFeature: "250 credits",
+      icon: <Crown className="h-7 w-7 text-white" />,
       features: [
         `250 ${t("landing.pricing.features.credits")}`,
         `~2000 ${t("landing.pricing.features.wordsPerCredit")}`,
@@ -63,7 +61,7 @@ export function Pricing() {
         `20% ${t("landing.pricing.features.saving")}`
       ],
       isPopular: false,
-      color: "purple"
+      gradient: "from-purple-500 to-purple-600"
     }
   ];
 
@@ -72,8 +70,7 @@ export function Pricing() {
       name: t("landing.pricing.packages.storageBasic"),
       price: 200000,
       period: "month",
-      icon: <Database className="h-6 w-6" />,
-      highlightFeature: "5GB storage",
+      icon: <Database className="h-7 w-7 text-white" />,
       features: [
         `50 ${t("landing.pricing.features.maxArticles")}`,
         `5GB ${t("landing.pricing.features.storage")}`,
@@ -81,14 +78,14 @@ export function Pricing() {
         `1 ${t("landing.pricing.features.wpConnections")}`
       ],
       isPopular: false,
-      color: "blue"
+      gradient: "from-blue-500 to-blue-600"
     },
     {
       name: t("landing.pricing.packages.storageBusiness"),
       price: 500000,
       period: "month",
-      icon: <Award className="h-6 w-6" />,
-      highlightFeature: "20GB storage",
+      icon: <BarChart4 className="h-7 w-7 text-white" />,
+      badge: "Phổ biến nhất",
       features: [
         `200 ${t("landing.pricing.features.maxArticles")}`,
         `20GB ${t("landing.pricing.features.storage")}`,
@@ -97,14 +94,13 @@ export function Pricing() {
         `${t("landing.pricing.features.socialConnect")}`
       ],
       isPopular: true,
-      color: "violet"
+      gradient: "from-emerald-500 to-emerald-600"
     },
     {
       name: t("landing.pricing.packages.storageEnterprise"),
       price: 1000000,
       period: "month",
-      icon: <Shield className="h-6 w-6" />,
-      highlightFeature: "Unlimited articles",
+      icon: <Shield className="h-7 w-7 text-white" />,
       features: [
         `${t("landing.pricing.features.maxArticles")} (unlimited)`,
         `50GB ${t("landing.pricing.features.storage")}`,
@@ -114,7 +110,7 @@ export function Pricing() {
         `${t("landing.pricing.features.apiAccess")}`
       ],
       isPopular: false,
-      color: "purple"
+      gradient: "from-purple-500 to-purple-600"
     }
   ];
 
@@ -126,275 +122,149 @@ export function Pricing() {
     }).format(amount);
   };
 
-  function getIconBgColor(color: string) {
-    switch(color) {
-      case 'blue': return "bg-gradient-to-br from-blue-500 to-blue-600";
-      case 'accent': return "bg-gradient-to-br from-accent to-accent-600";
-      case 'violet': return "bg-gradient-to-br from-violet-500 to-violet-600";
-      case 'purple': return "bg-gradient-to-br from-purple-500 to-purple-600";
-      default: return "bg-gradient-to-br from-blue-500 to-blue-600";
-    }
-  }
-
   return (
-    <div id="pricing" className="py-24 bg-gray-50 dark:bg-gray-900 overflow-hidden relative">
+    <div id="pricing" className="py-24 bg-gradient-to-b from-slate-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden relative">
       {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
-        <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/5 to-transparent"></div>
-        <div className="absolute left-0 top-1/4 w-64 h-64 bg-gradient-radial from-primary/10 to-transparent rounded-full"></div>
-        <div className="absolute right-0 bottom-1/4 w-64 h-64 bg-gradient-radial from-accent/10 to-transparent rounded-full"></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-48 -right-48 w-96 h-96 rounded-full bg-gradient-to-b from-primary/10 to-transparent blur-3xl opacity-70"></div>
+        <div className="absolute -bottom-48 -left-48 w-96 h-96 rounded-full bg-gradient-to-b from-blue-500/10 to-transparent blur-3xl opacity-70"></div>
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary dark:bg-primary-900/30 dark:text-primary-400 text-sm font-medium mb-4 border border-primary/20 dark:border-primary-800/50">
+          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-50 to-blue-50 dark:from-primary-900/30 dark:to-blue-900/30 text-primary dark:text-primary-400 text-sm font-medium mb-6 border border-primary/20 dark:border-primary-800/50">
             <Star className="w-4 h-4 mr-2" />
-            Gói dịch vụ linh hoạt
+            Bảng giá linh hoạt
           </div>
           
-          <h2 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-primary-800 to-primary-600 dark:from-primary-400 dark:to-primary-300 bg-clip-text text-transparent font-heading mb-4">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white font-heading mb-6">
             {t("landing.pricing.title")}
           </h2>
           
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-300">
+          <p className="mt-4 text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             {t("landing.pricing.subtitle")}
           </p>
         </div>
 
-        {/* Comparison grid for larger screens */}
-        <div className="hidden lg:block mb-16">
-          <div className="grid grid-cols-4 gap-4 rounded-xl overflow-hidden bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700">
-            {/* Header row */}
-            <div className="bg-gray-100 dark:bg-gray-800/80 p-6">
-              <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300">Tính năng</h3>
-            </div>
-            
-            {/* Package headers */}
-            {creditPackages.map((pkg, index) => (
-              <div 
-                key={index} 
-                className={cn(
-                  "p-6 text-center border-b border-gray-200 dark:border-gray-700",
-                  pkg.isPopular ? "bg-primary-50 dark:bg-primary-900/20" : "bg-gray-100 dark:bg-gray-800/80"
-                )}
-              >
-                {pkg.isPopular && (
-                  <div className="mb-3 text-center">
-                    <span className="inline-block px-3 py-1 bg-primary text-white text-xs font-medium rounded-full">
-                      Phổ biến nhất
-                    </span>
-                  </div>
-                )}
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{pkg.name}</h3>
-                <div className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
-                  {formatCurrency(pkg.price)}
-                </div>
-                <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  Thanh toán một lần
-                </div>
-              </div>
-            ))}
-            
-            {/* Credits row */}
-            <div className="p-6 border-t border-gray-200 dark:border-gray-700 col-span-1 bg-white dark:bg-gray-800">
-              <div className="flex items-center">
-                <Users className="h-5 w-5 text-gray-400" />
-                <span className="ml-3 text-gray-700 dark:text-gray-300">Credits</span>
-              </div>
-            </div>
-            
-            {creditPackages.map((pkg, index) => (
-              <div 
-                key={index} 
-                className={cn(
-                  "p-6 text-center border-t border-gray-200 dark:border-gray-700",
-                  pkg.isPopular ? "bg-primary-50/50 dark:bg-primary-900/10" : "bg-white dark:bg-gray-800"
-                )}
-              >
-                <div className="font-medium text-gray-900 dark:text-white">
-                  {pkg.features[0].split(' ')[0]} credits
-                </div>
-              </div>
-            ))}
-            
-            {/* Words per credit row */}
-            <div className="p-6 border-t border-gray-200 dark:border-gray-700 col-span-1 bg-white dark:bg-gray-800">
-              <div className="flex items-center">
-                <Star className="h-5 w-5 text-gray-400" />
-                <span className="ml-3 text-gray-700 dark:text-gray-300">Words per credit</span>
-              </div>
-            </div>
-            
-            {creditPackages.map((pkg, index) => (
-              <div 
-                key={index} 
-                className={cn(
-                  "p-6 text-center border-t border-gray-200 dark:border-gray-700",
-                  pkg.isPopular ? "bg-primary-50/50 dark:bg-primary-900/10" : "bg-white dark:bg-gray-800"
-                )}
-              >
-                <div className="font-medium text-gray-900 dark:text-white">
-                  {pkg.features[1].split('~')[1].split(' ')[0]}
-                </div>
-              </div>
-            ))}
-            
-            {/* SEO row */}
-            <div className="p-6 border-t border-gray-200 dark:border-gray-700 col-span-1 bg-white dark:bg-gray-800">
-              <div className="flex items-center">
-                <Clock className="h-5 w-5 text-gray-400" />
-                <span className="ml-3 text-gray-700 dark:text-gray-300">SEO Optimization</span>
-              </div>
-            </div>
-            
-            {creditPackages.map((pkg, index) => (
-              <div 
-                key={index} 
-                className={cn(
-                  "p-6 text-center border-t border-gray-200 dark:border-gray-700",
-                  pkg.isPopular ? "bg-primary-50/50 dark:bg-primary-900/10" : "bg-white dark:bg-gray-800"
-                )}
-              >
-                <div className="font-medium text-gray-900 dark:text-white">
-                  {pkg.features[2].includes('+') ? (
-                    <span className="text-green-600 dark:text-green-400">{pkg.features[2].split(" ").pop()}</span>
-                  ) : (
-                    <Check className="h-5 w-5 text-green-600 dark:text-green-400 mx-auto" />
-                  )}
-                </div>
-              </div>
-            ))}
-            
-            {/* Action row */}
-            <div className="p-6 col-span-1 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-            </div>
-            
-            {creditPackages.map((pkg, index) => (
-              <div 
-                key={index} 
-                className={cn(
-                  "p-6 border-t border-gray-200 dark:border-gray-700",
-                  pkg.isPopular ? "bg-primary-50/50 dark:bg-primary-900/10" : "bg-white dark:bg-gray-800"
-                )}
-              >
-                <Link href="/auth">
-                  <Button
-                    className={cn(
-                      "w-full py-2 shadow-sm transition-all duration-300",
-                      pkg.isPopular 
-                        ? "bg-primary hover:bg-primary/90" 
-                        : "bg-white text-primary border border-primary hover:bg-primary/10"
-                    )}
-                  >
-                    {pkg.isPopular ? "Mua ngay" : "Chọn gói"}
-                  </Button>
-                </Link>
-              </div>
-            ))}
+        {/* Plan selection tabs */}
+        <div className="flex justify-center mb-12">
+          <div className="bg-white dark:bg-gray-800 p-1 rounded-full shadow-lg inline-flex border border-gray-200 dark:border-gray-700">
+            <Button
+              variant="ghost"
+              onClick={() => setActiveTab('credit')}
+              className={cn(
+                "px-8 py-3 rounded-full text-sm font-medium transition-all duration-200",
+                activeTab === 'credit' 
+                  ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg" 
+                  : "text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary-400"
+              )}
+            >
+              {t("landing.pricing.creditPlans")}
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => setActiveTab('storage')}
+              className={cn(
+                "px-8 py-3 rounded-full text-sm font-medium transition-all duration-200",
+                activeTab === 'storage' 
+                  ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg" 
+                  : "text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary-400"
+              )}
+            >
+              {t("landing.pricing.storagePlans")}
+            </Button>
           </div>
         </div>
 
-        {/* Plan selection tabs */}
-        <div className="lg:hidden">
-          <div className="flex justify-center mb-12">
-            <div className="bg-white dark:bg-gray-800 p-1 rounded-full shadow-md inline-flex">
-              <Button
-                variant="ghost"
-                onClick={() => setActiveTab('credit')}
-                className={cn(
-                  "px-6 py-2 rounded-full text-sm font-medium transition-all duration-200",
-                  activeTab === 'credit' 
-                    ? "bg-primary text-white shadow-md" 
-                    : "text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-400"
-                )}
-              >
-                {t("landing.pricing.creditPlans")}
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => setActiveTab('storage')}
-                className={cn(
-                  "px-6 py-2 rounded-full text-sm font-medium transition-all duration-200",
-                  activeTab === 'storage' 
-                    ? "bg-primary text-white shadow-md" 
-                    : "text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-400"
-                )}
-              >
-                {t("landing.pricing.storagePlans")}
-              </Button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3 mt-8">
-            {(activeTab === 'credit' ? creditPackages : storagePackages).map((pkg: PackageInfo, index) => (
-              <div
-                key={index}
-                className={cn(
-                  "bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1",
-                  pkg.isPopular 
-                    ? "ring-2 ring-primary dark:ring-primary-400 border-0 md:scale-105 relative z-10" 
-                    : "border border-gray-200 dark:border-gray-700"
-                )}
-              >
-                {pkg.isPopular && (
-                  <div className="absolute -top-4 inset-x-0 mx-auto w-max bg-primary dark:bg-primary-600 text-white text-xs font-bold py-1 px-4 rounded-full shadow-md">
-                    {t("landing.pricing.popular")}
-                  </div>
-                )}
-                
-                <div className="p-8">
-                  {/* Icon and header */}
-                  <div className="mb-8 flex flex-col items-center text-center">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 mt-8">
+          {(activeTab === 'credit' ? creditPackages : storagePackages).map((pkg: PackageInfo, index) => (
+            <div
+              key={index}
+              className={cn(
+                "relative z-0 overflow-hidden group",
+                pkg.isPopular ? "md:-mt-4 md:mb-4" : ""
+              )}
+            >
+              {/* Background with gradient border effect */}
+              <div className={cn(
+                "absolute -z-10 rounded-[2rem] inset-0 p-0.5",
+                pkg.isPopular 
+                  ? `bg-gradient-to-b ${pkg.gradient}`
+                  : "bg-gradient-to-b from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600"
+              )}></div>
+              
+              {/* Main card */}
+              <div className="bg-white dark:bg-gray-800 rounded-[2rem] h-full flex flex-col p-1">
+                <div className="flex flex-col flex-grow p-7 md:p-8">
+                  {/* Popular badge */}
+                  {pkg.badge && (
                     <div className={cn(
-                      "w-16 h-16 rounded-xl mb-4 flex items-center justify-center text-white",
-                      getIconBgColor(pkg.color)
+                      "absolute top-0 right-10 z-20 transform -translate-y-1/2 px-4 py-1 rounded-full text-xs font-bold text-white shadow-lg",
+                      `bg-gradient-to-r ${pkg.gradient}`
+                    )}>
+                      {pkg.badge}
+                    </div>
+                  )}
+                  
+                  {/* Header */}
+                  <div className="text-center mb-8">
+                    <div className={cn(
+                      "w-20 h-20 rounded-full mb-6 mx-auto flex items-center justify-center",
+                      `bg-gradient-to-br ${pkg.gradient}`
                     )}>
                       {pkg.icon}
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                    
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                       {pkg.name}
                     </h3>
-                    {pkg.highlightFeature && (
-                      <div className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700/50 px-3 py-1 rounded-full">
-                        {pkg.highlightFeature}
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Price */}
-                  <div className="text-center mb-8">
-                    <div className="text-4xl font-extrabold text-gray-900 dark:text-white">
-                      {formatCurrency(pkg.price)}
+                    
+                    <div className="flex items-end justify-center mb-1">
+                      <span className="text-4xl font-extrabold text-gray-900 dark:text-white">
+                        {formatCurrency(pkg.price)}
+                      </span>
+                      {pkg.period && (
+                        <span className="ml-1 text-gray-500 dark:text-gray-400 pb-1">
+                          /{pkg.period}
+                        </span>
+                      )}
                     </div>
-                    {pkg.period && (
-                      <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        mỗi {pkg.period}
-                      </div>
-                    )}
+                    
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {pkg.period ? 'Thanh toán hàng tháng' : 'Thanh toán một lần'}
+                    </p>
                   </div>
                   
-                  <div className="border-t border-gray-200 dark:border-gray-700 my-6"></div>
-                  
-                  {/* Features */}
-                  <ul className="space-y-4 mb-8">
+                  {/* Features list */}
+                  <div className="space-y-4 flex-grow mb-8">
                     {pkg.features.map((feature, i) => (
-                      <li key={i} className="flex items-start">
-                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mt-0.5 mr-3">
-                          <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+                      <div key={i} className="flex items-start">
+                        <div className={cn(
+                          "flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 mr-3",
+                          `bg-gradient-to-r ${pkg.gradient} bg-opacity-20`
+                        )}>
+                          <CheckCircle className="h-5 w-5 text-white" />
                         </div>
                         <span className="text-gray-700 dark:text-gray-300">{feature}</span>
-                      </li>
+                      </div>
                     ))}
-                  </ul>
-                  
-                  {/* Action button */}
+                  </div>
+                </div>
+                
+                {/* Action button */}
+                <div className={cn(
+                  "p-7 md:p-8 -mt-4 rounded-b-[2rem] transition-all duration-300",
+                  pkg.isPopular 
+                    ? `bg-gradient-to-r ${pkg.gradient} group-hover:shadow-lg`
+                    : "bg-gray-50 dark:bg-gray-800/50"
+                )}>
                   <Link href="/auth">
                     <Button
                       className={cn(
-                        "w-full rounded-xl py-6 font-medium text-base transition-all duration-300",
+                        "w-full py-6 rounded-xl text-base font-medium transition-all duration-300",
                         pkg.isPopular
-                          ? "bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/10"
-                          : "bg-white dark:bg-gray-800 text-primary dark:text-primary-400 border border-primary dark:border-primary-800/50 hover:bg-primary/10 dark:hover:bg-primary-900/20"
+                          ? "bg-white text-gray-900 hover:bg-gray-100"
+                          : `bg-gradient-to-r ${pkg.gradient} text-white hover:opacity-90`
                       )}
                     >
                       {activeTab === 'credit' 
@@ -405,12 +275,12 @@ export function Pricing() {
                   </Link>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
           
         <div className="mt-16 text-center">
-          <p className="text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             {t("landing.pricing.guarantee")} 
             <a href="#contact" className="text-primary dark:text-primary-400 font-medium hover:underline ml-1">
               {t("landing.pricing.contactUs")}
