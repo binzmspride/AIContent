@@ -32,7 +32,7 @@ export function Pricing() {
         `${t("landing.pricing.features.support")} (${t("landing.pricing.features.supportEmail")})`
       ],
       isPopular: false,
-      gradient: "from-blue-500 to-blue-600"
+      gradient: "from-cyan-400 to-blue-500"
     },
     {
       name: t("landing.pricing.packages.advanced"),
@@ -47,7 +47,7 @@ export function Pricing() {
         `10% ${t("landing.pricing.features.saving")}`
       ],
       isPopular: true,
-      gradient: "from-primary-500 to-primary-600"
+      gradient: "from-indigo-400 to-violet-500"
     },
     {
       name: t("landing.pricing.packages.professional"),
@@ -61,7 +61,7 @@ export function Pricing() {
         `20% ${t("landing.pricing.features.saving")}`
       ],
       isPopular: false,
-      gradient: "from-purple-500 to-purple-600"
+      gradient: "from-pink-400 to-rose-500"
     }
   ];
 
@@ -78,7 +78,7 @@ export function Pricing() {
         `1 ${t("landing.pricing.features.wpConnections")}`
       ],
       isPopular: false,
-      gradient: "from-blue-500 to-blue-600"
+      gradient: "from-sky-400 to-cyan-500"
     },
     {
       name: t("landing.pricing.packages.storageBusiness"),
@@ -94,7 +94,7 @@ export function Pricing() {
         `${t("landing.pricing.features.socialConnect")}`
       ],
       isPopular: true,
-      gradient: "from-emerald-500 to-emerald-600"
+      gradient: "from-amber-400 to-orange-500"
     },
     {
       name: t("landing.pricing.packages.storageEnterprise"),
@@ -110,7 +110,7 @@ export function Pricing() {
         `${t("landing.pricing.features.apiAccess")}`
       ],
       isPopular: false,
-      gradient: "from-purple-500 to-purple-600"
+      gradient: "from-fuchsia-400 to-purple-600"
     }
   ];
 
@@ -123,21 +123,21 @@ export function Pricing() {
   };
 
   return (
-    <div id="pricing" className="py-24 bg-gradient-to-b from-slate-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden relative">
+    <div id="pricing" className="py-24 bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden relative">
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-48 -right-48 w-96 h-96 rounded-full bg-gradient-to-b from-primary/10 to-transparent blur-3xl opacity-70"></div>
-        <div className="absolute -bottom-48 -left-48 w-96 h-96 rounded-full bg-gradient-to-b from-blue-500/10 to-transparent blur-3xl opacity-70"></div>
+        <div className="absolute -top-48 -right-48 w-96 h-96 rounded-full bg-gradient-to-b from-indigo-400/10 to-transparent blur-3xl opacity-70"></div>
+        <div className="absolute -bottom-48 -left-48 w-96 h-96 rounded-full bg-gradient-to-b from-cyan-400/10 to-transparent blur-3xl opacity-70"></div>
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-50 to-blue-50 dark:from-primary-900/30 dark:to-blue-900/30 text-primary dark:text-primary-400 text-sm font-medium mb-6 border border-primary/20 dark:border-primary-800/50">
+          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-indigo-50 to-cyan-50 dark:from-indigo-900/30 dark:to-cyan-900/30 text-indigo-600 dark:text-indigo-400 text-sm font-medium mb-6 border border-indigo-200/40 dark:border-indigo-800/50 shadow-sm">
             <Star className="w-4 h-4 mr-2" />
             Bảng giá linh hoạt
           </div>
           
-          <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white font-heading mb-6">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-600 dark:from-indigo-300 dark:to-cyan-400 font-heading mb-6">
             {t("landing.pricing.title")}
           </h2>
           
@@ -155,8 +155,8 @@ export function Pricing() {
               className={cn(
                 "px-8 py-3 rounded-full text-sm font-medium transition-all duration-200",
                 activeTab === 'credit' 
-                  ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg" 
-                  : "text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary-400"
+                  ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-lg" 
+                  : "text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
               )}
             >
               {t("landing.pricing.creditPlans")}
@@ -167,8 +167,8 @@ export function Pricing() {
               className={cn(
                 "px-8 py-3 rounded-full text-sm font-medium transition-all duration-200",
                 activeTab === 'storage' 
-                  ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg" 
-                  : "text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary-400"
+                  ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg" 
+                  : "text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400"
               )}
             >
               {t("landing.pricing.storagePlans")}
