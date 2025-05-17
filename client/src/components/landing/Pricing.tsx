@@ -136,12 +136,6 @@ export function Pricing() {
     }
   }
 
-  const featuredIcons = {
-    users: <Users className="h-5 w-5 text-gray-400" />,
-    clock: <Clock className="h-5 w-5 text-gray-400" />,
-    star: <Star className="h-5 w-5 text-gray-400" />
-  };
-
   return (
     <div id="pricing" className="py-24 bg-gray-50 dark:bg-gray-900 overflow-hidden relative">
       {/* Decorative elements */}
@@ -201,10 +195,10 @@ export function Pricing() {
               </div>
             ))}
             
-            {/* Features rows */}
+            {/* Credits row */}
             <div className="p-6 border-t border-gray-200 dark:border-gray-700 col-span-1 bg-white dark:bg-gray-800">
               <div className="flex items-center">
-                <featuredIcons.users />
+                <Users className="h-5 w-5 text-gray-400" />
                 <span className="ml-3 text-gray-700 dark:text-gray-300">Credits</span>
               </div>
             </div>
@@ -223,9 +217,10 @@ export function Pricing() {
               </div>
             ))}
             
+            {/* Words per credit row */}
             <div className="p-6 border-t border-gray-200 dark:border-gray-700 col-span-1 bg-white dark:bg-gray-800">
               <div className="flex items-center">
-                <featuredIcons.star />
+                <Star className="h-5 w-5 text-gray-400" />
                 <span className="ml-3 text-gray-700 dark:text-gray-300">Words per credit</span>
               </div>
             </div>
@@ -244,9 +239,10 @@ export function Pricing() {
               </div>
             ))}
             
+            {/* SEO row */}
             <div className="p-6 border-t border-gray-200 dark:border-gray-700 col-span-1 bg-white dark:bg-gray-800">
               <div className="flex items-center">
-                <featuredIcons.clock />
+                <Clock className="h-5 w-5 text-gray-400" />
                 <span className="ml-3 text-gray-700 dark:text-gray-300">SEO Optimization</span>
               </div>
             </div>
