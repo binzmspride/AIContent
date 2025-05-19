@@ -248,7 +248,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         // Tạo controller để có thể hủy thủ công nếu cần
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 120000); // Đặt timeout 120 giây (2 phút)
+        const timeoutId = setTimeout(() => controller.abort(), 180000); // Đặt timeout 180 giây (3 phút)
         
         // Gửi request đến webhook
         const webhookResponse = await fetch(webhookUrl, {

@@ -189,14 +189,34 @@ export default function CreateContent() {
       return responseData.data as GenerateContentResponse;
     },
     onSuccess: async (data) => {
-      // Kiểm tra xem response có chứa aiTitle và articleContent không
-      const content = data.articleContent || data.content;
+      // Kiểm tra cấu trúc dữ liệu từ webhook và trích xuất đúng cách
+      console.log("Data structure from webhook:", JSON.stringify(data, null, 2));
       
-      // Đảm bảo ưu tiên lấy từ aiTitle nếu có, và thực hiện làm sạch tiêu đề
-      // Loại bỏ các ký tự xuống dòng và khoảng trắng thừa
-      const title = data.aiTitle 
-        ? data.aiTitle.replace(/[\r\n\t]+/g, ' ').trim() 
-        : (data.title || "Bài viết mới");
+      // Xử lý content
+      let content;
+      if (Array.isArray(data) && data.length > 0 && data[0].articleContent) {
+        // Trường hợp data là array (được trả về từ một số loại webhook)
+        content = data[0].articleContent;
+      } else if (data.articleContent) {
+        // Trường hợp data là object có articleContent
+        content = data.articleContent;
+      } else {
+        // Mặc định sử dụng content
+        content = data.content || "<p>Không có nội dung</p>";
+      }
+      
+      // Xử lý title - làm sạch và định dạng tiêu đề
+      let title;
+      if (Array.isArray(data) && data.length > 0 && data[0].aiTitle) {
+        // Trường hợp data là array
+        title = data[0].aiTitle.replace(/[\r\n\t]+/g, ' ').trim();
+      } else if (data.aiTitle) {
+        // Trường hợp data là object có aiTitle
+        title = data.aiTitle.replace(/[\r\n\t]+/g, ' ').trim();
+      } else {
+        // Sử dụng title nếu không có aiTitle
+        title = data.title || "Bài viết mới";
+      }
       
       console.log("Webhook response data:", data);
       console.log("Using title from webhook:", title);
@@ -206,11 +226,22 @@ export default function CreateContent() {
         // Lưu nội dung vào database với giá trị từ webhook
         console.log("Saving article with title:", title);
         
+        // Xử lý keywords - đảm bảo đúng định dạng
+        let keywords;
+        if (Array.isArray(data.keywords)) {
+          keywords = data.keywords.join(", ");
+        } else if (typeof data.keywords === 'string') {
+          keywords = data.keywords;
+        } else {
+          // Mặc định sử dụng keywords từ form nếu không có
+          keywords = form.getValues().keywords;
+        }
+        
         const saveResponse = await apiRequest("POST", "/api/dashboard/articles", {
           title: title,
           content: content,
-          keywords: data.keywords.join(", "),
-          creditsUsed: data.creditsUsed,
+          keywords: keywords,
+          creditsUsed: data.creditsUsed || 1,
         });
         
         const savedArticle = await saveResponse.json();
@@ -240,9 +271,10 @@ export default function CreateContent() {
       }
       
       // Hiển thị tiêu đề và nội dung từ webhook trong dialog
-      // Cập nhật tiêu đề từ aiTitle hoặc title
+      // Đảm bảo hiển thị aiTitle từ webhook trong trường tiêu đề
+      console.log("Setting edited title to:", title);
       if (title && title.trim() !== '') {
-        setEditedTitle(title.trim());
+        setEditedTitle(title);
       } else {
         setEditedTitle("Bài viết mới");
       }
