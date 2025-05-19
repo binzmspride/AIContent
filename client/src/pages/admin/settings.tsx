@@ -870,30 +870,7 @@ export default function AdminSettings() {
                         />
                       </div>
                       
-                      <FormField
-                        control={generalForm.control}
-                        name="offlineMode"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 bg-amber-50 mt-4">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-base flex items-center">
-                                <Server className="h-4 w-4 mr-2 text-amber-600" />
-                                Chế độ offline
-                              </FormLabel>
-                              <FormDescription>
-                                Kích hoạt chế độ offline để tạo nội dung mà không cần kết nối đến webhook n8n. 
-                                Sử dụng khi gặp lỗi 504 hoặc webhook không khả dụng.
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
+
                         
                       <div className="pt-4 border-t mt-6">
                         <Button 
