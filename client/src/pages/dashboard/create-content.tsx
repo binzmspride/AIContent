@@ -191,13 +191,17 @@ export default function CreateContent() {
     onSuccess: async (data) => {
       // Kiểm tra xem response có chứa aiTitle và articleContent không
       const content = data.articleContent || data.content;
-      const title = data.aiTitle || data.title;
+      // Đảm bảo ưu tiên lấy từ aiTitle nếu có
+      const title = data.aiTitle || data.title || "Bài viết mới";
       
       console.log("Webhook response data:", data);
+      console.log("Using title from webhook:", title);
       
       // Lưu bài viết ngay khi tạo thành công
       try {
         // Lưu nội dung vào database với giá trị từ webhook
+        console.log("Saving article with title:", title);
+        
         const saveResponse = await apiRequest("POST", "/api/dashboard/articles", {
           title: title,
           content: content,
