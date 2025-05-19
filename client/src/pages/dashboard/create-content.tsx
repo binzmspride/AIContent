@@ -150,7 +150,7 @@ export default function CreateContent() {
       language: "vietnamese",
       country: "vietnam",
       perspective: "auto",
-      complexity: "intermediate",
+      complexity: "auto",
       useWebResearch: true,
       refSources: "",
       aiModel: "chatgpt",
