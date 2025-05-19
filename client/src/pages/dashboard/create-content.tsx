@@ -129,7 +129,7 @@ export default function CreateContent() {
   const [currentHeadingLevel, setCurrentHeadingLevel] = useState<'h2' | 'h3' | 'h4'>('h2');
   const [isContentDialogOpen, setIsContentDialogOpen] = useState(false);
   const [editedContent, setEditedContent] = useState("");
-  // Đã xóa trường tiêu đề theo yêu cầu
+  const [editedTitle, setEditedTitle] = useState("");
   
   // Khởi tạo linkItems ban đầu
   const [isLinkItemsInitialized, setIsLinkItemsInitialized] = useState(false);
@@ -215,16 +215,22 @@ export default function CreateContent() {
         setGeneratedContent(data);
       }
       
-      // Đảm bảo nội dung từ webhook được hiển thị trong dialog
-      if (data.content && data.content.trim() !== '') {
-        setEditedContent(data.content);
-      } else if (data.title) {
-        // Tạo nội dung ban đầu nếu không có nội dung từ webhook
-        setEditedContent(`<h1>${data.title}</h1><p>Nhập nội dung bài viết của bạn ở đây...</p>`);
+      // Hiển thị tiêu đề và nội dung từ webhook trong dialog
+      // Cập nhật tiêu đề
+      if (data.title && data.title.trim() !== '') {
+        setEditedTitle(data.title.trim());
       } else {
-        setEditedContent(`<h1>Bài viết mới</h1><p>Nhập nội dung bài viết của bạn ở đây...</p>`);
+        setEditedTitle("Bài viết mới");
       }
       
+      // Cập nhật nội dung
+      if (data.content && data.content.trim() !== '') {
+        setEditedContent(data.content);
+      } else {
+        setEditedContent("<p>Nhập nội dung bài viết của bạn ở đây...</p>");
+      }
+      
+      // Hiển thị dialog chỉnh sửa
       setIsContentDialogOpen(true);
       
       toast({
@@ -499,10 +505,10 @@ export default function CreateContent() {
   // Xử lý khi lưu nội dung từ dialog
   const handleSaveEditedContent = () => {
     if (generatedContent) {
-      // Cập nhật nội dung đã chỉnh sửa vào generatedContent
+      // Cập nhật nội dung và tiêu đề đã chỉnh sửa vào generatedContent
       setGeneratedContent({
         ...generatedContent,
-        title: generatedContent.title,
+        title: editedTitle, // Sử dụng tiêu đề đã chỉnh sửa
         content: editedContent // ReactQuill trả về HTML
       });
       
@@ -1697,6 +1703,17 @@ export default function CreateContent() {
             </DialogHeader>
             
             <div className="grid gap-4 py-4">
+              {/* Tiêu đề bài viết */}
+              <div className="grid gap-2">
+                <Label htmlFor="title" className="font-medium">Tiêu đề bài viết</Label>
+                <Input 
+                  id="title" 
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:border-primary"
+                  placeholder="Nhập tiêu đề bài viết..."
+                />
+              </div>
               
               {/* Content editing with rich text editor */}
               <div className="grid gap-2">

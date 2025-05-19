@@ -464,7 +464,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`DEV MODE: Would subtract ${creditsNeeded} credits for content generation`);
         }
         
-        // Xử lý cấu trúc JSON mới từ webhook với articleContent và aiTitle
+        // Xử lý cấu trúc JSON từ webhook với articleContent và aiTitle
         let formattedResult;
         
         // Kiểm tra cấu trúc webhookResult
@@ -484,13 +484,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 wordCount: firstResult.articleContent.split(/\s+/).length // Ước tính số từ
               }
             };
+            console.log("Đã xử lý dữ liệu từ webhook với định dạng mới (articleContent, aiTitle)");
           } else {
             // Dữ liệu không đúng định dạng, giữ nguyên kết quả
             formattedResult = webhookResult;
+            console.log("Không tìm thấy articleContent hoặc aiTitle trong phản hồi webhook:", firstResult);
           }
         } else {
           // Giữ nguyên kết quả nếu không phải cấu trúc mới
           formattedResult = webhookResult;
+          console.log("Phản hồi webhook không có cấu trúc mong đợi:", webhookResult);
         }
         
         return res.json({ 
