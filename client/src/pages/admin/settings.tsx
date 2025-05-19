@@ -107,6 +107,7 @@ const generalSettingsSchema = z.object({
   enableArticleCreation: z.boolean(),
   enableAutoPublish: z.boolean(),
   maintenanceMode: z.boolean(),
+  offlineMode: z.boolean(),
 });
 
 // AI settings form schema
