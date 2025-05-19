@@ -285,10 +285,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             
             // Xử lý theo cấu trúc phản hồi
             if (firstResult.articleContent && firstResult.aiTitle) {
-              // Định dạng phản hồi
+              // Định dạng phản hồi bao gồm cả trường aiTitle và articleContent gốc
+              // để client có thể sử dụng trực tiếp
               const formattedResponse = {
                 title: firstResult.aiTitle.trim(),
                 content: firstResult.articleContent,
+                aiTitle: firstResult.aiTitle.trim(),
+                articleContent: firstResult.articleContent,
                 keywords: contentRequest.keywords.split(','),
                 creditsUsed: creditsNeeded,
                 metrics: {
@@ -297,6 +300,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 }
               };
               
+              console.log('Trả về phản hồi với aiTitle và articleContent:', formattedResponse);
               return res.json({ success: true, data: formattedResponse });
             }
           }
