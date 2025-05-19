@@ -301,13 +301,13 @@ export default function CreateContent() {
         const size = data.imageSize || 'medium';
         switch(size) {
           case 'small':
-            return { width: 640, height: 480 };
+            return { width: 640, height: 480 }; // Nhỏ (640×480)
           case 'medium':
-            return { width: 1080, height: 1920 };
+            return { width: 1280, height: 720 }; // Trung bình (1280×720)
           case 'large':
-            return { width: 1920, height: 1080 };
+            return { width: 1920, height: 1080 }; // Lớn (1920×1080)
           default:
-            return { width: 1080, height: 1920 }; // Mặc định là medium
+            return { width: 1280, height: 720 }; // Mặc định là trung bình
         }
       })()
     };
