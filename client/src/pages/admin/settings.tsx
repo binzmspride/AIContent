@@ -307,6 +307,7 @@ export default function AdminSettings() {
         enableArticleCreation: settings.enableArticleCreation,
         enableAutoPublish: settings.enableAutoPublish,
         maintenanceMode: settings.maintenanceMode,
+        offlineMode: settings.offlineMode === "true",
       });
       
       aiForm.reset({
