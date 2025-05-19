@@ -1810,17 +1810,11 @@ export default function CreateContent() {
                 Hủy
               </Button>
               
-              <Button 
-                onClick={handleSaveEditedContent}
-                className="sm:order-2"
-              >
-                Lưu thay đổi
-              </Button>
-              
+
               <Button 
                 onClick={handleSaveArticle}
                 variant="secondary"
-                className="sm:order-3"
+                className="sm:order-2"
               >
                 Lưu bài viết
               </Button>
@@ -1828,7 +1822,7 @@ export default function CreateContent() {
               <Button 
                 onClick={handlePublishContent}
                 variant="default"
-                className="sm:order-4 bg-accent-500 hover:bg-accent-600"
+                className="sm:order-3 bg-accent-500 hover:bg-accent-600"
               >
                 Xuất bản lên website
               </Button>
