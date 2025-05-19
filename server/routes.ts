@@ -806,7 +806,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Webhook settings
         webhookSecret: integrationSettings.webhookSecret || "",
         notificationWebhookUrl: integrationSettings.notificationWebhookUrl || "",
-        webhook_url: integrationSettings.webhook_url || "", // Webhook URL cho tạo nội dung
+        // Sử dụng notificationWebhookUrl thay cho webhook_url để thống nhất
+        webhook_url: integrationSettings.notificationWebhookUrl || "",
         
         // Firebase settings
         firebaseApiKey: firebaseSettings.firebaseApiKey || "",
