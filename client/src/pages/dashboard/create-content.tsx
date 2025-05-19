@@ -191,8 +191,12 @@ export default function CreateContent() {
     onSuccess: async (data) => {
       // Kiểm tra xem response có chứa aiTitle và articleContent không
       const content = data.articleContent || data.content;
-      // Đảm bảo ưu tiên lấy từ aiTitle nếu có
-      const title = data.aiTitle || data.title || "Bài viết mới";
+      
+      // Đảm bảo ưu tiên lấy từ aiTitle nếu có, và thực hiện làm sạch tiêu đề
+      // Loại bỏ các ký tự xuống dòng và khoảng trắng thừa
+      const title = data.aiTitle 
+        ? data.aiTitle.replace(/[\r\n\t]+/g, ' ').trim() 
+        : (data.title || "Bài viết mới");
       
       console.log("Webhook response data:", data);
       console.log("Using title from webhook:", title);
