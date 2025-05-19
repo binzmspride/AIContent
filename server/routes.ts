@@ -464,9 +464,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`DEV MODE: Would subtract ${creditsNeeded} credits for content generation`);
         }
         
+        // Xử lý cấu trúc JSON mới từ webhook với articleContent và aiTitle
+        let formattedResult;
+        
+        // Kiểm tra cấu trúc webhookResult
+        if (webhookResult && Array.isArray(webhookResult.data) && webhookResult.data.length > 0) {
+          // Nếu webhookResult có cấu trúc { success: true, data: [{ articleContent, aiTitle }] }
+          const firstResult = webhookResult.data[0];
+          
+          if (firstResult.articleContent && firstResult.aiTitle) {
+            // Chuyển đổi sang định dạng mà client đang mong đợi
+            formattedResult = {
+              title: firstResult.aiTitle.trim(),
+              content: firstResult.articleContent,
+              keywords: contentRequest.keywords.split(','),
+              creditsUsed: creditsNeeded,
+              metrics: {
+                generationTimeMs: 5000, // Giá trị mặc định vì webhook không trả về thời gian
+                wordCount: firstResult.articleContent.split(/\s+/).length // Ước tính số từ
+              }
+            };
+          } else {
+            // Dữ liệu không đúng định dạng, giữ nguyên kết quả
+            formattedResult = webhookResult;
+          }
+        } else {
+          // Giữ nguyên kết quả nếu không phải cấu trúc mới
+          formattedResult = webhookResult;
+        }
+        
         return res.json({ 
           success: true, 
-          data: webhookResult 
+          data: formattedResult 
         });
       } catch (error) {
         const webhookError = error as Error;
