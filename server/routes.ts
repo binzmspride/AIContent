@@ -414,31 +414,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Kiểm tra xem lỗi có phải là timeout không
         if (webhookError.name === 'AbortError' || webhookError.name === 'TimeoutError') {
           console.log('Xử lý lỗi timeout webhook');
-          
-          // Trừ credits cho người dùng
-          await storage.subtractUserCredits(userId, creditsNeeded, `Content generation (fallback)`);
-          
-          // Tạo nội dung mẫu với từ khóa chính
-          const mainKeyword = contentRequest.mainKeyword || contentRequest.keywords.split(',')[0];
-          
-          // Tạo phản hồi dự phòng với từ khóa
-          const fallbackResponse = {
-            title: `Bài viết về ${mainKeyword}`,
-            content: `<h2>Bài viết về ${mainKeyword}</h2><p>Đã xảy ra lỗi kết nối với máy chủ tạo nội dung. Vui lòng thử lại sau hoặc liên hệ quản trị viên.</p>`,
-            aiTitle: `Bài viết về ${mainKeyword}`,
-            articleContent: `<h2>Bài viết về ${mainKeyword}</h2><p>Đã xảy ra lỗi kết nối với máy chủ tạo nội dung. Vui lòng thử lại sau hoặc liên hệ quản trị viên.</p>`,
-            keywords: contentRequest.keywords.split(','),
-            creditsUsed: creditsNeeded,
-            metrics: {
-              generationTimeMs: 1000,
-              wordCount: 30
-            }
-          };
-          
-          return res.json({ 
-            success: true, 
-            data: fallbackResponse,
-            warning: 'Webhook timeout. Please try again later or contact administrator.'
+          return res.status(504).json({
+            success: false,
+            error: 'Không thể kết nối với dịch vụ tạo nội dung. Mã lỗi: 504. Vui lòng kiểm tra cấu hình webhook.'
           });
         }
         
