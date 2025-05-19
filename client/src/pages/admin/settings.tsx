@@ -1593,8 +1593,14 @@ export default function AdminSettings() {
                       <div className="space-y-2">
                         <h3 className="text-sm font-medium text-muted-foreground">{t("admin.settingsPage.lastBackup") || "Sao lưu gần đây"}</h3>
                         <p className="text-base font-medium">
-                          {settings?.lastBackup 
-                            ? format(new Date(settings.lastBackup), "dd/MM/yyyy HH:mm") 
+                          {settings?.lastBackup && settings.lastBackup !== "N/A" ? 
+                            (() => {
+                              try {
+                                return format(new Date(settings.lastBackup), "dd/MM/yyyy HH:mm")
+                              } catch (e) {
+                                return "N/A"
+                              }
+                            })()
                             : "N/A"}
                         </p>
                       </div>
