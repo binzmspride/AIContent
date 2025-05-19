@@ -141,7 +141,7 @@ const apiSettingsSchema = z.object({
 
 // Webhook settings form schema
 const webhookSettingsSchema = z.object({
-  webhookSecret: z.string().min(10, "Webhook secret must be at least 10 characters"),
+  webhookSecret: z.string().optional().or(z.literal("")),
   notificationWebhookUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
 });
 
