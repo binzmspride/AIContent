@@ -48,6 +48,8 @@ export interface GenerateContentResponse {
   creditsUsed: number;
   metrics: ContentGenerationMetrics;
   articleId?: number; // ID của bài viết đã lưu trong database
+  aiTitle?: string;   // Tiêu đề được tạo bởi AI từ webhook
+  articleContent?: string; // Nội dung được tạo bởi AI từ webhook
 }
 
 // WordPress connection types

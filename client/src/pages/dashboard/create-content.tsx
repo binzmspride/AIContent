@@ -189,12 +189,18 @@ export default function CreateContent() {
       return responseData.data as GenerateContentResponse;
     },
     onSuccess: async (data) => {
+      // Kiểm tra xem response có chứa aiTitle và articleContent không
+      const content = data.articleContent || data.content;
+      const title = data.aiTitle || data.title;
+      
+      console.log("Webhook response data:", data);
+      
       // Lưu bài viết ngay khi tạo thành công
       try {
-        // Lưu nội dung vào database
+        // Lưu nội dung vào database với giá trị từ webhook
         const saveResponse = await apiRequest("POST", "/api/dashboard/articles", {
-          title: data.title,
-          content: data.content,
+          title: title,
+          content: content,
           keywords: data.keywords.join(", "),
           creditsUsed: data.creditsUsed,
         });
@@ -205,27 +211,37 @@ export default function CreateContent() {
         if (savedArticle.success && savedArticle.data) {
           setGeneratedContent({
             ...data,
+            title: title,
+            content: content,
             articleId: savedArticle.data.id // Lưu ID bài viết để cập nhật sau này
           });
         } else {
-          setGeneratedContent(data);
+          setGeneratedContent({
+            ...data,
+            title: title,
+            content: content
+          });
         }
       } catch (error) {
         console.error("Không thể lưu bài viết tự động:", error);
-        setGeneratedContent(data);
+        setGeneratedContent({
+          ...data,
+          title: title,
+          content: content
+        });
       }
       
       // Hiển thị tiêu đề và nội dung từ webhook trong dialog
-      // Cập nhật tiêu đề
-      if (data.title && data.title.trim() !== '') {
-        setEditedTitle(data.title.trim());
+      // Cập nhật tiêu đề từ aiTitle hoặc title
+      if (title && title.trim() !== '') {
+        setEditedTitle(title.trim());
       } else {
         setEditedTitle("Bài viết mới");
       }
       
-      // Cập nhật nội dung
-      if (data.content && data.content.trim() !== '') {
-        setEditedContent(data.content);
+      // Cập nhật nội dung từ articleContent hoặc content
+      if (content && content.trim() !== '') {
+        setEditedContent(content);
       } else {
         setEditedContent("<p>Nhập nội dung bài viết của bạn ở đây...</p>");
       }
