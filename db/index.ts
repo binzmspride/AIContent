@@ -15,13 +15,7 @@ export const pool = new Pool({
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
   connectionTimeoutMillis: 10000, // Return an error after 10 seconds if connection could not be established
-  maxUses: 7500, // Close a connection after it has been used 7500 times
-  retryStrategy: (err, maxRetries) => {
-    // Custom retry strategy to handle connection failures
-    if (maxRetries > 3) return false;
-    if (err.message.includes('timeout')) return true;
-    return false;
-  }
+  maxUses: 7500 // Close a connection after it has been used 7500 times
 });
 
 // Add error handling for the connection pool

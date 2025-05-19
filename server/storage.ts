@@ -528,6 +528,18 @@ class DatabaseStorage implements IStorage {
       }, {} as Record<string, string>);
     } catch (error) {
       console.error(`Error retrieving settings for category [${category}]:`, error);
+      
+      // Return default settings for specific categories when database isn't available
+      if (category === 'smtp') {
+        return {
+          smtpServer: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
+          smtpPort: process.env.SMTP_PORT || '587',
+          smtpUsername: process.env.SMTP_USER || 'seoviet.ai@gmail.com',
+          smtpPassword: process.env.SMTP_PASS || 'xsmtpsib-06c8a3d8ad2e8f8e943a94b144ba23befe0c4c2fafa01ebe02399f84fa1b10d4-bCqw0LpZkYWBFMGf',
+          emailSender: process.env.SMTP_FROM || 'SEO AI Writer <seoviet.ai@gmail.com>'
+        };
+      }
+      
       return {};
     }
   }

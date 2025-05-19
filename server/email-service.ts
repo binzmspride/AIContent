@@ -2,21 +2,25 @@ import nodemailer from 'nodemailer';
 import { storage } from './storage';
 import { SmtpConfig } from '@shared/types';
 
-// Biến toàn cục lưu cấu hình ứng dụng
+// Global app configuration
 export const appConfig = {
   baseUrl: process.env.APP_BASE_URL || 'http://localhost:5000'
 };
 
-// Hàm cập nhật URL cơ sở của ứng dụng
+// Function to update the base URL of the application
 export async function updateAppBaseUrl(baseUrl: string): Promise<boolean> {
   try {
-    // Cập nhật cấu hình trong bộ nhớ
+    // Update configuration in memory
     appConfig.baseUrl = baseUrl;
     console.log('App base URL updated in memory:', baseUrl);
     
-    // Lưu cấu hình vào cơ sở dữ liệu
-    await storage.setSetting('appBaseUrl', baseUrl, 'general');
-    console.log('App base URL saved to database');
+    // Try to save configuration to the database
+    try {
+      await storage.setSetting('appBaseUrl', baseUrl, 'general');
+      console.log('App base URL saved to database');
+    } catch (dbError) {
+      console.warn('Could not save app base URL to database, using memory only:', dbError.message);
+    }
     
     return true;
   } catch (error) {
@@ -25,7 +29,7 @@ export async function updateAppBaseUrl(baseUrl: string): Promise<boolean> {
   }
 }
 
-// Tải URL cơ sở từ cơ sở dữ liệu
+// Load base URL from database
 async function loadAppBaseUrlFromDatabase() {
   try {
     const baseUrl = await storage.getSetting('appBaseUrl');
@@ -37,13 +41,16 @@ async function loadAppBaseUrlFromDatabase() {
     }
   } catch (error) {
     console.error('Error loading app base URL from database:', error);
+    console.log('Using default app base URL:', appConfig.baseUrl);
   }
 }
 
-// Tải cấu hình khi khởi động
-loadAppBaseUrlFromDatabase();
+// Load configuration at startup (but don't wait for it)
+loadAppBaseUrlFromDatabase().catch(err => {
+  console.warn('Failed to load app base URL, using defaults:', err.message);
+});
 
-// Biến toàn cục lưu cấu hình SMTP
+// Global SMTP configuration
 let smtpConfig = {
   host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
   port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587,
@@ -55,7 +62,7 @@ let smtpConfig = {
   from: process.env.SMTP_FROM || 'SEO AI Writer <seoviet.ai@gmail.com>'
 };
 
-// Tải cấu hình SMTP từ cơ sở dữ liệu
+// Load SMTP configuration from database
 async function loadSmtpConfigFromDatabase() {
   try {
     const dbConfig = await storage.getSmtpSettings();
@@ -76,11 +83,14 @@ async function loadSmtpConfigFromDatabase() {
     }
   } catch (error) {
     console.error('Error loading SMTP config from database:', error);
+    console.log('Using default SMTP configuration');
   }
 }
 
-// Tải cấu hình khi khởi động
-loadSmtpConfigFromDatabase();
+// Load configuration at startup (but don't wait for it)
+loadSmtpConfigFromDatabase().catch(err => {
+  console.warn('Failed to load SMTP config, using defaults:', err.message);
+});
 
 // Hàm cập nhật cấu hình SMTP
 export async function updateSmtpConfig(config: {
