@@ -226,6 +226,7 @@ export default function AdminSettings() {
       enableArticleCreation: settings?.enableArticleCreation || false,
       enableAutoPublish: settings?.enableAutoPublish || false,
       maintenanceMode: settings?.maintenanceMode || false,
+      offlineMode: settings?.offlineMode === "true" || false,
     },
   });
 
