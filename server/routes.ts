@@ -126,6 +126,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get article by id
+  app.get('/api/dashboard/articles/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+      
+      const userId = req.user.id;
+      const articleId = parseInt(req.params.id, 10);
+      
+      if (isNaN(articleId)) {
+        return res.status(400).json({ success: false, error: 'Invalid article ID' });
+      }
+      
+      const article = await storage.getArticleById(articleId);
+      
+      if (!article) {
+        return res.status(404).json({ success: false, error: 'Article not found' });
+      }
+      
+      // Kiểm tra quyền sở hữu bài viết
+      if (article.userId !== userId && req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'You do not have permission to access this article' });
+      }
+      
+      res.json({ success: true, data: article });
+    } catch (error) {
+      console.error('Error fetching article details:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch article details' });
+    }
+  });
+
   // Create article
   app.post('/api/dashboard/articles', async (req, res) => {
     try {
