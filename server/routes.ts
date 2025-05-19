@@ -376,6 +376,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Không gửi webhook secret vì bạn không sử dụng nó
         };
         
+        // Đảm bảo các trường từ khóa chính và từ khóa phụ được gửi đi
+        if (!webhookPayload.mainKeyword && webhookPayload.keywords) {
+          // Nếu không có mainKeyword nhưng có keywords, tách từ keywords
+          const keywordsArray = webhookPayload.keywords.split(',').filter(Boolean);
+          webhookPayload.mainKeyword = keywordsArray.length > 0 ? keywordsArray[0].trim() : '';
+          webhookPayload.secondaryKeywords = keywordsArray.length > 1 
+            ? keywordsArray.slice(1).map(k => k.trim()).join(',') 
+            : '';
+        }
+        
         console.log(`Sending content request to webhook: ${webhookUrl}`);
         console.log('Webhook payload:', JSON.stringify(webhookPayload, null, 2));
         

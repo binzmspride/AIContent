@@ -267,11 +267,18 @@ export default function CreateContent() {
     
     // Đã kiểm tra keywords ở phía trên rồi
       
+    // Tách từ khóa chính và từ khóa phụ từ chuỗi keywords
+    const keywordsArray = data.keywords.split(',').filter(Boolean);
+    const mainKeyword = keywordsArray.length > 0 ? keywordsArray[0].trim() : '';
+    const secondaryKeywords = keywordsArray.length > 1 ? keywordsArray.slice(1).map(k => k.trim()) : [];
+
     // Convert form data to GenerateContentRequest format
     const requestData: GenerateContentRequest = {
       title: '', // Không dùng tiêu đề từ form nữa
       contentType: data.contentType || 'blog',
-      keywords: data.keywords,
+      keywords: data.keywords, // Giữ nguyên trường keywords để tương thích với code cũ
+      mainKeyword: mainKeyword, // Thêm trường mới cho từ khóa chính
+      secondaryKeywords: secondaryKeywords.join(','), // Thêm trường mới cho từ khóa phụ
       length: data.length,
       tone: data.tone,
       prompt: data.prompt || '',

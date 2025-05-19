@@ -9,7 +9,9 @@ export interface ApiResponse<T> {
 export interface GenerateContentRequest {
   title?: string; // Không bắt buộc nhập tiêu đề
   contentType: 'blog' | 'product' | 'news' | 'social';
-  keywords: string;
+  keywords: string; // Giữ lại để tương thích với code cũ
+  mainKeyword?: string; // Từ khóa chính (tách ra từ keywords)
+  secondaryKeywords?: string; // Các từ khóa phụ (tách ra từ keywords)
   length: 'short' | 'medium' | 'long' | 'extra_long';
   tone: 'professional' | 'conversational' | 'informative' | 'persuasive' | 'humorous' | 'neutral';
   prompt: string;
