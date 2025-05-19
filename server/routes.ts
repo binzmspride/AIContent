@@ -237,7 +237,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Generate content (mock API for now)
+  // Generate content API - tạo nội dung trong ứng dụng
   app.post('/api/dashboard/generate-content', async (req, res) => {
     try {
       if (!req.isAuthenticated()) {
