@@ -434,25 +434,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`Webhook response status: ${webhookResponse.status}`);
         
         if (!webhookResponse.ok) {
-          // Trong trường hợp webhook không hoạt động (lỗi 404 hoặc lỗi khác)
-          // chúng ta sẽ cung cấp nội dung dự phòng thay vì hiển thị lỗi
-          console.log(`Webhook error with status ${webhookResponse.status}. Using fallback content.`);
+          // Trong trường hợp webhook không hoạt động (lỗi 404 hoặc lỗi khác), thông báo lỗi
+          console.log(`Webhook error with status ${webhookResponse.status}.`);
           
-          // Tạo nội dung dự phòng
-          const fallbackResponse = {
-            title: contentRequest.title || `Bài viết về ${contentRequest.mainKeyword || contentRequest.keywords}`,
-            content: `<h1>Nội dung về ${contentRequest.mainKeyword || contentRequest.keywords}</h1><p>Chúng tôi đang gặp khó khăn trong việc kết nối với dịch vụ tạo nội dung. Vui lòng thử lại sau ít phút.</p><h2>Các từ khóa</h2><p>Từ khóa chính: ${contentRequest.mainKeyword || contentRequest.keywords.split(',')[0]}</p><p>Từ khóa phụ: ${contentRequest.secondaryKeywords || (contentRequest.keywords.split(',').length > 1 ? contentRequest.keywords.split(',').slice(1).join(', ') : 'Không có')}</p><p>Mức độ phức tạp: ${contentRequest.complexity}</p>`,
-            keywords: contentRequest.keywords.split(','),
-            creditsUsed: 0, // Không trừ tín dụng vì dịch vụ không hoạt động
-            metrics: {
-              generationTimeMs: 0,
-              wordCount: 0
-            }
-          };
-          
-          return res.json({
-            success: true,
-            data: fallbackResponse
+          // Trả về lỗi cho người dùng biết có vấn đề với dịch vụ tạo nội dung
+          return res.status(webhookResponse.status).json({
+            success: false,
+            error: `Không thể kết nối với dịch vụ tạo nội dung. Mã lỗi: ${webhookResponse.status}. Vui lòng kiểm tra cấu hình webhook hoặc thử lại sau.`
           });
         }
         
