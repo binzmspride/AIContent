@@ -28,7 +28,11 @@ export interface GenerateContentRequest {
   useItalic?: boolean; // Sử dụng định dạng in nghiêng
   useBullets?: boolean; // Sử dụng định dạng danh sách
   linkItems?: Array<{ keyword?: string; url?: string }>; // Danh sách liên kết
-  imageSize?: 'small' | 'medium' | 'large'; // Kích thước hình ảnh
+  imageSize?: 'small' | 'medium' | 'large'; // Kích thước hình ảnh cũ (để tương thích)
+  image_size?: { 
+    width: number;
+    height: number; 
+  }; // Định dạng mới cho kích thước hình ảnh
 }
 
 export interface ContentGenerationMetrics {

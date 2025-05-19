@@ -295,11 +295,39 @@ export default function CreateContent() {
       refSources: data.refSources || "",
       aiModel: data.aiModel || 'chatgpt',
       linkItems: filteredLinkItems,
-      imageSize: data.imageSize || 'medium'
+      imageSize: data.imageSize || 'medium',
+      // Thêm cấu trúc image_size mới theo định dạng width/height
+      image_size: (() => {
+        const size = data.imageSize || 'medium';
+        switch(size) {
+          case 'small':
+            return { width: 640, height: 480 };
+          case 'medium':
+            return { width: 1080, height: 1920 };
+          case 'large':
+            return { width: 1920, height: 1080 };
+          default:
+            return { width: 1080, height: 1920 }; // Mặc định là medium
+        }
+      })()
     };
 
     console.log('Sending content generation request:', requestData);
     generateContentMutation.mutate(requestData);
+  };
+
+  // Hàm trả về kích thước hình ảnh theo định dạng width/height dựa trên loại kích thước
+  const getImageSizeDimensions = (size: string) => {
+    switch(size) {
+      case 'small':
+        return { width: 640, height: 480 };
+      case 'medium':
+        return { width: 1080, height: 1920 };
+      case 'large':
+        return { width: 1920, height: 1080 };
+      default:
+        return { width: 1080, height: 1920 }; // Mặc định là medium
+    }
   };
 
   const handleCopyContent = () => {
