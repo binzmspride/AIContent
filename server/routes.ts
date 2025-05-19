@@ -305,8 +305,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           }
           
-          // Nếu không nhận dạng được cấu trúc, sử dụng dữ liệu như đã nhận
-          return res.json({ success: true, data: webhookResult });
+          // Nếu không nhận dạng được cấu trúc theo cách trên, kiểm tra dữ liệu từ webhookResult
+          if (webhookResult && webhookResult.success && Array.isArray(webhookResult.data)) {
+            // Trường hợp dữ liệu đã được đóng gói trong webhookResult.data
+            console.log('Trả về phản hồi gốc từ webhook:', webhookResult.data);
+            return res.json({ success: true, data: webhookResult.data[0] });
+          } else {
+            // Trường hợp cấu trúc khác, trả về nguyên dạng
+            console.log('Trả về phản hồi nguyên dạng:', webhookResult);
+            return res.json({ success: true, data: webhookResult });
+          }
           
         } catch (jsonError) {
           console.error('Failed to parse webhook response as JSON:', jsonError);
