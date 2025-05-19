@@ -440,8 +440,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Tạo nội dung dự phòng
           const fallbackResponse = {
-            title: contentRequest.title || `Bài viết về ${contentRequest.keywords}`,
-            content: `<h1>Nội dung về ${contentRequest.keywords}</h1><p>Chúng tôi đang gặp khó khăn trong việc kết nối với dịch vụ tạo nội dung. Vui lòng thử lại sau ít phút.</p><h2>Các từ khóa</h2><p>${contentRequest.keywords}</p>`,
+            title: contentRequest.title || `Bài viết về ${contentRequest.mainKeyword || contentRequest.keywords}`,
+            content: `<h1>Nội dung về ${contentRequest.mainKeyword || contentRequest.keywords}</h1><p>Chúng tôi đang gặp khó khăn trong việc kết nối với dịch vụ tạo nội dung. Vui lòng thử lại sau ít phút.</p><h2>Các từ khóa</h2><p>Từ khóa chính: ${contentRequest.mainKeyword || contentRequest.keywords.split(',')[0]}</p><p>Từ khóa phụ: ${contentRequest.secondaryKeywords || (contentRequest.keywords.split(',').length > 1 ? contentRequest.keywords.split(',').slice(1).join(', ') : 'Không có')}</p><p>Mức độ phức tạp: ${contentRequest.complexity}</p>`,
             keywords: contentRequest.keywords.split(','),
             creditsUsed: 0, // Không trừ tín dụng vì dịch vụ không hoạt động
             metrics: {

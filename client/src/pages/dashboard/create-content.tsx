@@ -150,7 +150,7 @@ export default function CreateContent() {
       language: "vietnamese",
       country: "vietnam",
       perspective: "auto",
-      complexity: "auto",
+      complexity: "intermediate",
       useWebResearch: true,
       refSources: "",
       aiModel: "chatgpt",
@@ -290,7 +290,7 @@ export default function CreateContent() {
       language: data.language || 'vietnamese',
       country: data.country || 'vietnam',
       perspective: data.perspective || 'auto',
-      complexity: data.complexity || 'auto',
+      complexity: data.complexity || 'intermediate', // Đảm bảo mức độ phức tạp luôn có giá trị
       useWebResearch: data.useWebResearch || false,
       refSources: data.refSources || "",
       aiModel: data.aiModel || 'chatgpt',
