@@ -287,10 +287,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             if (firstResult.articleContent && firstResult.aiTitle) {
               // Định dạng phản hồi bao gồm cả trường aiTitle và articleContent gốc
               // để client có thể sử dụng trực tiếp
+              // Xử lý aiTitle để loại bỏ các ký tự xuống dòng và dấu cách thừa
+              const cleanedTitle = firstResult.aiTitle.replace(/[\r\n\t]+/g, ' ').trim();
+              
               const formattedResponse = {
-                title: firstResult.aiTitle.trim(), // Tiêu đề sẽ được hiển thị
+                title: cleanedTitle, // Tiêu đề sẽ được hiển thị (đã được làm sạch)
                 content: firstResult.articleContent, // Nội dung sẽ được hiển thị
-                aiTitle: firstResult.aiTitle.trim(), // Lưu trữ tiêu đề gốc từ AI
+                aiTitle: cleanedTitle, // Lưu trữ tiêu đề gốc từ AI (đã được làm sạch)
                 articleContent: firstResult.articleContent, // Lưu trữ nội dung gốc
                 keywords: contentRequest.keywords.split(','),
                 creditsUsed: creditsNeeded,
@@ -301,7 +304,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               };
               
               // Log để kiểm tra dữ liệu gửi đi
-              console.log('Sending aiTitle to client:', firstResult.aiTitle.trim());
+              console.log('Sending aiTitle to client:', cleanedTitle);
               
               console.log('Trả về phản hồi với aiTitle và articleContent:', formattedResponse);
               return res.json({ success: true, data: formattedResponse });
