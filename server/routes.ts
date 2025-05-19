@@ -40,14 +40,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ success: false, error: 'Invalid article ID' });
       }
       
-      const article = await storage.getArticleById(articleId);
-      
-      if (!article) {
-        return res.status(404).json({ success: false, error: 'Article not found' });
+      // Thử lấy bài viết từ cơ sở dữ liệu
+      try {
+        const article = await storage.getArticleById(articleId);
+        
+        if (!article) {
+          return res.status(404).json({ success: false, error: 'Article not found' });
+        }
+        
+        // Không kiểm tra quyền sở hữu vì đây là API công khai để xem bài viết
+        return res.json({ success: true, data: article });
+      } catch (dbError) {
+        console.error('Database error when fetching article:', dbError);
+        
+        // Nếu có lỗi kết nối cơ sở dữ liệu, trả về lỗi máy chủ
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Database connection error, please try again later' 
+        });
       }
-      
-      // Không kiểm tra quyền sở hữu vì đây là API công khai để xem bài viết
-      return res.json({ success: true, data: article });
     } catch (error) {
       console.error('Error fetching article:', error);
       res.status(500).json({ success: false, error: 'Failed to fetch article' });
