@@ -1640,15 +1640,27 @@ export default function CreateContent() {
                           <div className="flex mt-2 text-sm">
                             <div className="mr-4">
                               <span className="text-gray-500 dark:text-gray-400">{t("dashboard.create.performance.timeToGenerate")}: </span>
-                              <span className="font-medium text-gray-900 dark:text-gray-100">{generatedContent.metrics.generationTimeMs / 1000}s</span>
+                              <span className="font-medium text-gray-900 dark:text-gray-100">
+                                {generatedContent.metrics && generatedContent.metrics.generationTimeMs 
+                                  ? `${(generatedContent.metrics.generationTimeMs / 1000).toFixed(2)}s` 
+                                  : '0s'}
+                              </span>
                             </div>
                             <div className="mr-4">
                               <span className="text-gray-500 dark:text-gray-400">{t("dashboard.create.performance.creditsUsed")}: </span>
-                              <span className="font-medium text-gray-900 dark:text-gray-100">{generatedContent.creditsUsed}</span>
+                              <span className="font-medium text-gray-900 dark:text-gray-100">
+                                {generatedContent.creditsUsed !== undefined 
+                                  ? generatedContent.creditsUsed 
+                                  : 0}
+                              </span>
                             </div>
                             <div>
                               <span className="text-gray-500 dark:text-gray-400">{t("dashboard.create.performance.wordCount")}: </span>
-                              <span className="font-medium text-gray-900 dark:text-gray-100">{generatedContent.metrics.wordCount}</span>
+                              <span className="font-medium text-gray-900 dark:text-gray-100">
+                                {generatedContent.metrics && generatedContent.metrics.wordCount 
+                                  ? generatedContent.metrics.wordCount 
+                                  : 0}
+                              </span>
                             </div>
                           </div>
                         </div>
