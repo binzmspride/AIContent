@@ -1819,13 +1819,14 @@ export default function CreateContent() {
                 Lưu bài viết
               </Button>
               
-              <Button 
+              {/* Tạm ẩn nút xuất bản theo yêu cầu */}
+              {/* <Button 
                 onClick={handlePublishContent}
                 variant="default"
                 className="sm:order-3 bg-accent-500 hover:bg-accent-600"
               >
                 Xuất bản lên website
-              </Button>
+              </Button> */}
             </DialogFooter>
           </DialogContent>
         </Dialog>
