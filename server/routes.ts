@@ -734,6 +734,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Get admin settings
+  app.get('/api/admin/settings', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+      
+      // Lấy tất cả cài đặt từ cơ sở dữ liệu
+      // Phân loại theo danh mục
+      const generalSettings = await storage.getSettingsByCategory('general');
+      const aiSettings = await storage.getSettingsByCategory('ai');
+      const emailSettings = await storage.getSettingsByCategory('smtp');
+      const apiSettings = await storage.getSettingsByCategory('api');
+      const integrationSettings = await storage.getSettingsByCategory('integration');
+      const firebaseSettings = await storage.getSettingsByCategory('firebase');
+      
+      console.log('Integration settings retrieved:', integrationSettings);
+      
+      // Chuẩn bị đối tượng cài đặt
+      const settings = {
+        // General settings
+        siteName: generalSettings.siteName || "SEO AI Writer",
+        siteDescription: generalSettings.siteDescription || "AI-powered SEO content generator",
+        contactEmail: generalSettings.contactEmail || "support@seoaiwriter.com",
+        supportEmail: generalSettings.supportEmail || "support@seoaiwriter.com",
+        
+        // Feature flags
+        enableNewUsers: generalSettings.enableNewUsers === "true",
+        enableArticleCreation: generalSettings.enableArticleCreation === "true",
+        enableAutoPublish: generalSettings.enableAutoPublish === "true",
+        maintenanceMode: generalSettings.maintenanceMode === "true",
+        
+        // AI settings
+        aiModel: aiSettings.aiModel || "gpt-3.5-turbo",
+        aiTemperature: parseFloat(aiSettings.aiTemperature || "0.7"),
+        aiContextLength: parseInt(aiSettings.aiContextLength || "4000"),
+        systemPromptPrefix: aiSettings.systemPromptPrefix || "",
+        defaultUserCredits: parseInt(aiSettings.defaultUserCredits || "50"),
+        creditCostPerArticle: parseInt(aiSettings.creditCostPerArticle || "10"),
+        creditCostPerImage: parseInt(aiSettings.creditCostPerImage || "5"),
+        
+        // Email settings
+        smtpServer: emailSettings.smtpServer || "",
+        smtpPort: parseInt(emailSettings.smtpPort || "587"),
+        smtpUsername: emailSettings.smtpUsername || "",
+        smtpPassword: emailSettings.smtpPassword || "",
+        emailSender: emailSettings.emailSender || "",
+        appBaseUrl: emailSettings.appBaseUrl || "",
+        
+        // API integration settings
+        openaiApiKey: apiSettings.openaiApiKey || "",
+        claudeApiKey: apiSettings.claudeApiKey || "",
+        wordpressApiUrl: apiSettings.wordpressApiUrl || "",
+        wordpressApiUser: apiSettings.wordpressApiUser || "",
+        wordpressApiKey: apiSettings.wordpressApiKey || "",
+        
+        // Webhook settings
+        webhookSecret: integrationSettings.webhookSecret || "",
+        notificationWebhookUrl: integrationSettings.notificationWebhookUrl || "",
+        webhook_url: integrationSettings.webhook_url || "", // Webhook URL cho tạo nội dung
+        
+        // Firebase settings
+        firebaseApiKey: firebaseSettings.firebaseApiKey || "",
+        firebaseProjectId: firebaseSettings.firebaseProjectId || "",
+        firebaseAppId: firebaseSettings.firebaseAppId || "",
+        enableGoogleAuth: firebaseSettings.enableGoogleAuth === "true",
+        enableFacebookAuth: firebaseSettings.enableFacebookAuth === "true",
+        
+        // System info
+        version: "1.0.0",
+        lastBackup: generalSettings.lastBackup || "N/A",
+        dbStatus: "online"
+      };
+      
+      res.json({ success: true, data: settings });
+    } catch (error) {
+      console.error('Error fetching admin settings:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch admin settings' });
+    }
+  });
+  
   // Admin settings API - Webhook settings update
   app.patch('/api/admin/settings/webhook', async (req, res) => {
     try {
