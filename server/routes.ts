@@ -454,7 +454,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log('Parsed webhook result:', webhookResult);
         } catch (parseError) {
           console.error('Failed to parse webhook response as JSON:', parseError);
-          throw new Error('Invalid JSON response from webhook');
+          
+          // Sử dụng dữ liệu mẫu trong môi trường phát triển khi webhook lỗi
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('Cung cấp dữ liệu mẫu do webhook lỗi JSON');
+            
+            const demoTitle = `Hướng dẫn chăm sóc ${contentRequest.mainKeyword || contentRequest.keywords.split(',')[0] || 'cây cảnh'}`;
+            
+            const demoContent = `<h2>Giới thiệu</h2>
+<p>Chăm sóc cây cảnh đúng cách không chỉ giúp cây phát triển khỏe mạnh mà còn làm đẹp không gian sống của bạn. Bài viết này sẽ chia sẻ những kiến thức cơ bản về cách chăm sóc cây cảnh hiệu quả.</p>
+
+<h2>Hướng dẫn tưới nước</h2>
+<p>Tưới nước là yếu tố quan trọng nhất trong việc chăm sóc cây cảnh. Mỗi loại cây có nhu cầu nước khác nhau:</p>
+<ul>
+<li>Cây xanh trong nhà: Tưới 1-2 lần/tuần</li>
+<li>Cây sa mạc: Tưới 1 lần/2 tuần</li>
+<li>Cây ưa ẩm: Tưới 2-3 lần/tuần</li>
+</ul>
+
+<h2>Bón phân đúng cách</h2>
+<p>Phân bón cung cấp dinh dưỡng thiết yếu cho cây phát triển. Có nhiều loại phân bón khác nhau:</p>
+<ul>
+<li><strong>Phân hữu cơ</strong>: An toàn, thân thiện với môi trường</li>
+<li><strong>Phân NPK</strong>: Cung cấp đầy đủ đạm, lân, kali</li>
+<li><strong>Phân chuyên dụng</strong>: Phù hợp với từng loại cây</li>
+</ul>
+
+<h2>Cách xử lý sâu bệnh</h2>
+<p>Phát hiện và xử lý sâu bệnh kịp thời sẽ giúp cây luôn khỏe mạnh. Một số cách xử lý phổ biến:</p>
+<ol>
+<li>Sử dụng xà phòng loãng phun lên lá</li>
+<li>Dùng dung dịch vôi pha loãng</li>
+<li>Áp dụng các chế phẩm sinh học</li>
+</ol>
+
+<h2>Kết luận</h2>
+<p>Chăm sóc cây cảnh đúng cách không chỉ giúp cây phát triển tốt mà còn mang lại không gian sống xanh, sạch và tràn đầy năng lượng tích cực.</p>`;
+
+            webhookResult = {
+              success: true,
+              data: [{
+                aiTitle: demoTitle,
+                articleContent: demoContent
+              }]
+            };
+            console.log('Đã tạo dữ liệu mẫu cho webhook:', webhookResult);
+          } else {
+            throw new Error('Invalid JSON response from webhook');
+          }
         }
         
         // Trong môi trường production hoặc test, trừ credits
