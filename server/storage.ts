@@ -532,10 +532,11 @@ class DatabaseStorage implements IStorage {
       });
       
       if (existingSetting) {
-        // Update existing setting
+        // Update existing setting, bao gồm cả category
         await db.update(schema.systemSettings)
           .set({ 
             value, 
+            category, // cập nhật category khi cập nhật cài đặt
             updatedAt: new Date()
           })
           .where(eq(schema.systemSettings.key, key));
