@@ -400,8 +400,14 @@ export default function CreateContent() {
           (articlePayload as any)['id'] = generatedContent.articleId;
         }
         
+        // Đảm bảo tiêu đề từ form được sử dụng khi lưu bài viết
+        const articlePayloadWithTitle = {
+          ...articlePayload,
+          title: editedTitle // Sử dụng tiêu đề đã chỉnh sửa từ dialog
+        };
+        
         // Gửi request lưu hoặc cập nhật bài viết
-        const response = await apiRequest("POST", "/api/dashboard/articles", articlePayload);
+        const response = await apiRequest("POST", "/api/dashboard/articles", articlePayloadWithTitle);
         const result = await response.json();
         
         // Đóng dialog sau khi lưu thành công
