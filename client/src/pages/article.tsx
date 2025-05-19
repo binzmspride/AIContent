@@ -19,8 +19,6 @@ const Article = () => {
   const { data: articleData, isLoading, error } = useQuery<{ success: boolean; data: ArticleType }>({
     queryKey: [`/api/articles/${articleId}`],
     enabled: !!articleId,
-    retry: 1, // Chỉ thử lại 1 lần nếu thất bại
-    retryDelay: 1000, // Đợi 1 giây trước khi thử lại
   });
 
   const article = articleData?.data;
@@ -71,14 +69,9 @@ const Article = () => {
         <div className="text-center py-12">
           <h1 className="text-3xl font-bold text-red-500 mb-4">Không tìm thấy bài viết</h1>
           <p className="text-gray-600 dark:text-gray-400 mb-6">Bài viết không tồn tại hoặc đã bị xóa</p>
-          <div className="flex justify-center space-x-4">
-            <Button onClick={() => navigate("/dashboard/my-articles")}>
-              Quay lại
-            </Button>
-            <Button onClick={() => navigate("/dashboard/my-articles")}>
-              Bài viết của tôi
-            </Button>
-          </div>
+          <Button onClick={() => navigate("/")}>
+            Quay về trang chủ
+          </Button>
         </div>
       </div>
     );

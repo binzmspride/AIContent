@@ -31,60 +31,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ========== Dashboard API ==========
-  // Public API để xem bài viết
-  app.get('/api/articles/:id', async (req, res) => {
-    try {
-      const articleId = parseInt(req.params.id, 10);
-      
-      if (isNaN(articleId)) {
-        return res.status(400).json({ success: false, error: 'Invalid article ID' });
-      }
-      
-      // Lưu trữ tạm thời cho bài viết khi gặp lỗi kết nối cơ sở dữ liệu
-      const cachedArticles = {
-        // Mẫu các bài viết lưu cache cho trường hợp DB bị lỗi
-        1: {
-          id: 1,
-          title: "Bài viết mẫu 1",
-          content: "<p>Đây là nội dung bài viết mẫu.</p>",
-          userId: 1,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          status: "published",
-          keywords: "mẫu, bài viết, test",
-          language: "vi"
-        }
-      };
-      
-      // Thử lấy bài viết từ cơ sở dữ liệu
-      try {
-        let article = await storage.getArticleById(articleId);
-        
-        // Nếu không tìm thấy bài viết trong DB hoặc gặp lỗi, kiểm tra trong cache
-        if (!article && cachedArticles[articleId]) {
-          console.log(`Sử dụng bài viết cache cho ID ${articleId} do không thể truy cập DB`);
-          article = cachedArticles[articleId];
-        } else if (!article) {
-          return res.status(404).json({ success: false, error: 'Article not found' });
-        }
-        
-        // Không kiểm tra quyền sở hữu vì đây là API công khai để xem bài viết
-        return res.json({ success: true, data: article });
-      } catch (dbError) {
-        console.error('Database error when fetching article:', dbError);
-        
-        // Nếu có lỗi kết nối cơ sở dữ liệu, trả về lỗi máy chủ
-        return res.status(500).json({ 
-          success: false, 
-          error: 'Database connection error, please try again later' 
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching article:', error);
-      res.status(500).json({ success: false, error: 'Failed to fetch article' });
-    }
-  });
-
   // Get dashboard stats
   app.get('/api/dashboard/stats', async (req, res) => {
     try {
