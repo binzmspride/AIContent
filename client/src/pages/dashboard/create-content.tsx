@@ -215,7 +215,16 @@ export default function CreateContent() {
         setGeneratedContent(data);
       }
       
-      setEditedContent(data.content);
+      // Đảm bảo nội dung từ webhook được hiển thị trong dialog
+      if (data.content && data.content.trim() !== '') {
+        setEditedContent(data.content);
+      } else if (data.title) {
+        // Tạo nội dung ban đầu nếu không có nội dung từ webhook
+        setEditedContent(`<h1>${data.title}</h1><p>Nhập nội dung bài viết của bạn ở đây...</p>`);
+      } else {
+        setEditedContent(`<h1>Bài viết mới</h1><p>Nhập nội dung bài viết của bạn ở đây...</p>`);
+      }
+      
       setIsContentDialogOpen(true);
       
       toast({
