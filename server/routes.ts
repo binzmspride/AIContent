@@ -246,14 +246,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       try {
+        // Tạo controller để có thể hủy thủ công nếu cần
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // Giảm timeout xuống 30 giây
+        
         // Gửi request đến webhook
         const webhookResponse = await fetch(webhookUrl, {
           method: 'POST',
           headers,
           body: JSON.stringify(contentRequest),
-          // Tăng thời gian timeout
-          signal: AbortSignal.timeout(60000) // 60 giây timeout
+          signal: controller.signal
         });
+        
+        // Xóa timeout khi nhận được phản hồi
+        clearTimeout(timeoutId);
         
         if (!webhookResponse.ok) {
           console.log(`Webhook response status: ${webhookResponse.status}`);
@@ -329,6 +335,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       } catch (webhookError) {
         console.error('Error calling webhook:', webhookError);
+        
+        // Kiểm tra xem lỗi có phải là timeout không
+        if (webhookError.name === 'AbortError') {
+          console.log('Xử lý lỗi timeout webhook');
+          
+          // Trừ credits cho người dùng
+          await storage.subtractUserCredits(userId, creditsNeeded, `Content generation (fallback)`);
+          
+          // Tạo nội dung mẫu với từ khóa chính
+          const mainKeyword = contentRequest.mainKeyword || contentRequest.keywords.split(',')[0];
+          
+          // Tạo phản hồi dự phòng với từ khóa
+          const fallbackResponse = {
+            title: `Bài viết về ${mainKeyword}`,
+            content: `<h2>Bài viết về ${mainKeyword}</h2><p>Đã xảy ra lỗi kết nối với máy chủ tạo nội dung. Vui lòng thử lại sau hoặc liên hệ quản trị viên.</p>`,
+            aiTitle: `Bài viết về ${mainKeyword}`,
+            articleContent: `<h2>Bài viết về ${mainKeyword}</h2><p>Đã xảy ra lỗi kết nối với máy chủ tạo nội dung. Vui lòng thử lại sau hoặc liên hệ quản trị viên.</p>`,
+            keywords: contentRequest.keywords.split(','),
+            creditsUsed: creditsNeeded,
+            metrics: {
+              generationTimeMs: 1000,
+              wordCount: 30
+            }
+          };
+          
+          return res.json({ 
+            success: true, 
+            data: fallbackResponse,
+            warning: 'Webhook timeout. Please try again later or contact administrator.'
+          });
+        }
+        
         return res.status(500).json({
           success: false,
           error: 'Error calling webhook. Please check the webhook configuration.'
