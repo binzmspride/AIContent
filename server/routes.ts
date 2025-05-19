@@ -758,11 +758,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const generalSettings = await storage.getSettingsByCategory('general');
       const aiSettings = await storage.getSettingsByCategory('ai');
       const emailSettings = await storage.getSettingsByCategory('smtp');
-      const apiSettings = await storage.getSettingsByCategory('api');
-      const integrationSettings = await storage.getSettingsByCategory('integration');
-      const firebaseSettings = await storage.getSettingsByCategory('firebase');
       
+      // Lấy cài đặt webhook và thông báo
+      const integrationSettings = await storage.getSettingsByCategory('integration');
       console.log('Integration settings retrieved:', integrationSettings);
+      const apiSettings = await storage.getSettingsByCategory('api');
+      const firebaseSettings = await storage.getSettingsByCategory('firebase');
       
       // Chuẩn bị đối tượng cài đặt
       const settings = {
