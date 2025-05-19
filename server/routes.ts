@@ -292,8 +292,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const isOfflineMode = offlineModeSetting?.value === 'true';
       
-      if (isOfflineMode) {
-        console.log('Đang chạy ở chế độ offline, bỏ qua webhook');
+      // Hàm tiện ích để trả về nội dung mẫu trong chế độ offline
+      const generateOfflineContent = async () => {
+        console.log('Đang tạo nội dung ở chế độ offline');
         // Trừ credits cho người dùng
         await storage.subtractUserCredits(userId, creditsNeeded, 'Content generation (offline mode)');
         
@@ -301,9 +302,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const mainKeyword = contentRequest.mainKeyword || contentRequest.keywords.split(',')[0];
         const keywords = contentRequest.keywords.split(',').map(k => k.trim());
         
-        // Tạo bài viết mẫu
+        // Tạo bài viết mẫu với nội dung phong phú hơn
         const sampleTitle = 'Hướng dẫn toàn diện về ' + mainKeyword + ': Tất cả những gì bạn cần biết';
-        const sampleContent = '<h1>Hướng dẫn toàn diện về ' + mainKeyword + '</h1><p>Bài viết này cung cấp hướng dẫn đầy đủ về ' + mainKeyword + '.</p>';
+        const sampleContent = `
+          <h1>Hướng dẫn toàn diện về ${mainKeyword}</h1>
+          
+          <p>Chào mừng bạn đến với bài viết đầy đủ và chi tiết về ${mainKeyword}. Bài viết này được tạo trong chế độ offline, nhưng vẫn cung cấp cho bạn cấu trúc cơ bản để bạn có thể điều chỉnh và phát triển thêm.</p>
+          
+          <h2>Lợi ích của ${mainKeyword}</h2>
+          
+          <p>${mainKeyword} mang đến nhiều lợi ích quan trọng mà có thể bạn chưa biết:</p>
+          
+          <ul>
+            <li><b>Lợi ích 1:</b> Mô tả chi tiết về lợi ích đầu tiên của ${mainKeyword}</li>
+            <li><b>Lợi ích 2:</b> Mô tả chi tiết về lợi ích thứ hai của ${mainKeyword}</li>
+            <li><b>Lợi ích 3:</b> Mô tả chi tiết về lợi ích thứ ba của ${mainKeyword}</li>
+          </ul>
+          
+          <h2>Các loại ${mainKeyword} phổ biến</h2>
+          
+          <p>Có nhiều loại ${mainKeyword} khác nhau trên thị trường hiện nay, mỗi loại có những đặc điểm và công dụng riêng:</p>
+          
+          <ol>
+            <li><i>Loại 1:</i> Mô tả chi tiết về loại đầu tiên</li>
+            <li><i>Loại 2:</i> Mô tả chi tiết về loại thứ hai</li>
+            <li><i>Loại 3:</i> Mô tả chi tiết về loại thứ ba</li>
+          </ol>
+          
+          <h2>Hướng dẫn chọn mua ${mainKeyword}</h2>
+          
+          <p>Khi lựa chọn ${mainKeyword}, bạn nên quan tâm đến các yếu tố sau:</p>
+          
+          <h3>Tiêu chí 1</h3>
+          <p>Mô tả chi tiết về tiêu chí đầu tiên khi lựa chọn ${mainKeyword}</p>
+          
+          <h3>Tiêu chí 2</h3>
+          <p>Mô tả chi tiết về tiêu chí thứ hai khi lựa chọn ${mainKeyword}</p>
+          
+          <h2>Kết luận</h2>
+          
+          <p>Hy vọng bài viết này đã cung cấp cho bạn những thông tin cơ bản về ${mainKeyword}. Hãy cập nhật thêm thông tin và chi tiết cụ thể để tạo ra bài viết hoàn chỉnh hơn.</p>
+        `;
         
         // Tạo phản hồi mẫu cho chế độ offline
         const offlineResponse = {
@@ -320,10 +359,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
         
         console.log('Trả về nội dung mẫu ở chế độ offline');
-        return res.json({ success: true, data: offlineResponse });
+        return { success: true, data: offlineResponse };
+      };
+      
+      // Nếu đã bật chế độ offline, sử dụng nó ngay lập tức
+      if (isOfflineMode) {
+        console.log('Chế độ offline được bật, tạo nội dung offline');
+        const offlineResult = await generateOfflineContent();
+        return res.json(offlineResult);
       }
       
       if (!webhookUrl) {
+        // Nếu không có webhook URL và chế độ offline được bật, sử dụng chế độ offline
+        if (isOfflineMode) {
+          console.log('Không có webhook URL, sử dụng chế độ offline');
+          const offlineResult = await generateOfflineContent();
+          return res.json(offlineResult);
+        }
+        
         return res.status(404).json({ 
           success: false, 
           error: 'Webhook URL not configured'
@@ -376,6 +429,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         if (!webhookResponse.ok) {
           console.log(`Webhook response status: ${webhookResponse.status}`);
+          
+          // Khi webhook gặp lỗi và chế độ offline đã bật, tạo nội dung offline
+          if (isOfflineMode) {
+            console.log(`Webhook lỗi với mã ${webhookResponse.status}, sử dụng chế độ offline`);
+            const offlineResult = await generateOfflineContent();
+            return res.json(offlineResult);
+          }
+          
           return res.status(webhookResponse.status).json({
             success: false,
             error: `Không thể kết nối với dịch vụ tạo nội dung. Mã lỗi: ${webhookResponse.status}. Vui lòng kiểm tra cấu hình webhook.`
@@ -452,10 +513,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Kiểm tra xem lỗi có phải là timeout không
         if (webhookError.name === 'AbortError' || webhookError.name === 'TimeoutError') {
           console.log('Xử lý lỗi timeout webhook');
+          
+          // Khi webhook timeout và chế độ offline đã bật, tạo nội dung offline
+          if (isOfflineMode) {
+            console.log('Webhook timeout, sử dụng chế độ offline');
+            const offlineResult = await generateOfflineContent();
+            return res.json(offlineResult);
+          }
+          
           return res.status(504).json({
             success: false,
             error: 'Không thể kết nối với dịch vụ tạo nội dung. Mã lỗi: 504. Vui lòng kiểm tra cấu hình webhook.'
           });
+        }
+        
+        // Khi webhook gặp lỗi khác và chế độ offline đã bật, tạo nội dung offline
+        if (isOfflineMode) {
+          console.log('Webhook lỗi, sử dụng chế độ offline');
+          const offlineResult = await generateOfflineContent();
+          return res.json(offlineResult);
         }
         
         return res.status(500).json({
