@@ -180,10 +180,12 @@ export default function MyArticles() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => window.open(`/article/${article.id}` || '', '_blank')}>
-                <Eye className="mr-2 h-4 w-4" />
-                <span>View</span>
-              </DropdownMenuItem>
+              <Link href={`/article/${article.id}`}>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Eye className="mr-2 h-4 w-4" />
+                  <span>View</span>
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuItem onClick={() => copyArticleContent(article)}>
                 <Copy className="mr-2 h-4 w-4" />
                 <span>Copy Content</span>

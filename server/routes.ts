@@ -31,6 +31,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ========== Dashboard API ==========
+  // Public API để xem bài viết
+  app.get('/api/articles/:id', async (req, res) => {
+    try {
+      const articleId = parseInt(req.params.id, 10);
+      
+      if (isNaN(articleId)) {
+        return res.status(400).json({ success: false, error: 'Invalid article ID' });
+      }
+      
+      const article = await storage.getArticleById(articleId);
+      
+      if (!article) {
+        return res.status(404).json({ success: false, error: 'Article not found' });
+      }
+      
+      // Không kiểm tra quyền sở hữu vì đây là API công khai để xem bài viết
+      return res.json({ success: true, data: article });
+    } catch (error) {
+      console.error('Error fetching article:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch article' });
+    }
+  });
+
   // Get dashboard stats
   app.get('/api/dashboard/stats', async (req, res) => {
     try {
