@@ -731,6 +731,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Admin settings API - Webhook settings update
+  app.patch('/api/admin/settings/webhook', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+      
+      const { webhookSecret, notificationWebhookUrl } = req.body;
+      
+      // Update notification webhook URL if provided
+      if (notificationWebhookUrl !== undefined) {
+        await storage.setSetting('notificationWebhookUrl', notificationWebhookUrl, 'integration');
+      }
+      
+      // Update webhook secret if provided (now optional)
+      if (webhookSecret !== undefined) {
+        await storage.setSetting('webhookSecret', webhookSecret, 'integration');
+      }
+      
+      res.json({ 
+        success: true, 
+        data: { message: 'Webhook settings updated successfully' } 
+      });
+    } catch (error) {
+      console.error('Error updating webhook settings:', error);
+      res.status(500).json({ success: false, error: 'Failed to update webhook settings' });
+    }
+  });
+
   // Get performance metrics for the admin dashboard
   app.get('/api/admin/performance', async (req, res) => {
     try {
