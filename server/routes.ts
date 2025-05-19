@@ -4,8 +4,11 @@ import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import * as schema from "@shared/schema";
 import { db } from "../db";
-import { sql } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import { ApiResponse, GenerateContentRequest, GenerateContentResponse } from "@shared/types";
+import { systemSettings } from "@shared/schema";
+import { randomBytes, scrypt, timingSafeEqual } from "crypto";
+import { promisify } from "util";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
