@@ -248,7 +248,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         // Tạo controller để có thể hủy thủ công nếu cần
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // Giảm timeout xuống 30 giây
+        const timeoutId = setTimeout(() => controller.abort(), 120000); // Đặt timeout 120 giây (2 phút)
         
         // Gửi request đến webhook
         const webhookResponse = await fetch(webhookUrl, {
@@ -333,11 +333,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Sử dụng dữ liệu mẫu nếu phân tích JSON thất bại
           return res.json({ success: true, data: mockResponse });
         }
-      } catch (webhookError) {
+      } catch (webhookError: any) {
         console.error('Error calling webhook:', webhookError);
         
         // Kiểm tra xem lỗi có phải là timeout không
-        if (webhookError.name === 'AbortError') {
+        if (webhookError.name === 'AbortError' || webhookError.name === 'TimeoutError') {
           console.log('Xử lý lỗi timeout webhook');
           
           // Trừ credits cho người dùng
