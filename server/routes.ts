@@ -203,7 +203,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Get webhook URL from system settings
       const webhookSettingRes = await db.query.systemSettings.findFirst({
-        where: eq(systemSettings.key, 'webhook_url')
+        where: eq(systemSettings.key, 'notificationWebhookUrl')
       });
       
       const webhookUrl = webhookSettingRes?.value;
