@@ -24,6 +24,7 @@ export interface IStorage {
   
   // Article management
   getArticle(id: number): Promise<schema.Article | null>;
+  getArticleById(id: number): Promise<schema.Article | null>;
   getArticlesByUser(userId: number, page: number, limit: number, status?: string): Promise<{ articles: schema.Article[], total: number }>;
   createArticle(article: schema.InsertArticle): Promise<schema.Article>;
   updateArticle(id: number, data: Partial<schema.Article>): Promise<schema.Article | null>;
@@ -294,6 +295,13 @@ class DatabaseStorage implements IStorage {
     return updatedArticle || null;
   }
   
+  async getArticleById(id: number): Promise<schema.Article | null> {
+    const article = await db.query.articles.findFirst({
+      where: eq(schema.articles.id, id)
+    });
+    return article || null;
+  }
+
   async deleteArticle(id: number): Promise<boolean> {
     const result = await db.delete(schema.articles)
       .where(eq(schema.articles.id, id));
