@@ -44,6 +44,9 @@ import {
   Edit,
   ExternalLink,
   Copy,
+  Calendar,
+  Tag,
+  X,
 } from "lucide-react";
 import { Article } from "@shared/schema";
 import Head from "@/components/head";
@@ -55,6 +58,8 @@ export default function MyArticles() {
   const [articleToDelete, setArticleToDelete] = useState<number | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [viewArticle, setViewArticle] = useState<Article | null>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
   // Fetch articles with pagination
   const {
@@ -180,12 +185,13 @@ export default function MyArticles() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <Link href={`/article/${article.id}`}>
-                <DropdownMenuItem className="cursor-pointer">
-                  <Eye className="mr-2 h-4 w-4" />
-                  <span>View</span>
-                </DropdownMenuItem>
-              </Link>
+              <DropdownMenuItem onClick={() => {
+                setViewArticle(article);
+                setIsViewDialogOpen(true);
+              }} className="cursor-pointer">
+                <Eye className="mr-2 h-4 w-4" />
+                <span>View</span>
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => copyArticleContent(article)}>
                 <Copy className="mr-2 h-4 w-4" />
                 <span>Copy Content</span>
@@ -338,6 +344,7 @@ export default function MyArticles() {
           </div>
         )}
 
+        {/* Dialog xác nhận xóa bài viết */}
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DialogContent>
             <DialogHeader>
@@ -358,6 +365,65 @@ export default function MyArticles() {
                 {deleteArticleMutation.isPending ? "Deleting..." : "Delete"}
               </Button>
             </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialog xem bài viết */}
+        <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            {viewArticle && (
+              <>
+                <DialogHeader>
+                  <div className="flex justify-between items-center">
+                    <DialogTitle className="text-2xl font-bold">{viewArticle.title}</DialogTitle>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={() => setIsViewDialogOpen(false)}
+                      className="h-8 w-8"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mt-2">
+                    <div className="flex items-center">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      {formatDate(viewArticle.createdAt)}
+                    </div>
+                    
+                    {viewArticle.keywords && (
+                      <div className="flex items-center">
+                        <Tag className="h-4 w-4 mr-2" />
+                        {viewArticle.keywords}
+                      </div>
+                    )}
+
+                    <StatusBadge status={viewArticle.status as any} />
+                  </div>
+                </DialogHeader>
+                
+                <div 
+                  className="prose dark:prose-invert max-w-none mt-4"
+                  dangerouslySetInnerHTML={{ __html: viewArticle.content }}
+                />
+
+                <DialogFooter className="gap-2 mt-6">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => copyArticleContent(viewArticle)}
+                  >
+                    <Copy className="mr-2 h-4 w-4" />
+                    Copy Content
+                  </Button>
+                  <Link href={`/dashboard/edit-article/${viewArticle.id}`}>
+                    <Button>
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit
+                    </Button>
+                  </Link>
+                </DialogFooter>
+              </>
+            )}
           </DialogContent>
         </Dialog>
       </DashboardLayout>

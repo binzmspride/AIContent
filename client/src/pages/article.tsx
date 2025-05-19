@@ -72,7 +72,7 @@ const Article = () => {
           <h1 className="text-3xl font-bold text-red-500 mb-4">Không tìm thấy bài viết</h1>
           <p className="text-gray-600 dark:text-gray-400 mb-6">Bài viết không tồn tại hoặc đã bị xóa</p>
           <div className="flex justify-center space-x-4">
-            <Button onClick={() => navigate(-1)}>
+            <Button onClick={() => navigate("/dashboard/my-articles")}>
               Quay lại
             </Button>
             <Button onClick={() => navigate("/dashboard/my-articles")}>
