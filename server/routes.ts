@@ -519,7 +519,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Nếu webhookResult có cấu trúc { success: true, data: [{ articleContent, aiTitle }] }
           const firstResult = webhookResult.data[0];
           
+          // Kiểm tra xem có aiTitle và articleContent không
           if (firstResult.articleContent && firstResult.aiTitle) {
+            console.log("Đã tìm thấy aiTitle và articleContent trong phản hồi webhook");
+            
             // Chuyển đổi sang định dạng mà client đang mong đợi
             formattedResult = {
               title: firstResult.aiTitle.trim(),
@@ -533,9 +536,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             };
             console.log("Đã xử lý dữ liệu từ webhook với định dạng mới (articleContent, aiTitle)");
           } else {
-            // Dữ liệu không đúng định dạng, giữ nguyên kết quả
+            // Dữ liệu không đúng định dạng, kiểm tra từng trường và ghi log
+            console.log("Kiểm tra các trường trong phản hồi webhook:", 
+              "aiTitle:", firstResult.aiTitle ? "Có" : "Không có", 
+              "articleContent:", firstResult.articleContent ? "Có" : "Không có");
+            
             formattedResult = webhookResult;
-            console.log("Không tìm thấy articleContent hoặc aiTitle trong phản hồi webhook:", firstResult);
+            console.log("Không tìm thấy đủ cả articleContent và aiTitle trong phản hồi webhook:", firstResult);
           }
         } else {
           // Giữ nguyên kết quả nếu không phải cấu trúc mới
