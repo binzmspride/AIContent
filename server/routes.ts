@@ -742,20 +742,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const { webhookSecret, notificationWebhookUrl } = req.body;
+      console.log('Webhook settings update request received:');
+      console.log('- notificationWebhookUrl:', notificationWebhookUrl);
+      console.log('- webhookSecret provided:', webhookSecret !== undefined);
+      
+      let webhookUrlResult = true;
+      let webhookSecretResult = true;
       
       // Update notification webhook URL if provided
       if (notificationWebhookUrl !== undefined) {
-        await storage.setSetting('notificationWebhookUrl', notificationWebhookUrl, 'integration');
+        webhookUrlResult = await storage.setSetting('notificationWebhookUrl', notificationWebhookUrl, 'integration');
+        console.log('- notificationWebhookUrl update result:', webhookUrlResult);
       }
       
       // Update webhook secret if provided (now optional)
       if (webhookSecret !== undefined) {
-        await storage.setSetting('webhookSecret', webhookSecret, 'integration');
+        webhookSecretResult = await storage.setSetting('webhookSecret', webhookSecret, 'integration');
+        console.log('- webhookSecret update result:', webhookSecretResult);
       }
+      
+      if (!webhookUrlResult || !webhookSecretResult) {
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Failed to save one or more webhook settings' 
+        });
+      }
+      
+      // Kiểm tra xem cài đặt đã được lưu thành công hay chưa
+      const savedWebhookUrl = await storage.getSetting('notificationWebhookUrl');
+      const savedWebhookSecret = await storage.getSetting('webhookSecret');
+      
+      console.log('Verification after save:');
+      console.log('- Saved notificationWebhookUrl:', savedWebhookUrl);
+      console.log('- Saved webhookSecret exists:', savedWebhookSecret !== null);
       
       res.json({ 
         success: true, 
-        data: { message: 'Webhook settings updated successfully' } 
+        data: { 
+          message: 'Webhook settings updated successfully',
+          webhookUrl: savedWebhookUrl,
+          webhookSecretExists: savedWebhookSecret !== null
+        } 
       });
     } catch (error) {
       console.error('Error updating webhook settings:', error);
