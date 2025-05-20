@@ -237,79 +237,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Endpoint kiểm tra trạng thái nội dung
-  app.get('/api/dashboard/content-status', async (req, res) => {
-    try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ success: false, error: 'Not authenticated' });
-      }
-      
-      // Lấy requestId từ query string
-      const requestId = req.query.requestId as string;
-      
-      if (!requestId) {
-        return res.status(400).json({ 
-          success: false, 
-          error: 'Missing requestId parameter' 
-        });
-      }
-      
-      // Trong thực tế, bạn sẽ kiểm tra trạng thái từ webhook hoặc cơ sở dữ liệu
-      // Ở đây chúng ta sẽ giả lập một phản hồi và ngẫu nhiên trả về trạng thái hoàn thành
-      
-      // Xác suất 20% sẽ trả về trạng thái hoàn thành
-      const isCompleted = Math.random() < 0.2;
-      
-      if (isCompleted) {
-        // Giả lập nội dung đã được tạo
-        return res.json({
-          success: true,
-          data: {
-            status: 'completed',
-            content: {
-              title: 'Cây cảnh trong thiết kế nội thất hiện đại',
-              content: `<h1>Cây cảnh trong thiết kế nội thất hiện đại</h1>
-              <p>Trong thế giới thiết kế nội thất hiện đại, cây cảnh đang ngày càng được coi là một yếu tố thiết yếu, không chỉ vì giá trị thẩm mỹ mà còn vì những lợi ích về sức khỏe và tinh thần mà chúng mang lại. Bài viết này sẽ khám phá xu hướng sử dụng cây cảnh trong thiết kế nội thất và cách chúng góp phần tạo nên không gian sống hài hòa, thân thiện với môi trường.</p>
-              <h2>Lợi ích của việc đưa cây xanh vào không gian sống</h2>
-              <p>Cây xanh không chỉ là vật trang trí mà còn mang lại nhiều lợi ích sức khỏe như thanh lọc không khí, tăng độ ẩm và giảm căng thẳng. Nghiên cứu cho thấy việc tiếp xúc với cây xanh có thể cải thiện tâm trạng, tăng năng suất làm việc và giảm mệt mỏi.</p>
-              <h2>Xu hướng sử dụng cây cảnh trong thiết kế nội thất</h2>
-              <p>Hiện nay, nhiều kiến trúc sư và nhà thiết kế nội thất đang tích hợp cây xanh như một phần không thể thiếu trong các dự án của họ. Từ những khu vườn thẳng đứng, "mảng tường sống" đến các giải pháp trồng cây thông minh tích hợp công nghệ, cây xanh đang được sử dụng theo những cách sáng tạo và đổi mới.</p>
-              <h2>Lựa chọn cây cảnh phù hợp với từng không gian</h2>
-              <ul>
-                <li>Phòng khách: Sen đá, cây lưỡi hổ, cây bạch mã hoàng tử</li>
-                <li>Phòng ngủ: Cây lô hội, cây dây nhện, cây lan ý</li>
-                <li>Phòng làm việc: Cây trầu bà, cây kim tiền, cảnh đại mộc</li>
-                <li>Nhà bếp: Cây húng quế, cây kinh giới, cây rosemary</li>
-              </ul>
-              <h2>Cách chăm sóc cây cảnh trong nhà</h2>
-              <p>Mỗi loại cây có yêu cầu chăm sóc khác nhau, nhưng một số nguyên tắc cơ bản bao gồm: kiểm soát ánh sáng phù hợp, tưới nước đúng cách, và đảm bảo độ ẩm thích hợp. Việc tìm hiểu kỹ về từng loại cây trước khi mua là rất quan trọng để duy trì sức khỏe của chúng.</p>
-              <h2>Kết luận</h2>
-              <p>Cây cảnh không chỉ là một phần của thiết kế nội thất mà còn là cầu nối giữa con người với thiên nhiên trong không gian sống hiện đại. Bằng cách tích hợp cây xanh một cách hợp lý, chúng ta có thể tạo ra những không gian sống không chỉ đẹp mắt mà còn lành mạnh và bền vững.</p>`,
-              keywords: ['Cây cảnh', 'thiết kế nội thất', 'không gian sống', 'cây xanh trong nhà'],
-              creditsUsed: 1,
-              metrics: {
-                generationTimeMs: 5000,
-                wordCount: 350
-              }
-            }
-          }
-        });
-      } else {
-        // Giả lập nội dung đang được tạo
-        return res.json({
-          success: true,
-          data: {
-            status: 'processing',
-            message: 'Nội dung đang được tạo, vui lòng đợi trong giây lát.'
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Error checking content status:', error);
-      res.status(500).json({ success: false, error: 'Failed to check content status' });
-    }
-  });
-  
   // Generate content API - tạo nội dung trong ứng dụng
   app.post('/api/dashboard/generate-content', async (req, res) => {
     try {
@@ -337,8 +264,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // This would be replaced with actual AI content generation using n8n webhook
       // For now, return mock content
       const mockResponse: GenerateContentResponse = {
-        title: contentRequest.title || "Bài viết mới",
-        content: `<h1>${contentRequest.title || "Bài viết mới"}</h1>
+        title: contentRequest.title,
+        content: `<h1>${contentRequest.title}</h1>
           <p>This is a placeholder for AI-generated content. In a real implementation, this would be generated based on the provided parameters using the n8n webhook.</p>
           <h2>About this topic</h2>
           <p>This content would be optimized for SEO with keywords: ${contentRequest.keywords}</p>
@@ -346,11 +273,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           <p>The content would be written in a ${contentRequest.tone} tone and would be approximately ${contentRequest.length === 'short' ? '500' : contentRequest.length === 'medium' ? '1000' : contentRequest.length === 'long' ? '1500' : '2000'} words long.</p>
           <p>Custom prompt details: ${contentRequest.prompt}</p>`,
         keywords: contentRequest.keywords.split(',').map(k => k.trim()),
-        creditsUsed: creditsNeeded,
-        metrics: {
-          generationTimeMs: 5000,
-          wordCount: 500
-        }
+        creditsUsed: creditsNeeded
       };
       
       // Get webhook URL from system settings
@@ -360,11 +283,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const webhookUrl = webhookSettingRes?.value;
       console.log('=== GENERATE CONTENT API CALLED ===');
-      console.log('Webhook URL from database:', webhookUrl || '(missing)');
+      console.log('Webhook URL from database:', webhookUrl);
       
       // Xóa chế độ offline mode theo yêu cầu
       
-      if (!webhookUrl || typeof webhookUrl !== 'string') {
+      if (!webhookUrl) {
         return res.status(404).json({ 
           success: false, 
           error: 'Webhook URL not configured'
@@ -375,7 +298,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const webhookSecretRes = await db.query.systemSettings.findFirst({
         where: eq(systemSettings.key, 'webhook_secret')
       });
-      const webhookSecret = webhookSecretRes?.value || '';
+      const webhookSecret = webhookSecretRes?.value;
       console.log('Webhook Secret from database:', webhookSecret ? '(exists)' : '(missing)');
       
       // Gửi request đến webhook
@@ -429,114 +352,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Xử lý phản hồi từ webhook
         const responseText = await webhookResponse.text();
         console.log('Webhook response text:', responseText);
-        console.log('Webhook response status:', webhookResponse.status);
-        console.log('Webhook response headers:', JSON.stringify(Object.fromEntries(webhookResponse.headers)));
         
-        // Nếu responseText trống hoặc không hợp lệ, đợi kết quả từ webhook
+        // Nếu responseText trống hoặc không hợp lệ, sử dụng dữ liệu mẫu
         if (!responseText || responseText.trim() === '') {
-          if (webhookResponse.status === 200 || webhookResponse.status === 202 || webhookResponse.status === 204) {
-            console.log('Webhook accepted the request, waiting for real-time response...');
-            
-            // Thiết lập thời gian đợi tối đa cho webhook (30 giây)
-            let waitTime = 0;
-            const maxWaitTime = 30000; // 30 giây
-            const intervalTime = 1000; // 1 giây
-            
-            try {
-              // Trả về promise sẽ được giải quyết khi nhận được phản hồi từ webhook
-              // hoặc hết thời gian chờ
-              const waitForWebhookResponse = new Promise<any>((resolve) => {
-                const checkInterval = setInterval(async () => {
-                  waitTime += intervalTime;
-                  
-                  // Kiểm tra xem đã quá thời gian chờ chưa
-                  if (waitTime >= maxWaitTime) {
-                    clearInterval(checkInterval);
-                    console.log('Webhook response timeout, sending processing status');
-                    // Hết thời gian chờ, gửi phản hồi đang xử lý
-                    resolve({
-                      title: "Đang xử lý",
-                      content: "<p>Đang xử lý yêu cầu tạo nội dung...</p>",
-                      keywords: contentRequest.keywords.split(','),
-                      creditsUsed: creditsNeeded,
-                      status: "processing",
-                      message: "Nội dung đang được tạo, vui lòng đợi trong giây lát."
-                    });
-                  }
-                  
-                  // Thử lấy nội dung đã tạo từ webhook
-                  try {
-                    // Gửi yêu cầu kiểm tra trạng thái đến webhook
-                    const statusResponse = await fetch(`${webhookUrl}/status?requestId=${contentRequest.timestamp}`, {
-                      method: 'GET',
-                      headers: {
-                        'Content-Type': 'application/json',
-                        ...(webhookSecret ? { 'X-Webhook-Secret': webhookSecret } : {})
-                      }
-                    });
-                    
-                    if (statusResponse.ok) {
-                      const statusData = await statusResponse.json();
-                      
-                      // Nếu có nội dung đã tạo
-                      if (statusData && statusData.success && statusData.data) {
-                        clearInterval(checkInterval);
-                        console.log('Received webhook content response:', statusData.data);
-                        resolve(statusData.data);
-                      }
-                    }
-                  } catch (error) {
-                    console.log('Error checking webhook status:', error);
-                  }
-                }, intervalTime);
-              });
-              
-              // Đợi promise hoàn thành
-              const result = await waitForWebhookResponse;
-              return res.json({ success: true, data: result });
-            } catch (error) {
-              console.error('Error waiting for webhook response:', error);
-              // Trả về trạng thái đang xử lý nếu có lỗi
-              return res.json({
-                success: true,
-                data: {
-                  title: "Đang xử lý",
-                  content: "<p>Đang xử lý yêu cầu tạo nội dung...</p>",
-                  keywords: contentRequest.keywords.split(','),
-                  creditsUsed: creditsNeeded,
-                  status: "processing",
-                  message: "Nội dung đang được tạo, vui lòng đợi trong giây lát."
-                }
-              });
-            }
-          } else {
-            console.log('Webhook returned empty response with non-success status, using mock data');
-            return res.json({ success: true, data: mockResponse });
-          }
+          console.log('Webhook returned empty response, using mock data');
+          return res.json({ success: true, data: mockResponse });
         }
         
         try {
-          // Phân tích phản hồi
           const webhookResult = JSON.parse(responseText);
           
-          // Trừ credits khi nhận phản hồi thành công
+          // Trừ credits
           await storage.subtractUserCredits(userId, creditsNeeded, `Content generation`);
           
-          console.log('Parsed webhook response:', JSON.stringify(webhookResult));
-          
-          // TH1: WebhookResult chuẩn từ n8n có chứa trường articleContent và aiTitle
+          // Kiểm tra cấu trúc phản hồi
           if (webhookResult && webhookResult.success && Array.isArray(webhookResult.data) && webhookResult.data.length > 0) {
             const firstResult = webhookResult.data[0];
             
+            // Xử lý theo cấu trúc phản hồi
             if (firstResult.articleContent && firstResult.aiTitle) {
+              // Định dạng phản hồi bao gồm cả trường aiTitle và articleContent gốc
+              // để client có thể sử dụng trực tiếp
               // Xử lý aiTitle để loại bỏ các ký tự xuống dòng và dấu cách thừa
               const cleanedTitle = firstResult.aiTitle.replace(/[\r\n\t]+/g, ' ').trim();
               
               const formattedResponse = {
-                title: cleanedTitle,
-                content: firstResult.articleContent,
-                aiTitle: cleanedTitle,
-                articleContent: firstResult.articleContent,
+                title: cleanedTitle, // Tiêu đề sẽ được hiển thị (đã được làm sạch)
+                content: firstResult.articleContent, // Nội dung sẽ được hiển thị
+                aiTitle: cleanedTitle, // Lưu trữ tiêu đề gốc từ AI (đã được làm sạch)
+                articleContent: firstResult.articleContent, // Lưu trữ nội dung gốc
                 keywords: contentRequest.keywords.split(','),
                 creditsUsed: creditsNeeded,
                 metrics: {
@@ -545,57 +389,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 }
               };
               
-              console.log('Sending formatted response with aiTitle and articleContent');
+              // Log để kiểm tra dữ liệu gửi đi
+              console.log('Sending aiTitle to client:', cleanedTitle);
+              
+              console.log('Trả về phản hồi với aiTitle và articleContent:', formattedResponse);
               return res.json({ success: true, data: formattedResponse });
             }
-            
-            // TH2: WebhookResult có cấu trúc khác nhưng vẫn có data array
-            console.log('Sending direct data from webhook response array');
-            return res.json({ success: true, data: firstResult });
           }
           
-          // TH3: WebhookResult có cấu trúc hoàn toàn khác
-          if (webhookResult.content) {
-            // Tạo response với các trường content và title nếu có sẵn
-            const response = {
-              title: webhookResult.title || contentRequest.title || "Bài viết mới",
-              content: webhookResult.content,
-              keywords: contentRequest.keywords.split(','),
-              creditsUsed: creditsNeeded
-            };
-            console.log('Sending response with content field');
-            return res.json({ success: true, data: response });
+          // Nếu không nhận dạng được cấu trúc theo cách trên, kiểm tra dữ liệu từ webhookResult
+          if (webhookResult && webhookResult.success && Array.isArray(webhookResult.data)) {
+            // Trường hợp dữ liệu đã được đóng gói trong webhookResult.data
+            console.log('Trả về phản hồi gốc từ webhook:', webhookResult.data);
+            return res.json({ success: true, data: webhookResult.data[0] });
+          } else {
+            // Trường hợp cấu trúc khác, trả về nguyên dạng
+            console.log('Trả về phản hồi nguyên dạng:', webhookResult);
+            return res.json({ success: true, data: webhookResult });
           }
           
-          // TH4: Các trường hợp khác, trả về nguyên dạng
-          console.log('Sending original webhook response');
-          const defaultResponse = {
-            title: webhookResult.title || contentRequest.title || "Bài viết mới",
-            content: webhookResult.content || "<p>Nội dung đã được tạo.</p>",
-            keywords: contentRequest.keywords.split(','),
-            creditsUsed: creditsNeeded,
-            ...webhookResult // Đưa tất cả các trường khác từ webhookResult
-          };
-          
-          return res.json({ success: true, data: defaultResponse });
         } catch (jsonError) {
           console.error('Failed to parse webhook response as JSON:', jsonError);
-          console.log('Raw response text:', responseText);
-          
-          // Nếu phản hồi trông giống HTML, có thể đó là nội dung bài viết được trả về trực tiếp
-          if (responseText.includes('<html') || responseText.includes('<body') || 
-              responseText.includes('<h1') || responseText.includes('<p')) {
-            const htmlResponse = {
-              title: contentRequest.title || "Bài viết mới",
-              content: responseText,
-              keywords: contentRequest.keywords.split(','),
-              creditsUsed: creditsNeeded
-            };
-            console.log('Treating response as direct HTML content');
-            return res.json({ success: true, data: htmlResponse });
-          }
-          
-          // Sử dụng dữ liệu mẫu làm giải pháp cuối cùng
+          // Sử dụng dữ liệu mẫu nếu phân tích JSON thất bại
           return res.json({ success: true, data: mockResponse });
         }
       } catch (webhookError: any) {

@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, bigint, boolean, timestamp, pgEnum, jsonb, varchar, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, bigint, boolean, timestamp, pgEnum, jsonb, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { relations } from "drizzle-orm";
 import { z } from "zod";
@@ -8,7 +8,6 @@ export const roleEnum = pgEnum('role', ['admin', 'user']);
 export const articleStatusEnum = pgEnum('article_status', ['draft', 'published', 'deleted']);
 export const planTypeEnum = pgEnum('plan_type', ['credit', 'storage']);
 export const connectionTypeEnum = pgEnum('connection_type', ['wordpress', 'facebook', 'tiktok', 'twitter']);
-export const contentRequestStatusEnum = pgEnum('content_request_status', ['pending', 'processing', 'completed', 'failed']);
 
 // Enum types for TypeScript
 export type PlanType = 'credit' | 'storage';

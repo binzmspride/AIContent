@@ -86,7 +86,6 @@ const formSchema = z.object({
   keywords: z.string().min(3, {
     message: "Từ khóa phải có ít nhất 3 ký tự.",
   }),
-  mainKeyword: z.string().optional(),
   length: z.enum(["short", "medium", "long", "extra_long"]),
   tone: z.enum(["professional", "conversational", "informative", "persuasive", "humorous", "neutral"]),
   prompt: z.string().optional(),
@@ -192,118 +191,6 @@ export default function CreateContent() {
     onSuccess: async (data) => {
       // Kiểm tra cấu trúc dữ liệu từ webhook và trích xuất đúng cách
       console.log("Data structure from webhook:", JSON.stringify(data, null, 2));
-      console.log("Webhook response data:", data);
-      
-      // Kiểm tra nếu nội dung đang trong trạng thái xử lý
-      if (data.status === 'processing') {
-        // Hiển thị thông báo cho người dùng biết nội dung đang được xử lý
-        toast({
-          title: "Đang xử lý nội dung",
-          description: "Hệ thống đang tạo nội dung, vui lòng đợi trong giây lát...",
-          duration: 60000,
-        });
-        
-        // Bắt đầu quá trình kiểm tra nội dung
-        let isContentGenerated = false;
-        
-        // Thiết lập polling để kiểm tra trạng thái nội dung
-        const pollForContent = () => {
-          // Tạo biến interval để có thể clear khi cần
-          let pollInterval: NodeJS.Timeout;
-          const maxAttempts = 12; // Tối đa 12 lần thử (1 phút với 5s mỗi lần)
-          let attempts = 0;
-          
-          // Hàm kiểm tra trạng thái nội dung
-          const checkStatus = async () => {
-            try {
-              // Tạo requestId dựa trên timestamp
-              const requestId = Date.now().toString();
-              console.log(`Checking content status (attempt ${attempts + 1}/${maxAttempts})...`);
-              
-              const res = await apiRequest("GET", `/api/dashboard/content-status?requestId=${requestId}`);
-              const result = await res.json();
-              
-              if (result.success && result.data) {
-                if (result.data.status === 'completed' && result.data.content) {
-                  // Đã tạo xong nội dung
-                  isContentGenerated = true;
-                  
-                  // Dừng polling
-                  clearInterval(pollInterval);
-                  
-                  // Hiển thị thông báo thành công
-                  toast({
-                    title: "Tạo nội dung thành công",
-                    description: "Nội dung đã được tạo thành công!",
-                  });
-                  
-                  // Cập nhật UI với nội dung mới
-                  setGeneratedContent(result.data.content);
-                  return;
-                }
-              }
-              
-              // Tăng số lần thử
-              attempts++;
-              
-              // Kiểm tra nếu đã hết số lần thử
-              if (attempts >= maxAttempts) {
-                clearInterval(pollInterval);
-                
-                if (!isContentGenerated) {
-                  // Hiển thị thông báo nếu không nhận được nội dung
-                  toast({
-                    title: "Tạo nội dung mất nhiều thời gian",
-                    description: "Hệ thống đang xử lý yêu cầu của bạn. Nội dung sẽ xuất hiện trong danh sách bài viết khi hoàn tất.",
-                    duration: 5000,
-                    variant: "destructive"
-                  });
-                  
-                  // Chuyển đến trang danh sách bài viết sau vài giây
-                  setTimeout(() => {
-                    window.location.href = '/dashboard/articles';
-                  }, 3000);
-                }
-              }
-            } catch (error) {
-              console.error("Error checking content status:", error);
-              attempts++;
-              
-              // Dừng polling nếu đã hết số lần thử
-              if (attempts >= maxAttempts) {
-                clearInterval(pollInterval);
-                toast({
-                  title: "Không thể kiểm tra trạng thái",
-                  description: "Có lỗi khi kiểm tra trạng thái nội dung. Vui lòng kiểm tra lại sau.",
-                  duration: 5000,
-                });
-              }
-            }
-          };
-          
-          // Bắt đầu kiểm tra ngay lập tức
-          checkStatus();
-          
-          // Thiết lập interval để kiểm tra mỗi 5 giây
-          pollInterval = setInterval(checkStatus, 5000);
-          
-          // Trả về hàm dừng polling để có thể gọi khi cần
-          return () => {
-            if (pollInterval) clearInterval(pollInterval);
-          };
-        };
-        
-        // Bắt đầu quá trình polling
-        const stopPolling = pollForContent();
-        
-        // Hiển thị nội dung "đang xử lý"
-        setGeneratedContent(data);
-        
-        // Clean up khi component unmounts
-        return () => {
-          stopPolling();
-        };
-      }
       
       // Xử lý content
       let content;
@@ -589,6 +476,7 @@ export default function CreateContent() {
         form.reset({
           contentType: 'blog',
           keywords: '',
+          mainKeyword: '',
           length: 'medium',
           tone: 'conversational',
           language: 'vietnamese',
