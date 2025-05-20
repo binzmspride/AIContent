@@ -127,8 +127,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
           'X-Callback-URL': `${req.protocol}://${req.get('host')}/api/webhook/callback`
         };
 
-        // Gửi request đến webhook và không chờ phản hồi
-        fetch(contentWebhookUrl, {
+        // Gửi request đến webhook với timeout và retry
+        const fetchWithTimeout = async (url: string, options: any, timeout = 30000) => {
+          const controller = new AbortController();
+          const { signal } = controller;
+          
+          const timeoutId = setTimeout(() => controller.abort(), timeout);
+          
+          try {
+            const response = await fetch(url, { ...options, signal });
+            clearTimeout(timeoutId);
+            return response;
+          } catch (error) {
+            clearTimeout(timeoutId);
+            throw error;
+          }
+        };
+        
+        // Thêm tính năng retry cho webhook
+        const fetchWithRetry = async (url: string, options: any, retries = 2) => {
+          try {
+            return await fetchWithTimeout(url, options);
+          } catch (error: any) {
+            if (retries > 0) {
+              console.log(`Retrying webhook request. Attempts left: ${retries}`);
+              await new Promise(resolve => setTimeout(resolve, 2000));
+              return fetchWithRetry(url, options, retries - 1);
+            }
+            throw error;
+          }
+        };
+        
+        fetchWithRetry(contentWebhookUrl, {
           method: 'POST',
           headers,
           body: JSON.stringify(extendedRequest)
@@ -145,28 +175,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           try {
             const responseText = await response.text();
+            console.log(`Webhook response preview (first 200 chars): ${responseText.substring(0, 200)}`);
             
-            // Kiểm tra xem phản hồi có phải HTML không (bắt đầu với DOCTYPE hoặc <html)
-            if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
-              console.log('Webhook returned HTML instead of JSON, generating fallback content');
+            // Kiểm tra xem phản hồi có phải HTML không (bắt đầu với DOCTYPE, <html hoặc chứa các thẻ HTML phổ biến)
+            const isHtml = responseText.trim().startsWith('<!DOCTYPE') || 
+                        responseText.trim().startsWith('<html') ||
+                        responseText.includes('</html>') ||
+                        responseText.includes('</body>') ||
+                        responseText.includes('</head>');
+                        
+            if (isHtml) {
+              console.log('Webhook returned HTML instead of JSON, generating alternative content');
               
-              // Tạo nội dung dự phòng với dữ liệu từ request
+              // Log thêm thông tin để debug
+              console.log('Full response from webhook URL:', contentWebhookUrl);
+              console.log('Response status:', response.status);
+              console.log('Response headers:', JSON.stringify(Array.from(response.headers.entries())));
+              
+              // Cập nhật bài viết với thông báo lỗi chi tiết hơn
               await storage.updateArticle(newArticle.id, {
                 title: `Bài viết về ${contentRequest.keywords}`,
                 content: `
-                  <p>Hệ thống không thể tạo nội dung tự động do webhook trả về định dạng không hợp lệ.</p>
-                  <h2>Thông tin bài viết:</h2>
+                  <p>Hệ thống không thể tạo nội dung tự động do webhook trả về định dạng HTML thay vì JSON.</p>
+                  <h2>Thông tin lỗi:</h2>
+                  <ul>
+                    <li><strong>Webhook URL:</strong> ${contentWebhookUrl}</li>
+                    <li><strong>Mã trạng thái:</strong> ${response.status}</li>
+                    <li><strong>Loại phản hồi:</strong> HTML (không hợp lệ)</li>
+                  </ul>
+                  <h2>Thông tin bài viết yêu cầu:</h2>
                   <ul>
                     <li><strong>Chủ đề:</strong> ${contentRequest.keywords}</li>
                     <li><strong>Độ dài:</strong> ${contentRequest.length}</li>
                     <li><strong>Loại nội dung:</strong> ${contentRequest.contentType}</li>
                   </ul>
-                  <p>Vui lòng kiểm tra cấu hình webhook hoặc thử lại sau.</p>
+                  <p>Vui lòng kiểm tra cấu hình webhook trong phần <strong>Quản trị > Cài đặt</strong> và đảm bảo webhook URL trả về JSON hợp lệ.</p>
                 `,
                 updatedAt: new Date()
               });
               
-              console.log('Article updated with fallback content due to HTML response, ID:', newArticle.id);
+              console.log('Article updated with detailed error information due to HTML response, ID:', newArticle.id);
               return;
             }
             
