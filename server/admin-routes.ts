@@ -27,19 +27,35 @@ export function registerAdminRoutes(app: Express) {
       
       console.log('Fetched webhook settings:', { webhookUrl, webhookSecret, notificationUrl });
 
+      // Hiển thị dữ liệu webhook URL đã lưu để debug
+      console.log('Settings to return:', {
+        settings,
+        webhookSettings: {
+          webhookUrl,
+          webhookSecret, 
+          notificationUrl
+        }
+      });
+      
+      // Đảm bảo trả về dữ liệu đúng cấu trúc
       return res.status(200).json({
         success: true,
         data: {
           ...settings,
-          // Đảm bảo cấu trúc webhook được trả về đúng
+          // Thêm webhook URL trực tiếp vào đối tượng chính
+          webhookUrl: webhookUrl || '',
+          webhookSecret: webhookSecret || '',
+          notificationWebhookUrl: notificationUrl || '',
+          // Cung cấp dữ liệu theo cấu trúc cũ để đảm bảo tương thích ngược
           webhook: {
             webhookUrl: webhookUrl || '',
             webhookSecret: webhookSecret || '',
             notificationWebhookUrl: notificationUrl || ''
           },
-          // Cung cấp thêm các field riêng lẻ để đảm bảo tương thích
+          // Đảm bảo cũng có các trường riêng lẻ để tương thích
           content_webhook_url: webhookUrl || '',
-          webhook_secret: webhookSecret || ''
+          webhook_secret: webhookSecret || '',
+          notification_webhook_url: notificationUrl || ''
         }
       });
     } catch (error) {

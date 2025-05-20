@@ -280,9 +280,9 @@ export default function AdminSettings() {
   const webhookForm = useForm<WebhookSettingsValues>({
     resolver: zodResolver(webhookSettingsSchema),
     defaultValues: {
-      webhookUrl: settings?.webhook?.webhookUrl || settings?.content_webhook_url || '',
-      webhookSecret: settings?.webhook?.webhookSecret || settings?.webhook_secret || '',
-      notificationWebhookUrl: settings?.webhook?.notificationWebhookUrl || settings?.notification_webhook_url || '',
+      webhookUrl: settings?.webhookUrl || settings?.content_webhook_url || '',
+      webhookSecret: settings?.webhookSecret || settings?.webhook_secret || '',
+      notificationWebhookUrl: settings?.notificationWebhookUrl || settings?.notification_webhook_url || '',
     },
   });
   
