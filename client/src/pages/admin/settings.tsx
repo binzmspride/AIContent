@@ -303,6 +303,7 @@ export default function AdminSettings() {
     if (settings) {
       // Log dữ liệu cài đặt nhận được từ server để debug
       console.log('Settings received from server:', settings);
+      console.log('Webhook URL từ server:', settings.content_webhook_url);
       
       generalForm.reset({
         siteName: settings.siteName,
@@ -314,6 +315,23 @@ export default function AdminSettings() {
         enableAutoPublish: settings.enableAutoPublish,
         maintenanceMode: settings.maintenanceMode,
         offlineMode: settings.offlineMode === "true",
+      });
+      
+      // Cập nhật lại form webhookForm một cách rõ ràng với dữ liệu từ server
+      const webhookUrlFromServer = settings.content_webhook_url || '';
+      const webhookSecretFromServer = settings.webhook_secret || '';
+      const notificationUrlFromServer = settings.notification_webhook_url || '';
+      
+      console.log('Cập nhật webhookForm với:', {
+        webhookUrl: webhookUrlFromServer,
+        webhookSecret: webhookSecretFromServer,
+        notificationWebhookUrl: notificationUrlFromServer
+      });
+      
+      webhookForm.reset({
+        webhookUrl: webhookUrlFromServer,
+        webhookSecret: webhookSecretFromServer,
+        notificationWebhookUrl: notificationUrlFromServer
       });
       
       aiForm.reset({
