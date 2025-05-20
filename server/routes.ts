@@ -313,7 +313,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       try {
         // Tạo bài viết với trạng thái "đang xử lý" (sử dụng trạng thái draft)
-        const processingArticle = {
+        const processingArticle: schema.InsertArticle = {
           userId,
           title: "Đang xử lý",
           content: "<p>Hệ thống đang xử lý yêu cầu tạo nội dung. Vui lòng đợi trong giây lát...</p>",
@@ -392,8 +392,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Cập nhật bài viết thành trạng thái lỗi
             await storage.updateArticle(savedArticle.id, {
               title: "Lỗi xử lý",
-              content: "<p>Không thể xử lý dữ liệu từ dịch vụ tạo nội dung</p>",
-              status: "error"
+              content: "<p>Không thể xử lý dữ liệu từ dịch vụ tạo nội dung</p>"
+              // Giữ nguyên trạng thái draft
             });
           }
         })
@@ -402,8 +402,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Cập nhật bài viết thành trạng thái lỗi
           storage.updateArticle(savedArticle.id, {
             title: "Lỗi kết nối",
-            content: "<p>Không thể kết nối đến dịch vụ tạo nội dung</p>",
-            status: "error"
+            content: "<p>Không thể kết nối đến dịch vụ tạo nội dung</p>"
+            // Giữ nguyên trạng thái draft
           }).catch(err => {
             console.error('Failed to update article with error status:', err);
           });
