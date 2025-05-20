@@ -15,6 +15,15 @@ interface DatabaseStatusResponse {
   };
 }
 
+// Giá trị mặc định cho dữ liệu trả về
+const defaultStatusData = {
+  connected: false,
+  querySuccess: false,
+  status: 'offline' as const,
+  userCount: null,
+  timestamp: new Date().toISOString()
+};
+
 export function DatabaseStatus() {
   const { data, isLoading, isError, refetch } = useQuery<DatabaseStatusResponse>({
     queryKey: ['/api/status/database'],

@@ -446,6 +446,7 @@ export default function AdminSettings() {
     mutationFn: async (values: WebhookSettingsValues) => {
       try {
         console.log("Sending webhook settings:", values);
+        // Cải thiện cách xử lý fetch để tránh lỗi "body stream already read"
         const response = await fetch("/api/admin/settings/webhook", {
           method: "PATCH",
           headers: {
@@ -455,22 +456,36 @@ export default function AdminSettings() {
           credentials: "include"
         });
         
-        // Kiểm tra xem phản hồi có thành công không
+        // Xử lý lỗi tốt hơn - lưu ý rằng một số trường hợp không tải được response.json()
         if (!response.ok) {
-          // Clone response để có thể đọc nhiều lần
+          // Tạo bản sao của response để đọc nhiều lần
           const clonedRes = response.clone();
           try {
-            const errorText = await clonedRes.text();
-            console.error("API request failed:", errorText);
-            throw new Error(`Lỗi máy chủ ${response.status}: ${errorText}`);
+            const errorData = await clonedRes.json().catch(() => null);
+            if (errorData && errorData.error) {
+              throw new Error(errorData.error);
+            } else {
+              const errorText = await response.clone().text().catch(() => null) || '';
+              throw new Error(`Lỗi máy chủ ${response.status}: ${errorText.substring(0, 100)}`);
+            }
           } catch (e) {
-            console.error("Could not read error response:", e);
+            if (e instanceof Error) {
+              throw e; // Ném lỗi đã xử lý ở trên
+            }
             throw new Error(`Lỗi máy chủ: ${response.status}`);
           }
         }
 
-        // Đọc và phân tích phản hồi JSON
-        const responseData = await response.json();
+        // Clone response trước khi đọc JSON để tránh lỗi
+        const clonedForJson = response.clone();
+        let responseData;
+        try {
+          responseData = await clonedForJson.json();
+        } catch (jsonError) {
+          console.warn("Could not parse JSON response, using empty success response");
+          responseData = { success: true };
+        }
+        
         console.log("Webhook settings updated successfully:", responseData);
         return responseData;
       } catch (err) {
