@@ -7,6 +7,77 @@ import { format, subHours, subDays } from "date-fns";
  * Registers admin routes for admin panel functionality
  */
 export function registerAdminRoutes(app: Express) {
+  // API lấy tất cả cài đặt hệ thống
+  app.get("/api/admin/settings", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      // Lấy cài đặt webhook
+      const webhookUrl = await storage.getSetting('content_webhook_url');
+      const webhookSecret = await storage.getSetting('webhook_secret');
+      const notificationUrl = await storage.getSetting('notification_webhook_url');
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          webhook: {
+            webhookUrl: webhookUrl || '',
+            webhookSecret: webhookSecret || '',
+            notificationWebhookUrl: notificationUrl || ''
+          }
+        }
+      });
+    } catch (error) {
+      console.error("Error getting settings:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Internal server error"
+      });
+    }
+  });
+
+  // API cập nhật cài đặt webhook
+  app.patch("/api/admin/settings/webhook", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const { webhookUrl, webhookSecret, notificationWebhookUrl } = req.body;
+      
+      // Lưu các cài đặt
+      if (webhookUrl !== undefined) {
+        await storage.setSetting('content_webhook_url', webhookUrl, 'webhook');
+      }
+      
+      if (webhookSecret !== undefined) {
+        await storage.setSetting('webhook_secret', webhookSecret, 'webhook');
+      }
+      
+      if (notificationWebhookUrl !== undefined) {
+        await storage.setSetting('notification_webhook_url', notificationWebhookUrl, 'webhook');
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Webhook settings updated successfully"
+      });
+    } catch (error) {
+      console.error("Error updating webhook settings:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Failed to update webhook settings"
+      });
+    }
+  });
   // Lấy cấu hình gói dùng thử
   app.get("/api/admin/trial-plan", async (req: Request, res: Response) => {
     if (!req.isAuthenticated() || req.user.role !== "admin") {
