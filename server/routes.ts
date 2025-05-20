@@ -270,6 +270,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
+      // This would be replaced with actual AI content generation using n8n webhook
+      // For now, return mock content
+      const mockResponse: GenerateContentResponse = {
+        title: contentRequest.title,
+        content: `<h1>${contentRequest.title}</h1>
+          <p>This is a placeholder for AI-generated content. In a real implementation, this would be generated based on the provided parameters using the n8n webhook.</p>
+          <h2>About this topic</h2>
+          <p>This content would be optimized for SEO with keywords: ${contentRequest.keywords}</p>
+          <h2>More information</h2>
+          <p>The content would be written in a ${contentRequest.tone} tone and would be approximately ${contentRequest.length === 'short' ? '500' : contentRequest.length === 'medium' ? '1000' : contentRequest.length === 'long' ? '1500' : '2000'} words long.</p>
+          <p>Custom prompt details: ${contentRequest.prompt}</p>`,
+        keywords: contentRequest.keywords.split(',').map(k => k.trim()),
+        creditsUsed: creditsNeeded
+      };
+      
       // Get webhook URL from system settings
       const webhookSettingRes = await db.query.systemSettings.findFirst({
         where: eq(systemSettings.key, 'notificationWebhookUrl')
@@ -299,15 +314,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Sending content request to webhook:', webhookUrl);
       
       // Thêm userId và username vào yêu cầu
-      const extendedRequest: ExtendedContentRequest = {
-        ...contentRequest,
-        userId,
-        username: req.user.username,
-        timestamp: new Date().toISOString()
-      };
+      contentRequest.userId = userId;
+      contentRequest.username = req.user.username;
+      contentRequest.timestamp = new Date().toISOString();
       
       // Ghi log yêu cầu gửi đến webhook
-      console.log('Webhook payload:', JSON.stringify(extendedRequest, null, 2));
+      console.log('Webhook payload:', JSON.stringify(contentRequest, null, 2));
       
       // Tạo header cho request
       const headers: HeadersInit = {
@@ -348,7 +360,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.subtractUserCredits(userId, creditsNeeded, "Tạo nội dung bài viết");
         
         // Thêm articleId vào request webhook để cập nhật bài viết sau khi webhook hoàn thành
-        extendedRequest.articleId = savedDraft.id;
+        const extendedRequest: ExtendedContentRequest = {
+          ...contentRequest,
+          articleId: savedDraft.id,
+          userId,
+          username: req.user.username,
+          timestamp: new Date().toISOString()
+        };
         
         // Gửi webhook trong một tiến trình riêng không chờ đợi
         console.log('Starting webhook request in background at:', new Date().toISOString());
@@ -418,17 +436,128 @@ export async function registerRoutes(app: Express): Promise<Server> {
           error: 'Không thể tạo bài viết. Vui lòng thử lại sau.'
         });
       }
+        }
+      } catch (webhookError: any) {
+        console.error('Error calling webhook:', webhookError);
+        
+        // Kiểm tra xem lỗi có phải là timeout không
+        if (webhookError.name === 'AbortError' || webhookError.name === 'TimeoutError') {
+          console.log('Xử lý lỗi timeout webhook');
+          
+
+          
+          return res.status(504).json({
+            success: false,
+            error: 'Không thể kết nối với dịch vụ tạo nội dung. Mã lỗi: 504. Vui lòng kiểm tra cấu hình webhook.'
+          });
+        }
+        
+
+        
+        return res.status(500).json({
+          success: false,
+          error: 'Error calling webhook. Please check the webhook configuration.'
+        });
+      }
     } catch (error) {
-      console.error('Error in generate-content endpoint:', error);
+      console.error('Error generating content:', error);
+      res.status(500).json({ success: false, error: 'Failed to generate content' });
+    }
+  });
+
+  // Get user's connections
+  app.get('/api/dashboard/connections', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const connections = await storage.getConnections(userId);
+      
+      res.json({ success: true, data: connections });
+    } catch (error) {
+      console.error('Error fetching connections:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch connections' });
+    }
+  });
+
+  // Add WordPress connection
+  app.post('/api/dashboard/connections/wordpress', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { url, username, appPassword } = req.body;
+      
+      if (!url || !username || !appPassword) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'URL, username and appPassword are required' 
+        });
+      }
+      
+      // In a real implementation, we would validate the WordPress credentials
+      // by making a test request to the WordPress REST API
+      
+      const connection = await storage.createConnection({
+        userId,
+        type: 'wordpress',
+        name: url,
+        config: { url, username, appPassword },
+        isActive: true
+      });
+      
+      res.status(201).json({ success: true, data: connection });
+    } catch (error) {
+      console.error('Error adding WordPress connection:', error);
       res.status(500).json({ 
         success: false, 
-        error: 'An error occurred while processing your request'
+        error: 'Failed to add WordPress connection' 
       });
     }
   });
 
-  // Published articles
-  app.get('/api/dashboard/published', async (req, res) => {
+  // Add social media connection
+  app.post('/api/dashboard/connections/social', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { platform, accessToken, accountName, accountId } = req.body;
+      
+      if (!platform || !accessToken || !accountName || !accountId) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Platform, accessToken, accountName and accountId are required' 
+        });
+      }
+      
+      // Create connection
+      const connection = await storage.createConnection({
+        userId,
+        type: platform as schema.Connection['type'],
+        name: accountName,
+        config: { accessToken, accountName, accountId },
+        isActive: true
+      });
+      
+      res.status(201).json({ success: true, data: connection });
+    } catch (error) {
+      console.error('Error adding social media connection:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to add social media connection' 
+      });
+    }
+  });
+
+  // Get credit history
+  app.get('/api/dashboard/credits/history', async (req, res) => {
     try {
       if (!req.isAuthenticated()) {
         return res.status(401).json({ success: false, error: 'Not authenticated' });
@@ -438,12 +567,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const page = parseInt(req.query.page as string || '1');
       const limit = parseInt(req.query.limit as string || '10');
       
-      const { articles, total } = await storage.getArticlesByUser(userId, page, limit, 'published');
+      const { transactions, total } = await storage.getCreditHistory(userId, page, limit);
       
       res.json({
         success: true,
         data: {
-          articles,
+          transactions,
           pagination: {
             page,
             limit,
@@ -453,169 +582,301 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
     } catch (error) {
-      console.error('Error fetching published articles:', error);
-      res.status(500).json({ success: false, error: 'Failed to fetch published articles' });
+      console.error('Error fetching credit history:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch credit history' });
     }
   });
 
-  // Publish article
-  app.post('/api/dashboard/articles/:id/publish', async (req, res) => {
+  // Purchase credits
+  app.post('/api/dashboard/credits/purchase', async (req, res) => {
     try {
       if (!req.isAuthenticated()) {
         return res.status(401).json({ success: false, error: 'Not authenticated' });
       }
-      
+
       const userId = req.user.id;
-      const articleId = parseInt(req.params.id, 10);
+      const { planId } = req.body;
       
-      if (isNaN(articleId)) {
-        return res.status(400).json({ success: false, error: 'Invalid article ID' });
+      if (!planId) {
+        return res.status(400).json({ success: false, error: 'Plan ID is required' });
       }
       
-      const article = await storage.getArticleById(articleId);
-      
-      if (!article) {
-        return res.status(404).json({ success: false, error: 'Article not found' });
+      // Get plan details
+      const plan = await storage.getPlan(planId);
+      if (!plan || plan.type !== 'credit') {
+        return res.status(400).json({ success: false, error: 'Invalid plan ID' });
       }
       
-      // Kiểm tra quyền sở hữu bài viết
-      if (article.userId !== userId && req.user.role !== 'admin') {
-        return res.status(403).json({ success: false, error: 'You do not have permission to publish this article' });
+      // In a real implementation, we would integrate with a payment gateway here
+      // For now, just add the credits to the user's account
+      
+      const newCreditBalance = await storage.addUserCredits(
+        userId, 
+        plan.value, 
+        planId, 
+        `Purchased ${plan.value} credits (${plan.name})`
+      );
+      
+      res.json({
+        success: true,
+        data: {
+          credits: newCreditBalance,
+          plan: plan.name,
+          amount: plan.value,
+        }
+      });
+    } catch (error) {
+      console.error('Error purchasing credits:', error);
+      res.status(500).json({ success: false, error: 'Failed to purchase credits' });
+    }
+  });
+
+  // Purchase storage plan
+  app.post('/api/dashboard/plans/purchase', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { planId } = req.body;
+      
+      if (!planId) {
+        return res.status(400).json({ success: false, error: 'Plan ID is required' });
       }
       
-      // Cập nhật trạng thái
-      const publishedArticle = await storage.updateArticle(articleId, {
-        status: 'published',
-        publishedAt: new Date()
+      // Get plan details
+      const plan = await storage.getPlan(planId);
+      if (!plan || plan.type !== 'storage') {
+        return res.status(400).json({ success: false, error: 'Invalid plan ID' });
+      }
+      
+      // Calculate end date
+      const startDate = new Date();
+      let endDate = null;
+      if (plan.duration) {
+        endDate = new Date();
+        endDate.setDate(endDate.getDate() + plan.duration);
+      }
+      
+      // In a real implementation, we would integrate with a payment gateway here
+      // For now, just create the user plan
+      
+      const userPlan = await storage.createUserPlan({
+        userId,
+        planId,
+        startDate,
+        endDate,
+        isActive: true,
+        usedStorage: 0
       });
       
-      res.json({ success: true, data: publishedArticle });
+      res.status(201).json({
+        success: true,
+        data: {
+          ...userPlan,
+          plan
+        }
+      });
     } catch (error) {
-      console.error('Error publishing article:', error);
-      res.status(500).json({ success: false, error: 'Failed to publish article' });
+      console.error('Error purchasing storage plan:', error);
+      res.status(500).json({ success: false, error: 'Failed to purchase storage plan' });
     }
   });
 
-  // Trash article
-  app.post('/api/dashboard/articles/:id/trash', async (req, res) => {
+  // Update user profile
+  app.patch('/api/dashboard/profile', async (req, res) => {
     try {
       if (!req.isAuthenticated()) {
         return res.status(401).json({ success: false, error: 'Not authenticated' });
       }
-      
+
       const userId = req.user.id;
-      const articleId = parseInt(req.params.id, 10);
+      const { fullName, email, language } = req.body;
       
-      if (isNaN(articleId)) {
-        return res.status(400).json({ success: false, error: 'Invalid article ID' });
-      }
-      
-      const article = await storage.getArticleById(articleId);
-      
-      if (!article) {
-        return res.status(404).json({ success: false, error: 'Article not found' });
-      }
-      
-      // Kiểm tra quyền sở hữu bài viết
-      if (article.userId !== userId && req.user.role !== 'admin') {
-        return res.status(403).json({ success: false, error: 'You do not have permission to trash this article' });
-      }
-      
-      // Cập nhật trạng thái
-      const trashedArticle = await storage.updateArticle(articleId, {
-        status: 'trash',
-        trashedAt: new Date()
+      // Update user
+      const updatedUser = await storage.updateUser(userId, {
+        fullName,
+        email,
+        language
       });
       
-      res.json({ success: true, data: trashedArticle });
+      if (!updatedUser) {
+        return res.status(404).json({ success: false, error: 'User not found' });
+      }
+      
+      // Don't include password in response
+      const { password, ...userWithoutPassword } = updatedUser;
+      
+      res.json({ success: true, data: userWithoutPassword });
     } catch (error) {
-      console.error('Error trashing article:', error);
-      res.status(500).json({ success: false, error: 'Failed to trash article' });
+      console.error('Error updating profile:', error);
+      res.status(500).json({ success: false, error: 'Failed to update profile' });
     }
   });
 
-  // Delete article permanently
-  app.delete('/api/dashboard/articles/:id', async (req, res) => {
+  // Change password
+  app.post('/api/dashboard/change-password', async (req, res) => {
     try {
       if (!req.isAuthenticated()) {
         return res.status(401).json({ success: false, error: 'Not authenticated' });
       }
-      
-      const userId = req.user.id;
-      const articleId = parseInt(req.params.id, 10);
-      
-      if (isNaN(articleId)) {
-        return res.status(400).json({ success: false, error: 'Invalid article ID' });
-      }
-      
-      const article = await storage.getArticleById(articleId);
-      
-      if (!article) {
-        return res.status(404).json({ success: false, error: 'Article not found' });
-      }
-      
-      // Kiểm tra quyền sở hữu bài viết
-      if (article.userId !== userId && req.user.role !== 'admin') {
-        return res.status(403).json({ success: false, error: 'You do not have permission to delete this article' });
-      }
-      
-      // Xóa vĩnh viễn bài viết
-      const success = await storage.deleteArticle(articleId);
-      
-      if (success) {
-        res.json({ success: true, message: 'Article deleted successfully' });
-      } else {
-        res.status(500).json({ success: false, error: 'Failed to delete article' });
-      }
-    } catch (error) {
-      console.error('Error deleting article:', error);
-      res.status(500).json({ success: false, error: 'Failed to delete article' });
-    }
-  });
 
-  // Restore article from trash
-  app.post('/api/dashboard/articles/:id/restore', async (req, res) => {
-    try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ success: false, error: 'Not authenticated' });
-      }
-      
       const userId = req.user.id;
-      const articleId = parseInt(req.params.id, 10);
+      const { currentPassword, newPassword } = req.body;
       
-      if (isNaN(articleId)) {
-        return res.status(400).json({ success: false, error: 'Invalid article ID' });
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Current password and new password are required' 
+        });
       }
       
-      const article = await storage.getArticleById(articleId);
-      
-      if (!article) {
-        return res.status(404).json({ success: false, error: 'Article not found' });
+      // Get user
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ success: false, error: 'User not found' });
       }
       
-      // Kiểm tra quyền sở hữu bài viết
-      if (article.userId !== userId && req.user.role !== 'admin') {
-        return res.status(403).json({ success: false, error: 'You do not have permission to restore this article' });
+      // Verify current password
+      const scryptAsync = promisify(scrypt);
+      const [hashed, salt] = user.password.split(".");
+      const hashedBuf = Buffer.from(hashed, "hex");
+      const suppliedBuf = (await scryptAsync(currentPassword, salt, 64)) as Buffer;
+      
+      const passwordMatches = timingSafeEqual(hashedBuf, suppliedBuf);
+      if (!passwordMatches) {
+        return res.status(400).json({ success: false, error: 'Current password is incorrect' });
       }
       
-      // Kiểm tra trạng thái hiện tại
-      if (article.status !== 'trash') {
-        return res.status(400).json({ success: false, error: 'Article is not in trash' });
-      }
+      // Hash new password
+      const newSalt = randomBytes(16).toString("hex");
+      const newHashedBuf = (await scryptAsync(newPassword, newSalt, 64)) as Buffer;
+      const newHashedPassword = `${newHashedBuf.toString("hex")}.${newSalt}`;
       
-      // Cập nhật trạng thái trở lại draft
-      const restoredArticle = await storage.updateArticle(articleId, {
-        status: 'draft',
-        trashedAt: null
+      // Update user
+      await storage.updateUser(userId, {
+        password: newHashedPassword
       });
       
-      res.json({ success: true, data: restoredArticle });
+      res.json({ success: true });
     } catch (error) {
-      console.error('Error restoring article:', error);
-      res.status(500).json({ success: false, error: 'Failed to restore article' });
+      console.error('Error changing password:', error);
+      res.status(500).json({ success: false, error: 'Failed to change password' });
     }
   });
 
+  // ========== Admin API ==========
+  // Get all users
+  app.get('/api/admin/users', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+
+      const page = parseInt(req.query.page as string || '1');
+      const limit = parseInt(req.query.limit as string || '10');
+      
+      const { users, total } = await storage.listUsers(page, limit);
+      
+      // Remove passwords from response
+      const usersWithoutPasswords = users.map(user => {
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+      });
+      
+      res.json({
+        success: true,
+        data: {
+          users: usersWithoutPasswords,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch users' });
+    }
+  });
+
+  // Update user (admin)
+  app.patch('/api/admin/users/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+
+      const userId = parseInt(req.params.id);
+      const { fullName, email, role, credits, language } = req.body;
+      
+      // Update user
+      const updatedUser = await storage.updateUser(userId, {
+        fullName,
+        email,
+        role,
+        credits,
+        language
+      });
+      
+      if (!updatedUser) {
+        return res.status(404).json({ success: false, error: 'User not found' });
+      }
+      
+      // Don't include password in response
+      const { password, ...userWithoutPassword } = updatedUser;
+      
+      res.json({ success: true, data: userWithoutPassword });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      res.status(500).json({ success: false, error: 'Failed to update user' });
+    }
+  });
+
+  // Get admin dashboard stats
+  app.get('/api/admin/stats', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+
+      // Get total users
+      const { total: totalUsers } = await storage.listUsers(1, 0);
+      
+      // Get total articles
+      const [{ count: totalArticles }] = await db
+        .select({ count: sql`count(*)`.mapWith(Number) })
+        .from(schema.articles);
+      
+      // Get total credits purchased (sum of positive credit transactions)
+      const [{ sum: totalCredits }] = await db
+        .select({ sum: sql`sum(amount)`.mapWith(Number) })
+        .from(schema.creditTransactions)
+        .where(sql`amount > 0`);
+      
+      // Get total revenue (sum of credit and storage plan purchases)
+      // In a real implementation, this would come from actual payment records
+      // For now, just estimate based on credit transactions
+      const totalRevenue = totalCredits ? totalCredits * 10000 : 0; // Rough estimate
+      
+      res.json({
+        success: true,
+        data: {
+          totalUsers,
+          totalArticles,
+          totalCredits: totalCredits || 0,
+          totalRevenue
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching admin stats:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch admin stats' });
+    }
+  });
+  
   // Get admin settings
   app.get('/api/admin/settings', async (req, res) => {
     try {
@@ -623,14 +884,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ success: false, error: 'Admin access required' });
       }
       
+      // Lấy tất cả cài đặt từ cơ sở dữ liệu
+      // Phân loại theo danh mục
       const generalSettings = await storage.getSettingsByCategory('general');
-      const webhookSettings = await storage.getSettingsByCategory('webhook');
-      const emailSettings = await storage.getSettingsByCategory('email');
+      const aiSettings = await storage.getSettingsByCategory('ai');
+      const emailSettings = await storage.getSettingsByCategory('smtp');
       
+      // Lấy cài đặt webhook và thông báo
+      const integrationSettings = await storage.getSettingsByCategory('integration');
+      console.log('Integration settings retrieved:', integrationSettings);
+      const apiSettings = await storage.getSettingsByCategory('api');
+      const firebaseSettings = await storage.getSettingsByCategory('firebase');
+      
+      // Chuẩn bị đối tượng cài đặt
       const settings = {
-        general: generalSettings,
-        webhook: webhookSettings,
-        email: emailSettings
+        // General settings
+        siteName: generalSettings.siteName || "SEO AI Writer",
+        siteDescription: generalSettings.siteDescription || "AI-powered SEO content generator",
+        contactEmail: generalSettings.contactEmail || "support@seoaiwriter.com",
+        supportEmail: generalSettings.supportEmail || "support@seoaiwriter.com",
+        
+        // Feature flags
+        enableNewUsers: generalSettings.enableNewUsers === "true",
+        enableArticleCreation: generalSettings.enableArticleCreation === "true",
+        enableAutoPublish: generalSettings.enableAutoPublish === "true",
+        maintenanceMode: generalSettings.maintenanceMode === "true",
+        offlineMode: generalSettings.offlineMode === "true",
+        
+        // AI settings
+        aiModel: aiSettings.aiModel || "gpt-3.5-turbo",
+        aiTemperature: parseFloat(aiSettings.aiTemperature || "0.7"),
+        aiContextLength: parseInt(aiSettings.aiContextLength || "4000"),
+        systemPromptPrefix: aiSettings.systemPromptPrefix || "",
+        defaultUserCredits: parseInt(aiSettings.defaultUserCredits || "50"),
+        creditCostPerArticle: parseInt(aiSettings.creditCostPerArticle || "10"),
+        creditCostPerImage: parseInt(aiSettings.creditCostPerImage || "5"),
+        
+        // Email settings
+        smtpServer: emailSettings.smtpServer || "",
+        smtpPort: parseInt(emailSettings.smtpPort || "587"),
+        smtpUsername: emailSettings.smtpUsername || "",
+        smtpPassword: emailSettings.smtpPassword || "",
+        emailSender: emailSettings.emailSender || "",
+        appBaseUrl: emailSettings.appBaseUrl || "",
+        
+        // API integration settings
+        openaiApiKey: apiSettings.openaiApiKey || "",
+        claudeApiKey: apiSettings.claudeApiKey || "",
+        wordpressApiUrl: apiSettings.wordpressApiUrl || "",
+        wordpressApiUser: apiSettings.wordpressApiUser || "",
+        wordpressApiKey: apiSettings.wordpressApiKey || "",
+        
+        // Webhook settings
+        webhookSecret: integrationSettings.webhookSecret || "",
+        notificationWebhookUrl: integrationSettings.notificationWebhookUrl || "",
+        // Sử dụng notificationWebhookUrl thay cho webhook_url để thống nhất
+        webhook_url: integrationSettings.notificationWebhookUrl || "",
+        
+        // Firebase settings
+        firebaseApiKey: firebaseSettings.firebaseApiKey || "",
+        firebaseProjectId: firebaseSettings.firebaseProjectId || "",
+        firebaseAppId: firebaseSettings.firebaseAppId || "",
+        enableGoogleAuth: firebaseSettings.enableGoogleAuth === "true",
+        enableFacebookAuth: firebaseSettings.enableFacebookAuth === "true",
+        
+        // System info
+        version: "1.0.0",
+        lastBackup: generalSettings.lastBackup || "N/A",
+        dbStatus: "online"
       };
       
       res.json({ success: true, data: settings });
@@ -639,8 +960,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ success: false, error: 'Failed to fetch admin settings' });
     }
   });
-
-  // Update general settings
+  
+  // Admin settings API - General settings update
   app.patch('/api/admin/settings/general', async (req, res) => {
     try {
       if (!req.isAuthenticated() || req.user.role !== 'admin') {
@@ -650,73 +971,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { 
         siteName, 
         siteDescription, 
-        defaultLanguage,
-        userRegistrationEnabled,
-        publicApiEnabled,
-        maxRequestsPerMinute,
-        enabledFeatures = []
+        contactEmail, 
+        supportEmail,
+        enableNewUsers,
+        enableArticleCreation,
+        enableAutoPublish,
+        maintenanceMode,
+        offlineMode
       } = req.body;
       
-      // Update settings one by one
-      const updates = [];
+      console.log('General settings update request received:');
+      console.log('- siteName:', siteName);
+      console.log('- offlineMode:', offlineMode);
       
-      if (siteName !== undefined) {
-        updates.push(storage.setSetting('siteName', siteName, 'general'));
-      }
-      
-      if (siteDescription !== undefined) {
-        updates.push(storage.setSetting('siteDescription', siteDescription, 'general'));
-      }
-      
-      if (defaultLanguage !== undefined) {
-        updates.push(storage.setSetting('defaultLanguage', defaultLanguage, 'general'));
-      }
-      
-      if (userRegistrationEnabled !== undefined) {
-        updates.push(storage.setSetting(
-          'userRegistrationEnabled', 
-          userRegistrationEnabled ? 'true' : 'false', 
-          'general'
-        ));
-      }
-      
-      if (publicApiEnabled !== undefined) {
-        updates.push(storage.setSetting(
-          'publicApiEnabled', 
-          publicApiEnabled ? 'true' : 'false', 
-          'general'
-        ));
-      }
-      
-      if (maxRequestsPerMinute !== undefined) {
-        updates.push(storage.setSetting(
-          'maxRequestsPerMinute', 
-          maxRequestsPerMinute.toString(), 
-          'general'
-        ));
-      }
-      
-      if (enabledFeatures.length > 0) {
-        updates.push(storage.setSetting(
-          'enabledFeatures', 
-          JSON.stringify(enabledFeatures), 
-          'general'
-        )); 
-      }
+      // Update settings
+      const updates = [
+        storage.setSetting('siteName', siteName, 'general'),
+        storage.setSetting('siteDescription', siteDescription, 'general'),
+        storage.setSetting('contactEmail', contactEmail, 'general'),
+        storage.setSetting('supportEmail', supportEmail, 'general'),
+        storage.setSetting('enableNewUsers', enableNewUsers.toString(), 'general'),
+        storage.setSetting('enableArticleCreation', enableArticleCreation.toString(), 'general'),
+        storage.setSetting('enableAutoPublish', enableAutoPublish.toString(), 'general'),
+        storage.setSetting('maintenanceMode', maintenanceMode.toString(), 'general'),
+        storage.setSetting('offlineMode', offlineMode.toString(), 'general')
+      ];
       
       await Promise.all(updates);
       
-      // Get updated settings
-      const updatedSettings = await storage.getSettingsByCategory('general');
+      // Xác nhận cài đặt đã được lưu
+      const savedSettings = await storage.getSettingsByCategory('general');
       
-      res.json({ success: true, data: updatedSettings });
+      console.log('Verification after save:');
+      console.log('- Saved siteName:', savedSettings.siteName);
+      console.log('- Saved offlineMode:', savedSettings.offlineMode);
+      
+      res.json({ 
+        success: true, 
+        data: { 
+          message: 'General settings updated successfully',
+          settings: savedSettings
+        } 
+      });
     } catch (error) {
       console.error('Error updating general settings:', error);
       res.status(500).json({ success: false, error: 'Failed to update general settings' });
     }
   });
-
-  // Update webhook settings
+  
+  // Admin settings API - Webhook settings update
   app.patch('/api/admin/settings/webhook', async (req, res) => {
     try {
       if (!req.isAuthenticated() || req.user.role !== 'admin') {
@@ -724,77 +1027,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const { webhookSecret, notificationWebhookUrl } = req.body;
+      console.log('Webhook settings update request received:');
+      console.log('- notificationWebhookUrl:', notificationWebhookUrl);
+      console.log('- webhookSecret provided:', webhookSecret !== undefined);
       
-      // Update settings one by one
-      const updates = [];
+      let webhookUrlResult = true;
+      let webhookSecretResult = true;
       
-      if (webhookSecret !== undefined) {
-        updates.push(storage.setSetting(
-          'webhook_secret', 
-          webhookSecret, 
-          'webhook'
-        ));
-      }
-      
+      // Update notification webhook URL if provided
       if (notificationWebhookUrl !== undefined) {
-        updates.push(storage.setSetting(
-          'notificationWebhookUrl', 
-          notificationWebhookUrl, 
-          'webhook'
-        ));
+        webhookUrlResult = await storage.setSetting('notificationWebhookUrl', notificationWebhookUrl, 'integration');
+        console.log('- notificationWebhookUrl update result:', webhookUrlResult);
       }
       
-      await Promise.all(updates);
+      // Update webhook secret if provided (now optional)
+      if (webhookSecret !== undefined) {
+        webhookSecretResult = await storage.setSetting('webhookSecret', webhookSecret, 'integration');
+        console.log('- webhookSecret update result:', webhookSecretResult);
+      }
       
-      // Get updated settings
-      const updatedSettings = await storage.getSettingsByCategory('webhook');
+      if (!webhookUrlResult || !webhookSecretResult) {
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Failed to save one or more webhook settings' 
+        });
+      }
       
-      res.json({ success: true, data: updatedSettings });
+      // Kiểm tra xem cài đặt đã được lưu thành công hay chưa
+      const savedWebhookUrl = await storage.getSetting('notificationWebhookUrl');
+      const savedWebhookSecret = await storage.getSetting('webhookSecret');
+      
+      console.log('Verification after save:');
+      console.log('- Saved notificationWebhookUrl:', savedWebhookUrl);
+      console.log('- Saved webhookSecret exists:', savedWebhookSecret !== null);
+      
+      res.json({ 
+        success: true, 
+        data: { 
+          message: 'Webhook settings updated successfully',
+          webhookUrl: savedWebhookUrl,
+          webhookSecretExists: savedWebhookSecret !== null
+        } 
+      });
     } catch (error) {
       console.error('Error updating webhook settings:', error);
       res.status(500).json({ success: false, error: 'Failed to update webhook settings' });
     }
   });
 
-  // Get admin performance metrics
+  // Get performance metrics for the admin dashboard
   app.get('/api/admin/performance', async (req, res) => {
     try {
       if (!req.isAuthenticated() || req.user.role !== 'admin') {
         return res.status(403).json({ success: false, error: 'Admin access required' });
       }
       
-      // Dummy data for response time history
-      const historyPoints = 30; // 30 days
+      const timeRange = req.query.timeRange || '24h';
+      
+      // In a real application, this would fetch actual data from monitoring systems
+      // For now, we'll return mock data for demonstration purposes
+      
+      // Generate historical data points
+      const now = new Date();
+      const historyPoints = 24; // 24 hours of data
       
       const responseTimeHistory = Array.from({ length: historyPoints }, (_, i) => {
+        const timestamp = new Date(now.getTime() - (historyPoints - 1 - i) * 3600000).toISOString();
         return {
-          date: new Date(Date.now() - (historyPoints - i - 1) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          avgResponseTime: Math.floor(100 + Math.random() * 200), // 100-300ms
-          p90ResponseTime: Math.floor(250 + Math.random() * 350), // 250-600ms
-          p99ResponseTime: Math.floor(500 + Math.random() * 1000), // 500-1500ms
+          timestamp,
+          average: 120 + Math.random() * 80,
+          p95: 180 + Math.random() * 100,
+          p99: 220 + Math.random() * 120,
         };
       });
       
       const requestsHistory = Array.from({ length: historyPoints }, (_, i) => {
+        const timestamp = new Date(now.getTime() - (historyPoints - 1 - i) * 3600000).toISOString();
         return {
-          date: new Date(Date.now() - (historyPoints - i - 1) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          totalRequests: Math.floor(1000 + Math.random() * 9000), // 1K-10K requests
-          successfulRequests: Math.floor(900 + Math.random() * 8100), // 90% success rate approx
-          errorRequests: Math.floor(100 + Math.random() * 900), // 10% error rate approx
+          timestamp,
+          total: 1000 + Math.floor(Math.random() * 500),
+          errors: Math.floor(Math.random() * 50),
         };
       });
       
       const resourceUsageHistory = Array.from({ length: historyPoints }, (_, i) => {
+        const timestamp = new Date(now.getTime() - (historyPoints - 1 - i) * 3600000).toISOString();
         return {
-          date: new Date(Date.now() - (historyPoints - i - 1) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          cpuUsage: Math.floor(10 + Math.random() * 70), // 10-80% CPU usage
-          memoryUsage: Math.floor(20 + Math.random() * 60), // 20-80% Memory usage
-          diskUsage: Math.floor(30 + Math.random() * 50), // 30-80% Disk usage
+          timestamp,
+          cpu: 30 + Math.random() * 30,
+          memory: 40 + Math.random() * 25,
+          disk: 60 + Math.random() * 15,
         };
       });
       
-      // Top API endpoints by usage
-      const topEndpoints = [
+      // Generate endpoint performance data
+      const endpointPerformance = [
         { endpoint: "/api/articles", count: 5230, averageTime: 132, errorRate: 1.2 },
         { endpoint: "/api/user", count: 8450, averageTime: 88, errorRate: 0.8 },
         { endpoint: "/api/generate-content", count: 1820, averageTime: 2350, errorRate: 5.2 },
@@ -802,25 +1129,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         { endpoint: "/api/plans", count: 1230, averageTime: 112, errorRate: 1.5 },
       ];
       
-      // Current server stats
-      const serverStats = {
-        uptime: Math.floor(Math.random() * 30 * 24 * 60 * 60), // Up to 30 days in seconds
-        currentConnections: Math.floor(10 + Math.random() * 90), // 10-100 connections
-        peakConnections: Math.floor(50 + Math.random() * 950), // 50-1000 peak connections
-        totalRequests: requestsHistory.reduce((sum, day) => sum + day.totalRequests, 0),
-        averageResponseTime: Math.floor(
-          responseTimeHistory.reduce((sum, day) => sum + day.avgResponseTime, 0) / historyPoints
-        ),
-      };
-      
       res.json({
         success: true,
         data: {
+          // Current stats
+          averageResponseTime: 145,
+          p95ResponseTime: 220,
+          p99ResponseTime: 280,
+          
+          totalRequests: 24560,
+          requestsPerMinute: 42,
+          errorRate: 2.5,
+          
+          cpuUsage: 45,
+          memoryUsage: 62,
+          diskUsage: 72,
+          
+          // Historical data
           responseTimeHistory,
           requestsHistory,
           resourceUsageHistory,
-          topEndpoints,
-          serverStats,
+          
+          // Endpoint performance
+          endpointPerformance,
         }
       });
     } catch (error) {
@@ -828,6 +1159,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ success: false, error: 'Failed to fetch performance metrics' });
     }
   });
-  
+
   return httpServer;
 }
