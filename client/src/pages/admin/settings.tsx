@@ -625,7 +625,31 @@ export default function AdminSettings() {
     }
     
     // Gửi dữ liệu đến server
-    updateWebhookSettingsMutation.mutate(data);
+    updateWebhookSettingsMutation.mutate(data, {
+      onSuccess: () => {
+        toast({
+          title: "Thành công",
+          description: "Cài đặt webhook đã được cập nhật",
+        });
+        // Làm mới dữ liệu để đảm bảo giao diện hiển thị đúng
+        queryClient.invalidateQueries({ queryKey: ["/api/admin/settings"] });
+        
+        // Đảm bảo form vẫn hiển thị giá trị đã cập nhật
+        setTimeout(() => {
+          console.log("Manually updating form values:", data);
+          webhookForm.setValue("webhookUrl", data.webhookUrl || "");
+          webhookForm.setValue("webhookSecret", data.webhookSecret || "");
+          webhookForm.setValue("notificationWebhookUrl", data.notificationWebhookUrl || "");
+        }, 100);
+      },
+      onError: (error) => {
+        toast({
+          title: "Lỗi",
+          description: String(error),
+          variant: "destructive",
+        });
+      }
+    });
   };
   
   const onFirebaseSubmit = (data: FirebaseSettingsValues) => {
