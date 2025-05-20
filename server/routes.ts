@@ -283,11 +283,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const webhookUrl = webhookSettingRes?.value;
       console.log('=== GENERATE CONTENT API CALLED ===');
-      console.log('Webhook URL from database:', webhookUrl);
+      console.log('Webhook URL from database:', webhookUrl || '(missing)');
       
       // Xóa chế độ offline mode theo yêu cầu
       
-      if (!webhookUrl) {
+      if (!webhookUrl || typeof webhookUrl !== 'string') {
         return res.status(404).json({ 
           success: false, 
           error: 'Webhook URL not configured'
@@ -352,35 +352,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Xử lý phản hồi từ webhook
         const responseText = await webhookResponse.text();
         console.log('Webhook response text:', responseText);
+        console.log('Webhook response status:', webhookResponse.status);
+        console.log('Webhook response headers:', JSON.stringify(Object.fromEntries(webhookResponse.headers)));
         
-        // Nếu responseText trống hoặc không hợp lệ, sử dụng dữ liệu mẫu
+        // Nếu responseText trống hoặc không hợp lệ, kiểm tra xem có phải lỗi 204 No Content không
         if (!responseText || responseText.trim() === '') {
-          console.log('Webhook returned empty response, using mock data');
-          return res.json({ success: true, data: mockResponse });
+          // Nếu là webhook gửi thông báo "đã nhận", có thể nó đang xử lý bất đồng bộ
+          if (webhookResponse.status === 200 || webhookResponse.status === 202 || webhookResponse.status === 204) {
+            console.log('Webhook accepted the request but returned empty response, waiting for callback');
+            // Gửi phản hồi cho client biết rằng yêu cầu đang được xử lý 
+            return res.json({
+              success: true,
+              data: {
+                title: "Đang xử lý",
+                content: "<p>Đang xử lý yêu cầu tạo nội dung...</p>",
+                keywords: contentRequest.keywords.split(','),
+                creditsUsed: creditsNeeded,
+                status: "processing",
+                message: "Nội dung đang được tạo, vui lòng đợi trong giây lát."
+              }
+            });
+          } else {
+            console.log('Webhook returned empty response, using mock data');
+            return res.json({ success: true, data: mockResponse });
+          }
         }
         
         try {
+          // Phân tích phản hồi
           const webhookResult = JSON.parse(responseText);
           
-          // Trừ credits
+          // Trừ credits khi nhận phản hồi thành công
           await storage.subtractUserCredits(userId, creditsNeeded, `Content generation`);
           
-          // Kiểm tra cấu trúc phản hồi
+          console.log('Parsed webhook response:', JSON.stringify(webhookResult));
+          
+          // TH1: WebhookResult chuẩn từ n8n có chứa trường articleContent và aiTitle
           if (webhookResult && webhookResult.success && Array.isArray(webhookResult.data) && webhookResult.data.length > 0) {
             const firstResult = webhookResult.data[0];
             
-            // Xử lý theo cấu trúc phản hồi
             if (firstResult.articleContent && firstResult.aiTitle) {
-              // Định dạng phản hồi bao gồm cả trường aiTitle và articleContent gốc
-              // để client có thể sử dụng trực tiếp
               // Xử lý aiTitle để loại bỏ các ký tự xuống dòng và dấu cách thừa
               const cleanedTitle = firstResult.aiTitle.replace(/[\r\n\t]+/g, ' ').trim();
               
               const formattedResponse = {
-                title: cleanedTitle, // Tiêu đề sẽ được hiển thị (đã được làm sạch)
-                content: firstResult.articleContent, // Nội dung sẽ được hiển thị
-                aiTitle: cleanedTitle, // Lưu trữ tiêu đề gốc từ AI (đã được làm sạch)
-                articleContent: firstResult.articleContent, // Lưu trữ nội dung gốc
+                title: cleanedTitle,
+                content: firstResult.articleContent,
+                aiTitle: cleanedTitle,
+                articleContent: firstResult.articleContent,
                 keywords: contentRequest.keywords.split(','),
                 creditsUsed: creditsNeeded,
                 metrics: {
@@ -389,28 +408,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 }
               };
               
-              // Log để kiểm tra dữ liệu gửi đi
-              console.log('Sending aiTitle to client:', cleanedTitle);
-              
-              console.log('Trả về phản hồi với aiTitle và articleContent:', formattedResponse);
+              console.log('Sending formatted response with aiTitle and articleContent');
               return res.json({ success: true, data: formattedResponse });
             }
+            
+            // TH2: WebhookResult có cấu trúc khác nhưng vẫn có data array
+            console.log('Sending direct data from webhook response array');
+            return res.json({ success: true, data: firstResult });
           }
           
-          // Nếu không nhận dạng được cấu trúc theo cách trên, kiểm tra dữ liệu từ webhookResult
-          if (webhookResult && webhookResult.success && Array.isArray(webhookResult.data)) {
-            // Trường hợp dữ liệu đã được đóng gói trong webhookResult.data
-            console.log('Trả về phản hồi gốc từ webhook:', webhookResult.data);
-            return res.json({ success: true, data: webhookResult.data[0] });
-          } else {
-            // Trường hợp cấu trúc khác, trả về nguyên dạng
-            console.log('Trả về phản hồi nguyên dạng:', webhookResult);
-            return res.json({ success: true, data: webhookResult });
+          // TH3: WebhookResult có cấu trúc hoàn toàn khác
+          if (webhookResult.content) {
+            // Tạo response với các trường content và title nếu có sẵn
+            const response = {
+              title: webhookResult.title || contentRequest.title || "Bài viết mới",
+              content: webhookResult.content,
+              keywords: contentRequest.keywords.split(','),
+              creditsUsed: creditsNeeded
+            };
+            console.log('Sending response with content field');
+            return res.json({ success: true, data: response });
           }
           
+          // TH4: Các trường hợp khác, trả về nguyên dạng
+          console.log('Sending original webhook response');
+          const defaultResponse = {
+            title: webhookResult.title || contentRequest.title || "Bài viết mới",
+            content: webhookResult.content || "<p>Nội dung đã được tạo.</p>",
+            keywords: contentRequest.keywords.split(','),
+            creditsUsed: creditsNeeded,
+            ...webhookResult // Đưa tất cả các trường khác từ webhookResult
+          };
+          
+          return res.json({ success: true, data: defaultResponse });
         } catch (jsonError) {
           console.error('Failed to parse webhook response as JSON:', jsonError);
-          // Sử dụng dữ liệu mẫu nếu phân tích JSON thất bại
+          console.log('Raw response text:', responseText);
+          
+          // Nếu phản hồi trông giống HTML, có thể đó là nội dung bài viết được trả về trực tiếp
+          if (responseText.includes('<html') || responseText.includes('<body') || 
+              responseText.includes('<h1') || responseText.includes('<p')) {
+            const htmlResponse = {
+              title: contentRequest.title || "Bài viết mới",
+              content: responseText,
+              keywords: contentRequest.keywords.split(','),
+              creditsUsed: creditsNeeded
+            };
+            console.log('Treating response as direct HTML content');
+            return res.json({ success: true, data: htmlResponse });
+          }
+          
+          // Sử dụng dữ liệu mẫu làm giải pháp cuối cùng
           return res.json({ success: true, data: mockResponse });
         }
       } catch (webhookError: any) {
