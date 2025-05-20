@@ -51,30 +51,53 @@ export function registerAdminRoutes(app: Express) {
     }
 
     try {
+      console.log("Webhook settings update request:", req.body);
       const { webhookUrl, webhookSecret, notificationWebhookUrl } = req.body;
       
       // Lưu các cài đặt
+      let results = [];
+      
       if (webhookUrl !== undefined) {
-        await storage.setSetting('content_webhook_url', webhookUrl, 'webhook');
+        console.log("Saving content_webhook_url:", webhookUrl);
+        const result = await storage.setSetting('content_webhook_url', webhookUrl, 'webhook');
+        results.push({ key: 'content_webhook_url', success: result });
       }
       
       if (webhookSecret !== undefined) {
-        await storage.setSetting('webhook_secret', webhookSecret, 'webhook');
+        console.log("Saving webhook_secret");
+        const result = await storage.setSetting('webhook_secret', webhookSecret, 'webhook');
+        results.push({ key: 'webhook_secret', success: result });
       }
       
       if (notificationWebhookUrl !== undefined) {
-        await storage.setSetting('notification_webhook_url', notificationWebhookUrl, 'webhook');
+        console.log("Saving notification_webhook_url:", notificationWebhookUrl);
+        const result = await storage.setSetting('notification_webhook_url', notificationWebhookUrl, 'webhook');
+        results.push({ key: 'notification_webhook_url', success: result });
       }
+
+      // Verify settings were saved correctly
+      const savedSettings = {
+        content_webhook_url: await storage.getSetting('content_webhook_url'),
+        webhook_secret: await storage.getSetting('webhook_secret'),
+        notification_webhook_url: await storage.getSetting('notification_webhook_url')
+      };
+      
+      console.log("Saved settings:", savedSettings);
 
       return res.status(200).json({
         success: true,
-        message: "Webhook settings updated successfully"
+        message: "Webhook settings updated successfully",
+        data: {
+          results,
+          currentSettings: savedSettings
+        }
       });
     } catch (error) {
       console.error("Error updating webhook settings:", error);
       return res.status(500).json({
         success: false,
-        error: "Failed to update webhook settings"
+        error: "Failed to update webhook settings",
+        details: error instanceof Error ? error.message : String(error)
       });
     }
   });
