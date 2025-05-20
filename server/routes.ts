@@ -1,7 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import https from 'https';
-import { WebSocketServer, WebSocket } from 'ws';
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import * as schema from "@shared/schema";
@@ -11,23 +10,7 @@ import { ApiResponse, GenerateContentRequest, GenerateContentResponse } from "@s
 import { systemSettings } from "@shared/schema";
 import { randomBytes, scrypt, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-
-// Lưu trữ kết nối WebSocket theo userId
-const wsClients = new Map<number, Set<WebSocket>>();
-
-// Hàm gửi thông báo cho client qua WebSocket
-function notifyClient(userId: number, data: any) {
-  if (!userId || !wsClients.has(userId)) return;
-  
-  const connections = wsClients.get(userId)!;
-  const payload = JSON.stringify(data);
-  
-  connections.forEach(client => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(payload);
-    }
-  });
-}
+import { setupWebSocketServer, notifyClient } from "./websocket";
 
 // Interface để thêm trường vào content request
 interface ExtendedContentRequest extends GenerateContentRequest {
@@ -41,8 +24,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
 
-  // API routes
+  // Tạo HTTP server
   const httpServer = createServer(app);
+  
+  // Thiết lập WebSocket server trên đường dẫn /ws
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  
+  // Xử lý kết nối WebSocket mới
+  wss.on('connection', (ws: WebSocket) => {
+    console.log('New WebSocket connection established');
+    
+    // Biến để lưu userId của client này
+    let clientUserId: number | null = null;
+    
+    // Xử lý tin nhắn từ client
+    ws.on('message', (message: WebSocket.Data) => {
+      try {
+        const data = JSON.parse(message.toString());
+        
+        // Xử lý tin nhắn xác thực từ client
+        if (data.type === 'auth' && data.userId) {
+          clientUserId = data.userId;
+          
+          // Lưu kết nối này theo userId
+          if (!wsConnections.has(clientUserId)) {
+            wsConnections.set(clientUserId, new Set<WebSocket>());
+          }
+          
+          wsConnections.get(clientUserId)!.add(ws);
+          console.log(`WebSocket authenticated for user ${clientUserId}`);
+        }
+      } catch (error) {
+        console.error('Error processing WebSocket message:', error);
+      }
+    });
+    
+    // Xử lý khi client đóng kết nối
+    ws.on('close', () => {
+      if (clientUserId) {
+        const userConnections = wsConnections.get(clientUserId);
+        
+        if (userConnections) {
+          // Xóa kết nối này khỏi danh sách
+          userConnections.delete(ws);
+          
+          // Nếu không còn kết nối nào, xóa entry cho user này
+          if (userConnections.size === 0) {
+            wsConnections.delete(clientUserId);
+          }
+        }
+        
+        console.log(`WebSocket connection closed for user ${clientUserId}`);
+      }
+    });
+  });
+  
+  // API routes
 
   // ========== Plans API ==========
   // Get all plans
