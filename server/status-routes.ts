@@ -41,7 +41,9 @@ export function registerStatusRoutes(app: Express) {
           status: connected && querySuccess ? 'online' : 'offline',
           userCount: querySuccess ? userCount : null,
           timestamp: new Date().toISOString(),
-        }
+        },
+        online: connected && querySuccess,
+        message: connected && querySuccess ? "Database is online" : "Database is offline"
       });
     } catch (error) {
       console.error('Database status check error:', error);
@@ -53,7 +55,9 @@ export function registerStatusRoutes(app: Express) {
           connected: false,
           querySuccess: false,
           timestamp: new Date().toISOString(),
-        }
+        },
+        online: false,
+        message: "Failed to check database status"
       });
     }
   });

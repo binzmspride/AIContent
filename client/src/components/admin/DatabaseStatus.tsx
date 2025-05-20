@@ -86,8 +86,9 @@ export function DatabaseStatus() {
     );
   }
 
-  const status = data?.data?.status || 'offline';
-  const isOnline = status === 'online';
+  // Sử dụng dữ liệu mặc định nếu không có dữ liệu hoặc có lỗi
+  const statusData = data?.data || defaultStatusData;
+  const isOnline = statusData.status === 'online';
 
   return (
     <TooltipProvider>
@@ -109,8 +110,8 @@ export function DatabaseStatus() {
           </TooltipTrigger>
           <TooltipContent>
             <p>Kiểm tra lần cuối: {getTimeAgo()}</p>
-            {data?.data?.userCount !== null && (
-              <p>Số lượng người dùng: {data.data.userCount}</p>
+            {statusData.userCount !== null && (
+              <p>Số lượng người dùng: {statusData.userCount}</p>
             )}
           </TooltipContent>
         </Tooltip>
