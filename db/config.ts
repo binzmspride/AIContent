@@ -11,8 +11,9 @@ export const dbConfig: PoolConfig = {
   database: process.env.PGDATABASE,
   user: process.env.PGUSER,
   password: process.env.PGPASSWORD,
-  // SSL configuration based on environment
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  // SSL configuration for database connection
+  ssl: process.env.PGSSLMODE === 'require' ? { rejectUnauthorized: true } : 
+       process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   // Connection pool settings
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
