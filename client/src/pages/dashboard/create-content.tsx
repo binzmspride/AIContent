@@ -195,17 +195,78 @@ export default function CreateContent() {
       
       // Kiểm tra nếu nội dung đang trong trạng thái xử lý
       if (data.status === 'processing') {
-        toast({
+        // Hiển thị loading state
+        const loadingToastId = toast({
           title: "Đang xử lý nội dung",
-          description: "Hệ thống đang xử lý yêu cầu tạo nội dung của bạn. Nội dung sẽ tự động lưu khi hoàn tất. Vui lòng kiểm tra lại sau vài phút.",
-          duration: 10000,
+          description: "Hệ thống đang tạo nội dung, vui lòng đợi trong giây lát...",
+          duration: 60000,
         });
         
-        // Tự động chuyển hướng đến trang danh sách bài viết sau vài giây
-        setTimeout(() => {
-          window.location.href = '/dashboard/articles';
-        }, 7000);
+        // Khởi tạo biến theo dõi trạng thái
+        let isContentGenerated = false;
         
+        // Hàm kiểm tra trạng thái nội dung định kỳ
+        const checkContentStatus = async () => {
+          try {
+            const res = await apiRequest("GET", `/api/dashboard/content-status?requestId=${Date.now()}`);
+            const result = await res.json();
+            
+            if (result.success && result.data && result.data.status === 'completed') {
+              // Đã tạo xong nội dung
+              isContentGenerated = true;
+              
+              // Xóa toast đang loading
+              toast.dismiss(loadingToastId);
+              
+              // Hiển thị thông báo thành công
+              toast({
+                title: "Tạo nội dung thành công",
+                description: "Nội dung đã được tạo thành công!",
+              });
+              
+              // Cập nhật UI với nội dung mới
+              setGeneratedContent(result.data.content);
+              
+              return true;
+            }
+            return false;
+          } catch (error) {
+            console.error("Error checking content status:", error);
+            return false;
+          }
+        };
+        
+        // Kiểm tra trạng thái nội dung sau mỗi 5 giây, tối đa 12 lần (1 phút)
+        const maxAttempts = 12;
+        let attempts = 0;
+        
+        const statusInterval = setInterval(async () => {
+          attempts++;
+          
+          const isCompleted = await checkContentStatus();
+          
+          if (isCompleted || attempts >= maxAttempts) {
+            clearInterval(statusInterval);
+            
+            // Nếu đã hết số lần thử và vẫn chưa tạo được nội dung
+            if (!isContentGenerated && attempts >= maxAttempts) {
+              toast.dismiss(loadingToastId);
+              toast({
+                title: "Tạo nội dung mất nhiều thời gian",
+                description: "Hệ thống đang xử lý yêu cầu của bạn. Nội dung sẽ xuất hiện trong danh sách bài viết khi hoàn tất.",
+                duration: 5000,
+              });
+              
+              // Chuyển đến trang danh sách bài viết
+              setTimeout(() => {
+                window.location.href = '/dashboard/articles';
+              }, 3000);
+            }
+          }
+        }, 5000);
+        
+        // Hiển thị nội dung "đang xử lý"
+        setGeneratedContent(data);
         return;
       }
       

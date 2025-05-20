@@ -359,25 +359,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('Webhook response status:', webhookResponse.status);
         console.log('Webhook response headers:', JSON.stringify(Object.fromEntries(webhookResponse.headers)));
         
-        // Nếu responseText trống hoặc không hợp lệ, kiểm tra xem có phải lỗi 204 No Content không
+        // Nếu responseText trống hoặc không hợp lệ, đợi kết quả từ webhook
         if (!responseText || responseText.trim() === '') {
-          // Nếu là webhook gửi thông báo "đã nhận", có thể nó đang xử lý bất đồng bộ
           if (webhookResponse.status === 200 || webhookResponse.status === 202 || webhookResponse.status === 204) {
-            console.log('Webhook accepted the request but returned empty response, waiting for callback');
-            // Gửi phản hồi cho client biết rằng yêu cầu đang được xử lý 
-            return res.json({
-              success: true,
-              data: {
-                title: "Đang xử lý",
-                content: "<p>Đang xử lý yêu cầu tạo nội dung...</p>",
-                keywords: contentRequest.keywords.split(','),
-                creditsUsed: creditsNeeded,
-                status: "processing",
-                message: "Nội dung đang được tạo, vui lòng đợi trong giây lát."
-              }
-            });
+            console.log('Webhook accepted the request, waiting for real-time response...');
+            
+            // Thiết lập thời gian đợi tối đa cho webhook (30 giây)
+            let waitTime = 0;
+            const maxWaitTime = 30000; // 30 giây
+            const intervalTime = 1000; // 1 giây
+            
+            try {
+              // Trả về promise sẽ được giải quyết khi nhận được phản hồi từ webhook
+              // hoặc hết thời gian chờ
+              const waitForWebhookResponse = new Promise<any>((resolve) => {
+                const checkInterval = setInterval(async () => {
+                  waitTime += intervalTime;
+                  
+                  // Kiểm tra xem đã quá thời gian chờ chưa
+                  if (waitTime >= maxWaitTime) {
+                    clearInterval(checkInterval);
+                    console.log('Webhook response timeout, sending processing status');
+                    // Hết thời gian chờ, gửi phản hồi đang xử lý
+                    resolve({
+                      title: "Đang xử lý",
+                      content: "<p>Đang xử lý yêu cầu tạo nội dung...</p>",
+                      keywords: contentRequest.keywords.split(','),
+                      creditsUsed: creditsNeeded,
+                      status: "processing",
+                      message: "Nội dung đang được tạo, vui lòng đợi trong giây lát."
+                    });
+                  }
+                  
+                  // Thử lấy nội dung đã tạo từ webhook
+                  try {
+                    // Gửi yêu cầu kiểm tra trạng thái đến webhook
+                    const statusResponse = await fetch(`${webhookUrl}/status?requestId=${contentRequest.timestamp}`, {
+                      method: 'GET',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        ...(webhookSecret ? { 'X-Webhook-Secret': webhookSecret } : {})
+                      }
+                    });
+                    
+                    if (statusResponse.ok) {
+                      const statusData = await statusResponse.json();
+                      
+                      // Nếu có nội dung đã tạo
+                      if (statusData && statusData.success && statusData.data) {
+                        clearInterval(checkInterval);
+                        console.log('Received webhook content response:', statusData.data);
+                        resolve(statusData.data);
+                      }
+                    }
+                  } catch (error) {
+                    console.log('Error checking webhook status:', error);
+                  }
+                }, intervalTime);
+              });
+              
+              // Đợi promise hoàn thành
+              const result = await waitForWebhookResponse;
+              return res.json({ success: true, data: result });
+            } catch (error) {
+              console.error('Error waiting for webhook response:', error);
+              // Trả về trạng thái đang xử lý nếu có lỗi
+              return res.json({
+                success: true,
+                data: {
+                  title: "Đang xử lý",
+                  content: "<p>Đang xử lý yêu cầu tạo nội dung...</p>",
+                  keywords: contentRequest.keywords.split(','),
+                  creditsUsed: creditsNeeded,
+                  status: "processing",
+                  message: "Nội dung đang được tạo, vui lòng đợi trong giây lát."
+                }
+              });
+            }
           } else {
-            console.log('Webhook returned empty response, using mock data');
+            console.log('Webhook returned empty response with non-success status, using mock data');
             return res.json({ success: true, data: mockResponse });
           }
         }
