@@ -65,7 +65,13 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
-
+  
+  // Increase the default timeout on the HTTP server
+  server.timeout = 180000; // 3 minutes timeout
+  
+  // Also set keepAliveTimeout to be longer
+  server.keepAliveTimeout = 180000;
+  
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";

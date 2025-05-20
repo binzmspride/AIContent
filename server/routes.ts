@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import https from 'https';
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import * as schema from "@shared/schema";
@@ -328,12 +329,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Đặt timeout 2 phút 30 giây (150000ms) - đủ thời gian cho webhook của n8n hoàn thành (khoảng 1:38)
         const timeoutId = setTimeout(() => controller.abort(), 150000);
         
-        // Gửi request đến webhook
+        // Tạo một HTTPS agent với timeout dài hơn (3 phút)
+        const agent = new https.Agent({
+          keepAlive: true,
+          timeout: 180000, // 3 phút
+        });
+        
+        // Gửi request đến webhook với agent có timeout dài hơn
         const webhookResponse = await fetch(webhookUrl, {
           method: 'POST',
           headers,
           body: JSON.stringify(contentRequest),
-          signal: controller.signal
+          signal: controller.signal,
+          // Sử dụng agent để tăng timeout
+          agent: webhookUrl.startsWith('https') ? agent : undefined
         });
         
         // Xóa timeout khi nhận được phản hồi
