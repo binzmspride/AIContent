@@ -144,8 +144,9 @@ const apiSettingsSchema = z.object({
 
 // Webhook settings form schema
 const webhookSettingsSchema = z.object({
+  webhookUrl: z.string().url("Phải là URL hợp lệ").optional().or(z.literal("")),
   webhookSecret: z.string().optional().or(z.literal("")),
-  notificationWebhookUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  notificationWebhookUrl: z.string().url("Phải là URL hợp lệ").optional().or(z.literal("")),
 });
 
 // Firebase settings form schema
@@ -339,8 +340,9 @@ export default function AdminSettings() {
       });
       
       webhookForm.reset({
-        webhookSecret: settings.webhookSecret,
-        notificationWebhookUrl: settings.notificationWebhookUrl || "",
+        webhookUrl: settings.webhook?.webhookUrl || '',
+        webhookSecret: settings.webhook?.webhookSecret || '',
+        notificationWebhookUrl: settings.webhook?.notificationWebhookUrl || "",
       });
       
       firebaseForm.reset({

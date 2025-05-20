@@ -64,6 +64,8 @@ export function registerAdminRoutes(app: Express) {
       // Trích xuất dữ liệu từ request
       const { webhookUrl, webhookSecret, notificationWebhookUrl } = req.body;
       
+      console.log("Received webhook configuration:", { webhookUrl, webhookSecret, notificationWebhookUrl });
+      
       // Mảng lưu kết quả các thao tác cập nhật
       let results = [];
       let hasErrors = false;
