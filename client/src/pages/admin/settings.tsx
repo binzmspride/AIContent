@@ -280,9 +280,9 @@ export default function AdminSettings() {
   const webhookForm = useForm<WebhookSettingsValues>({
     resolver: zodResolver(webhookSettingsSchema),
     defaultValues: {
-      webhookUrl: settings?.webhook?.webhookUrl || '',
-      webhookSecret: settings?.webhook?.webhookSecret || '',
-      notificationWebhookUrl: settings?.webhook?.notificationWebhookUrl || '',
+      webhookUrl: settings?.webhook?.webhookUrl || settings?.content_webhook_url || '',
+      webhookSecret: settings?.webhook?.webhookSecret || settings?.webhook_secret || '',
+      notificationWebhookUrl: settings?.webhook?.notificationWebhookUrl || settings?.notification_webhook_url || '',
     },
   });
   
@@ -301,6 +301,9 @@ export default function AdminSettings() {
   // Update settings when data is loaded
   useEffect(() => {
     if (settings) {
+      // Log dữ liệu cài đặt nhận được từ server để debug
+      console.log('Settings received from server:', settings);
+      
       generalForm.reset({
         siteName: settings.siteName,
         siteDescription: settings.siteDescription,
@@ -340,10 +343,14 @@ export default function AdminSettings() {
         wordpressApiKey: settings.wordpressApiKey || "",
       });
       
+      // Sử dụng trực tiếp giá trị content_webhook_url nếu có
+      const webhookUrlValue = settings.content_webhook_url || settings.webhook?.webhookUrl || '';
+      console.log('Using webhook URL for form:', webhookUrlValue);
+      
       webhookForm.reset({
-        webhookUrl: settings.webhook?.webhookUrl || '',
-        webhookSecret: settings.webhook?.webhookSecret || '',
-        notificationWebhookUrl: settings.webhook?.notificationWebhookUrl || "",
+        webhookUrl: webhookUrlValue,
+        webhookSecret: settings.webhook_secret || settings.webhook?.webhookSecret || '',
+        notificationWebhookUrl: settings.notification_webhook_url || settings.webhook?.notificationWebhookUrl || "",
       });
       
       firebaseForm.reset({
