@@ -145,21 +145,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           try {
             const responseText = await response.text();
-            const webhookData = JSON.parse(responseText);
             
-            // Cập nhật bài viết với nội dung từ webhook
-            await storage.updateArticle(newArticle.id, {
-              title: webhookData[0]?.aiTitle || webhookData?.aiTitle || "Bài viết mới",
-              content: webhookData[0]?.content || webhookData?.content || "<p>Không có nội dung</p>",
-              updatedAt: new Date()
-            });
+            // Kiểm tra xem phản hồi có phải HTML không (bắt đầu với DOCTYPE hoặc <html)
+            if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
+              console.log('Webhook returned HTML instead of JSON, generating fallback content');
+              
+              // Tạo nội dung dự phòng với dữ liệu từ request
+              await storage.updateArticle(newArticle.id, {
+                title: `Bài viết về ${contentRequest.keywords}`,
+                content: `
+                  <p>Hệ thống không thể tạo nội dung tự động do webhook trả về định dạng không hợp lệ.</p>
+                  <h2>Thông tin bài viết:</h2>
+                  <ul>
+                    <li><strong>Chủ đề:</strong> ${contentRequest.keywords}</li>
+                    <li><strong>Độ dài:</strong> ${contentRequest.length}</li>
+                    <li><strong>Loại nội dung:</strong> ${contentRequest.contentType}</li>
+                  </ul>
+                  <p>Vui lòng kiểm tra cấu hình webhook hoặc thử lại sau.</p>
+                `,
+                updatedAt: new Date()
+              });
+              
+              console.log('Article updated with fallback content due to HTML response, ID:', newArticle.id);
+              return;
+            }
             
-            console.log('Article updated with content from webhook, ID:', newArticle.id);
-          } catch (parseError) {
-            console.error('Failed to parse webhook response as JSON:', parseError);
+            // Xử lý JSON thông thường
+            try {
+              const webhookData = JSON.parse(responseText);
+              
+              // Cập nhật bài viết với nội dung từ webhook
+              await storage.updateArticle(newArticle.id, {
+                title: webhookData[0]?.aiTitle || webhookData?.aiTitle || "Bài viết mới",
+                content: webhookData[0]?.content || webhookData?.content || "<p>Không có nội dung</p>",
+                updatedAt: new Date()
+              });
+              
+              console.log('Article updated with content from webhook, ID:', newArticle.id);
+            } catch (jsonError) {
+              console.error('Failed to parse webhook response as JSON:', jsonError);
+              
+              // Lưu phần đầu của phản hồi để debug
+              console.log('Webhook response preview:', responseText.substring(0, 200));
+              
+              await storage.updateArticle(newArticle.id, {
+                title: "Lỗi định dạng dữ liệu",
+                content: "<p>Không thể xử lý dữ liệu từ dịch vụ tạo nội dung. Phản hồi không phải là JSON hợp lệ.</p>"
+              });
+            }
+          } catch (error) {
+            console.error('Error processing webhook response:', error);
             await storage.updateArticle(newArticle.id, {
-              title: "Lỗi định dạng dữ liệu",
-              content: "<p>Không thể xử lý dữ liệu từ dịch vụ tạo nội dung</p>"
+              title: "Lỗi xử lý phản hồi",
+              content: "<p>Đã xảy ra lỗi khi xử lý phản hồi từ dịch vụ tạo nội dung</p>"
             });
           }
         })
