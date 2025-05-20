@@ -20,9 +20,9 @@ export function setupWebSocketServer(httpServer: Server) {
     let userId: number | null = null;
     
     // Xử lý tin nhắn từ client
-    ws.on('message', (message: WebSocket.Data) => {
+    ws.addEventListener('message', (event) => {
       try {
-        const data = JSON.parse(message.toString());
+        const data = JSON.parse(event.data.toString());
         
         // Nếu có tin nhắn xác thực với userId, lưu lại
         if (data.type === 'auth' && data.userId) {
@@ -43,7 +43,7 @@ export function setupWebSocketServer(httpServer: Server) {
     
     // Xử lý khi kết nối bị đóng
     ws.on('close', () => {
-      if (userId) {
+      if (userId !== null) {
         const userConnections = clients.get(userId);
         
         if (userConnections) {

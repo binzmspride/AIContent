@@ -437,6 +437,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           if (!webhookResponse.ok) {
             console.log(`Webhook error status: ${webhookResponse.status}`);
+            // Thông báo lỗi qua WebSocket
+            notifyClient(userId, {
+              type: 'webhook_complete',
+              success: false,
+              articleId: savedDraft.id,
+              status: "error",
+              error: `Không thể kết nối với dịch vụ tạo nội dung. Mã lỗi: ${webhookResponse.status}`
+            });
             return;
           }
           
@@ -450,6 +458,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
               console.log('Webhook response content received successfully');
             } catch (parseError) {
               console.error('Failed to parse webhook response as JSON:', parseError);
+              // Thông báo lỗi qua WebSocket
+              notifyClient(userId, {
+                type: 'webhook_complete',
+                success: false,
+                articleId: savedDraft.id,
+                status: "error",
+                error: "Lỗi định dạng dữ liệu từ webhook"
+              });
               return;
             }
             
@@ -463,13 +479,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
               
               await storage.updateArticle(savedDraft.id, updatedArticle);
               console.log('Article updated with content from webhook, article ID:', savedDraft.id);
+              
+              // Gửi thông báo thành công qua WebSocket
+              notifyClient(userId, {
+                type: 'webhook_complete',
+                success: true,
+                articleId: savedDraft.id,
+                status: "completed",
+                data: webhookData
+              });
             }
           } catch (error) {
             console.error('Error processing webhook response:', error);
+            // Thông báo lỗi qua WebSocket
+            notifyClient(userId, {
+              type: 'webhook_complete',
+              success: false,
+              articleId: savedDraft.id,
+              status: "error",
+              error: "Lỗi xử lý phản hồi từ webhook"
+            });
           }
         })
         .catch(error => {
           console.error('Webhook request failed:', error);
+          // Thông báo lỗi qua WebSocket
+          notifyClient(userId, {
+            type: 'webhook_complete',
+            success: false,
+            articleId: savedDraft.id,
+            status: "error",
+            error: "Lỗi kết nối đến webhook"
+          });
         });
         
         // Trả về bài viết nháp cho người dùng ngay lập tức
