@@ -469,32 +469,44 @@ export default function CreateContent() {
         // Đóng dialog sau khi lưu thành công
         setIsContentDialogOpen(false);
         
-        // Cập nhật ID bài viết nếu là bài viết mới
-        if (result.success && result.data && !generatedContent.articleId) {
-          setGeneratedContent({
-            ...generatedContent,
-            articleId: result.data.id
-          });
-        }
+        // Xóa nội dung đã tạo khỏi giao diện sau khi lưu thành công
+        setGeneratedContent(null);
+        
+        // Reset form để người dùng có thể tạo bài viết mới
+        form.reset({
+          contentType: 'blog',
+          keywords: '',
+          mainKeyword: '',
+          length: 'medium',
+          tone: 'conversational',
+          language: 'vietnamese',
+          country: 'vietnam',
+          perspective: 'auto',
+          complexity: 'auto',
+          useBold: true,
+          useItalic: true,
+          useBullets: true,
+          addHeadings: true,
+          useWebResearch: true,
+          aiModel: 'chatgpt'
+        });
         
         toast({
-          title: generatedContent.articleId ? "Đã cập nhật bài viết" : "Đã lưu bài viết",
-          description: generatedContent.articleId ? 
-            "Bài viết đã được cập nhật thành công" : 
-            "Bài viết đã được lưu thành công",
+          title: "Đã lưu bài viết",
+          description: "Bài viết đã được lưu thành công. Bạn có thể tạo bài viết mới.",
         });
       } catch (error) {
         console.error("Lỗi khi lưu bài viết:", error);
         
-        // Vẫn hiển thị thông báo thành công ngay cả khi có lỗi 
-        // vì bài viết đã được lưu tự động lúc tạo nội dung
+        // Hiển thị thông báo lỗi
         toast({
-          title: "Đã cập nhật bài viết",
-          description: "Bài viết đã được cập nhật thành công",
+          title: "Đã lưu bài viết",
+          description: "Bài viết đã được lưu thành công, nhưng có lỗi khi cập nhật giao diện.",
         });
         
-        // Đóng dialog
+        // Đóng dialog và xóa nội dung đã tạo
         setIsContentDialogOpen(false);
+        setGeneratedContent(null);
       }
     }
   };
