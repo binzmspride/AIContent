@@ -141,7 +141,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Xử lý webhook trong background mà không đợi phản hồi
       processWebhookInBackground(
-        webhookSettings.value,
+        webhookSettings.value || 'https://example.com/webhook', // Sử dụng URL mặc định nếu không có
         extendedRequest,
         headers,
         newArticle.id,

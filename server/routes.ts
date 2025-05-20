@@ -2,34 +2,24 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
-import * as schema from "../shared/schema";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
 import { systemSettings } from "../shared/schema";
-import { processWebhookInBackground } from "./webhook-handler";
-
-// API response interface
-interface ApiResponse<T> {
-  success: boolean;
-  message?: string;
-  data?: T;
-  error?: any;
-}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Thiết lập xác thực người dùng
   setupAuth(app);
 
   // HTTP server để đáp ứng request
-  const httpServer = createServer(app.callback ? app.callback() : app);
+  const httpServer = createServer(app);
 
-  // API tạo nội dung thông qua webhook
+  // API tạo nội dung
   app.post("/api/generate-content", async (req: Request, res: Response) => {
-    if (!req.isAuthenticated || !req.isAuthenticated()) {
-      return res.status(401).json({ success: false, message: "Unauthenticated" });
-    }
-
     try {
+      if (!req.isAuthenticated || !req.isAuthenticated()) {
+        return res.status(401).json({ success: false, message: "Unauthenticated" });
+      }
+
       const user = req.user;
       
       // Kiểm tra tài khoản
@@ -80,7 +70,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Trừ credits trước khi tạo nội dung
-      await storage.deductUserCredits(user.id, creditsToDeduct);
+      await storage.subtractUserCredits(user.id, creditsToDeduct, `Sử dụng ${creditsToDeduct} credits để tạo nội dung`);
       
       // Tạo bài viết mới với trạng thái "draft"
       const newArticle = await storage.createArticle({
@@ -88,39 +78,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         title: `Đang tạo nội dung... (${new Date().toLocaleString('vi-VN')})`,
         content: "<p>Đang xử lý yêu cầu tạo nội dung, vui lòng đợi trong giây lát...</p>",
         status: 'draft',
+        creditsUsed: creditsToDeduct,
         createdAt: new Date(),
         updatedAt: new Date()
       });
 
-      // Lấy cài đặt hệ thống để biết webhook URL
-      const settings = await db.query.systemSettings.findFirst();
+      // Lấy cài đặt webhook URL từ database
+      const webhookSettings = await db.query.systemSettings.findFirst({
+        where: eq(systemSettings.key, 'content_webhook_url')
+      });
       
-      if (!settings || !settings.contentWebhookUrl) {
-        await storage.updateArticle(newArticle.id, {
-          title: "Lỗi cấu hình",
-          content: "<p>Hệ thống chưa được cấu hình webhook URL cho dịch vụ tạo nội dung</p>"
-        });
-        
-        return res.status(500).json({ 
-          success: false, 
-          message: "Hệ thống chưa được cấu hình webhook" 
-        });
-      }
-
-      // Tạo request mở rộng để gửi tới webhook với thông tin bổ sung
-      const extendedRequest = {
-        ...contentRequest,
-        articleId: newArticle.id,
-        userId: user.id,
-        username: user.username,
-        timestamp: new Date().toISOString()
-      };
-
-      // Thiết lập headers cho request đến webhook
-      const headers = {
-        'Content-Type': 'application/json',
-        'X-Callback-URL': `${req.protocol}://${req.get('host')}/api/webhook/callback`
-      };
+      const webhookUrl = webhookSettings?.value || "https://n8n.example.com/webhook/content-generation";
 
       // Tạo phản hồi mockup ngay lập tức
       const mockResponse = {
@@ -137,27 +105,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       };
 
-      // Xử lý webhook trong background mà không đợi phản hồi
-      processWebhookInBackground(
-        settings.contentWebhookUrl,
-        extendedRequest,
-        headers,
-        newArticle.id,
-        user.id
-      );
-
       // Phản hồi ngay cho người dùng với ID bài viết và thông tin credits đã trừ
-      return res.json({
+      res.json({
         success: true,
         message: "Đã bắt đầu tạo nội dung",
         data: mockResponse
       });
+
+      // Gửi request đến webhook trong nền (không chờ đợi)
+      try {
+        const extendedRequest = {
+          ...contentRequest,
+          articleId: newArticle.id,
+          userId: user.id,
+          username: user.username,
+          timestamp: new Date().toISOString()
+        };
+
+        const headers = {
+          'Content-Type': 'application/json',
+          'X-Callback-URL': `${req.protocol}://${req.get('host')}/api/webhook/callback`
+        };
+
+        // Gửi request đến webhook và không chờ phản hồi
+        fetch(webhookUrl, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(extendedRequest)
+        })
+        .then(async (response) => {
+          if (!response.ok) {
+            console.error(`Webhook error status: ${response.status}`);
+            await storage.updateArticle(newArticle.id, {
+              title: "Lỗi tạo nội dung",
+              content: `<p>Đã xảy ra lỗi khi tạo nội dung. Mã lỗi: ${response.status}</p>`
+            });
+            return;
+          }
+
+          try {
+            const responseText = await response.text();
+            const webhookData = JSON.parse(responseText);
+            
+            // Cập nhật bài viết với nội dung từ webhook
+            await storage.updateArticle(newArticle.id, {
+              title: webhookData[0]?.aiTitle || webhookData?.aiTitle || "Bài viết mới",
+              content: webhookData[0]?.content || webhookData?.content || "<p>Không có nội dung</p>",
+              updatedAt: new Date()
+            });
+            
+            console.log('Article updated with content from webhook, ID:', newArticle.id);
+          } catch (parseError) {
+            console.error('Failed to parse webhook response as JSON:', parseError);
+            await storage.updateArticle(newArticle.id, {
+              title: "Lỗi định dạng dữ liệu",
+              content: "<p>Không thể xử lý dữ liệu từ dịch vụ tạo nội dung</p>"
+            });
+          }
+        })
+        .catch(async (error) => {
+          console.error('Error calling webhook:', error);
+          await storage.updateArticle(newArticle.id, {
+            title: "Lỗi kết nối",
+            content: "<p>Không thể kết nối đến dịch vụ tạo nội dung</p>"
+          });
+        });
+      } catch (error) {
+        console.error('Error processing webhook in background:', error);
+        await storage.updateArticle(newArticle.id, {
+          title: "Lỗi xử lý",
+          content: "<p>Đã xảy ra lỗi khi xử lý dữ liệu từ webhook</p>"
+        });
+      }
     } catch (error) {
       console.error("Error generating content:", error);
       return res.status(500).json({ 
         success: false, 
         message: "Lỗi khi tạo nội dung", 
-        error: error.message 
+        error: error instanceof Error ? error.message : String(error)
       });
     }
   });
@@ -202,12 +227,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error processing webhook callback:", error);
       return res.status(500).json({ 
         success: false, 
-        message: "Error processing webhook callback" 
+        message: "Error processing webhook callback",
+        error: error instanceof Error ? error.message : String(error)
       });
     }
   });
 
-  // Đăng ký các route khác ở đây nếu cần
+  // API lấy danh sách bài viết của người dùng
+  app.get("/api/articles", async (req: Request, res: Response) => {
+    try {
+      // Kiểm tra người dùng đã đăng nhập
+      if (!req.isAuthenticated || !req.isAuthenticated()) {
+        return res.status(401).json({ success: false, message: "Unauthenticated" });
+      }
+      
+      const user = req.user;
+      
+      // Phân trang
+      const page = parseInt(req.query.page as string || "1");
+      const limit = parseInt(req.query.limit as string || "10");
+      
+      // Lấy danh sách bài viết
+      const result = await storage.getArticlesByUser(user.id, page, limit);
+      
+      res.json({
+        success: true,
+        data: result.articles,
+        pagination: {
+          page,
+          limit,
+          totalItems: result.total,
+          totalPages: Math.ceil(result.total / limit)
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Failed to fetch articles", 
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
+  // API lấy chi tiết bài viết
+  app.get("/api/articles/:id", async (req: Request, res: Response) => {
+    try {
+      // Kiểm tra người dùng đã đăng nhập
+      if (!req.isAuthenticated || !req.isAuthenticated()) {
+        return res.status(401).json({ success: false, message: "Unauthenticated" });
+      }
+      
+      const user = req.user;
+      const articleId = parseInt(req.params.id);
+      
+      if (isNaN(articleId)) {
+        return res.status(400).json({ success: false, message: "Invalid article ID" });
+      }
+      
+      // Lấy bài viết
+      const article = await storage.getArticleById(articleId);
+      
+      if (!article) {
+        return res.status(404).json({ success: false, message: "Article not found" });
+      }
+      
+      // Kiểm tra quyền truy cập
+      if (article.userId !== user.id) {
+        return res.status(403).json({ success: false, message: "Unauthorized" });
+      }
+      
+      res.json({
+        success: true,
+        data: article
+      });
+    } catch (error) {
+      console.error("Error fetching article:", error);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Failed to fetch article", 
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
 
   return httpServer;
 }
