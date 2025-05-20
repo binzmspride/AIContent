@@ -1,0 +1,40 @@
+import type { Express } from "express";
+import { createServer, type Server } from "http";
+import https from 'https';
+import { storage } from "./storage";
+import { setupAuth } from "./auth";
+import * as schema from "@shared/schema";
+import { db } from "../db";
+import { sql, eq } from "drizzle-orm";
+import { ApiResponse, GenerateContentRequest, GenerateContentResponse } from "@shared/types";
+import { systemSettings } from "@shared/schema";
+import { randomBytes, scrypt, timingSafeEqual } from "crypto";
+import { promisify } from "util";
+
+// Interface để thêm articleId vào content request
+interface ExtendedContentRequest extends GenerateContentRequest {
+  articleId?: number;
+  userId?: number;
+  username?: string;
+  timestamp?: string;
+}
+
+export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up authentication routes
+  setupAuth(app);
+
+  // API routes
+  const httpServer = createServer(app);
+
+  // ========== Plans API ==========
+  // Get all plans
+  app.get('/api/plans', async (req, res) => {
+    try {
+      const type = req.query.type as schema.PlanType | undefined;
+      const plans = await storage.getPlans(type);
+      res.json({ success: true, data: plans });
+    } catch (error) {
+      console.error('Error fetching plans:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch plans' });
+    }
+  });
