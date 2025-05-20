@@ -43,57 +43,109 @@ export function registerAdminRoutes(app: Express) {
 
   // API cập nhật cài đặt webhook
   app.patch("/api/admin/settings/webhook", async (req: Request, res: Response) => {
-    if (!req.isAuthenticated() || req.user.role !== "admin") {
-      return res.status(403).json({ 
-        success: false, 
-        error: "Unauthorized. Only admin users can perform this action." 
-      });
-    }
-
     try {
-      console.log("Webhook settings update request:", req.body);
+      // Kiểm tra xác thực và phân quyền
+      if (!req.isAuthenticated || !req.isAuthenticated()) {
+        return res.status(401).json({ 
+          success: false, 
+          error: "Unauthorized. Login required." 
+        });
+      }
+      
+      if (req.user.role !== "admin") {
+        return res.status(403).json({ 
+          success: false, 
+          error: "Forbidden. Admin privileges required." 
+        });
+      }
+
+      console.log("Webhook settings update request body:", req.body);
+      
+      // Trích xuất dữ liệu từ request
       const { webhookUrl, webhookSecret, notificationWebhookUrl } = req.body;
       
-      // Lưu các cài đặt
+      // Mảng lưu kết quả các thao tác cập nhật
       let results = [];
+      let hasErrors = false;
       
+      // Cập nhật URL webhook chính
       if (webhookUrl !== undefined) {
-        console.log("Saving content_webhook_url:", webhookUrl);
-        const result = await storage.setSetting('content_webhook_url', webhookUrl, 'webhook');
-        results.push({ key: 'content_webhook_url', success: result });
+        try {
+          console.log("Saving content_webhook_url:", webhookUrl);
+          const result = await storage.setSetting('content_webhook_url', webhookUrl.toString(), 'webhook');
+          results.push({ key: 'content_webhook_url', success: result });
+          if (!result) hasErrors = true;
+        } catch (err) {
+          console.error("Error saving content_webhook_url:", err);
+          results.push({ key: 'content_webhook_url', success: false, error: String(err) });
+          hasErrors = true;
+        }
       }
       
+      // Cập nhật khóa bí mật
       if (webhookSecret !== undefined) {
-        console.log("Saving webhook_secret");
-        const result = await storage.setSetting('webhook_secret', webhookSecret, 'webhook');
-        results.push({ key: 'webhook_secret', success: result });
+        try {
+          console.log("Saving webhook_secret");
+          const result = await storage.setSetting('webhook_secret', webhookSecret.toString(), 'webhook');
+          results.push({ key: 'webhook_secret', success: result });
+          if (!result) hasErrors = true;
+        } catch (err) {
+          console.error("Error saving webhook_secret:", err);
+          results.push({ key: 'webhook_secret', success: false, error: String(err) });
+          hasErrors = true;
+        }
       }
       
+      // Cập nhật URL thông báo
       if (notificationWebhookUrl !== undefined) {
-        console.log("Saving notification_webhook_url:", notificationWebhookUrl);
-        const result = await storage.setSetting('notification_webhook_url', notificationWebhookUrl, 'webhook');
-        results.push({ key: 'notification_webhook_url', success: result });
+        try {
+          console.log("Saving notification_webhook_url:", notificationWebhookUrl);
+          const result = await storage.setSetting('notification_webhook_url', notificationWebhookUrl.toString(), 'webhook');
+          results.push({ key: 'notification_webhook_url', success: result });
+          if (!result) hasErrors = true;
+        } catch (err) {
+          console.error("Error saving notification_webhook_url:", err);
+          results.push({ key: 'notification_webhook_url', success: false, error: String(err) });
+          hasErrors = true;
+        }
       }
 
-      // Verify settings were saved correctly
+      // Lấy cài đặt đã lưu để kiểm tra
       const savedSettings = {
-        content_webhook_url: await storage.getSetting('content_webhook_url'),
-        webhook_secret: await storage.getSetting('webhook_secret'),
-        notification_webhook_url: await storage.getSetting('notification_webhook_url')
+        content_webhook_url: await storage.getSetting('content_webhook_url') || '',
+        webhook_secret: await storage.getSetting('webhook_secret') || '',
+        notification_webhook_url: await storage.getSetting('notification_webhook_url') || ''
       };
       
-      console.log("Saved settings:", savedSettings);
+      console.log("Final saved settings:", savedSettings);
 
-      return res.status(200).json({
-        success: true,
-        message: "Webhook settings updated successfully",
-        data: {
-          results,
-          currentSettings: savedSettings
-        }
-      });
+      // Gửi phản hồi
+      res.setHeader('Content-Type', 'application/json');
+      
+      if (hasErrors) {
+        return res.status(207).json({
+          success: false,
+          message: "Some settings could not be updated",
+          data: {
+            results,
+            currentSettings: savedSettings
+          }
+        });
+      } else {
+        return res.status(200).json({
+          success: true,
+          message: "Webhook settings updated successfully",
+          data: {
+            results,
+            currentSettings: savedSettings
+          }
+        });
+      }
     } catch (error) {
-      console.error("Error updating webhook settings:", error);
+      console.error("Error in webhook settings update API:", error);
+      
+      // Đảm bảo phản hồi luôn là JSON
+      res.setHeader('Content-Type', 'application/json');
       return res.status(500).json({
         success: false,
         error: "Failed to update webhook settings",

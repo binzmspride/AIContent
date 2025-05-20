@@ -443,10 +443,32 @@ export default function AdminSettings() {
   // Update webhook settings mutation
   const updateWebhookSettingsMutation = useMutation({
     mutationFn: async (data: WebhookSettingsValues) => {
-      const res = await apiRequest("PATCH", "/api/admin/settings/webhook", data);
-      return res.json();
+      try {
+        console.log("Sending webhook settings:", data);
+        const res = await apiRequest("PATCH", "/api/admin/settings/webhook", data);
+        
+        // Kiểm tra xem phản hồi có thành công không
+        if (!res.ok) {
+          console.error("API request failed:", await res.text());
+          throw new Error(`Lỗi máy chủ: ${res.status}`);
+        }
+
+        // Thử phân tích phản hồi JSON
+        try {
+          return await res.json();
+        } catch (err) {
+          console.error("Failed to parse JSON:", err);
+          const text = await res.text();
+          console.error("Response text:", text);
+          throw new Error("Phản hồi không hợp lệ từ máy chủ");
+        }
+      } catch (err) {
+        console.error("Webhook settings update error:", err);
+        throw err;
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Webhook settings updated successfully:", data);
       toast({
         title: "Thành công",
         description: "Cài đặt webhook đã được cập nhật",
@@ -454,9 +476,10 @@ export default function AdminSettings() {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/settings"] });
     },
     onError: (error: Error) => {
+      console.error("Webhook settings update mutation error:", error);
       toast({
-        title: "Lỗi",
-        description: error.message,
+        title: "Lỗi cập nhật cài đặt",
+        description: error.message || "Không thể cập nhật cài đặt webhook",
         variant: "destructive",
       });
     },
