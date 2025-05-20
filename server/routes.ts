@@ -11,9 +11,12 @@ import { systemSettings } from "@shared/schema";
 import { randomBytes, scrypt, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 
-// Interface để thêm articleId vào content request
+// Interface để thêm trường vào content request
 interface ExtendedContentRequest extends GenerateContentRequest {
   articleId?: number;
+  userId?: number;
+  username?: string;
+  timestamp?: string;
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -328,11 +331,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         headers['X-Webhook-Secret'] = webhookSecret;
       }
       
-      // Tăng thời gian tối đa cho request này - Node.js/Express có thể có timeout mặc định là 60s
-      // Đặt trực tiếp cho req và res
-      req.socket.setTimeout(200000); // 3 phút 20 giây - thời gian dài hơn webhook cần (1:38)
+      // ===== GIẢI PHÁP MỚI CHO WEBHOOK TIMEOUT =====
+      // 
+      // Thay vì chờ đợi webhook hoàn thành (có thể mất hơn 1 phút - bị timeout),
+      // chúng ta sẽ:
+      // 1. Tạo bài viết nháp ngay lập tức
+      // 2. Trả về bài viết nháp cho người dùng
+      // 3. Khởi chạy webhook trong background
+      // 4. Cập nhật bài viết khi webhook hoàn thành
       
-      // Tạo bài viết nháp ngay lập tức trong cơ sở dữ liệu
+      // Tạo bài viết nháp trong cơ sở dữ liệu
       const draftArticle: schema.InsertArticle = {
         userId,
         title: "Đang xử lý",
@@ -354,11 +362,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Thêm articleId vào request webhook để cập nhật bài viết sau khi webhook hoàn thành
         const extendedRequest: ExtendedContentRequest = {
           ...contentRequest,
-          articleId: savedDraft.id
+          articleId: savedDraft.id,
+          userId,
+          username: req.user.username,
+          timestamp: new Date().toISOString()
         };
         
         // Gửi webhook trong một tiến trình riêng không chờ đợi
-        console.log('Start webhook request at:', new Date().toISOString());
+        console.log('Starting webhook request in background at:', new Date().toISOString());
         
         // Khởi động request webhook mà không chờ đợi kết quả
         fetch(webhookUrl, {
@@ -425,41 +436,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           error: 'Không thể tạo bài viết. Vui lòng thử lại sau.'
         });
       }
-        try {
-          const webhookResult = JSON.parse(responseText);
-          
-          // Trừ credits
-          await storage.subtractUserCredits(userId, creditsNeeded, `Content generation`);
-          
-          // Kiểm tra cấu trúc phản hồi
-          if (webhookResult && webhookResult.success && Array.isArray(webhookResult.data) && webhookResult.data.length > 0) {
-            const firstResult = webhookResult.data[0];
-            
-            // Xử lý theo cấu trúc phản hồi
-            if (firstResult.articleContent && firstResult.aiTitle) {
-              // Định dạng phản hồi bao gồm cả trường aiTitle và articleContent gốc
-              // để client có thể sử dụng trực tiếp
-              // Xử lý aiTitle để loại bỏ các ký tự xuống dòng và dấu cách thừa
-              const cleanedTitle = firstResult.aiTitle.replace(/[\r\n\t]+/g, ' ').trim();
-              
-              const formattedResponse = {
-                title: cleanedTitle, // Tiêu đề sẽ được hiển thị (đã được làm sạch)
-                content: firstResult.articleContent, // Nội dung sẽ được hiển thị
-                aiTitle: cleanedTitle, // Lưu trữ tiêu đề gốc từ AI (đã được làm sạch)
-                articleContent: firstResult.articleContent, // Lưu trữ nội dung gốc
-                keywords: contentRequest.keywords.split(','),
-                creditsUsed: creditsNeeded,
-                metrics: {
-                  generationTimeMs: 5000,
-                  wordCount: firstResult.articleContent.split(/\s+/).length
-                }
-              };
-              
-              // Log để kiểm tra dữ liệu gửi đi
-              console.log('Sending aiTitle to client:', cleanedTitle);
-              
-              console.log('Trả về phản hồi với aiTitle và articleContent:', formattedResponse);
-              return res.json({ success: true, data: formattedResponse });
             }
           }
           
