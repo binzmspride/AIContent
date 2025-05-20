@@ -26,15 +26,20 @@ export function setupWebSocketServer(httpServer: Server) {
         
         // Nếu có tin nhắn xác thực với userId, lưu lại
         if (data.type === 'auth' && data.userId) {
-          userId = data.userId;
+          userId = Number(data.userId);
           
-          // Thêm vào danh sách kết nối theo userId
-          if (!clients.has(userId)) {
-            clients.set(userId, new Set<WebSocket>());
+          // Đảm bảo userId là số hợp lệ
+          if (!Number.isNaN(userId)) {
+            // Thêm vào danh sách kết nối theo userId
+            if (!clients.has(userId)) {
+              clients.set(userId, new Set<WebSocket>());
+            }
+            
+            clients.get(userId)!.add(ws);
+            console.log(`WebSocket authenticated for user ${userId}`);
+          } else {
+            console.error('Invalid userId received:', data.userId);
           }
-          
-          clients.get(userId)!.add(ws);
-          console.log(`WebSocket authenticated for user ${userId}`);
         }
       } catch (error) {
         console.error('Error processing WebSocket message:', error);
@@ -42,7 +47,7 @@ export function setupWebSocketServer(httpServer: Server) {
     });
     
     // Xử lý khi kết nối bị đóng
-    ws.on('close', () => {
+    ws.addEventListener('close', () => {
       if (userId !== null) {
         const userConnections = clients.get(userId);
         
@@ -68,9 +73,12 @@ export function setupWebSocketServer(httpServer: Server) {
  * @param userId ID của người dùng để xác định kết nối
  * @param data Dữ liệu để gửi
  */
-export function notifyClient(userId: number, data: any) {
-  if (!clients.has(userId)) {
-    console.log(`No WebSocket connections for user ${userId}`);
+export function notifyClient(userId: number | null, data: any) {
+  // Nếu userId là null hoặc không có kết nối, không gửi thông báo
+  if (userId === null || !clients.has(userId)) {
+    if (userId !== null) {
+      console.log(`No WebSocket connections for user ${userId}`);
+    }
     return;
   }
   
