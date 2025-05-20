@@ -312,13 +312,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       try {
-        // Tạo bài viết với trạng thái "đang xử lý" trước
+        // Tạo bài viết với trạng thái "đang xử lý" (sử dụng trạng thái draft)
         const processingArticle = {
           userId,
           title: "Đang xử lý",
           content: "<p>Hệ thống đang xử lý yêu cầu tạo nội dung. Vui lòng đợi trong giây lát...</p>",
           keywords: contentRequest.keywords,
-          status: "processing", // Trạng thái đặc biệt cho biết đang xử lý
+          status: "draft", // Sử dụng trạng thái draft theo enum đã định nghĩa
           publishedUrl: null,
           creditsUsed: creditsNeeded
         };
@@ -351,11 +351,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           if (!webhookResponse.ok) {
             console.error('Webhook error status:', webhookResponse.status);
-            // Cập nhật bài viết thành trạng thái lỗi
+            // Cập nhật bài viết thành bài viết lỗi (vẫn giữ trạng thái draft)
             await storage.updateArticle(savedArticle.id, {
               title: "Lỗi tạo nội dung",
-              content: `<p>Đã xảy ra lỗi khi tạo nội dung. Mã lỗi: ${webhookResponse.status}</p>`,
-              status: "error"
+              content: `<p>Đã xảy ra lỗi khi tạo nội dung. Mã lỗi: ${webhookResponse.status}</p>`
+              // Giữ nguyên trạng thái draft
             });
             return;
           }
@@ -372,8 +372,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
               console.error('Failed to parse webhook response as JSON:', parseError);
               await storage.updateArticle(savedArticle.id, {
                 title: "Lỗi dữ liệu",
-                content: "<p>Không thể xử lý dữ liệu từ dịch vụ tạo nội dung</p>",
-                status: "error"
+                content: "<p>Không thể xử lý dữ liệu từ dịch vụ tạo nội dung</p>"
+                // Giữ nguyên trạng thái draft
               });
               return;
             }
@@ -381,8 +381,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Cập nhật bài viết với nội dung thực từ webhook
             const updatedArticle = {
               title: webhookData[0]?.aiTitle || webhookData?.aiTitle || "Bài viết mới",
-              content: webhookData[0]?.content || webhookData?.content || "<p>Không có nội dung</p>",
-              status: "draft" // Chuyển từ "processing" sang "draft"
+              content: webhookData[0]?.content || webhookData?.content || "<p>Không có nội dung</p>"
+              // Giữ nguyên trạng thái draft
             };
             
             await storage.updateArticle(savedArticle.id, updatedArticle);
