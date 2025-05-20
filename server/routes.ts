@@ -323,30 +323,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
         headers['X-Webhook-Secret'] = webhookSecret;
       }
       
+      // Tăng thời gian tối đa cho request này - Node.js/Express có thể có timeout mặc định là 60s
+      // Đặt trực tiếp cho req và res
+      req.socket.setTimeout(200000); // 3 phút 20 giây - thời gian dài hơn webhook cần (1:38)
+      
       try {
-        // Tạo controller để có thể hủy thủ công nếu cần
-        const controller = new AbortController();
-        // Đặt timeout 2 phút 30 giây (150000ms) - đủ thời gian cho webhook của n8n hoàn thành (khoảng 1:38)
-        const timeoutId = setTimeout(() => controller.abort(), 150000);
+        console.log('Start webhook request at:', new Date().toISOString());
         
-        // Tạo một HTTPS agent với timeout dài hơn (3 phút)
-        const agent = new https.Agent({
-          keepAlive: true,
-          timeout: 180000, // 3 phút
-        });
+        // Hàm retry cho webhook nếu bị timeout
+        const fetchWithRetries = async (url: string, options: RequestInit, maxRetries = 1) => {
+          for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+              // Sử dụng AbortController với timeout dài hơn (3 phút)
+              const controller = new AbortController();
+              // Đặt timeout 3 phút
+              const timeoutId = setTimeout(() => controller.abort(), 180000);
+              
+              const response = await fetch(url, {
+                ...options,
+                signal: controller.signal
+              });
+              
+              clearTimeout(timeoutId);
+              return response;
+            } catch (error) {
+              console.log(`Webhook attempt ${attempt + 1} failed:`, error);
+              
+              // Nếu đã hết số lần thử, ném lỗi
+              if (attempt === maxRetries) throw error;
+              
+              // Đợi 1 giây trước khi thử lại
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+          }
+          
+          // Fallback return trong trường hợp không có response
+          throw new Error("Maximum retries reached with no successful response");
+        };
         
-        // Gửi request đến webhook với agent có timeout dài hơn
-        const webhookResponse = await fetch(webhookUrl, {
+        // Gọi webhook với retry
+        const webhookResponse = await fetchWithRetries(webhookUrl, {
           method: 'POST',
           headers,
           body: JSON.stringify(contentRequest),
-          signal: controller.signal,
-          // Sử dụng agent để tăng timeout
-          agent: webhookUrl.startsWith('https') ? agent : undefined
-        });
-        
-        // Xóa timeout khi nhận được phản hồi
-        clearTimeout(timeoutId);
+        }, 1) as Response; // Type assertion để typescript không còn báo lỗi
+          
+        console.log('Webhook response received at:', new Date().toISOString());
         
         if (!webhookResponse.ok) {
           console.log(`Webhook response status: ${webhookResponse.status}`);
