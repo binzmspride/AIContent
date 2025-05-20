@@ -42,8 +42,34 @@ export async function processWebhookInBackground(
     
     // Xử lý phản hồi từ webhook
     const responseText = await response.text();
-    let webhookData;
+    console.log('Webhook raw response:', responseText.substring(0, 200) + '...');
     
+    // Kiểm tra nếu phản hồi chứa HTML thay vì JSON (bắt đầu bằng <!DOCTYPE hoặc <html)
+    if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
+      console.error('Webhook returned HTML instead of JSON');
+      
+      // Tạo dữ liệu mẫu thay thế để tiếp tục quy trình
+      const mockData = {
+        aiTitle: `Bài viết về ${requestData.keywords || 'chủ đề mới'}`,
+        content: `<p>Đã xảy ra lỗi với webhook, nhưng chúng tôi đã tạo một nội dung mẫu.</p>
+                 <p>URL webhook có thể đang trả về HTML thay vì JSON. Vui lòng kiểm tra lại cấu hình webhook.</p>
+                 <h2>Chủ đề: ${requestData.keywords || 'Không xác định'}</h2>
+                 <p>Nội dung này được tạo tự động khi webhook gặp lỗi.</p>`,
+      };
+      
+      // Cập nhật bài viết với thông báo và nội dung mẫu
+      await storage.updateArticle(articleId, {
+        title: mockData.aiTitle,
+        content: mockData.content,
+        updatedAt: new Date()
+      });
+      
+      console.log('Article updated with fallback content due to HTML response from webhook');
+      return;
+    }
+    
+    // Xử lý phản hồi JSON như bình thường
+    let webhookData;
     try {
       webhookData = JSON.parse(responseText);
       console.log('Successfully parsed webhook response');
@@ -53,7 +79,7 @@ export async function processWebhookInBackground(
       // Cập nhật bài viết với thông báo lỗi
       await storage.updateArticle(articleId, {
         title: "Lỗi định dạng dữ liệu",
-        content: "<p>Không thể xử lý dữ liệu từ dịch vụ tạo nội dung</p>"
+        content: "<p>Không thể xử lý dữ liệu từ dịch vụ tạo nội dung. Phản hồi từ webhook không phải là JSON hợp lệ.</p>"
       });
       
       return;
