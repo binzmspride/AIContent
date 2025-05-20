@@ -409,16 +409,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         });
         
-        // Trả về phản hồi cho người dùng ngay lập tức với bài viết "đang xử lý"
+        // Trả về phản hồi cho người dùng với articleId để có thể theo dõi tiến trình
         return res.status(200).json({
           success: true,
           data: [{
-            title: "Đang xử lý",
-            content: "<p>Hệ thống đang xử lý yêu cầu tạo nội dung. Vui lòng đợi trong giây lát...</p>",
             articleId: savedArticle.id,
             keywords: contentRequest.keywords.split(',').map(k => k.trim()),
-            creditsUsed: creditsNeeded,
-            status: "processing"
+            creditsUsed: creditsNeeded
           }]
         });
       } catch (error) {
