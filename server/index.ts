@@ -64,6 +64,12 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Nhập các route status
+  const { registerStatusRoutes } = await import('./status-routes');
+  
+  // Đăng ký route status
+  registerStatusRoutes(app);
+  
   const server = await registerRoutes(app);
   
   // Increase the default timeout on the HTTP server
