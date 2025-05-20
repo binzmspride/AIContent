@@ -83,8 +83,19 @@ interface SystemSettings {
   wordpressApiUser: string;
   wordpressApiKey: string;
   // Webhook settings
+  webhookUrl?: string;
   webhookSecret: string;
   notificationWebhookUrl: string;
+  // Cấu trúc webhooks thay thế
+  webhook?: {
+    webhookUrl: string;
+    webhookSecret: string;
+    notificationWebhookUrl: string;
+  };
+  // Tên trường thay thế
+  content_webhook_url?: string;
+  webhook_secret?: string;
+  notification_webhook_url?: string;
   // Firebase settings
   firebaseApiKey: string;
   firebaseProjectId: string;
@@ -303,7 +314,18 @@ export default function AdminSettings() {
     if (settings) {
       // Log dữ liệu cài đặt nhận được từ server để debug
       console.log('Settings received from server:', settings);
-      console.log('Webhook URL từ server:', settings.content_webhook_url);
+      
+      // Log tất cả các key có trong đối tượng settings
+      console.log('Các key trong settings:', Object.keys(settings));
+      
+      // Log riêng giá trị webhook URL từ nhiều nguồn khác nhau
+      console.log('content_webhook_url từ settings:', settings.content_webhook_url);
+      if (settings.webhook) {
+        console.log('webhook.webhookUrl từ settings:', settings.webhook.webhookUrl);
+      }
+      if (settings.webhookUrl) {
+        console.log('webhookUrl từ settings:', settings.webhookUrl);
+      }
       
       generalForm.reset({
         siteName: settings.siteName,
@@ -317,17 +339,32 @@ export default function AdminSettings() {
         offlineMode: settings.offlineMode === "true",
       });
       
-      // Cập nhật lại form webhookForm một cách rõ ràng với dữ liệu từ server
-      const webhookUrlFromServer = settings.content_webhook_url || '';
-      const webhookSecretFromServer = settings.webhook_secret || '';
-      const notificationUrlFromServer = settings.notification_webhook_url || '';
+      // Tìm giá trị webhook URL từ tất cả các vị trí có thể
+      const webhookUrlFromServer = 
+        settings.webhookUrl || 
+        (settings.webhook ? settings.webhook.webhookUrl : '') || 
+        settings.content_webhook_url || 
+        '';
+        
+      const webhookSecretFromServer = 
+        settings.webhookSecret || 
+        (settings.webhook ? settings.webhook.webhookSecret : '') || 
+        settings.webhook_secret || 
+        '';
+        
+      const notificationUrlFromServer = 
+        settings.notificationWebhookUrl || 
+        (settings.webhook ? settings.webhook.notificationWebhookUrl : '') || 
+        settings.notification_webhook_url || 
+        '';
       
-      console.log('Cập nhật webhookForm với:', {
+      console.log('Cập nhật webhookForm với giá trị đã xử lý:', {
         webhookUrl: webhookUrlFromServer,
         webhookSecret: webhookSecretFromServer,
         notificationWebhookUrl: notificationUrlFromServer
       });
       
+      // Cập nhật form webhook với dữ liệu từ server
       webhookForm.reset({
         webhookUrl: webhookUrlFromServer,
         webhookSecret: webhookSecretFromServer,

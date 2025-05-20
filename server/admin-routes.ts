@@ -100,12 +100,19 @@ export function registerAdminRoutes(app: Express) {
       if (webhookUrl !== undefined) {
         try {
           console.log("Saving content_webhook_url:", webhookUrl);
-          const result = await storage.setSetting('content_webhook_url', webhookUrl.toString(), 'webhook');
-          results.push({ key: 'content_webhook_url', success: result });
-          if (!result) hasErrors = true;
+          // Lưu vào cả content_webhook_url và webhookUrl để đảm bảo tính nhất quán
+          const result1 = await storage.setSetting('content_webhook_url', webhookUrl.toString(), 'webhook');
+          const result2 = await storage.setSetting('webhookUrl', webhookUrl.toString(), 'settings');
+          
+          results.push({ key: 'content_webhook_url', success: result1 });
+          results.push({ key: 'webhookUrl', success: result2 });
+          
+          if (!result1 || !result2) hasErrors = true;
+          
+          console.log("Saved webhook URLs:", { result1, result2 });
         } catch (err) {
-          console.error("Error saving content_webhook_url:", err);
-          results.push({ key: 'content_webhook_url', success: false, error: String(err) });
+          console.error("Error saving webhook URLs:", err);
+          results.push({ key: 'webhook_urls', success: false, error: String(err) });
           hasErrors = true;
         }
       }
@@ -114,12 +121,19 @@ export function registerAdminRoutes(app: Express) {
       if (webhookSecret !== undefined) {
         try {
           console.log("Saving webhook_secret");
-          const result = await storage.setSetting('webhook_secret', webhookSecret.toString(), 'webhook');
-          results.push({ key: 'webhook_secret', success: result });
-          if (!result) hasErrors = true;
+          // Lưu vào cả webhook_secret và webhookSecret để đảm bảo tính nhất quán
+          const result1 = await storage.setSetting('webhook_secret', webhookSecret.toString(), 'webhook');
+          const result2 = await storage.setSetting('webhookSecret', webhookSecret.toString(), 'settings');
+          
+          results.push({ key: 'webhook_secret', success: result1 });
+          results.push({ key: 'webhookSecret', success: result2 });
+          
+          if (!result1 || !result2) hasErrors = true;
+          
+          console.log("Saved webhook secrets:", { result1, result2 });
         } catch (err) {
-          console.error("Error saving webhook_secret:", err);
-          results.push({ key: 'webhook_secret', success: false, error: String(err) });
+          console.error("Error saving webhook secrets:", err);
+          results.push({ key: 'webhook_secrets', success: false, error: String(err) });
           hasErrors = true;
         }
       }
@@ -128,12 +142,19 @@ export function registerAdminRoutes(app: Express) {
       if (notificationWebhookUrl !== undefined) {
         try {
           console.log("Saving notification_webhook_url:", notificationWebhookUrl);
-          const result = await storage.setSetting('notification_webhook_url', notificationWebhookUrl.toString(), 'webhook');
-          results.push({ key: 'notification_webhook_url', success: result });
-          if (!result) hasErrors = true;
+          // Lưu vào cả notification_webhook_url và notificationWebhookUrl để đảm bảo tính nhất quán
+          const result1 = await storage.setSetting('notification_webhook_url', notificationWebhookUrl.toString(), 'webhook');
+          const result2 = await storage.setSetting('notificationWebhookUrl', notificationWebhookUrl.toString(), 'settings');
+          
+          results.push({ key: 'notification_webhook_url', success: result1 });
+          results.push({ key: 'notificationWebhookUrl', success: result2 });
+          
+          if (!result1 || !result2) hasErrors = true;
+          
+          console.log("Saved notification URLs:", { result1, result2 });
         } catch (err) {
-          console.error("Error saving notification_webhook_url:", err);
-          results.push({ key: 'notification_webhook_url', success: false, error: String(err) });
+          console.error("Error saving notification URLs:", err);
+          results.push({ key: 'notification_webhook_urls', success: false, error: String(err) });
           hasErrors = true;
         }
       }
