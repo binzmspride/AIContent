@@ -12,21 +12,22 @@ import { systemSettings } from "@shared/schema";
 import { randomBytes, scrypt, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 
-// Lưu trữ kết nối WebSocket theo userId
-const wsClients = new Map<number, Set<WebSocket>>();
+// Lưu trữ các kết nối WebSocket theo userId
+const clients = new Map<number, WebSocket[]>();
 
 // Hàm gửi thông báo cho client qua WebSocket
-function notifyClient(userId: number, data: any) {
-  if (!userId || !wsClients.has(userId)) return;
-  
-  const connections = wsClients.get(userId)!;
-  const payload = JSON.stringify(data);
-  
-  connections.forEach(client => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(payload);
+function notifyClient(userId: number, message: any) {
+  if (clients.has(userId)) {
+    const userClients = clients.get(userId) || [];
+    const payload = JSON.stringify(message);
+    
+    // Gửi thông báo đến tất cả các kết nối của user này
+    for (const client of userClients) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(payload);
+      }
     }
-  });
+  }
 }
 
 // Interface để thêm trường vào content request
@@ -40,9 +41,64 @@ interface ExtendedContentRequest extends GenerateContentRequest {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
+  
+  // Tạo HTTP server
+  const httpServer = createServer(app);
+  
+  // Thiết lập WebSocket server trên một đường dẫn riêng biệt
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  
+  // Xử lý kết nối WebSocket
+  wss.on('connection', (ws: WebSocket, req) => {
+    console.log('New WebSocket connection established');
+    
+    // Lấy session từ cookie để xác định userId
+    let userId: number | null = null;
+    
+    // Khi nhận được message từ client
+    ws.on('message', (message) => {
+      try {
+        const data = JSON.parse(message.toString());
+        
+        // Xác thực và lưu userId
+        if (data.type === 'auth' && data.userId) {
+          userId = data.userId;
+          
+          // Thêm kết nối mới vào danh sách theo userId
+          if (!clients.has(userId)) {
+            clients.set(userId, []);
+          }
+          
+          clients.get(userId)?.push(ws);
+          console.log(`User ${userId} connected via WebSocket`);
+        }
+      } catch (error) {
+        console.error('Error processing WebSocket message:', error);
+      }
+    });
+    
+    // Xử lý khi client ngắt kết nối
+    ws.on('close', () => {
+      if (userId) {
+        // Xóa kết nối đã đóng khỏi danh sách
+        const userClients = clients.get(userId) || [];
+        const index = userClients.indexOf(ws);
+        
+        if (index !== -1) {
+          userClients.splice(index, 1);
+          
+          // Nếu không còn kết nối nào, xóa user khỏi map
+          if (userClients.length === 0) {
+            clients.delete(userId);
+          }
+        }
+        
+        console.log(`User ${userId} disconnected from WebSocket`);
+      }
+    });
+  });
 
   // API routes
-  const httpServer = createServer(app);
 
   // ========== Plans API ==========
   // Get all plans
@@ -288,21 +344,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // This would be replaced with actual AI content generation using n8n webhook
-      // For now, return mock content
-      const mockResponse: GenerateContentResponse = {
-        title: contentRequest.title,
-        content: `<h1>${contentRequest.title}</h1>
-          <p>This is a placeholder for AI-generated content. In a real implementation, this would be generated based on the provided parameters using the n8n webhook.</p>
-          <h2>About this topic</h2>
-          <p>This content would be optimized for SEO with keywords: ${contentRequest.keywords}</p>
-          <h2>More information</h2>
-          <p>The content would be written in a ${contentRequest.tone} tone and would be approximately ${contentRequest.length === 'short' ? '500' : contentRequest.length === 'medium' ? '1000' : contentRequest.length === 'long' ? '1500' : '2000'} words long.</p>
-          <p>Custom prompt details: ${contentRequest.prompt}</p>`,
-        keywords: contentRequest.keywords.split(',').map(k => k.trim()),
-        creditsUsed: creditsNeeded
-      };
-      
       // Get webhook URL from system settings
       const webhookSettingRes = await db.query.systemSettings.findFirst({
         where: eq(systemSettings.key, 'notificationWebhookUrl')
@@ -311,8 +352,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const webhookUrl = webhookSettingRes?.value;
       console.log('=== GENERATE CONTENT API CALLED ===');
       console.log('Webhook URL from database:', webhookUrl);
-      
-      // Xóa chế độ offline mode theo yêu cầu
       
       if (!webhookUrl) {
         return res.status(404).json({ 
@@ -327,9 +366,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       const webhookSecret = webhookSecretRes?.value;
       console.log('Webhook Secret from database:', webhookSecret ? '(exists)' : '(missing)');
-      
-      // Gửi request đến webhook
-      console.log('Sending content request to webhook:', webhookUrl);
       
       // Thêm userId và username vào yêu cầu
       contentRequest.userId = userId;
@@ -349,138 +385,141 @@ export async function registerRoutes(app: Express): Promise<Server> {
         headers['X-Webhook-Secret'] = webhookSecret;
       }
       
-      // ===== GIẢI PHÁP MỚI CHO WEBHOOK TIMEOUT =====
-      // 
-      // Thay vì chờ đợi webhook hoàn thành (có thể mất hơn 1 phút - bị timeout),
-      // chúng ta sẽ:
-      // 1. Tạo bài viết nháp ngay lập tức
-      // 2. Trả về bài viết nháp cho người dùng
-      // 3. Khởi chạy webhook trong background
-      // 4. Cập nhật bài viết khi webhook hoàn thành
-      
-      // Tạo bài viết nháp trong cơ sở dữ liệu
-      const draftArticle: schema.InsertArticle = {
-        userId,
-        title: "Đang xử lý",
-        content: "<p>Đang xử lý yêu cầu tạo nội dung...</p>",
-        keywords: contentRequest.keywords, 
-        status: "draft",
-        publishedUrl: null,
-        creditsUsed: creditsNeeded
-      };
-      
       try {
-        // Lưu bài viết nháp trước khi gửi webhook
-        const savedDraft = await storage.createArticle(draftArticle);
-        console.log('Draft article saved with ID:', savedDraft.id);
-        
-        // Trừ credits người dùng
+        // Trừ credits người dùng trước khi gửi webhook
         await storage.subtractUserCredits(userId, creditsNeeded, "Tạo nội dung bài viết");
+        console.log('Deducted', creditsNeeded, 'credits from user', userId);
         
-        // Thêm articleId vào request webhook để cập nhật bài viết sau khi webhook hoàn thành
-        const extendedRequest: ExtendedContentRequest = {
-          ...contentRequest,
-          articleId: savedDraft.id,
-          userId,
-          username: req.user.username,
-          timestamp: new Date().toISOString()
-        };
+        // Gửi webhook và đợi phản hồi (có thể gây timeout)
+        console.log('Starting webhook request at:', new Date().toISOString());
         
-        // Gửi webhook trong một tiến trình riêng không chờ đợi
-        console.log('Starting webhook request in background at:', new Date().toISOString());
-        
-        // Khởi động request webhook mà không chờ đợi kết quả
-        fetch(webhookUrl, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify(extendedRequest)
-        })
-        .then(async (webhookResponse) => {
+        try {
+          // Cố gắng gửi webhook và đợi phản hồi
+          const webhookResponse = await fetch(webhookUrl, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(contentRequest),
+            // Không thể tăng timeout ở đây do giới hạn mạng
+          });
+          
           console.log('Webhook response received at:', new Date().toISOString(), 'Status:', webhookResponse.status);
           
           if (!webhookResponse.ok) {
-            console.log(`Webhook error status: ${webhookResponse.status}`);
-            return;
+            console.error('Webhook error status:', webhookResponse.status);
+            return res.status(500).json({
+              success: false,
+              error: `Không thể kết nối với dịch vụ tạo nội dung. Mã lỗi: ${webhookResponse.status}. Vui lòng thử lại sau.`
+            });
           }
+          
+          // Xử lý phản hồi webhook
+          const responseText = await webhookResponse.text();
+          let webhookData;
           
           try {
-            // Xử lý phản hồi webhook và cập nhật bài viết trong cơ sở dữ liệu
-            const responseText = await webhookResponse.text();
-            let webhookData;
+            webhookData = JSON.parse(responseText);
+            console.log('Successfully parsed webhook response');
+          } catch (parseError) {
+            console.error('Failed to parse webhook response as JSON:', parseError);
+            return res.status(500).json({
+              success: false,
+              error: 'Lỗi định dạng dữ liệu từ webhook'
+            });
+          }
+          
+          // Lưu bài viết vào database với nội dung từ webhook
+          const article: schema.InsertArticle = {
+            userId,
+            title: webhookData[0]?.aiTitle || webhookData?.aiTitle || "Bài viết mới",
+            content: webhookData[0]?.content || webhookData?.content || "<p>Không có nội dung</p>",
+            keywords: contentRequest.keywords,
+            status: "draft",
+            publishedUrl: null,
+            creditsUsed: creditsNeeded
+          };
+          
+          // Lưu bài viết vào database
+          const savedArticle = await storage.createArticle(article);
+          console.log('Created article with ID:', savedArticle.id);
+          
+          // Trả về dữ liệu cho người dùng ngay khi có nội dung từ webhook
+          return res.status(200).json({
+            success: true,
+            data: webhookData.map(item => ({
+              ...item,
+              articleId: savedArticle.id
+            }))
+          });
+        } catch (webhookError) {
+          // Xử lý lỗi webhook (nhiều khả năng là timeout)
+          console.error('Webhook request failed:', webhookError);
+          
+          // Tạo bài viết nháp vì webhook đã thất bại
+          const draftArticle: schema.InsertArticle = {
+            userId,
+            title: "Webhook timeout",
+            content: "<p>Yêu cầu tạo nội dung đã được gửi nhưng bị timeout. Hệ thống vẫn đang xử lý và sẽ hiển thị kết quả khi hoàn thành.</p>",
+            keywords: contentRequest.keywords,
+            status: "draft",
+            publishedUrl: null,
+            creditsUsed: creditsNeeded
+          };
+          
+          // Lưu bài viết nháp
+          const savedDraft = await storage.createArticle(draftArticle);
+          console.log('Created draft article due to webhook timeout, ID:', savedDraft.id);
+          
+          // Gửi tiếp webhook trong background để cập nhật bài viết sau
+          const webhookRequest = {
+            ...contentRequest,
+            articleId: savedDraft.id
+          };
+          
+          // Khởi chạy webhook không đồng bộ
+          fetch(webhookUrl, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(webhookRequest)
+          })
+          .then(async (response) => {
+            if (!response.ok) return;
             
             try {
-              webhookData = JSON.parse(responseText);
-              console.log('Webhook response content received successfully');
-            } catch (parseError) {
-              console.error('Failed to parse webhook response as JSON:', parseError);
-              return;
-            }
-            
-            if (savedDraft.id && webhookData) {
-              // Cập nhật bài viết với nội dung từ webhook
-              const updatedArticle = {
-                title: webhookData[0]?.aiTitle || webhookData?.aiTitle || "Bài viết mới",
-                content: webhookData[0]?.content || webhookData?.content || "<p>Không có nội dung</p>",
-                updatedAt: new Date()
-              };
+              const responseText = await response.text();
+              const webhookData = JSON.parse(responseText);
               
-              await storage.updateArticle(savedDraft.id, updatedArticle);
-              console.log('Article updated with content from webhook, article ID:', savedDraft.id);
+              // Cập nhật bài viết với nội dung thực từ webhook
+              await storage.updateArticle(savedDraft.id, {
+                title: webhookData[0]?.aiTitle || webhookData?.aiTitle || "Bài viết mới",
+                content: webhookData[0]?.content || webhookData?.content || "<p>Không có nội dung</p>"
+              });
+              console.log('Article updated with content from background webhook, ID:', savedDraft.id);
+            } catch (error) {
+              console.error('Error processing background webhook response:', error);
             }
-          } catch (error) {
-            console.error('Error processing webhook response:', error);
-          }
-        })
-        .catch(error => {
-          console.error('Webhook request failed:', error);
-        });
-        
-        // Trả về bài viết nháp cho người dùng ngay lập tức
-        return res.status(200).json({
-          success: true,
-          data: [{
-            title: "Đang xử lý", 
-            content: "<p>Đang xử lý yêu cầu tạo nội dung...</p>", 
-            articleId: savedDraft.id,
-            keywords: contentRequest.keywords.split(',').map(k => k.trim()),
-            creditsUsed: creditsNeeded
-          }]
-        });
-      } catch (error) {
-        console.error('Error creating draft article:', error);
-        
-        return res.status(500).json({
-          success: false,
-          error: 'Không thể tạo bài viết. Vui lòng thử lại sau.'
-        });
-      }
-          }
+          })
+          .catch(error => {
+            console.error('Background webhook failed:', error);
+          });
           
-        } catch (jsonError) {
-          console.error('Failed to parse webhook response as JSON:', jsonError);
-          // Sử dụng dữ liệu mẫu nếu phân tích JSON thất bại
-          return res.json({ success: true, data: mockResponse });
-        }
-      } catch (webhookError: any) {
-        console.error('Error calling webhook:', webhookError);
-        
-        // Kiểm tra xem lỗi có phải là timeout không
-        if (webhookError.name === 'AbortError' || webhookError.name === 'TimeoutError') {
-          console.log('Xử lý lỗi timeout webhook');
-          
-
-          
-          return res.status(504).json({
-            success: false,
-            error: 'Không thể kết nối với dịch vụ tạo nội dung. Mã lỗi: 504. Vui lòng kiểm tra cấu hình webhook.'
+          // Thông báo lỗi timeout nhưng vẫn có thể xem bài viết sau
+          return res.status(200).json({
+            success: true,
+            data: [{
+              title: "Webhook timeout",
+              content: "<p>Webhook đã bị timeout. Bài viết đang được xử lý trong background và sẽ có kết quả sau.</p>",
+              articleId: savedDraft.id,
+              keywords: contentRequest.keywords.split(',').map(k => k.trim()),
+              creditsUsed: creditsNeeded
+            }]
           });
         }
+      } catch (error) {
+        console.error('Error in content generation process:', error);
         
-
-        
-        return res.status(500).json({
-          success: false,
-          error: 'Error calling webhook. Please check the webhook configuration.'
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Đã xảy ra lỗi khi tạo nội dung. Vui lòng thử lại sau.' 
         });
       }
     } catch (error) {
@@ -489,7 +528,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get user's connections
+  // Get user's connections  // Get user's connections
   app.get('/api/dashboard/connections', async (req, res) => {
     try {
       if (!req.isAuthenticated()) {
