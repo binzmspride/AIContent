@@ -11,6 +11,11 @@ import { systemSettings } from "@shared/schema";
 import { randomBytes, scrypt, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 
+// Interface để thêm articleId vào content request
+interface ExtendedContentRequest extends GenerateContentRequest {
+  articleId?: number;
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
@@ -328,7 +333,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       req.socket.setTimeout(200000); // 3 phút 20 giây - thời gian dài hơn webhook cần (1:38)
       
       // Tạo bài viết nháp ngay lập tức trong cơ sở dữ liệu
-      const draftArticle = {
+      const draftArticle: schema.InsertArticle = {
         userId,
         title: "Đang xử lý",
         content: "<p>Đang xử lý yêu cầu tạo nội dung...</p>",
@@ -340,23 +345,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       try {
         // Lưu bài viết nháp trước khi gửi webhook
-        const [savedDraft] = await db.insert(schema.articles).values(draftArticle).returning();
+        const savedDraft = await storage.createArticle(draftArticle);
         console.log('Draft article saved with ID:', savedDraft.id);
         
         // Trừ credits người dùng
-        await storage.deductUserCredits(userId, creditsNeeded);
+        await storage.subtractUserCredits(userId, creditsNeeded, "Tạo nội dung bài viết");
         
         // Thêm articleId vào request webhook để cập nhật bài viết sau khi webhook hoàn thành
-        contentRequest.articleId = savedDraft.id;
+        const extendedRequest: ExtendedContentRequest = {
+          ...contentRequest,
+          articleId: savedDraft.id
+        };
         
         // Gửi webhook trong một tiến trình riêng không chờ đợi
         console.log('Start webhook request at:', new Date().toISOString());
         
         // Khởi động request webhook mà không chờ đợi kết quả
-        const webhookPromise = fetch(webhookUrl, {
+        fetch(webhookUrl, {
           method: 'POST',
           headers,
-          body: JSON.stringify(contentRequest)
+          body: JSON.stringify(extendedRequest)
         })
         .then(async (webhookResponse) => {
           console.log('Webhook response received at:', new Date().toISOString(), 'Status:', webhookResponse.status);
@@ -387,10 +395,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 updatedAt: new Date()
               };
               
-              await db.update(schema.articles)
-                .set(updatedArticle)
-                .where(eq(schema.articles.id, savedDraft.id));
-              
+              await storage.updateArticle(savedDraft.id, updatedArticle);
               console.log('Article updated with content from webhook, article ID:', savedDraft.id);
             }
           } catch (error) {
@@ -400,8 +405,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .catch(error => {
           console.error('Webhook request failed:', error);
         });
-        
-        // Không chờ đợi promise hoàn thành, tiếp tục xử lý
         
         // Trả về bài viết nháp cho người dùng ngay lập tức
         return res.status(200).json({
@@ -422,10 +425,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           error: 'Không thể tạo bài viết. Vui lòng thử lại sau.'
         });
       }
-          console.log('Webhook returned empty response, using mock data');
-          return res.json({ success: true, data: mockResponse });
-        }
-        
         try {
           const webhookResult = JSON.parse(responseText);
           
