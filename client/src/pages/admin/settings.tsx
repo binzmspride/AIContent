@@ -280,8 +280,9 @@ export default function AdminSettings() {
   const webhookForm = useForm<WebhookSettingsValues>({
     resolver: zodResolver(webhookSettingsSchema),
     defaultValues: {
-      webhookSecret: settings?.webhookSecret || "",
-      notificationWebhookUrl: settings?.notificationWebhookUrl || "",
+      webhookUrl: settings?.webhook?.webhookUrl || '',
+      webhookSecret: settings?.webhook?.webhookSecret || '',
+      notificationWebhookUrl: settings?.webhook?.notificationWebhookUrl || '',
     },
   });
   
@@ -1409,6 +1410,23 @@ export default function AdminSettings() {
                 <CardContent>
                   <Form {...webhookForm}>
                     <form onSubmit={webhookForm.handleSubmit(onWebhookSubmit)} className="space-y-4">
+                      <FormField
+                        control={webhookForm.control}
+                        name="webhookUrl"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("admin.settingsPage.webhookUrl") || "URL webhook tạo nội dung"}</FormLabel>
+                            <FormControl>
+                              <Input placeholder="https://workflows-in.matbao.com/webhook/..." {...field} value={field.value || ""} />
+                            </FormControl>
+                            <FormDescription>
+                              {t("admin.settingsPage.webhookUrlDescription") || "URL webhook dùng để tạo nội dung AI"}
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
                       <FormField
                         control={webhookForm.control}
                         name="webhookSecret"
