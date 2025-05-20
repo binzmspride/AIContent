@@ -17,19 +17,29 @@ export function registerAdminRoutes(app: Express) {
     }
 
     try {
+      // Lấy tất cả các cài đặt
+      const settings = await storage.getAllSettings();
+      
       // Lấy cài đặt webhook
       const webhookUrl = await storage.getSetting('content_webhook_url');
       const webhookSecret = await storage.getSetting('webhook_secret');
       const notificationUrl = await storage.getSetting('notification_webhook_url');
+      
+      console.log('Fetched webhook settings:', { webhookUrl, webhookSecret, notificationUrl });
 
       return res.status(200).json({
         success: true,
         data: {
+          ...settings,
+          // Đảm bảo cấu trúc webhook được trả về đúng
           webhook: {
             webhookUrl: webhookUrl || '',
             webhookSecret: webhookSecret || '',
             notificationWebhookUrl: notificationUrl || ''
-          }
+          },
+          // Cung cấp thêm các field riêng lẻ để đảm bảo tương thích
+          content_webhook_url: webhookUrl || '',
+          webhook_secret: webhookSecret || ''
         }
       });
     } catch (error) {
