@@ -50,6 +50,7 @@ export interface IStorage {
   getUserCredits(userId: number): Promise<number>;
   addUserCredits(userId: number, amount: number, planId?: number, description?: string): Promise<number>;
   subtractUserCredits(userId: number, amount: number, description: string): Promise<number>;
+  deductUserCredits(userId: number, amount: number): Promise<number>;
   getCreditHistory(userId: number, page: number, limit: number): Promise<{ transactions: schema.CreditTransaction[], total: number }>;
   
   // System settings
@@ -481,6 +482,11 @@ class DatabaseStorage implements IStorage {
       });
     
     return updatedUser.credits;
+  }
+  
+  // Alias for subtractUserCredits with default description
+  async deductUserCredits(userId: number, amount: number): Promise<number> {
+    return this.subtractUserCredits(userId, amount, `Sử dụng ${amount} credits để tạo nội dung`);
   }
   
   async getCreditHistory(userId: number, page: number = 1, limit: number = 10): Promise<{ transactions: schema.CreditTransaction[], total: number }> {

@@ -21,7 +21,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
 
   // HTTP server để đáp ứng request
-  const httpServer = createServer(app.callback ? app.callback() : app);
+  const httpServer = createServer(app);
 
   // API tạo nội dung thông qua webhook
   app.post("/api/generate-content", async (req: Request, res: Response) => {
@@ -93,9 +93,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Lấy cài đặt hệ thống để biết webhook URL
-      const settings = await db.query.systemSettings.findFirst();
+      const webhookSettings = await db.query.systemSettings.findFirst({
+        where: eq(systemSettings.key, 'content_webhook_url')
+      });
       
-      if (!settings || !settings.contentWebhookUrl) {
+      if (!webhookSettings || !webhookSettings.value) {
         await storage.updateArticle(newArticle.id, {
           title: "Lỗi cấu hình",
           content: "<p>Hệ thống chưa được cấu hình webhook URL cho dịch vụ tạo nội dung</p>"
@@ -139,7 +141,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Xử lý webhook trong background mà không đợi phản hồi
       processWebhookInBackground(
-        settings.contentWebhookUrl,
+        webhookSettings.value,
         extendedRequest,
         headers,
         newArticle.id,
