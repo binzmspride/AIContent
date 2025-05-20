@@ -449,17 +449,24 @@ export default function AdminSettings() {
         
         // Kiểm tra xem phản hồi có thành công không
         if (!res.ok) {
-          console.error("API request failed:", await res.text());
+          // Clone response để có thể đọc nhiều lần
+          const clonedRes = res.clone();
+          try {
+            const errorText = await clonedRes.text();
+            console.error("API request failed:", errorText);
+          } catch (e) {
+            console.error("Could not read error text");
+          }
           throw new Error(`Lỗi máy chủ: ${res.status}`);
         }
 
         // Thử phân tích phản hồi JSON
         try {
-          return await res.json();
-        } catch (err) {
-          console.error("Failed to parse JSON:", err);
-          const text = await res.text();
-          console.error("Response text:", text);
+          const jsonData = await res.json();
+          console.log("Response JSON:", jsonData);
+          return jsonData;
+        } catch (jsonErr) {
+          console.error("Failed to parse JSON:", jsonErr);
           throw new Error("Phản hồi không hợp lệ từ máy chủ");
         }
       } catch (err) {

@@ -26,16 +26,25 @@ export async function apiRequest(
     });
     
     if (!res.ok) {
-      const responseText = await res.text();
-      console.error(`API Error: ${res.status} - ${responseText}`);
+      // Clone response để sau này vẫn có thể sử dụng body stream
+      const clonedRes = res.clone();
       
-      // Try to parse as JSON to get a structured error message if possible
       try {
-        const errorData = JSON.parse(responseText);
+        // Thử đọc và parse JSON từ response
+        const errorData = await clonedRes.json();
+        console.error(`API Error: ${res.status}`, errorData);
         throw new Error(errorData.error || errorData.message || res.statusText);
-      } catch (parseError) {
-        // If parsing fails, use the text directly
-        throw new Error(responseText || res.statusText);
+      } catch (jsonError) {
+        // Nếu parse JSON thất bại, thử đọc text 
+        try {
+          const responseText = await clonedRes.text();
+          console.error(`API Error (Text): ${res.status} - ${responseText}`);
+          throw new Error(responseText || res.statusText);
+        } catch (textError) {
+          // Nếu cả hai đều thất bại, sử dụng status text
+          console.error(`API Error (Status): ${res.status} - ${res.statusText}`);
+          throw new Error(`HTTP Error ${res.status}: ${res.statusText}`);
+        }
       }
     }
     
