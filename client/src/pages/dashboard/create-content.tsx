@@ -191,6 +191,23 @@ export default function CreateContent() {
     onSuccess: async (data) => {
       // Kiểm tra cấu trúc dữ liệu từ webhook và trích xuất đúng cách
       console.log("Data structure from webhook:", JSON.stringify(data, null, 2));
+      console.log("Webhook response data:", data);
+      
+      // Kiểm tra nếu nội dung đang trong trạng thái xử lý
+      if (data.status === 'processing') {
+        toast({
+          title: "Đang xử lý nội dung",
+          description: "Hệ thống đang xử lý yêu cầu tạo nội dung của bạn. Nội dung sẽ tự động lưu khi hoàn tất. Vui lòng kiểm tra lại sau vài phút.",
+          duration: 10000,
+        });
+        
+        // Tự động chuyển hướng đến trang danh sách bài viết sau vài giây
+        setTimeout(() => {
+          window.location.href = '/dashboard/articles';
+        }, 7000);
+        
+        return;
+      }
       
       // Xử lý content
       let content;
