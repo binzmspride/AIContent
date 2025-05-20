@@ -55,6 +55,7 @@ export interface IStorage {
   
   // System settings
   getSetting(key: string): Promise<string | null>;
+  getAllSettings(): Promise<Record<string, any>>;
   getSettingsByCategory(category: string): Promise<Record<string, string>>;
   setSetting(key: string, value: string, category?: string): Promise<boolean>;
   getSmtpSettings(): Promise<{
@@ -517,6 +518,40 @@ class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error(`Error retrieving setting [${key}]:`, error);
       return null;
+    }
+  }
+  
+  async getAllSettings(): Promise<Record<string, any>> {
+    try {
+      const settings = await db.query.systemSettings.findMany();
+      
+      const result: Record<string, any> = {};
+      
+      // Nhóm các settings theo category
+      const categorizedSettings: Record<string, Record<string, string>> = {};
+      
+      // Đầu tiên, tách riêng các settings theo category
+      settings.forEach(setting => {
+        if (!categorizedSettings[setting.category]) {
+          categorizedSettings[setting.category] = {};
+        }
+        categorizedSettings[setting.category][setting.key] = setting.value || '';
+      });
+      
+      // Lưu settings vào result
+      settings.forEach(setting => {
+        result[setting.key] = setting.value || '';
+      });
+      
+      // Thêm các cài đặt nhóm vào result
+      Object.keys(categorizedSettings).forEach(category => {
+        result[category] = categorizedSettings[category];
+      });
+      
+      return result;
+    } catch (error) {
+      console.error('Error retrieving all settings:', error);
+      return {};
     }
   }
   
