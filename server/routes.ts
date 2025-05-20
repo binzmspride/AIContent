@@ -264,8 +264,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // This would be replaced with actual AI content generation using n8n webhook
       // For now, return mock content
       const mockResponse: GenerateContentResponse = {
-        title: contentRequest.title,
-        content: `<h1>${contentRequest.title}</h1>
+        title: contentRequest.title || "Bài viết mới",
+        content: `<h1>${contentRequest.title || "Bài viết mới"}</h1>
           <p>This is a placeholder for AI-generated content. In a real implementation, this would be generated based on the provided parameters using the n8n webhook.</p>
           <h2>About this topic</h2>
           <p>This content would be optimized for SEO with keywords: ${contentRequest.keywords}</p>
@@ -273,7 +273,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           <p>The content would be written in a ${contentRequest.tone} tone and would be approximately ${contentRequest.length === 'short' ? '500' : contentRequest.length === 'medium' ? '1000' : contentRequest.length === 'long' ? '1500' : '2000'} words long.</p>
           <p>Custom prompt details: ${contentRequest.prompt}</p>`,
         keywords: contentRequest.keywords.split(',').map(k => k.trim()),
-        creditsUsed: creditsNeeded
+        creditsUsed: creditsNeeded,
+        metrics: {
+          generationTimeMs: 5000,
+          wordCount: 500
+        }
       };
       
       // Get webhook URL from system settings
@@ -298,7 +302,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const webhookSecretRes = await db.query.systemSettings.findFirst({
         where: eq(systemSettings.key, 'webhook_secret')
       });
-      const webhookSecret = webhookSecretRes?.value;
+      const webhookSecret = webhookSecretRes?.value || '';
       console.log('Webhook Secret from database:', webhookSecret ? '(exists)' : '(missing)');
       
       // Gửi request đến webhook
