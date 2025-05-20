@@ -6,8 +6,16 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+
+// Increase the timeout for all requests to handle long-running operations like webhooks
+app.use((req, res, next) => {
+  // Set timeout to 3 minutes (180000ms)
+  req.setTimeout(180000);
+  res.setTimeout(180000);
+  next();
+});
 
 // Cài đặt CORS để cho phép frontend kết nối với backend
 app.use((req, res, next) => {
