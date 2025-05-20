@@ -327,66 +327,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Đặt trực tiếp cho req và res
       req.socket.setTimeout(200000); // 3 phút 20 giây - thời gian dài hơn webhook cần (1:38)
       
+      // Tạo bài viết nháp ngay lập tức trong cơ sở dữ liệu
+      const draftArticle = {
+        userId,
+        title: "Đang xử lý",
+        content: "<p>Đang xử lý yêu cầu tạo nội dung...</p>",
+        keywords: contentRequest.keywords, 
+        status: "draft",
+        publishedUrl: null,
+        creditsUsed: creditsNeeded
+      };
+      
       try {
+        // Lưu bài viết nháp trước khi gửi webhook
+        const [savedDraft] = await db.insert(schema.articles).values(draftArticle).returning();
+        console.log('Draft article saved with ID:', savedDraft.id);
+        
+        // Trừ credits người dùng
+        await storage.deductUserCredits(userId, creditsNeeded);
+        
+        // Thêm articleId vào request webhook để cập nhật bài viết sau khi webhook hoàn thành
+        contentRequest.articleId = savedDraft.id;
+        
+        // Gửi webhook trong một tiến trình riêng không chờ đợi
         console.log('Start webhook request at:', new Date().toISOString());
         
-        // Hàm retry cho webhook nếu bị timeout
-        const fetchWithRetries = async (url: string, options: RequestInit, maxRetries = 1) => {
-          for (let attempt = 0; attempt <= maxRetries; attempt++) {
-            try {
-              // Sử dụng AbortController với timeout dài hơn (3 phút)
-              const controller = new AbortController();
-              // Đặt timeout 3 phút
-              const timeoutId = setTimeout(() => controller.abort(), 180000);
-              
-              const response = await fetch(url, {
-                ...options,
-                signal: controller.signal
-              });
-              
-              clearTimeout(timeoutId);
-              return response;
-            } catch (error) {
-              console.log(`Webhook attempt ${attempt + 1} failed:`, error);
-              
-              // Nếu đã hết số lần thử, ném lỗi
-              if (attempt === maxRetries) throw error;
-              
-              // Đợi 1 giây trước khi thử lại
-              await new Promise(resolve => setTimeout(resolve, 1000));
-            }
-          }
-          
-          // Fallback return trong trường hợp không có response
-          throw new Error("Maximum retries reached with no successful response");
-        };
-        
-        // Gọi webhook với retry
-        const webhookResponse = await fetchWithRetries(webhookUrl, {
+        // Khởi động request webhook mà không chờ đợi kết quả
+        const webhookPromise = fetch(webhookUrl, {
           method: 'POST',
           headers,
-          body: JSON.stringify(contentRequest),
-        }, 1) as Response; // Type assertion để typescript không còn báo lỗi
+          body: JSON.stringify(contentRequest)
+        })
+        .then(async (webhookResponse) => {
+          console.log('Webhook response received at:', new Date().toISOString(), 'Status:', webhookResponse.status);
           
-        console.log('Webhook response received at:', new Date().toISOString());
-        
-        if (!webhookResponse.ok) {
-          console.log(`Webhook response status: ${webhookResponse.status}`);
+          if (!webhookResponse.ok) {
+            console.log(`Webhook error status: ${webhookResponse.status}`);
+            return;
+          }
           
-
-          
-          return res.status(webhookResponse.status).json({
-            success: false,
-            error: `Không thể kết nối với dịch vụ tạo nội dung. Mã lỗi: ${webhookResponse.status}. Vui lòng kiểm tra cấu hình webhook.`
-          });
-        }
+          try {
+            // Xử lý phản hồi webhook và cập nhật bài viết trong cơ sở dữ liệu
+            const responseText = await webhookResponse.text();
+            let webhookData;
+            
+            try {
+              webhookData = JSON.parse(responseText);
+              console.log('Webhook response content received successfully');
+            } catch (parseError) {
+              console.error('Failed to parse webhook response as JSON:', parseError);
+              return;
+            }
+            
+            if (savedDraft.id && webhookData) {
+              // Cập nhật bài viết với nội dung từ webhook
+              const updatedArticle = {
+                title: webhookData[0]?.aiTitle || webhookData?.aiTitle || "Bài viết mới",
+                content: webhookData[0]?.content || webhookData?.content || "<p>Không có nội dung</p>",
+                updatedAt: new Date()
+              };
+              
+              await db.update(schema.articles)
+                .set(updatedArticle)
+                .where(eq(schema.articles.id, savedDraft.id));
+              
+              console.log('Article updated with content from webhook, article ID:', savedDraft.id);
+            }
+          } catch (error) {
+            console.error('Error processing webhook response:', error);
+          }
+        })
+        .catch(error => {
+          console.error('Webhook request failed:', error);
+        });
         
-        // Xử lý phản hồi từ webhook
-        const responseText = await webhookResponse.text();
-        console.log('Webhook response text:', responseText);
+        // Không chờ đợi promise hoàn thành, tiếp tục xử lý
         
-        // Nếu responseText trống hoặc không hợp lệ, sử dụng dữ liệu mẫu
-        if (!responseText || responseText.trim() === '') {
+        // Trả về bài viết nháp cho người dùng ngay lập tức
+        return res.status(200).json({
+          success: true,
+          data: [{
+            title: "Đang xử lý", 
+            content: "<p>Đang xử lý yêu cầu tạo nội dung...</p>", 
+            articleId: savedDraft.id,
+            keywords: contentRequest.keywords.split(',').map(k => k.trim()),
+            creditsUsed: creditsNeeded
+          }]
+        });
+      } catch (error) {
+        console.error('Error creating draft article:', error);
+        
+        return res.status(500).json({
+          success: false,
+          error: 'Không thể tạo bài viết. Vui lòng thử lại sau.'
+        });
+      }
           console.log('Webhook returned empty response, using mock data');
           return res.json({ success: true, data: mockResponse });
         }
