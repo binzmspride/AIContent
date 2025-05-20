@@ -442,40 +442,43 @@ export default function AdminSettings() {
 
   // Update webhook settings mutation
   const updateWebhookSettingsMutation = useMutation({
-    mutationFn: async (data: WebhookSettingsValues) => {
+    mutationFn: async (values: WebhookSettingsValues) => {
       try {
-        console.log("Sending webhook settings:", data);
-        const res = await apiRequest("PATCH", "/api/admin/settings/webhook", data);
+        console.log("Sending webhook settings:", values);
+        const response = await fetch("/api/admin/settings/webhook", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(values),
+          credentials: "include"
+        });
         
         // Kiểm tra xem phản hồi có thành công không
-        if (!res.ok) {
+        if (!response.ok) {
           // Clone response để có thể đọc nhiều lần
-          const clonedRes = res.clone();
+          const clonedRes = response.clone();
           try {
             const errorText = await clonedRes.text();
             console.error("API request failed:", errorText);
+            throw new Error(`Lỗi máy chủ ${response.status}: ${errorText}`);
           } catch (e) {
-            console.error("Could not read error text");
+            console.error("Could not read error response:", e);
+            throw new Error(`Lỗi máy chủ: ${response.status}`);
           }
-          throw new Error(`Lỗi máy chủ: ${res.status}`);
         }
 
-        // Thử phân tích phản hồi JSON
-        try {
-          const jsonData = await res.json();
-          console.log("Response JSON:", jsonData);
-          return jsonData;
-        } catch (jsonErr) {
-          console.error("Failed to parse JSON:", jsonErr);
-          throw new Error("Phản hồi không hợp lệ từ máy chủ");
-        }
+        // Đọc và phân tích phản hồi JSON
+        const responseData = await response.json();
+        console.log("Webhook settings updated successfully:", responseData);
+        return responseData;
       } catch (err) {
         console.error("Webhook settings update error:", err);
         throw err;
       }
     },
-    onSuccess: (data) => {
-      console.log("Webhook settings updated successfully:", data);
+    onSuccess: (responseData) => {
+      console.log("Webhook settings update completed:", responseData);
       toast({
         title: "Thành công",
         description: "Cài đặt webhook đã được cập nhật",
@@ -575,6 +578,27 @@ export default function AdminSettings() {
   };
 
   const onWebhookSubmit = (data: WebhookSettingsValues) => {
+    console.log("Submitting webhook settings:", data);
+    
+    // Đảm bảo URL và webhook secret đều hợp lệ trước khi gửi
+    let isValid = true;
+    const validationErrors: Record<string, string> = {};
+    
+    // Kiểm tra URL thông báo nếu được cung cấp
+    if (data.notificationWebhookUrl && !data.notificationWebhookUrl.startsWith('http')) {
+      validationErrors.notificationWebhookUrl = 'URL phải bắt đầu bằng http:// hoặc https://';
+      isValid = false;
+    }
+    
+    if (!isValid) {
+      // Hiển thị lỗi
+      Object.entries(validationErrors).forEach(([field, message]) => {
+        webhookForm.setError(field as any, { message });
+      });
+      return;
+    }
+    
+    // Gửi dữ liệu đến server
     updateWebhookSettingsMutation.mutate(data);
   };
   
