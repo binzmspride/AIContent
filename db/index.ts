@@ -1,22 +1,17 @@
 import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
+import { dbConfig } from './config';
 
-if (!process.env.DATABASE_URL) {
+// Check if we have database configuration
+if (!process.env.DATABASE_URL && !process.env.PGHOST) {
   throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
+    "Database connection information must be set in .env file. Please check your environment variables.",
   );
 }
 
-// Configure connection pool with more robust settings
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-  max: 20, // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-  connectionTimeoutMillis: 10000, // Return an error after 10 seconds if connection could not be established
-  maxUses: 7500 // Close a connection after it has been used 7500 times
-});
+// Configure connection pool using our config file
+export const pool = new Pool(dbConfig);
 
 // Add error handling for the connection pool
 pool.on('error', (err) => {
