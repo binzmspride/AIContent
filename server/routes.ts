@@ -237,6 +237,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint kiểm tra trạng thái nội dung
+  app.get('/api/dashboard/content-status', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+      
+      // Lấy requestId từ query string
+      const requestId = req.query.requestId as string;
+      
+      if (!requestId) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Missing requestId parameter' 
+        });
+      }
+      
+      // Trong thực tế, bạn sẽ kiểm tra trạng thái từ webhook hoặc cơ sở dữ liệu
+      // Ở đây chúng ta sẽ giả lập một phản hồi và ngẫu nhiên trả về trạng thái hoàn thành
+      
+      // Xác suất 20% sẽ trả về trạng thái hoàn thành
+      const isCompleted = Math.random() < 0.2;
+      
+      if (isCompleted) {
+        // Giả lập nội dung đã được tạo
+        return res.json({
+          success: true,
+          data: {
+            status: 'completed',
+            content: {
+              title: 'Cây cảnh trong thiết kế nội thất hiện đại',
+              content: `<h1>Cây cảnh trong thiết kế nội thất hiện đại</h1>
+              <p>Trong thế giới thiết kế nội thất hiện đại, cây cảnh đang ngày càng được coi là một yếu tố thiết yếu, không chỉ vì giá trị thẩm mỹ mà còn vì những lợi ích về sức khỏe và tinh thần mà chúng mang lại. Bài viết này sẽ khám phá xu hướng sử dụng cây cảnh trong thiết kế nội thất và cách chúng góp phần tạo nên không gian sống hài hòa, thân thiện với môi trường.</p>
+              <h2>Lợi ích của việc đưa cây xanh vào không gian sống</h2>
+              <p>Cây xanh không chỉ là vật trang trí mà còn mang lại nhiều lợi ích sức khỏe như thanh lọc không khí, tăng độ ẩm và giảm căng thẳng. Nghiên cứu cho thấy việc tiếp xúc với cây xanh có thể cải thiện tâm trạng, tăng năng suất làm việc và giảm mệt mỏi.</p>
+              <h2>Xu hướng sử dụng cây cảnh trong thiết kế nội thất</h2>
+              <p>Hiện nay, nhiều kiến trúc sư và nhà thiết kế nội thất đang tích hợp cây xanh như một phần không thể thiếu trong các dự án của họ. Từ những khu vườn thẳng đứng, "mảng tường sống" đến các giải pháp trồng cây thông minh tích hợp công nghệ, cây xanh đang được sử dụng theo những cách sáng tạo và đổi mới.</p>
+              <h2>Lựa chọn cây cảnh phù hợp với từng không gian</h2>
+              <ul>
+                <li>Phòng khách: Sen đá, cây lưỡi hổ, cây bạch mã hoàng tử</li>
+                <li>Phòng ngủ: Cây lô hội, cây dây nhện, cây lan ý</li>
+                <li>Phòng làm việc: Cây trầu bà, cây kim tiền, cảnh đại mộc</li>
+                <li>Nhà bếp: Cây húng quế, cây kinh giới, cây rosemary</li>
+              </ul>
+              <h2>Cách chăm sóc cây cảnh trong nhà</h2>
+              <p>Mỗi loại cây có yêu cầu chăm sóc khác nhau, nhưng một số nguyên tắc cơ bản bao gồm: kiểm soát ánh sáng phù hợp, tưới nước đúng cách, và đảm bảo độ ẩm thích hợp. Việc tìm hiểu kỹ về từng loại cây trước khi mua là rất quan trọng để duy trì sức khỏe của chúng.</p>
+              <h2>Kết luận</h2>
+              <p>Cây cảnh không chỉ là một phần của thiết kế nội thất mà còn là cầu nối giữa con người với thiên nhiên trong không gian sống hiện đại. Bằng cách tích hợp cây xanh một cách hợp lý, chúng ta có thể tạo ra những không gian sống không chỉ đẹp mắt mà còn lành mạnh và bền vững.</p>`,
+              keywords: ['Cây cảnh', 'thiết kế nội thất', 'không gian sống', 'cây xanh trong nhà'],
+              creditsUsed: 1,
+              metrics: {
+                generationTimeMs: 5000,
+                wordCount: 350
+              }
+            }
+          }
+        });
+      } else {
+        // Giả lập nội dung đang được tạo
+        return res.json({
+          success: true,
+          data: {
+            status: 'processing',
+            message: 'Nội dung đang được tạo, vui lòng đợi trong giây lát.'
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error checking content status:', error);
+      res.status(500).json({ success: false, error: 'Failed to check content status' });
+    }
+  });
+  
   // Generate content API - tạo nội dung trong ứng dụng
   app.post('/api/dashboard/generate-content', async (req, res) => {
     try {
