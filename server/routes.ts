@@ -322,60 +322,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         headers['X-Webhook-Secret'] = webhookSecret;
       }
       
-      // Cấu hình cho cơ chế retry
-      const MAX_RETRIES = 3;
-      const RETRY_DELAY = 5000; // 5 seconds
-      const TIMEOUT_MS = 60000; // 60 seconds timeout (giảm từ 15 phút xuống 1 phút)
-      
       try {
-        // Biến theo dõi số lần đã thử
-        let retryCount = 0;
-        let webhookResponse: Response | null = null;
-        let lastError: Error | null = null;
+        // Tạo controller để có thể hủy thủ công nếu cần
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 900000); // Đặt timeout 900 giây (15 phút)
         
-        // Vòng lặp retry
-        while (retryCount < MAX_RETRIES) {
-          try {
-            console.log(`Webhook call attempt ${retryCount + 1}/${MAX_RETRIES}`);
-            
-            // Tạo controller để kiểm soát timeout
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
-            
-            // Gọi webhook
-            webhookResponse = await fetch(webhookUrl, {
-              method: 'POST',
-              headers,
-              body: JSON.stringify(contentRequest),
-              signal: controller.signal
-            });
-            
-            // Xóa timeout khi nhận được phản hồi
-            clearTimeout(timeoutId);
-            
-            // Nếu gọi thành công, thoát khỏi vòng lặp
-            break;
-          } catch (error) {
-            // Lưu lỗi để ném ra nếu tất cả các lần thử đều thất bại
-            lastError = error instanceof Error ? error : new Error(String(error));
-            console.error(`Webhook attempt ${retryCount + 1} failed:`, lastError);
-            
-            // Tăng số lần đã thử
-            retryCount++;
-            
-            // Nếu đã thử đủ số lần, thoát vòng lặp
-            if (retryCount >= MAX_RETRIES) break;
-            
-            // Đợi một khoảng thời gian trước khi thử lại
-            console.log(`Waiting ${RETRY_DELAY}ms before next retry...`);
-            await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
-          }
-        }
+        // Gửi request đến webhook
+        const webhookResponse = await fetch(webhookUrl, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(contentRequest),
+          signal: controller.signal
+        });
         
-        // Kiểm tra kết quả sau khi đã thử hết các lần
-        if (!webhookResponse) {
-          throw lastError || new Error('Webhook call failed after multiple retries');
-        }
+        // Xóa timeout khi nhận được phản hồi
+        clearTimeout(timeoutId);
         
         if (!webhookResponse.ok) {
           console.log(`Webhook response status: ${webhookResponse.status}`);
