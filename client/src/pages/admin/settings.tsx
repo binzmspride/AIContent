@@ -545,10 +545,13 @@ export default function AdminSettings() {
   const updateWebhookSettingsMutation = useMutation({
     mutationFn: async (values: WebhookSettingsValues) => {
       try {
-        // Đảm bảo cả webhookUrl và content_webhook_seo đều được cập nhật
+        // Dữ liệu chỉ chứa URL cần lưu và secret, đơn giản hóa để tránh xung đột
         const dataToSend = {
-          ...values,
-          content_webhook_seo: values.webhookUrl
+          webhookUrl: values.webhookUrl,
+          webhookSecret: values.webhookSecret,
+          notificationWebhookUrl: values.notificationWebhookUrl,
+          // Quan trọng: chỉ sử dụng 1 trường duy nhất cho URL webhook
+          content_webhook_seo: values.webhookUrl 
         };
         console.log("Sending webhook settings:", dataToSend);
         // Cải thiện cách xử lý fetch để tránh lỗi "body stream already read"
