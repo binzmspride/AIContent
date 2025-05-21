@@ -1530,7 +1530,7 @@ export default function AdminSettings() {
                 <CardHeader>
                   <CardTitle>{t("admin.settingsPage.webhook") || "Cài đặt webhook"}</CardTitle>
                   <CardDescription>
-                    {t("admin.settingsPage.webhookDescription") || "Cấu hình webhook cho n8n và các dịch vụ khác"}
+                    {t("admin.settingsPage.webhookDescription") || "Cấu hình webhook cho tạo nội dung và các dịch vụ khác"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -1593,46 +1593,9 @@ export default function AdminSettings() {
                         )}
                       />
                       
-                      <FormField
-                        control={webhookForm.control}
-                        name="notificationWebhookUrl"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>{t("admin.settingsPage.notificationWebhook") || "Webhook thông báo (n8n)"}</FormLabel>
-                            <FormControl>
-                              <Input placeholder="https://hooks.n8n.cloud/webhook/..." {...field} value={field.value || ""} />
-                            </FormControl>
-                            <FormDescription>
-                              {t("admin.settingsPage.notificationWebhookDescription") || "URL webhook để nhận thông báo về sự kiện hệ thống"}
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+{/* Removed notification webhook field as requested */}
                       
-                      <div className="rounded-md border p-4 mt-6 bg-muted/50">
-                        <h3 className="text-sm font-medium mb-2">{t("admin.settingsPage.availableWebhookEvents") || "Sự kiện webhook có sẵn"}</h3>
-                        <div className="space-y-2 text-sm">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            <div className="flex items-start">
-                              <code className="text-xs bg-muted p-1 rounded mr-2">user.registered</code>
-                              <span className="text-xs text-muted-foreground">Khi người dùng mới đăng ký</span>
-                            </div>
-                            <div className="flex items-start">
-                              <code className="text-xs bg-muted p-1 rounded mr-2">article.created</code>
-                              <span className="text-xs text-muted-foreground">Khi bài viết mới được tạo</span>
-                            </div>
-                            <div className="flex items-start">
-                              <code className="text-xs bg-muted p-1 rounded mr-2">payment.successful</code>
-                              <span className="text-xs text-muted-foreground">Khi thanh toán thành công</span>
-                            </div>
-                            <div className="flex items-start">
-                              <code className="text-xs bg-muted p-1 rounded mr-2">credits.depleted</code>
-                              <span className="text-xs text-muted-foreground">Khi credits của người dùng hết</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+{/* Đã loại bỏ phần sự kiện webhook vì không còn liên quan */}
                       
                       <div className="pt-4 border-t mt-6">
                         <Button 
