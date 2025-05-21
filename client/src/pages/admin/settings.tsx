@@ -1515,18 +1515,28 @@ export default function AdminSettings() {
                       <FormField
                         control={webhookForm.control}
                         name="webhookUrl"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>{t("admin.settingsPage.webhookUrl") || "URL webhook tạo nội dung"}</FormLabel>
-                            <FormControl>
-                              <Input placeholder="https://workflows-in.matbao.com/webhook/..." {...field} value={field.value || ""} />
-                            </FormControl>
-                            <FormDescription>
-                              {t("admin.settingsPage.webhookUrlDescription") || "URL webhook dùng để tạo nội dung AI"}
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                        render={({ field }) => {
+                          // Đảm bảo hiển thị giá trị từ form
+                          console.log("Rendering webhookUrl input with value:", field.value);
+                          
+                          return (
+                            <FormItem>
+                              <FormLabel>{t("admin.settingsPage.webhookUrl") || "URL webhook tạo nội dung"}</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="https://workflows-in.matbao.com/webhook/..." 
+                                  {...field} 
+                                  defaultValue={field.value || ""} 
+                                  value={field.value || ""} 
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                {t("admin.settingsPage.webhookUrlDescription") || "URL webhook dùng để tạo nội dung AI"}
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
                       />
                       
                       <FormField
