@@ -119,6 +119,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         data: mockResponse
       });
 
+      // Log thông tin debug về webhook
+      console.log("====== WEBHOOK DEBUG INFO ======");
+      console.log("Đã trả response cho client, bắt đầu xử lý webhook");
+      console.log("contentWebhookUrl:", contentWebhookUrl);
+      console.log("backupWebhookUrl:", backupWebhookUrl);
+      console.log("finalWebhookUrl:", finalWebhookUrl);
+
       // Gửi request đến webhook trong nền (không chờ đợi)
       try {
         const extendedRequest = {
