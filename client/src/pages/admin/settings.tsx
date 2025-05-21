@@ -327,6 +327,22 @@ export default function AdminSettings() {
         console.log('webhookUrl từ settings:', settings.webhookUrl);
       }
       
+      // Cập nhật trực tiếp giá trị form để đảm bảo hiển thị đúng
+      const webhookUrlToUse = settings.webhookUrl || settings.content_webhook_url || '';
+      const webhookSecretToUse = settings.webhookSecret || settings.webhook_secret || '';
+      const notificationUrlToUse = settings.notificationWebhookUrl || settings.notification_webhook_url || '';
+      
+      console.log('Cập nhật trực tiếp giá trị webhook form:', {
+        webhookUrl: webhookUrlToUse,
+        webhookSecret: webhookSecretToUse,
+        notificationWebhookUrl: notificationUrlToUse
+      });
+      
+      // Cập nhật các giá trị trong form webhook bằng setValue thay vì reset
+      webhookForm.setValue('webhookUrl', webhookUrlToUse);
+      webhookForm.setValue('webhookSecret', webhookSecretToUse);
+      webhookForm.setValue('notificationWebhookUrl', notificationUrlToUse);
+      
       generalForm.reset({
         siteName: settings.siteName,
         siteDescription: settings.siteDescription,
