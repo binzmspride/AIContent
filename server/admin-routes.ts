@@ -1,5 +1,6 @@
 import { Request, Response, Express } from "express";
 import { storage } from "./storage";
+import { db } from "@db";
 import { z } from "zod";
 import { format, subHours, subDays } from "date-fns";
 
@@ -70,77 +71,63 @@ export function registerAdminRoutes(app: Express) {
         });
       }
 
-      console.log("Webhook settings update request body:", req.body);
+      console.log("=== WEBHOOK SETTINGS UPDATE REQUEST ===");
+      console.log("Webhook settings update request body:", JSON.stringify(req.body));
       
       // Trích xuất dữ liệu từ request - ưu tiên dùng content_webhook_seo, nếu không có thì dùng webhookUrl
-      const { webhookUrl, content_webhook_seo } = req.body;
-      const finalWebhookUrl = content_webhook_seo || webhookUrl;
+      const { webhookUrl, content_webhook_seo, webhookSecret } = req.body;
+      const finalUrl = content_webhook_seo || webhookUrl || "";
       
-      console.log("Received webhook configuration:", { webhookUrl, content_webhook_seo, finalWebhookUrl });
+      console.log("Extracted final webhook URL:", finalUrl);
       
-      // Mảng lưu kết quả các thao tác cập nhật
-      let results = [];
-      let hasErrors = false;
-      
-      // Chỉ cập nhật URL webhook SEO
-      if (finalWebhookUrl !== undefined) {
-        try {
-          console.log("Saving content_webhook_seo:", finalWebhookUrl);
-          
-          // Thêm log chi tiết hơn
-          console.log("Type of finalWebhookUrl:", typeof finalWebhookUrl);
-          console.log("JSON stringified finalWebhookUrl:", JSON.stringify(finalWebhookUrl));
-          
-          // Lưu vào trường duy nhất content_webhook_seo - đảm bảo giá trị là chuỗi
-          const webhookUrlString = String(finalWebhookUrl).trim();
-          console.log("Cleaned webhook URL to save:", webhookUrlString);
-          
-          const result = await storage.setSetting('content_webhook_seo', webhookUrlString, 'webhook');
-          
-          results.push({ key: 'content_webhook_seo', success: result });
-          
-          if (!result) hasErrors = true;
-          
-          console.log("Saved SEO webhook URL:", { result });
-          
-          // Kiểm tra lại giá trị đã lưu
-          const savedValue = await storage.getSetting('content_webhook_seo');
-          console.log("Verification - Value saved in database:", savedValue);
-        } catch (err) {
-          console.error("Error saving SEO webhook URL:", err);
-          results.push({ key: 'content_webhook_seo', success: false, error: String(err) });
-          hasErrors = true;
+      // Cập nhật URL webhook trực tiếp vào database bằng execute_sql_tool
+      try {
+        // Thực hiện cập nhật URL webhook
+        const result = await executeSQL(`
+          INSERT INTO system_settings (key, value, category, created_at, updated_at)
+          VALUES ('content_webhook_seo', '${finalUrl}', 'webhook', NOW(), NOW())
+          ON CONFLICT (key) 
+          DO UPDATE SET value = '${finalUrl}', updated_at = NOW()
+          RETURNING *;
+        `);
+        
+        console.log("SQL update result for webhook URL:", result);
+        
+        // Lưu webhook secret nếu có
+        if (webhookSecret) {
+          await executeSQL(`
+            INSERT INTO system_settings (key, value, category, created_at, updated_at)
+            VALUES ('webhook_secret', '${webhookSecret}', 'webhook', NOW(), NOW())
+            ON CONFLICT (key) 
+            DO UPDATE SET value = '${webhookSecret}', updated_at = NOW();
+          `);
         }
-      }
-
-      // Lấy cài đặt đã lưu để kiểm tra
-      const savedSettings = {
-        content_webhook_seo: await storage.getSetting('content_webhook_seo') || ''
-      };
-      
-      console.log("Final saved settings:", savedSettings);
-
-      // Gửi phản hồi
-      res.setHeader('Content-Type', 'application/json');
-      
-      if (hasErrors) {
-        return res.status(207).json({
-          success: false,
-          message: "Some settings could not be updated",
-          data: {
-            results,
-            currentSettings: savedSettings
-          }
-        });
-      } else {
+        
+        // Verify the data was saved correctly
+        const verifyRows = await executeSQL(`
+          SELECT value FROM system_settings WHERE key = 'content_webhook_seo';
+        `);
+        
+        const savedValue = verifyRows && verifyRows.length > 0
+          ? verifyRows[0].value 
+          : null;
+        
+        console.log("Verification - Value saved in database:", savedValue);
+        
+        // Return the updated settings
         return res.status(200).json({
           success: true,
           message: "Webhook settings updated successfully",
           data: {
-            results,
-            currentSettings: savedSettings,
-            webhookUrl: savedSettings.content_webhook_seo
+            content_webhook_seo: savedValue || '',
+            webhookUrl: savedValue || ''
           }
+        });
+      } catch (sqlError: any) {
+        console.error("Database error when updating webhook:", sqlError);
+        return res.status(500).json({
+          success: false,
+          error: "Database error: " + (sqlError.message || String(sqlError))
         });
       }
     } catch (error) {
@@ -155,6 +142,18 @@ export function registerAdminRoutes(app: Express) {
       });
     }
   });
+  
+  // Hàm execute SQL helper
+  async function executeSQL(query: string): Promise<any[]> {
+    try {
+      const { pool } = await import('@db');
+      const result = await pool.query(query);
+      return result.rows;
+    } catch (error) {
+      console.error("SQL execution error:", error);
+      throw error;
+    }
+  }
   // Lấy cấu hình gói dùng thử
   app.get("/api/admin/trial-plan", async (req: Request, res: Response) => {
     if (!req.isAuthenticated() || req.user.role !== "admin") {
