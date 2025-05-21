@@ -19,14 +19,38 @@ export async function processWebhookInBackground(
   console.log('For article ID:', articleId);
   
   try {
-    // Gửi request đến webhook
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(requestData)
-    });
+    // Kiểm tra URL webhook
+    if (!webhookUrl || webhookUrl.trim() === '') {
+      console.error('Webhook URL is empty');
+      await storage.updateArticle(articleId, {
+        title: "Lỗi cấu hình",
+        content: "<p>URL webhook chưa được cấu hình. Vui lòng thiết lập URL webhook trong phần cài đặt.</p>",
+        updatedAt: new Date()
+      });
+      return;
+    }
+
+    console.log('Sending request to webhook URL:', webhookUrl);
     
-    console.log('Webhook response status:', response.status);
+    // Gửi request đến webhook
+    let response;
+    try {
+      response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(requestData)
+      });
+      
+      console.log('Webhook response status:', response.status);
+    } catch (fetchError) {
+      console.error('Error fetching webhook:', fetchError);
+      await storage.updateArticle(articleId, {
+        title: "Lỗi kết nối",
+        content: "<p>Không thể kết nối đến webhook. Vui lòng kiểm tra URL và thử lại.</p>",
+        updatedAt: new Date()
+      });
+      throw fetchError;
+    }
     
     if (!response.ok) {
       console.error(`Webhook error status: ${response.status}`);

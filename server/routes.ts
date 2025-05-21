@@ -14,7 +14,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // HTTP server để đáp ứng request
   const httpServer = createServer(app);
 
-  // API tạo nội dung
+  // API tạo nội dung - hỗ trợ tạo bài viết từ API hoặc thông qua webhook
   app.post("/api/generate-content", async (req: Request, res: Response) => {
     try {
       if (!req.isAuthenticated || !req.isAuthenticated()) {
@@ -90,11 +90,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         backupWebhookUrl 
       });
       
-      // Sử dụng URL có sẵn hoặc URL backup hoặc URL mặc định
-      const finalWebhookUrl = contentWebhookUrl || backupWebhookUrl || "https://n8n.example.com/webhook/content-generation";
+      // Kiểm tra URL webhook
+      let finalWebhookUrl = contentWebhookUrl || backupWebhookUrl;
+      
+      if (!finalWebhookUrl) {
+        console.warn("Không tìm thấy URL webhook, sẽ tạo nội dung mẫu");
+        
+        // Cập nhật bài viết với lỗi cấu hình webhook
+        await storage.updateArticle(newArticle.id, {
+          title: "Lỗi cấu hình webhook",
+          content: "<p>Hệ thống chưa được cấu hình URL webhook. Vui lòng cấu hình trong phần Cài đặt.</p>",
+          updatedAt: new Date()
+        });
+        
+        // Trả về phản hồi cho người dùng
+        return res.json({
+          success: true,
+          message: "Đã bắt đầu tạo nội dung",
+          data: {
+            articleId: newArticle.id,
+            title: "Lỗi cấu hình webhook",
+            content: "<p>Hệ thống chưa được cấu hình URL webhook. Vui lòng cấu hình trong phần Cài đặt.</p>",
+            keywords: contentRequest.keywords.split(',').map((k: string) => k.trim()),
+            creditsUsed: creditsToDeduct
+          }
+        });
+      }
+      
       console.log("Webhook URL được sử dụng:", finalWebhookUrl);
 
-      // Tạo phản hồi mockup ngay lập tức
+      // Tạo phản hồi ngay lập tức
       const mockResponse = {
         articleId: newArticle.id,
         title: `Bài viết về ${contentRequest.keywords}`,
