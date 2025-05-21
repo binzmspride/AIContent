@@ -183,39 +183,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         };
         
-        fetchWithRetry(finalWebhookUrl || '', {
-          method: 'POST',
-          headers,
-          body: JSON.stringify(extendedRequest)
-        })
-        .then(async (response) => {
-          if (!response.ok) {
-            console.error(`Webhook error status: ${response.status}`);
-            await storage.updateArticle(newArticle.id, {
-              title: "Lỗi tạo nội dung",
-              content: `<p>Đã xảy ra lỗi khi tạo nội dung. Mã lỗi: ${response.status}</p>`
-            });
-            return;
-          }
-
+        console.log('Đang gửi webhook request đến URL:', finalWebhookUrl);
+        
+        const callWebhook = async () => {
           try {
-            const responseText = await response.text();
-            console.log(`Webhook response preview (first 200 chars): ${responseText.substring(0, 200)}`);
+            const response = await fetchWithRetry(finalWebhookUrl || '', {
+              method: 'POST',
+              headers,
+              body: JSON.stringify(extendedRequest)
+            });
             
-            // Kiểm tra xem phản hồi có phải HTML không (bắt đầu với DOCTYPE, <html hoặc chứa các thẻ HTML phổ biến)
-            const isHtml = responseText.trim().startsWith('<!DOCTYPE') || 
-                        responseText.trim().startsWith('<html') ||
-                        responseText.includes('</html>') ||
-                        responseText.includes('</body>') ||
-                        responseText.includes('</head>');
-                        
-            if (isHtml) {
-              console.log('Webhook returned HTML instead of JSON, generating alternative content');
+            console.log('Đã nhận response từ webhook, status:', response.status);
+            
+            if (!response.ok) {
+              console.error(`Webhook error status: ${response.status}`);
+              await storage.updateArticle(newArticle.id, {
+                title: "Lỗi tạo nội dung",
+                content: `<p>Đã xảy ra lỗi khi tạo nội dung. Mã lỗi: ${response.status}</p>`
+              });
+              return;
+            }
+
+            try {
+              const responseText = await response.text();
+              console.log(`Webhook response preview (first 200 chars): ${responseText.substring(0, 200)}`);
               
-              // Log thêm thông tin để debug
-              console.log('Full response from webhook URL:', contentWebhookUrl);
-              console.log('Response status:', response.status);
-              console.log('Response headers:', JSON.stringify(Array.from(response.headers.entries())));
+              // Kiểm tra xem phản hồi có phải HTML không (bắt đầu với DOCTYPE, <html hoặc chứa các thẻ HTML phổ biến)
+              const isHtml = responseText.trim().startsWith('<!DOCTYPE') || 
+                          responseText.trim().startsWith('<html') ||
+                          responseText.includes('</html>') ||
+                          responseText.includes('</body>') ||
+                          responseText.includes('</head>');
+                          
+              if (isHtml) {
+                console.log('Webhook returned HTML instead of JSON, generating alternative content');
+                
+                // Log thêm thông tin để debug
+                console.log('Full response from webhook URL:', finalWebhookUrl);
+                console.log('Response status:', response.status);
+                console.log('Response headers:', JSON.stringify(Array.from(response.headers.entries())));
               
               // Tạo nội dung mẫu thay vì hiển thị lỗi
               const mockTitle = `Bài viết về ${contentRequest.keywords}`;
