@@ -87,14 +87,25 @@ export function registerAdminRoutes(app: Express) {
         try {
           console.log("Saving content_webhook_seo:", finalWebhookUrl);
           
-          // Lưu vào trường duy nhất content_webhook_seo
-          const result = await storage.setSetting('content_webhook_seo', finalWebhookUrl.toString(), 'webhook');
+          // Thêm log chi tiết hơn
+          console.log("Type of finalWebhookUrl:", typeof finalWebhookUrl);
+          console.log("JSON stringified finalWebhookUrl:", JSON.stringify(finalWebhookUrl));
+          
+          // Lưu vào trường duy nhất content_webhook_seo - đảm bảo giá trị là chuỗi
+          const webhookUrlString = String(finalWebhookUrl).trim();
+          console.log("Cleaned webhook URL to save:", webhookUrlString);
+          
+          const result = await storage.setSetting('content_webhook_seo', webhookUrlString, 'webhook');
           
           results.push({ key: 'content_webhook_seo', success: result });
           
           if (!result) hasErrors = true;
           
           console.log("Saved SEO webhook URL:", { result });
+          
+          // Kiểm tra lại giá trị đã lưu
+          const savedValue = await storage.getSetting('content_webhook_seo');
+          console.log("Verification - Value saved in database:", savedValue);
         } catch (err) {
           console.error("Error saving SEO webhook URL:", err);
           results.push({ key: 'content_webhook_seo', success: false, error: String(err) });
