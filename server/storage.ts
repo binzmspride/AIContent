@@ -587,29 +587,50 @@ class DatabaseStorage implements IStorage {
   
   async setSetting(key: string, value: string, category: string = 'general'): Promise<boolean> {
     try {
+      console.log(`Đang cập nhật cài đặt '${key}' thành: '${value}' (category: ${category})`);
+      
       // Check if the setting already exists
       const existingSetting = await db.query.systemSettings.findFirst({
         where: eq(schema.systemSettings.key, key)
       });
       
       if (existingSetting) {
+        console.log(`Cài đặt ${key} đã tồn tại với giá trị: '${existingSetting.value}', đang cập nhật...`);
+        
         // Update existing setting, bao gồm cả category
-        await db.update(schema.systemSettings)
+        const result = await db.update(schema.systemSettings)
           .set({ 
             value, 
             category, // cập nhật category khi cập nhật cài đặt
             updatedAt: new Date()
           })
-          .where(eq(schema.systemSettings.key, key));
+          .where(eq(schema.systemSettings.key, key))
+          .returning();
+        
+        console.log(`Kết quả cập nhật:`, result);
       } else {
+        console.log(`Cài đặt ${key} chưa tồn tại, đang tạo mới...`);
+        
         // Create new setting
-        await db.insert(schema.systemSettings)
+        const result = await db.insert(schema.systemSettings)
           .values({
             key,
             value,
-            category
-          });
+            category,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          })
+          .returning();
+        
+        console.log(`Kết quả tạo mới:`, result);
       }
+      
+      // Kiểm tra kết quả để xác nhận
+      const verifyUpdate = await db.query.systemSettings.findFirst({
+        where: eq(schema.systemSettings.key, key)
+      });
+      
+      console.log(`Xác nhận cập nhật cài đặt ${key}: '${verifyUpdate?.value}'`);
       
       return true;
     } catch (error) {
