@@ -20,42 +20,27 @@ export function registerAdminRoutes(app: Express) {
       // Lấy tất cả các cài đặt
       const settings = await storage.getAllSettings();
       
-      // Lấy cài đặt webhook
-      const webhookUrl = await storage.getSetting('content_webhook_url');
-      const webhookSecret = await storage.getSetting('webhook_secret');
-      const notificationUrl = await storage.getSetting('notification_webhook_url');
+      // Lấy cài đặt webhook SEO từ database - sử dụng một trường duy nhất
+      const webhookSeoUrl = await storage.getSetting('content_webhook_seo');
       
-      console.log('Fetched webhook settings:', { webhookUrl, webhookSecret, notificationUrl });
+      console.log('Fetched SEO webhook setting:', webhookSeoUrl);
 
       // Hiển thị dữ liệu webhook URL đã lưu để debug
       console.log('Settings to return:', {
         settings,
-        webhookSettings: {
-          webhookUrl,
-          webhookSecret, 
-          notificationUrl
-        }
+        seoWebhook: webhookSeoUrl
       });
       
-      // Đảm bảo trả về dữ liệu đúng cấu trúc
+      // Đảm bảo trả về dữ liệu với cấu trúc đơn giản và rõ ràng
       return res.status(200).json({
         success: true,
         data: {
           ...settings,
-          // Thêm webhook URL trực tiếp vào đối tượng chính
-          webhookUrl: webhookUrl || '',
-          webhookSecret: webhookSecret || '',
-          notificationWebhookUrl: notificationUrl || '',
-          // Cung cấp dữ liệu theo cấu trúc cũ để đảm bảo tương thích ngược
-          webhook: {
-            webhookUrl: webhookUrl || '',
-            webhookSecret: webhookSecret || '',
-            notificationWebhookUrl: notificationUrl || ''
-          },
-          // Đảm bảo cũng có các trường riêng lẻ để tương thích
-          content_webhook_url: webhookUrl || '',
-          webhook_secret: webhookSecret || '',
-          notification_webhook_url: notificationUrl || ''
+          // Chỉ thêm một trường duy nhất cho webhook SEO
+          content_webhook_seo: webhookSeoUrl || '',
+          // Duy trì tương thích ngược với code cũ - map sang các trường cũ
+          webhookUrl: webhookSeoUrl || '',
+          content_webhook_url: webhookSeoUrl || ''
         }
       });
     } catch (error) {
@@ -87,83 +72,38 @@ export function registerAdminRoutes(app: Express) {
 
       console.log("Webhook settings update request body:", req.body);
       
-      // Trích xuất dữ liệu từ request
-      const { webhookUrl, webhookSecret, notificationWebhookUrl } = req.body;
+      // Trích xuất dữ liệu từ request - chỉ lấy webhookUrl
+      const { webhookUrl } = req.body;
       
-      console.log("Received webhook configuration:", { webhookUrl, webhookSecret, notificationWebhookUrl });
+      console.log("Received webhook configuration:", { webhookUrl });
       
       // Mảng lưu kết quả các thao tác cập nhật
       let results = [];
       let hasErrors = false;
       
-      // Cập nhật URL webhook chính
+      // Chỉ cập nhật URL webhook SEO
       if (webhookUrl !== undefined) {
         try {
-          console.log("Saving content_webhook_url:", webhookUrl);
-          // Lưu vào cả content_webhook_url và webhookUrl để đảm bảo tính nhất quán
-          const result1 = await storage.setSetting('content_webhook_url', webhookUrl.toString(), 'webhook');
-          const result2 = await storage.setSetting('webhookUrl', webhookUrl.toString(), 'settings');
+          console.log("Saving content_webhook_seo:", webhookUrl);
           
-          results.push({ key: 'content_webhook_url', success: result1 });
-          results.push({ key: 'webhookUrl', success: result2 });
+          // Lưu vào trường duy nhất content_webhook_seo
+          const result = await storage.setSetting('content_webhook_seo', webhookUrl.toString(), 'webhook');
           
-          if (!result1 || !result2) hasErrors = true;
+          results.push({ key: 'content_webhook_seo', success: result });
           
-          console.log("Saved webhook URLs:", { result1, result2 });
+          if (!result) hasErrors = true;
+          
+          console.log("Saved SEO webhook URL:", { result });
         } catch (err) {
-          console.error("Error saving webhook URLs:", err);
-          results.push({ key: 'webhook_urls', success: false, error: String(err) });
-          hasErrors = true;
-        }
-      }
-      
-      // Cập nhật khóa bí mật
-      if (webhookSecret !== undefined) {
-        try {
-          console.log("Saving webhook_secret");
-          // Lưu vào cả webhook_secret và webhookSecret để đảm bảo tính nhất quán
-          const result1 = await storage.setSetting('webhook_secret', webhookSecret.toString(), 'webhook');
-          const result2 = await storage.setSetting('webhookSecret', webhookSecret.toString(), 'settings');
-          
-          results.push({ key: 'webhook_secret', success: result1 });
-          results.push({ key: 'webhookSecret', success: result2 });
-          
-          if (!result1 || !result2) hasErrors = true;
-          
-          console.log("Saved webhook secrets:", { result1, result2 });
-        } catch (err) {
-          console.error("Error saving webhook secrets:", err);
-          results.push({ key: 'webhook_secrets', success: false, error: String(err) });
-          hasErrors = true;
-        }
-      }
-      
-      // Cập nhật URL thông báo
-      if (notificationWebhookUrl !== undefined) {
-        try {
-          console.log("Saving notification_webhook_url:", notificationWebhookUrl);
-          // Lưu vào cả notification_webhook_url và notificationWebhookUrl để đảm bảo tính nhất quán
-          const result1 = await storage.setSetting('notification_webhook_url', notificationWebhookUrl.toString(), 'webhook');
-          const result2 = await storage.setSetting('notificationWebhookUrl', notificationWebhookUrl.toString(), 'settings');
-          
-          results.push({ key: 'notification_webhook_url', success: result1 });
-          results.push({ key: 'notificationWebhookUrl', success: result2 });
-          
-          if (!result1 || !result2) hasErrors = true;
-          
-          console.log("Saved notification URLs:", { result1, result2 });
-        } catch (err) {
-          console.error("Error saving notification URLs:", err);
-          results.push({ key: 'notification_webhook_urls', success: false, error: String(err) });
+          console.error("Error saving SEO webhook URL:", err);
+          results.push({ key: 'content_webhook_seo', success: false, error: String(err) });
           hasErrors = true;
         }
       }
 
       // Lấy cài đặt đã lưu để kiểm tra
       const savedSettings = {
-        content_webhook_url: await storage.getSetting('content_webhook_url') || '',
-        webhook_secret: await storage.getSetting('webhook_secret') || '',
-        notification_webhook_url: await storage.getSetting('notification_webhook_url') || ''
+        content_webhook_seo: await storage.getSetting('content_webhook_seo') || ''
       };
       
       console.log("Final saved settings:", savedSettings);
@@ -186,7 +126,8 @@ export function registerAdminRoutes(app: Express) {
           message: "Webhook settings updated successfully",
           data: {
             results,
-            currentSettings: savedSettings
+            currentSettings: savedSettings,
+            webhookUrl: savedSettings.content_webhook_seo
           }
         });
       }
