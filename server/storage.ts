@@ -50,12 +50,10 @@ export interface IStorage {
   getUserCredits(userId: number): Promise<number>;
   addUserCredits(userId: number, amount: number, planId?: number, description?: string): Promise<number>;
   subtractUserCredits(userId: number, amount: number, description: string): Promise<number>;
-  deductUserCredits(userId: number, amount: number): Promise<number>;
   getCreditHistory(userId: number, page: number, limit: number): Promise<{ transactions: schema.CreditTransaction[], total: number }>;
   
   // System settings
   getSetting(key: string): Promise<string | null>;
-  getAllSettings(): Promise<Record<string, any>>;
   getSettingsByCategory(category: string): Promise<Record<string, string>>;
   setSetting(key: string, value: string, category?: string): Promise<boolean>;
   getSmtpSettings(): Promise<{
@@ -485,11 +483,6 @@ class DatabaseStorage implements IStorage {
     return updatedUser.credits;
   }
   
-  // Alias for subtractUserCredits with default description
-  async deductUserCredits(userId: number, amount: number): Promise<number> {
-    return this.subtractUserCredits(userId, amount, `Sử dụng ${amount} credits để tạo nội dung`);
-  }
-  
   async getCreditHistory(userId: number, page: number = 1, limit: number = 10): Promise<{ transactions: schema.CreditTransaction[], total: number }> {
     const offset = (page - 1) * limit;
     
@@ -518,40 +511,6 @@ class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error(`Error retrieving setting [${key}]:`, error);
       return null;
-    }
-  }
-  
-  async getAllSettings(): Promise<Record<string, any>> {
-    try {
-      const settings = await db.query.systemSettings.findMany();
-      
-      const result: Record<string, any> = {};
-      
-      // Nhóm các settings theo category
-      const categorizedSettings: Record<string, Record<string, string>> = {};
-      
-      // Đầu tiên, tách riêng các settings theo category
-      settings.forEach(setting => {
-        if (!categorizedSettings[setting.category]) {
-          categorizedSettings[setting.category] = {};
-        }
-        categorizedSettings[setting.category][setting.key] = setting.value || '';
-      });
-      
-      // Lưu settings vào result
-      settings.forEach(setting => {
-        result[setting.key] = setting.value || '';
-      });
-      
-      // Thêm các cài đặt nhóm vào result
-      Object.keys(categorizedSettings).forEach(category => {
-        result[category] = categorizedSettings[category];
-      });
-      
-      return result;
-    } catch (error) {
-      console.error('Error retrieving all settings:', error);
-      return {};
     }
   }
   
@@ -587,73 +546,33 @@ class DatabaseStorage implements IStorage {
   
   async setSetting(key: string, value: string, category: string = 'general'): Promise<boolean> {
     try {
-      // Đảm bảo giá trị là chuỗi và không undefined
-      const finalValue = String(value || "");
-
-      console.log(`Đang cập nhật cài đặt [${key}] trong database:`, { 
-        value: finalValue,
-        originalValue: value,
-        category 
-      });
-      
       // Check if the setting already exists
       const existingSetting = await db.query.systemSettings.findFirst({
         where: eq(schema.systemSettings.key, key)
       });
       
-      let result;
-      
       if (existingSetting) {
-        console.log(`Cài đặt [${key}] đã tồn tại với giá trị: '${existingSetting.value}', đang cập nhật...`);
-        
         // Update existing setting, bao gồm cả category
-        const updateResult = await db.update(schema.systemSettings)
+        await db.update(schema.systemSettings)
           .set({ 
-            value: finalValue, 
+            value, 
             category, // cập nhật category khi cập nhật cài đặt
             updatedAt: new Date()
           })
-          .where(eq(schema.systemSettings.id, existingSetting.id))
-          .returning();
-        
-        result = updateResult;
-        console.log(`Kết quả cập nhật:`, updateResult);
+          .where(eq(schema.systemSettings.key, key));
       } else {
-        console.log(`Cài đặt [${key}] chưa tồn tại, đang tạo mới...`);
-        
         // Create new setting
-        const insertResult = await db.insert(schema.systemSettings)
+        await db.insert(schema.systemSettings)
           .values({
             key,
-            value: finalValue,
-            category,
-            createdAt: new Date(),
-            updatedAt: new Date()
-          })
-          .returning();
-        
-        result = insertResult;
-        console.log(`Kết quả tạo mới:`, insertResult);
+            value,
+            category
+          });
       }
       
-      // Kiểm tra kết quả để xác nhận
-      const verifyUpdate = await db.query.systemSettings.findFirst({
-        where: eq(schema.systemSettings.key, key)
-      });
-      
-      if (verifyUpdate) {
-        console.log(`Xác nhận cập nhật cài đặt [${key}]:`, {
-          oldValue: existingSetting?.value || "chưa tồn tại",
-          newValue: verifyUpdate.value,
-          success: verifyUpdate.value === finalValue
-        });
-        return verifyUpdate.value === finalValue; // Trả về true nếu giá trị đã được cập nhật đúng
-      } else {
-        console.log(`Không thể xác nhận cài đặt [${key}] sau khi cập nhật!`);
-        return false;
-      }
+      return true;
     } catch (error) {
-      console.error(`Lỗi khi lưu cài đặt [${key}]:`, error);
+      console.error(`Error saving setting [${key}]:`, error);
       return false;
     }
   }

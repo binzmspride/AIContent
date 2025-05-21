@@ -11,7 +11,6 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { DatabaseStatus } from "@/components/admin/DatabaseStatus";
 import {
   Select,
   SelectContent,
@@ -83,19 +82,8 @@ interface SystemSettings {
   wordpressApiUser: string;
   wordpressApiKey: string;
   // Webhook settings
-  webhookUrl?: string;
   webhookSecret: string;
   notificationWebhookUrl: string;
-  // Cấu trúc webhooks thay thế
-  webhook?: {
-    webhookUrl: string;
-    webhookSecret: string;
-    notificationWebhookUrl: string;
-  };
-  // Tên trường thay thế
-  content_webhook_url?: string;
-  webhook_secret?: string;
-  notification_webhook_url?: string;
   // Firebase settings
   firebaseApiKey: string;
   firebaseProjectId: string;
@@ -155,10 +143,8 @@ const apiSettingsSchema = z.object({
 
 // Webhook settings form schema
 const webhookSettingsSchema = z.object({
-  webhookUrl: z.string().url("Phải là URL hợp lệ").optional().or(z.literal("")),
   webhookSecret: z.string().optional().or(z.literal("")),
-  notificationWebhookUrl: z.string().url("Phải là URL hợp lệ").optional().or(z.literal("")),
-  content_webhook_seo: z.string().url("Phải là URL hợp lệ").optional().or(z.literal("")),
+  notificationWebhookUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
 });
 
 // Firebase settings form schema
@@ -196,19 +182,7 @@ export default function AdminSettings() {
       if (!response.ok) {
         throw new Error(`Error fetching settings: ${response.statusText}`);
       }
-      
-      const data = await response.json();
-      
-      // Log dữ liệu nhận được để debug
-      console.log('Settings data received from API:', data);
-      
-      // Kiểm tra đặc biệt cho webhook URL
-      if (data.success && data.data) {
-        console.log('Webhook URL from API:', data.data.webhookUrl);
-        console.log('Content webhook URL from API:', data.data.content_webhook_url);
-      }
-      
-      return data;
+      return await response.json();
     },
   });
   
@@ -304,9 +278,8 @@ export default function AdminSettings() {
   const webhookForm = useForm<WebhookSettingsValues>({
     resolver: zodResolver(webhookSettingsSchema),
     defaultValues: {
-      webhookUrl: settings?.webhookUrl || settings?.content_webhook_url || '',
-      webhookSecret: settings?.webhookSecret || settings?.webhook_secret || '',
-      notificationWebhookUrl: settings?.notificationWebhookUrl || settings?.notification_webhook_url || '',
+      webhookSecret: settings?.webhookSecret || "",
+      notificationWebhookUrl: settings?.notificationWebhookUrl || "",
     },
   });
   
@@ -325,43 +298,6 @@ export default function AdminSettings() {
   // Update settings when data is loaded
   useEffect(() => {
     if (settings) {
-      // Log dữ liệu cài đặt nhận được từ server để debug
-      console.log('Settings received from server:', settings);
-      
-      // Log tất cả các key có trong đối tượng settings
-      console.log('Các key trong settings:', Object.keys(settings));
-      
-      // Xác định giá trị webhook URL từ tất cả các nguồn 
-      console.log('content_webhook_url từ settings:', settings.content_webhook_url);
-      if (settings.webhook) {
-        console.log('webhook.webhookUrl từ settings:', settings.webhook.webhookUrl);
-      }
-      if (settings.webhookUrl) {
-        console.log('webhookUrl từ settings:', settings.webhookUrl);
-      }
-      
-      // Ưu tiên sử dụng content_webhook_url vì đây là trường chính được sử dụng trong hệ thống
-      const webhookUrlToUse = settings.content_webhook_url || settings.webhookUrl || 
-                             (settings.webhook ? settings.webhook.webhookUrl : '') || '';
-      const webhookSecretToUse = settings.webhook_secret || settings.webhookSecret || 
-                               (settings.webhook ? settings.webhook.webhookSecret : '') || '';
-      const notificationUrlToUse = settings.notification_webhook_url || settings.notificationWebhookUrl || 
-                                 (settings.webhook ? settings.webhook.notificationWebhookUrl : '') || '';
-      
-      console.log('Cập nhật giá trị form với các giá trị sau:', {
-        webhookUrl: webhookUrlToUse,
-        webhookSecret: webhookSecretToUse,
-        notificationWebhookUrl: notificationUrlToUse
-      });
-      
-      // Sử dụng timeout để đảm bảo DOM đã được cập nhật trước khi thiết lập giá trị
-      setTimeout(() => {
-        // Sử dụng cả hai cách để đảm bảo giá trị được cập nhật
-        webhookForm.setValue('webhookUrl', webhookUrlToUse, { shouldDirty: false });
-        webhookForm.setValue('webhookSecret', webhookSecretToUse, { shouldDirty: false });
-        webhookForm.setValue('notificationWebhookUrl', notificationUrlToUse, { shouldDirty: false });
-      }, 0);
-      
       generalForm.reset({
         siteName: settings.siteName,
         siteDescription: settings.siteDescription,
@@ -372,38 +308,6 @@ export default function AdminSettings() {
         enableAutoPublish: settings.enableAutoPublish,
         maintenanceMode: settings.maintenanceMode,
         offlineMode: settings.offlineMode === "true",
-      });
-      
-      // Tìm giá trị webhook URL từ tất cả các vị trí có thể
-      const webhookUrlFromServer = 
-        settings.webhookUrl || 
-        (settings.webhook ? settings.webhook.webhookUrl : '') || 
-        settings.content_webhook_url || 
-        '';
-        
-      const webhookSecretFromServer = 
-        settings.webhookSecret || 
-        (settings.webhook ? settings.webhook.webhookSecret : '') || 
-        settings.webhook_secret || 
-        '';
-        
-      const notificationUrlFromServer = 
-        settings.notificationWebhookUrl || 
-        (settings.webhook ? settings.webhook.notificationWebhookUrl : '') || 
-        settings.notification_webhook_url || 
-        '';
-      
-      console.log('Cập nhật webhookForm với giá trị đã xử lý:', {
-        webhookUrl: webhookUrlFromServer,
-        webhookSecret: webhookSecretFromServer,
-        notificationWebhookUrl: notificationUrlFromServer
-      });
-      
-      // Cập nhật form webhook với dữ liệu từ server
-      webhookForm.reset({
-        webhookUrl: webhookUrlFromServer,
-        webhookSecret: webhookSecretFromServer,
-        notificationWebhookUrl: notificationUrlFromServer
       });
       
       aiForm.reset({
@@ -433,14 +337,9 @@ export default function AdminSettings() {
         wordpressApiKey: settings.wordpressApiKey || "",
       });
       
-      // Sử dụng trực tiếp giá trị content_webhook_url nếu có
-      const webhookUrlValue = settings.content_webhook_url || settings.webhook?.webhookUrl || '';
-      console.log('Using webhook URL for form:', webhookUrlValue);
-      
       webhookForm.reset({
-        webhookUrl: webhookUrlValue,
-        webhookSecret: settings.webhook_secret || settings.webhook?.webhookSecret || '',
-        notificationWebhookUrl: settings.notification_webhook_url || settings.webhook?.notificationWebhookUrl || "",
+        webhookSecret: settings.webhookSecret,
+        notificationWebhookUrl: settings.notificationWebhookUrl || "",
       });
       
       firebaseForm.reset({
@@ -543,66 +442,11 @@ export default function AdminSettings() {
 
   // Update webhook settings mutation
   const updateWebhookSettingsMutation = useMutation({
-    mutationFn: async (values: WebhookSettingsValues) => {
-      try {
-        // Dữ liệu chỉ chứa URL cần lưu và secret, đơn giản hóa để tránh xung đột
-        const dataToSend = {
-          webhookUrl: values.webhookUrl,
-          webhookSecret: values.webhookSecret,
-          notificationWebhookUrl: values.notificationWebhookUrl,
-          // Quan trọng: chỉ sử dụng 1 trường duy nhất cho URL webhook
-          content_webhook_seo: values.webhookUrl 
-        };
-        console.log("Sending webhook settings:", dataToSend);
-        // Cải thiện cách xử lý fetch để tránh lỗi "body stream already read"
-        const response = await fetch("/api/admin/settings/webhook", {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(dataToSend),
-          credentials: "include"
-        });
-        
-        // Xử lý lỗi tốt hơn - lưu ý rằng một số trường hợp không tải được response.json()
-        if (!response.ok) {
-          // Tạo bản sao của response để đọc nhiều lần
-          const clonedRes = response.clone();
-          try {
-            const errorData = await clonedRes.json().catch(() => null);
-            if (errorData && errorData.error) {
-              throw new Error(errorData.error);
-            } else {
-              const errorText = await response.clone().text().catch(() => null) || '';
-              throw new Error(`Lỗi máy chủ ${response.status}: ${errorText.substring(0, 100)}`);
-            }
-          } catch (e) {
-            if (e instanceof Error) {
-              throw e; // Ném lỗi đã xử lý ở trên
-            }
-            throw new Error(`Lỗi máy chủ: ${response.status}`);
-          }
-        }
-
-        // Clone response trước khi đọc JSON để tránh lỗi
-        const clonedForJson = response.clone();
-        let responseData;
-        try {
-          responseData = await clonedForJson.json();
-        } catch (jsonError) {
-          console.warn("Could not parse JSON response, using empty success response");
-          responseData = { success: true };
-        }
-        
-        console.log("Webhook settings updated successfully:", responseData);
-        return responseData;
-      } catch (err) {
-        console.error("Webhook settings update error:", err);
-        throw err;
-      }
+    mutationFn: async (data: WebhookSettingsValues) => {
+      const res = await apiRequest("PATCH", "/api/admin/settings/webhook", data);
+      return res.json();
     },
-    onSuccess: (responseData) => {
-      console.log("Webhook settings update completed:", responseData);
+    onSuccess: () => {
       toast({
         title: "Thành công",
         description: "Cài đặt webhook đã được cập nhật",
@@ -610,10 +454,9 @@ export default function AdminSettings() {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/settings"] });
     },
     onError: (error: Error) => {
-      console.error("Webhook settings update mutation error:", error);
       toast({
-        title: "Lỗi cập nhật cài đặt",
-        description: error.message || "Không thể cập nhật cài đặt webhook",
+        title: "Lỗi",
+        description: error.message,
         variant: "destructive",
       });
     },
@@ -702,52 +545,7 @@ export default function AdminSettings() {
   };
 
   const onWebhookSubmit = (data: WebhookSettingsValues) => {
-    console.log("Submitting webhook settings:", data);
-    
-    // Đảm bảo URL và webhook secret đều hợp lệ trước khi gửi
-    let isValid = true;
-    const validationErrors: Record<string, string> = {};
-    
-    // Kiểm tra URL thông báo nếu được cung cấp
-    if (data.notificationWebhookUrl && !data.notificationWebhookUrl.startsWith('http')) {
-      validationErrors.notificationWebhookUrl = 'URL phải bắt đầu bằng http:// hoặc https://';
-      isValid = false;
-    }
-    
-    if (!isValid) {
-      // Hiển thị lỗi
-      Object.entries(validationErrors).forEach(([field, message]) => {
-        webhookForm.setError(field as any, { message });
-      });
-      return;
-    }
-    
-    // Gửi dữ liệu đến server
-    updateWebhookSettingsMutation.mutate(data, {
-      onSuccess: () => {
-        toast({
-          title: "Thành công",
-          description: "Cài đặt webhook đã được cập nhật",
-        });
-        // Làm mới dữ liệu để đảm bảo giao diện hiển thị đúng
-        queryClient.invalidateQueries({ queryKey: ["/api/admin/settings"] });
-        
-        // Đảm bảo form vẫn hiển thị giá trị đã cập nhật
-        setTimeout(() => {
-          console.log("Manually updating form values:", data);
-          webhookForm.setValue("webhookUrl", data.webhookUrl || "");
-          webhookForm.setValue("webhookSecret", data.webhookSecret || "");
-          webhookForm.setValue("notificationWebhookUrl", data.notificationWebhookUrl || "");
-        }, 100);
-      },
-      onError: (error) => {
-        toast({
-          title: "Lỗi",
-          description: String(error),
-          variant: "destructive",
-        });
-      }
-    });
+    updateWebhookSettingsMutation.mutate(data);
   };
   
   const onFirebaseSubmit = (data: FirebaseSettingsValues) => {
@@ -1533,42 +1331,12 @@ export default function AdminSettings() {
                 <CardHeader>
                   <CardTitle>{t("admin.settingsPage.webhook") || "Cài đặt webhook"}</CardTitle>
                   <CardDescription>
-                    {t("admin.settingsPage.webhookDescription") || "Cấu hình webhook cho tạo nội dung và các dịch vụ khác"}
+                    {t("admin.settingsPage.webhookDescription") || "Cấu hình webhook cho n8n và các dịch vụ khác"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Form {...webhookForm}>
                     <form onSubmit={webhookForm.handleSubmit(onWebhookSubmit)} className="space-y-4">
-                      <FormField
-                        control={webhookForm.control}
-                        name="webhookUrl"
-                        render={({ field }) => {
-                          // Đảm bảo hiển thị giá trị từ form
-                          console.log("Rendering webhookUrl input with value:", field.value);
-                          
-                          return (
-                            <FormItem>
-                              <FormLabel>{t("admin.settingsPage.webhookUrl") || "URL webhook tạo nội dung"}</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  placeholder="https://workflows-in.matbao.com/webhook/..." 
-                                  {...field} 
-                                  value={field.value || ""}
-                                  onChange={(e) => {
-                                    console.log("Input value changed to:", e.target.value);
-                                    field.onChange(e.target.value);
-                                  }}
-                                />
-                              </FormControl>
-                              <FormDescription>
-                                {t("admin.settingsPage.webhookUrlDescription") || "URL webhook dùng để tạo nội dung AI"}
-                              </FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          );
-                        }}
-                      />
-                      
                       <FormField
                         control={webhookForm.control}
                         name="webhookSecret"
@@ -1596,9 +1364,46 @@ export default function AdminSettings() {
                         )}
                       />
                       
-{/* Removed notification webhook field as requested */}
+                      <FormField
+                        control={webhookForm.control}
+                        name="notificationWebhookUrl"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("admin.settingsPage.notificationWebhook") || "Webhook thông báo (n8n)"}</FormLabel>
+                            <FormControl>
+                              <Input placeholder="https://hooks.n8n.cloud/webhook/..." {...field} value={field.value || ""} />
+                            </FormControl>
+                            <FormDescription>
+                              {t("admin.settingsPage.notificationWebhookDescription") || "URL webhook để nhận thông báo về sự kiện hệ thống"}
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                       
-{/* Đã loại bỏ phần sự kiện webhook vì không còn liên quan */}
+                      <div className="rounded-md border p-4 mt-6 bg-muted/50">
+                        <h3 className="text-sm font-medium mb-2">{t("admin.settingsPage.availableWebhookEvents") || "Sự kiện webhook có sẵn"}</h3>
+                        <div className="space-y-2 text-sm">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div className="flex items-start">
+                              <code className="text-xs bg-muted p-1 rounded mr-2">user.registered</code>
+                              <span className="text-xs text-muted-foreground">Khi người dùng mới đăng ký</span>
+                            </div>
+                            <div className="flex items-start">
+                              <code className="text-xs bg-muted p-1 rounded mr-2">article.created</code>
+                              <span className="text-xs text-muted-foreground">Khi bài viết mới được tạo</span>
+                            </div>
+                            <div className="flex items-start">
+                              <code className="text-xs bg-muted p-1 rounded mr-2">payment.successful</code>
+                              <span className="text-xs text-muted-foreground">Khi thanh toán thành công</span>
+                            </div>
+                            <div className="flex items-start">
+                              <code className="text-xs bg-muted p-1 rounded mr-2">credits.depleted</code>
+                              <span className="text-xs text-muted-foreground">Khi credits của người dùng hết</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                       
                       <div className="pt-4 border-t mt-6">
                         <Button 

@@ -1,6 +1,5 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import https from 'https';
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
 import * as schema from "@shared/schema";
@@ -10,14 +9,6 @@ import { ApiResponse, GenerateContentRequest, GenerateContentResponse } from "@s
 import { systemSettings } from "@shared/schema";
 import { randomBytes, scrypt, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-
-// Interface để thêm trường vào content request
-interface ExtendedContentRequest extends GenerateContentRequest {
-  articleId?: number;
-  userId?: number;
-  username?: string;
-  timestamp?: string;
-}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
@@ -246,7 +237,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Generate content API - tạo nội dung trong ứng dụng
+  // Generate content (mock API for now)
   app.post('/api/dashboard/generate-content', async (req, res) => {
     try {
       if (!req.isAuthenticated()) {
@@ -294,14 +285,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('=== GENERATE CONTENT API CALLED ===');
       console.log('Webhook URL from database:', webhookUrl);
       
-      // Xóa chế độ offline mode theo yêu cầu
+      // Kiểm tra chế độ phát triển offline
+      const offlineModeSetting = await db.query.systemSettings.findFirst({
+        where: eq(systemSettings.key, 'offlineMode')
+      });
+      
+      const isOfflineMode = offlineModeSetting?.value === 'true';
+      
+      if (isOfflineMode) {
+        console.log('Đang chạy ở chế độ offline, bỏ qua webhook');
+        // Trừ credits cho người dùng
+        await storage.subtractUserCredits(userId, creditsNeeded, `Content generation (offline mode)`);
+        
+        // Tạo mẫu bài viết offline về chủ đề dựa trên từ khóa chính
+        const mainKeyword = contentRequest.mainKeyword || contentRequest.keywords.split(',')[0];
+        const keywords = contentRequest.keywords.split(',').map(k => k.trim());
+        
+        // Tạo bài viết mẫu chất lượng cao dựa trên từ khóa
+        let sampleTitle = `Hướng dẫn toàn diện về ${mainKeyword}: Tất cả những gì bạn cần biết`;
+        let sampleContent = `<h1>Hướng dẫn toàn diện về ${mainKeyword}</h1>
+        
+<p><strong>Meta Description:</strong> Bài viết này cung cấp hướng dẫn đầy đủ về ${mainKeyword}, bao gồm ${keywords[1] || 'ưu điểm'}, ${keywords[2] || 'cách sử dụng'}, và ${keywords[3] || 'lợi ích'}. Dành cho người mới bắt đầu và người có kinh nghiệm.</p>
+
+<h2>Giới thiệu về ${mainKeyword}</h2>
+
+<p>${mainKeyword} đang trở thành xu hướng được nhiều người quan tâm trong những năm gần đây. Không chỉ vì ${keywords[1] || 'tính ứng dụng cao'} mà còn bởi ${keywords[2] || 'sự tiện lợi'} mà nó mang lại. Bài viết này sẽ giúp bạn hiểu rõ hơn về ${mainKeyword}, các lợi ích và cách sử dụng hiệu quả.</p>
+
+<h2>Lợi ích chính của ${mainKeyword}</h2>
+
+<ul>
+  <li><strong>Tiết kiệm thời gian:</strong> ${mainKeyword} giúp bạn ${keywords[1] || 'hoàn thành công việc'} nhanh hơn 35% so với các phương pháp truyền thống.</li>
+  <li><strong>Chi phí hợp lý:</strong> Đầu tư vào ${mainKeyword} mang lại hiệu quả kinh tế cao với chi phí ban đầu thấp.</li>
+  <li><strong>Dễ sử dụng:</strong> Ngay cả người mới bắt đầu cũng có thể nhanh chóng làm quen với ${mainKeyword}.</li>
+  <li><strong>Độ bền cao:</strong> ${mainKeyword} được thiết kế để sử dụng lâu dài, giảm thiểu nhu cầu thay thế.</li>
+</ul>
+
+<h2>Cách chọn ${mainKeyword} phù hợp</h2>
+
+<p>Để chọn được ${mainKeyword} phù hợp với nhu cầu của bạn, hãy cân nhắc những yếu tố sau:</p>
+
+<ol>
+  <li><strong>Mục đích sử dụng:</strong> Xác định rõ bạn cần ${mainKeyword} để làm gì</li>
+  <li><strong>Ngân sách:</strong> Xác định số tiền bạn có thể đầu tư</li>
+  <li><strong>Không gian:</strong> Đánh giá không gian nơi bạn sẽ sử dụng ${mainKeyword}</li>
+  <li><strong>Tần suất sử dụng:</strong> Nếu sử dụng thường xuyên, nên chọn loại cao cấp</li>
+</ol>
+
+<h2>Các lỗi thường gặp khi sử dụng ${mainKeyword}</h2>
+
+<p>Tránh những sai lầm phổ biến sau để có trải nghiệm tốt nhất với ${mainKeyword}:</p>
+
+<ul>
+  <li>Không đọc kỹ hướng dẫn sử dụng</li>
+  <li>Chọn ${mainKeyword} không phù hợp với nhu cầu</li>
+  <li>Bảo quản không đúng cách</li>
+  <li>Sử dụng quá mức khuyến nghị</li>
+</ul>
+
+<h2>Kết luận</h2>
+
+<p>${mainKeyword} là một lựa chọn tuyệt vời cho những ai đang tìm kiếm ${keywords[1] || 'giải pháp hiệu quả'} và ${keywords[2] || 'tiện lợi'}. Với những thông tin trong bài viết này, chúng tôi hy vọng bạn đã có cái nhìn toàn diện về ${mainKeyword} và cách tận dụng tối đa lợi ích mà nó mang lại.</p>
+
+<p>Nếu bạn có bất kỳ câu hỏi nào về ${mainKeyword}, đừng ngần ngại để lại bình luận bên dưới. Chúng tôi luôn sẵn sàng hỗ trợ bạn!</p>`;
+
+        // Tạo phản hồi mẫu cho chế độ offline
+        const offlineResponse: GenerateContentResponse = {
+          title: sampleTitle,
+          content: sampleContent,
+          aiTitle: sampleTitle,
+          articleContent: sampleContent,
+          keywords: contentRequest.keywords.split(','),
+          creditsUsed: creditsNeeded,
+          metrics: {
+            generationTimeMs: 500, // Thời gian sinh nhanh vì ở chế độ offline
+            wordCount: sampleContent.split(/\s+/).length
+          }
+        };
+        
+        console.log('Trả về nội dung mẫu ở chế độ offline');
+        return res.json({ success: true, data: offlineResponse });
+      }
       
       if (!webhookUrl) {
-        return res.status(404).json({ 
-          success: false, 
-          error: 'Webhook URL not configured'
-        });
-      }
       
       // Lấy webhook secret
       const webhookSecretRes = await db.query.systemSettings.findFirst({
@@ -331,111 +396,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
         headers['X-Webhook-Secret'] = webhookSecret;
       }
       
-      // ===== GIẢI PHÁP MỚI CHO WEBHOOK TIMEOUT =====
-      // 
-      // Thay vì chờ đợi webhook hoàn thành (có thể mất hơn 1 phút - bị timeout),
-      // chúng ta sẽ:
-      // 1. Tạo bài viết nháp ngay lập tức
-      // 2. Trả về bài viết nháp cho người dùng
-      // 3. Khởi chạy webhook trong background
-      // 4. Cập nhật bài viết khi webhook hoàn thành
-      
-      // Tạo bài viết nháp trong cơ sở dữ liệu
-      const draftArticle: schema.InsertArticle = {
-        userId,
-        title: "Đang xử lý",
-        content: "<p>Đang xử lý yêu cầu tạo nội dung...</p>",
-        keywords: contentRequest.keywords, 
-        status: "draft",
-        publishedUrl: null,
-        creditsUsed: creditsNeeded
-      };
-      
       try {
-        // Lưu bài viết nháp trước khi gửi webhook
-        const savedDraft = await storage.createArticle(draftArticle);
-        console.log('Draft article saved with ID:', savedDraft.id);
+        // Tạo controller để có thể hủy thủ công nếu cần
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 360000); // Đặt timeout 360 giây (6 phút)
         
-        // Trừ credits người dùng
-        await storage.subtractUserCredits(userId, creditsNeeded, "Tạo nội dung bài viết");
-        
-        // Thêm articleId vào request webhook để cập nhật bài viết sau khi webhook hoàn thành
-        const extendedRequest: ExtendedContentRequest = {
-          ...contentRequest,
-          articleId: savedDraft.id,
-          userId,
-          username: req.user.username,
-          timestamp: new Date().toISOString()
-        };
-        
-        // Gửi webhook trong một tiến trình riêng không chờ đợi
-        console.log('Starting webhook request in background at:', new Date().toISOString());
-        
-        // Khởi động request webhook mà không chờ đợi kết quả
-        fetch(webhookUrl, {
+        // Gửi request đến webhook
+        const webhookResponse = await fetch(webhookUrl, {
           method: 'POST',
           headers,
-          body: JSON.stringify(extendedRequest)
-        })
-        .then(async (webhookResponse) => {
-          console.log('Webhook response received at:', new Date().toISOString(), 'Status:', webhookResponse.status);
+          body: JSON.stringify(contentRequest),
+          signal: controller.signal
+        });
+        
+        // Xóa timeout khi nhận được phản hồi
+        clearTimeout(timeoutId);
+        
+        if (!webhookResponse.ok) {
+          console.log(`Webhook response status: ${webhookResponse.status}`);
+          return res.status(webhookResponse.status).json({
+            success: false,
+            error: `Không thể kết nối với dịch vụ tạo nội dung. Mã lỗi: ${webhookResponse.status}. Vui lòng kiểm tra cấu hình webhook.`
+          });
+        }
+        
+        // Xử lý phản hồi từ webhook
+        const responseText = await webhookResponse.text();
+        console.log('Webhook response text:', responseText);
+        
+        // Nếu responseText trống hoặc không hợp lệ, sử dụng dữ liệu mẫu
+        if (!responseText || responseText.trim() === '') {
+          console.log('Webhook returned empty response, using mock data');
+          return res.json({ success: true, data: mockResponse });
+        }
+        
+        try {
+          const webhookResult = JSON.parse(responseText);
           
-          if (!webhookResponse.ok) {
-            console.log(`Webhook error status: ${webhookResponse.status}`);
-            return;
-          }
+          // Trừ credits
+          await storage.subtractUserCredits(userId, creditsNeeded, `Content generation`);
           
-          try {
-            // Xử lý phản hồi webhook và cập nhật bài viết trong cơ sở dữ liệu
-            const responseText = await webhookResponse.text();
-            let webhookData;
+          // Kiểm tra cấu trúc phản hồi
+          if (webhookResult && webhookResult.success && Array.isArray(webhookResult.data) && webhookResult.data.length > 0) {
+            const firstResult = webhookResult.data[0];
             
-            try {
-              webhookData = JSON.parse(responseText);
-              console.log('Webhook response content received successfully');
-            } catch (parseError) {
-              console.error('Failed to parse webhook response as JSON:', parseError);
-              return;
-            }
-            
-            if (savedDraft.id && webhookData) {
-              // Cập nhật bài viết với nội dung từ webhook
-              const updatedArticle = {
-                title: webhookData[0]?.aiTitle || webhookData?.aiTitle || "Bài viết mới",
-                content: webhookData[0]?.content || webhookData?.content || "<p>Không có nội dung</p>",
-                updatedAt: new Date()
+            // Xử lý theo cấu trúc phản hồi
+            if (firstResult.articleContent && firstResult.aiTitle) {
+              // Định dạng phản hồi bao gồm cả trường aiTitle và articleContent gốc
+              // để client có thể sử dụng trực tiếp
+              // Xử lý aiTitle để loại bỏ các ký tự xuống dòng và dấu cách thừa
+              const cleanedTitle = firstResult.aiTitle.replace(/[\r\n\t]+/g, ' ').trim();
+              
+              const formattedResponse = {
+                title: cleanedTitle, // Tiêu đề sẽ được hiển thị (đã được làm sạch)
+                content: firstResult.articleContent, // Nội dung sẽ được hiển thị
+                aiTitle: cleanedTitle, // Lưu trữ tiêu đề gốc từ AI (đã được làm sạch)
+                articleContent: firstResult.articleContent, // Lưu trữ nội dung gốc
+                keywords: contentRequest.keywords.split(','),
+                creditsUsed: creditsNeeded,
+                metrics: {
+                  generationTimeMs: 5000,
+                  wordCount: firstResult.articleContent.split(/\s+/).length
+                }
               };
               
-              await storage.updateArticle(savedDraft.id, updatedArticle);
-              console.log('Article updated with content from webhook, article ID:', savedDraft.id);
+              // Log để kiểm tra dữ liệu gửi đi
+              console.log('Sending aiTitle to client:', cleanedTitle);
+              
+              console.log('Trả về phản hồi với aiTitle và articleContent:', formattedResponse);
+              return res.json({ success: true, data: formattedResponse });
             }
-          } catch (error) {
-            console.error('Error processing webhook response:', error);
           }
-        })
-        .catch(error => {
-          console.error('Webhook request failed:', error);
-        });
-        
-        // Trả về bài viết nháp cho người dùng ngay lập tức
-        return res.status(200).json({
-          success: true,
-          data: [{
-            title: "Đang xử lý", 
-            content: "<p>Đang xử lý yêu cầu tạo nội dung...</p>", 
-            articleId: savedDraft.id,
-            keywords: contentRequest.keywords.split(',').map(k => k.trim()),
-            creditsUsed: creditsNeeded
-          }]
-        });
-      } catch (error) {
-        console.error('Error creating draft article:', error);
-        
-        return res.status(500).json({
-          success: false,
-          error: 'Không thể tạo bài viết. Vui lòng thử lại sau.'
-        });
-      }
+          
+          // Nếu không nhận dạng được cấu trúc theo cách trên, kiểm tra dữ liệu từ webhookResult
+          if (webhookResult && webhookResult.success && Array.isArray(webhookResult.data)) {
+            // Trường hợp dữ liệu đã được đóng gói trong webhookResult.data
+            console.log('Trả về phản hồi gốc từ webhook:', webhookResult.data);
+            return res.json({ success: true, data: webhookResult.data[0] });
+          } else {
+            // Trường hợp cấu trúc khác, trả về nguyên dạng
+            console.log('Trả về phản hồi nguyên dạng:', webhookResult);
+            return res.json({ success: true, data: webhookResult });
           }
           
         } catch (jsonError) {
@@ -449,16 +490,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Kiểm tra xem lỗi có phải là timeout không
         if (webhookError.name === 'AbortError' || webhookError.name === 'TimeoutError') {
           console.log('Xử lý lỗi timeout webhook');
-          
-
-          
           return res.status(504).json({
             success: false,
             error: 'Không thể kết nối với dịch vụ tạo nội dung. Mã lỗi: 504. Vui lòng kiểm tra cấu hình webhook.'
           });
         }
-        
-
         
         return res.status(500).json({
           success: false,

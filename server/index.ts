@@ -1,21 +1,10 @@
-// Load environment variables from .env file
-import 'dotenv/config';
-
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: false, limit: '50mb' }));
-
-// Increase the timeout for all requests to handle long-running operations like webhooks
-app.use((req, res, next) => {
-  // Set timeout to 3 minutes (180000ms)
-  req.setTimeout(180000);
-  res.setTimeout(180000);
-  next();
-});
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // Cài đặt CORS để cho phép frontend kết nối với backend
 app.use((req, res, next) => {
@@ -64,20 +53,8 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Nhập các route status
-  const { registerStatusRoutes } = await import('./status-routes');
-  
-  // Đăng ký route status
-  registerStatusRoutes(app);
-  
   const server = await registerRoutes(app);
-  
-  // Increase the default timeout on the HTTP server
-  server.timeout = 180000; // 3 minutes timeout
-  
-  // Also set keepAliveTimeout to be longer
-  server.keepAliveTimeout = 180000;
-  
+
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";

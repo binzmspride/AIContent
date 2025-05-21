@@ -2,10 +2,9 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { DashboardLayout } from "@/components/dashboard/Layout";
 import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import webSocketService, { WebSocketMessage } from "@/lib/websocket";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -131,14 +130,9 @@ export default function CreateContent() {
   const [isContentDialogOpen, setIsContentDialogOpen] = useState(false);
   const [editedContent, setEditedContent] = useState("");
   const [editedTitle, setEditedTitle] = useState("");
-  const [pendingArticleId, setPendingArticleId] = useState<number | null>(null);
-  const [isWaitingForWebhook, setIsWaitingForWebhook] = useState(false);
   
   // Khởi tạo linkItems ban đầu
   const [isLinkItemsInitialized, setIsLinkItemsInitialized] = useState(false);
-  
-  // QueryClient cho cập nhật cache
-  const queryClient = useQueryClient();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -179,108 +173,12 @@ export default function CreateContent() {
     };
   }, []);
 
-  // Kết nối với WebSocket khi component được mount
-  useEffect(() => {
-    if (user && user.id) {
-      // Kết nối WebSocket và xác thực với userId
-      webSocketService.connect(user.id);
-      
-      // Đăng ký lắng nghe thông báo webhook_complete
-      const unsubscribe = webSocketService.subscribe('webhook_complete', handleWebhookComplete);
-      
-      // Hủy đăng ký khi component unmount
-      return () => {
-        unsubscribe();
-        // Không ngắt kết nối WebSocket ở đây vì có thể cần trong các trang khác
-      };
-    }
-  }, [user]);
-  
-  // Xử lý khi webhook hoàn thành và gửi thông báo qua WebSocket
-  const handleWebhookComplete = useCallback((message: WebSocketMessage) => {
-    console.log('Received webhook completion notification:', message);
-    
-    if (!message.articleId || message.articleId !== pendingArticleId) {
-      console.log('Ignoring webhook message for different article', message.articleId, pendingArticleId);
-      return;
-    }
-    
-    setIsWaitingForWebhook(false);
-    
-    if (!message.success) {
-      // Xử lý lỗi
-      toast({
-        title: "Không thể tạo nội dung",
-        description: message.error || "Đã xảy ra lỗi khi tạo nội dung",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Xử lý khi webhook thành công
-    const webhookData = message.data;
-    
-    if (webhookData) {
-      // Cập nhật UI và hiển thị nội dung đã tạo
-      processWebhookData(webhookData);
-      
-      // Thông báo thành công
-      toast({
-        title: "Đã tạo nội dung thành công",
-        description: "Webhook đã hoàn thành việc tạo nội dung",
-      });
-      
-      // Reload danh sách bài viết nếu cần
-      queryClient.invalidateQueries({ queryKey: ['/api/dashboard/articles'] });
-    }
-  }, [pendingArticleId, toast, queryClient]);
-  
-  // Xử lý dữ liệu từ webhook để hiển thị nội dung
-  const processWebhookData = useCallback((data: any) => {
-    try {
-      console.log("Processing webhook data:", data);
-      
-      // Xử lý content
-      let content;
-      if (Array.isArray(data) && data.length > 0 && data[0].content) {
-        content = data[0].content;
-      } else if (data.content) {
-        content = data.content;
-      } else {
-        content = "<p>Không có nội dung</p>";
-      }
-      
-      // Xử lý title
-      let title;
-      if (Array.isArray(data) && data.length > 0 && data[0].aiTitle) {
-        title = data[0].aiTitle.replace(/[\r\n\t]+/g, ' ').trim();
-      } else if (data.aiTitle) {
-        title = data.aiTitle.replace(/[\r\n\t]+/g, ' ').trim();
-      } else {
-        title = "Bài viết mới";
-      }
-      
-      // Cập nhật state và UI
-      setGeneratedContent({
-        title,
-        content,
-        articleId: pendingArticleId || undefined
-      });
-      
-      setEditedTitle(title);
-      setEditedContent(content);
-      setIsContentDialogOpen(true);
-    } catch (error) {
-      console.error("Error processing webhook data:", error);
-    }
-  }, [pendingArticleId]);
-
   const generateContentMutation = useMutation({
     mutationFn: async (data: GenerateContentRequest) => {
       // Hiển thị thông báo đang xử lý
       toast({
         title: "Đang tạo nội dung",
-        description: "Yêu cầu tạo nội dung đã được gửi, bạn sẽ nhận thông báo khi hoàn thành...",
+        description: "Vui lòng đợi trong khi hệ thống tạo nội dung của bạn...",
       });
       
       const res = await apiRequest("POST", "/api/dashboard/generate-content", data);
@@ -288,18 +186,6 @@ export default function CreateContent() {
       if (!responseData.success) {
         throw new Error(responseData.error || "Failed to generate content");
       }
-      
-      // Kiểm tra nếu API trả về articleId trong trạng thái "pending"
-      if (responseData.data && responseData.data.articleId && responseData.status === "pending") {
-        // Lưu articleId và đánh dấu đang chờ webhook
-        setPendingArticleId(responseData.data.articleId);
-        setIsWaitingForWebhook(true);
-        
-        // Trả về trạng thái chờ đợi
-        return { status: "pending", articleId: responseData.data.articleId };
-      }
-      
-      // Nếu không phải pending, trả về dữ liệu như bình thường
       return responseData.data as GenerateContentResponse;
     },
     onSuccess: async (data) => {
