@@ -1526,7 +1526,6 @@ export default function AdminSettings() {
                                 <Input 
                                   placeholder="https://workflows-in.matbao.com/webhook/..." 
                                   {...field} 
-                                  defaultValue={field.value || ""} 
                                   value={field.value || ""} 
                                 />
                               </FormControl>
