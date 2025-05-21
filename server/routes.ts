@@ -102,7 +102,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         articleId: newArticle.id,
         title: `Bài viết về ${contentRequest.keywords}`,
         content: "<p>Nội dung đang được tạo...</p>",
-        keywords: contentRequest.keywords.split(',').map(k => k.trim()),
+        keywords: contentRequest.keywords.split(',').map(function(k) { return k.trim(); }),
         creditsUsed: creditsToDeduct,
         metrics: {
           wordCount: 0,
@@ -165,7 +165,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         };
         
-        fetchWithRetry(contentWebhookUrl, {
+        fetchWithRetry(finalWebhookUrl || '', {
           method: 'POST',
           headers,
           body: JSON.stringify(extendedRequest)
