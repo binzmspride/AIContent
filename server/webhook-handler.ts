@@ -54,40 +54,14 @@ export async function processWebhookInBackground(
     ) {
       console.error('Webhook returned HTML instead of JSON');
       
-      // Tạo bài viết thay thế với nội dung cơ bản về từ khóa
-      const keywords = requestData.keywords || 'chủ đề mới';
-      const title = `Bài viết về ${keywords}`;
-      
-      // Nội dung thay thế chi tiết hơn
-      const fallbackContent = `
-        <h1>${title}</h1>
-        
-        <p>Bài viết này được tạo tự động khi webhook gặp vấn đề kết nối.</p>
-        
-        <h2>Từ khóa chính: ${keywords}</h2>
-        
-        <p>Cây cảnh xanh đã trở thành một phần không thể thiếu trong không gian sống hiện đại. Không chỉ mang lại vẻ đẹp tự nhiên, cây xanh còn có nhiều lợi ích cho sức khỏe và tinh thần của con người.</p>
-        
-        <h2>Lợi ích của cây cảnh xanh trong không gian sống</h2>
-        
-        <p>Việc đặt cây xanh trong nhà không chỉ đơn thuần là để trang trí mà còn mang lại nhiều giá trị thiết thực:</p>
-        
-        <ul>
-          <li><strong>Thanh lọc không khí</strong> - Nhiều loại cây có khả năng hấp thụ các chất độc hại và cung cấp oxy cho không gian sống</li>
-          <li><strong>Giảm stress</strong> - Màu xanh của cây có tác dụng thư giãn, giúp giảm căng thẳng và mệt mỏi</li>
-          <li><strong>Tăng độ ẩm</strong> - Cây xanh giúp điều hòa độ ẩm trong không khí, đặc biệt hữu ích trong mùa hanh khô</li>
-          <li><strong>Tạo điểm nhấn thẩm mỹ</strong> - Cây cảnh là một phần quan trọng trong thiết kế nội thất hiện đại</li>
-        </ul>
-      `;
-      
-      // Cập nhật bài viết với nội dung thay thế
+      // Báo lỗi và cập nhật bài viết với thông báo lỗi
       await storage.updateArticle(articleId, {
-        title: title,
-        content: fallbackContent,
+        title: "Lỗi kết nối",
+        content: "<p>Webhook trả về HTML thay vì JSON. Vui lòng kiểm tra lại cấu hình webhook.</p>",
         updatedAt: new Date()
       });
       
-      console.log('Article updated with fallback content due to HTML response from webhook');
+      console.log('Article updated with error message due to HTML response from webhook');
       return;
     }
     
@@ -118,37 +92,14 @@ export async function processWebhookInBackground(
       console.error('Failed to parse webhook response as JSON:', parseError);
       console.error('Response starts with:', responseText.substring(0, 50));
       
-      // Tạo bài viết thay thế với nội dung cơ bản về từ khóa
-      const keywords = requestData.keywords || 'chủ đề mới';
-      const title = `Bài viết về ${keywords}`;
-      
-      // Nội dung thay thế khi không thể xử lý JSON
-      const fallbackContent = `
-        <h1>${title}</h1>
-        
-        <p>Bài viết này được tạo tự động do không thể xử lý phản hồi JSON từ webhook.</p>
-        
-        <h2>Từ khóa chính: ${keywords}</h2>
-        
-        <p>Đây là bài viết mẫu về chủ đề ${keywords}. Nội dung này được tạo tự động khi hệ thống không thể parse dữ liệu JSON từ webhook.</p>
-        
-        <h2>Vấn đề có thể gặp phải</h2>
-        
-        <ul>
-          <li><strong>Định dạng phản hồi không đúng</strong> - Webhook cần trả về dữ liệu dạng JSON</li>
-          <li><strong>Cấu trúc JSON không hợp lệ</strong> - Kiểm tra cú pháp JSON trong phản hồi</li>
-          <li><strong>Trả về HTML thay vì JSON</strong> - Webhook có thể đang trả về trang lỗi HTML</li>
-        </ul>
-      `;
-      
-      // Cập nhật bài viết với nội dung thay thế
+      // Cập nhật bài viết với thông báo lỗi
       await storage.updateArticle(articleId, {
-        title: title,
-        content: fallbackContent,
+        title: "Lỗi định dạng JSON",
+        content: "<p>Webhook trả về dữ liệu không đúng định dạng JSON. Vui lòng kiểm tra lại cấu hình webhook.</p>",
         updatedAt: new Date()
       });
       
-      console.log('Article updated with fallback content due to JSON parsing error');
+      console.log('Article updated with error message due to JSON parsing error');
       return;
     }
     
