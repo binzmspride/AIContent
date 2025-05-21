@@ -158,6 +158,7 @@ const webhookSettingsSchema = z.object({
   webhookUrl: z.string().url("Phải là URL hợp lệ").optional().or(z.literal("")),
   webhookSecret: z.string().optional().or(z.literal("")),
   notificationWebhookUrl: z.string().url("Phải là URL hợp lệ").optional().or(z.literal("")),
+  content_webhook_seo: z.string().url("Phải là URL hợp lệ").optional().or(z.literal("")),
 });
 
 // Firebase settings form schema
@@ -544,14 +545,19 @@ export default function AdminSettings() {
   const updateWebhookSettingsMutation = useMutation({
     mutationFn: async (values: WebhookSettingsValues) => {
       try {
-        console.log("Sending webhook settings:", values);
+        // Đảm bảo cả webhookUrl và content_webhook_seo đều được cập nhật
+        const dataToSend = {
+          ...values,
+          content_webhook_seo: values.webhookUrl
+        };
+        console.log("Sending webhook settings:", dataToSend);
         // Cải thiện cách xử lý fetch để tránh lỗi "body stream already read"
         const response = await fetch("/api/admin/settings/webhook", {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify(values),
+          body: JSON.stringify(dataToSend),
           credentials: "include"
         });
         

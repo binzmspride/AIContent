@@ -72,22 +72,23 @@ export function registerAdminRoutes(app: Express) {
 
       console.log("Webhook settings update request body:", req.body);
       
-      // Trích xuất dữ liệu từ request - chỉ lấy webhookUrl
-      const { webhookUrl } = req.body;
+      // Trích xuất dữ liệu từ request - ưu tiên dùng content_webhook_seo, nếu không có thì dùng webhookUrl
+      const { webhookUrl, content_webhook_seo } = req.body;
+      const finalWebhookUrl = content_webhook_seo || webhookUrl;
       
-      console.log("Received webhook configuration:", { webhookUrl });
+      console.log("Received webhook configuration:", { webhookUrl, content_webhook_seo, finalWebhookUrl });
       
       // Mảng lưu kết quả các thao tác cập nhật
       let results = [];
       let hasErrors = false;
       
       // Chỉ cập nhật URL webhook SEO
-      if (webhookUrl !== undefined) {
+      if (finalWebhookUrl !== undefined) {
         try {
-          console.log("Saving content_webhook_seo:", webhookUrl);
+          console.log("Saving content_webhook_seo:", finalWebhookUrl);
           
           // Lưu vào trường duy nhất content_webhook_seo
-          const result = await storage.setSetting('content_webhook_seo', webhookUrl.toString(), 'webhook');
+          const result = await storage.setSetting('content_webhook_seo', finalWebhookUrl.toString(), 'webhook');
           
           results.push({ key: 'content_webhook_seo', success: result });
           
