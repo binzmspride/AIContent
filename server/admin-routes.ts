@@ -53,7 +53,7 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
-  // API cập nhật cài đặt webhook
+  // API cập nhật cài đặt webhook - phiên bản đơn giản hóa
   app.patch("/api/admin/settings/webhook", async (req: Request, res: Response) => {
     try {
       // Kiểm tra xác thực và phân quyền
@@ -72,88 +72,104 @@ export function registerAdminRoutes(app: Express) {
       }
 
       console.log("=== WEBHOOK SETTINGS UPDATE REQUEST ===");
-      console.log("Webhook settings update request body:", JSON.stringify(req.body));
+      console.log("Request body:", JSON.stringify(req.body));
       
-      // Trích xuất dữ liệu từ request - ưu tiên dùng content_webhook_seo, nếu không có thì dùng webhookUrl
+      // Lấy URL webhook từ các trường có thể
       const { webhookUrl, content_webhook_seo, webhookSecret } = req.body;
-      const finalUrl = content_webhook_seo || webhookUrl || "";
+      const webhookValue = content_webhook_seo || webhookUrl || "";
       
-      console.log("Extracted final webhook URL:", finalUrl);
+      if (!webhookValue) {
+        return res.status(400).json({
+          success: false,
+          error: "Webhook URL không được để trống"
+        });
+      }
       
-      // Cập nhật URL webhook trực tiếp vào database bằng execute_sql_tool
+      console.log("Webhook URL để cập nhật:", webhookValue);
+      
       try {
-        // Thực hiện cập nhật URL webhook
-        const result = await executeSQL(`
-          INSERT INTO system_settings (key, value, category, created_at, updated_at)
-          VALUES ('content_webhook_seo', '${finalUrl}', 'webhook', NOW(), NOW())
-          ON CONFLICT (key) 
-          DO UPDATE SET value = '${finalUrl}', updated_at = NOW()
-          RETURNING *;
-        `);
+        // Sử dụng pool query trực tiếp để cập nhật
+        const { pool } = await import('@db');
         
-        console.log("SQL update result for webhook URL:", result);
+        // Lấy cài đặt hiện tại để kiểm tra xem có tồn tại không
+        const checkResult = await pool.query(
+          "SELECT * FROM system_settings WHERE key = $1",
+          ["content_webhook_seo"]
+        );
+        
+        let updateResult;
+        
+        if (checkResult.rows.length > 0) {
+          // Cập nhật bản ghi hiện có
+          console.log("Tìm thấy cài đặt hiện có, đang cập nhật...");
+          updateResult = await pool.query(
+            "UPDATE system_settings SET value = $1, updated_at = NOW() WHERE key = $2 RETURNING *",
+            [webhookValue, "content_webhook_seo"]
+          );
+        } else {
+          // Tạo bản ghi mới
+          console.log("Không tìm thấy cài đặt, đang tạo mới...");
+          updateResult = await pool.query(
+            "INSERT INTO system_settings (key, value, category, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW()) RETURNING *",
+            ["content_webhook_seo", webhookValue, "webhook"]
+          );
+        }
+        
+        console.log("Kết quả cập nhật/tạo mới:", updateResult.rows[0]);
         
         // Lưu webhook secret nếu có
         if (webhookSecret) {
-          await executeSQL(`
-            INSERT INTO system_settings (key, value, category, created_at, updated_at)
-            VALUES ('webhook_secret', '${webhookSecret}', 'webhook', NOW(), NOW())
-            ON CONFLICT (key) 
-            DO UPDATE SET value = '${webhookSecret}', updated_at = NOW();
-          `);
+          const secretCheck = await pool.query(
+            "SELECT * FROM system_settings WHERE key = $1",
+            ["webhook_secret"]
+          );
+          
+          if (secretCheck.rows.length > 0) {
+            await pool.query(
+              "UPDATE system_settings SET value = $1, updated_at = NOW() WHERE key = $2",
+              [webhookSecret, "webhook_secret"]
+            );
+          } else {
+            await pool.query(
+              "INSERT INTO system_settings (key, value, category, created_at, updated_at) VALUES ($1, $2, $3, NOW(), NOW())",
+              ["webhook_secret", webhookSecret, "webhook"]
+            );
+          }
         }
         
-        // Verify the data was saved correctly
-        const verifyRows = await executeSQL(`
-          SELECT value FROM system_settings WHERE key = 'content_webhook_seo';
-        `);
+        // Xác minh lại giá trị đã lưu
+        const verification = await pool.query(
+          "SELECT value FROM system_settings WHERE key = $1",
+          ["content_webhook_seo"]
+        );
         
-        const savedValue = verifyRows && verifyRows.length > 0
-          ? verifyRows[0].value 
-          : null;
+        const savedValue = verification.rows.length > 0 ? verification.rows[0].value : null;
+        console.log("Giá trị đã lưu trong database:", savedValue);
         
-        console.log("Verification - Value saved in database:", savedValue);
-        
-        // Return the updated settings
         return res.status(200).json({
           success: true,
-          message: "Webhook settings updated successfully",
+          message: "Cài đặt webhook đã được cập nhật thành công",
           data: {
-            content_webhook_seo: savedValue || '',
-            webhookUrl: savedValue || ''
+            webhookUrl: savedValue,
+            content_webhook_seo: savedValue
           }
         });
-      } catch (sqlError: any) {
-        console.error("Database error when updating webhook:", sqlError);
+      } catch (dbError) {
+        console.error("Lỗi database khi cập nhật webhook:", dbError);
         return res.status(500).json({
           success: false,
-          error: "Database error: " + (sqlError.message || String(sqlError))
+          error: "Lỗi cơ sở dữ liệu: " + String(dbError)
         });
       }
     } catch (error) {
-      console.error("Error in webhook settings update API:", error);
-      
-      // Đảm bảo phản hồi luôn là JSON
-      res.setHeader('Content-Type', 'application/json');
+      console.error("Lỗi trong API cập nhật webhook:", error);
       return res.status(500).json({
         success: false,
-        error: "Failed to update webhook settings",
+        error: "Không thể cập nhật cài đặt webhook",
         details: error instanceof Error ? error.message : String(error)
       });
     }
   });
-  
-  // Hàm execute SQL helper
-  async function executeSQL(query: string): Promise<any[]> {
-    try {
-      const { pool } = await import('@db');
-      const result = await pool.query(query);
-      return result.rows;
-    } catch (error) {
-      console.error("SQL execution error:", error);
-      throw error;
-    }
-  }
   // Lấy cấu hình gói dùng thử
   app.get("/api/admin/trial-plan", async (req: Request, res: Response) => {
     if (!req.isAuthenticated() || req.user.role !== "admin") {
