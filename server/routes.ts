@@ -83,12 +83,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         updatedAt: new Date()
       });
 
-      // Lấy cài đặt webhook URL từ database
-      const webhookUrl = await storage.getSetting('content_webhook_url');
+      // Lấy cài đặt webhook URL từ database - thử cả hai key
+      const contentWebhookUrl = await storage.getSetting('content_webhook_url');
+      const backupWebhookUrl = await storage.getSetting('webhookUrl');
       
-      // Sử dụng URL mặc định nếu không có cài đặt
-      const contentWebhookUrl = webhookUrl || "https://n8n.example.com/webhook/content-generation";
-      console.log("Using webhook URL:", contentWebhookUrl);
+      // In ra log để debug
+      console.log("Webhook URLs in database:", { 
+        contentWebhookUrl, 
+        backupWebhookUrl 
+      });
+      
+      // Sử dụng URL có sẵn hoặc URL backup hoặc URL mặc định
+      const finalWebhookUrl = contentWebhookUrl || backupWebhookUrl || "https://n8n.example.com/webhook/content-generation";
+      console.log("Using webhook URL:", finalWebhookUrl);
 
       // Tạo phản hồi mockup ngay lập tức
       const mockResponse = {
