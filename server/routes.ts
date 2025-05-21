@@ -151,13 +151,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         };
         
-        // Thêm tính năng retry cho webhook
+        // Thêm tính năng retry cho webhook và log chi tiết hơn
         const fetchWithRetry = async (url: string, options: any, retries = 2) => {
+          console.log(`Đang gửi request đến webhook URL: ${url}`);
+          
+          if (!url || url.trim() === '') {
+            console.error('Không thể gửi request: URL webhook trống');
+            throw new Error('URL webhook không hợp lệ');
+          }
+          
           try {
-            return await fetchWithTimeout(url, options);
+            console.log(`Đã bắt đầu gửi request với options:`, JSON.stringify(options));
+            const response = await fetchWithTimeout(url, options);
+            console.log(`Đã nhận response từ webhook, status: ${response.status}`);
+            return response;
           } catch (error: any) {
+            console.error(`Lỗi khi gửi request tới webhook:`, error);
             if (retries > 0) {
-              console.log(`Retrying webhook request. Attempts left: ${retries}`);
+              console.log(`Đang thử lại request. Còn ${retries} lần thử lại.`);
               await new Promise(resolve => setTimeout(resolve, 2000));
               return fetchWithRetry(url, options, retries - 1);
             }
