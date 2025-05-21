@@ -195,7 +195,19 @@ export default function AdminSettings() {
       if (!response.ok) {
         throw new Error(`Error fetching settings: ${response.statusText}`);
       }
-      return await response.json();
+      
+      const data = await response.json();
+      
+      // Log dữ liệu nhận được để debug
+      console.log('Settings data received from API:', data);
+      
+      // Kiểm tra đặc biệt cho webhook URL
+      if (data.success && data.data) {
+        console.log('Webhook URL from API:', data.data.webhookUrl);
+        console.log('Content webhook URL from API:', data.data.content_webhook_url);
+      }
+      
+      return data;
     },
   });
   
@@ -318,7 +330,7 @@ export default function AdminSettings() {
       // Log tất cả các key có trong đối tượng settings
       console.log('Các key trong settings:', Object.keys(settings));
       
-      // Log riêng giá trị webhook URL từ nhiều nguồn khác nhau
+      // Xác định giá trị webhook URL từ tất cả các nguồn 
       console.log('content_webhook_url từ settings:', settings.content_webhook_url);
       if (settings.webhook) {
         console.log('webhook.webhookUrl từ settings:', settings.webhook.webhookUrl);
@@ -327,21 +339,27 @@ export default function AdminSettings() {
         console.log('webhookUrl từ settings:', settings.webhookUrl);
       }
       
-      // Cập nhật trực tiếp giá trị form để đảm bảo hiển thị đúng
-      const webhookUrlToUse = settings.webhookUrl || settings.content_webhook_url || '';
-      const webhookSecretToUse = settings.webhookSecret || settings.webhook_secret || '';
-      const notificationUrlToUse = settings.notificationWebhookUrl || settings.notification_webhook_url || '';
+      // Ưu tiên sử dụng content_webhook_url vì đây là trường chính được sử dụng trong hệ thống
+      const webhookUrlToUse = settings.content_webhook_url || settings.webhookUrl || 
+                             (settings.webhook ? settings.webhook.webhookUrl : '') || '';
+      const webhookSecretToUse = settings.webhook_secret || settings.webhookSecret || 
+                               (settings.webhook ? settings.webhook.webhookSecret : '') || '';
+      const notificationUrlToUse = settings.notification_webhook_url || settings.notificationWebhookUrl || 
+                                 (settings.webhook ? settings.webhook.notificationWebhookUrl : '') || '';
       
-      console.log('Cập nhật trực tiếp giá trị webhook form:', {
+      console.log('Cập nhật giá trị form với các giá trị sau:', {
         webhookUrl: webhookUrlToUse,
         webhookSecret: webhookSecretToUse,
         notificationWebhookUrl: notificationUrlToUse
       });
       
-      // Cập nhật các giá trị trong form webhook bằng setValue thay vì reset
-      webhookForm.setValue('webhookUrl', webhookUrlToUse);
-      webhookForm.setValue('webhookSecret', webhookSecretToUse);
-      webhookForm.setValue('notificationWebhookUrl', notificationUrlToUse);
+      // Sử dụng timeout để đảm bảo DOM đã được cập nhật trước khi thiết lập giá trị
+      setTimeout(() => {
+        // Sử dụng cả hai cách để đảm bảo giá trị được cập nhật
+        webhookForm.setValue('webhookUrl', webhookUrlToUse, { shouldDirty: false });
+        webhookForm.setValue('webhookSecret', webhookSecretToUse, { shouldDirty: false });
+        webhookForm.setValue('notificationWebhookUrl', notificationUrlToUse, { shouldDirty: false });
+      }, 0);
       
       generalForm.reset({
         siteName: settings.siteName,
@@ -1526,7 +1544,11 @@ export default function AdminSettings() {
                                 <Input 
                                   placeholder="https://workflows-in.matbao.com/webhook/..." 
                                   {...field} 
-                                  value={field.value || ""} 
+                                  value={field.value || ""}
+                                  onChange={(e) => {
+                                    console.log("Input value changed to:", e.target.value);
+                                    field.onChange(e.target.value);
+                                  }}
                                 />
                               </FormControl>
                               <FormDescription>
