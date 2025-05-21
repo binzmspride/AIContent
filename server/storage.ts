@@ -587,42 +587,53 @@ class DatabaseStorage implements IStorage {
   
   async setSetting(key: string, value: string, category: string = 'general'): Promise<boolean> {
     try {
-      console.log(`Đang cập nhật cài đặt '${key}' thành: '${value}' (category: ${category})`);
+      // Đảm bảo giá trị là chuỗi và không undefined
+      const finalValue = String(value || "");
+
+      console.log(`Đang cập nhật cài đặt [${key}] trong database:`, { 
+        value: finalValue,
+        originalValue: value,
+        category 
+      });
       
       // Check if the setting already exists
       const existingSetting = await db.query.systemSettings.findFirst({
         where: eq(schema.systemSettings.key, key)
       });
       
+      let result;
+      
       if (existingSetting) {
-        console.log(`Cài đặt ${key} đã tồn tại với giá trị: '${existingSetting.value}', đang cập nhật...`);
+        console.log(`Cài đặt [${key}] đã tồn tại với giá trị: '${existingSetting.value}', đang cập nhật...`);
         
         // Update existing setting, bao gồm cả category
-        const result = await db.update(schema.systemSettings)
+        const updateResult = await db.update(schema.systemSettings)
           .set({ 
-            value, 
+            value: finalValue, 
             category, // cập nhật category khi cập nhật cài đặt
             updatedAt: new Date()
           })
-          .where(eq(schema.systemSettings.key, key))
+          .where(eq(schema.systemSettings.id, existingSetting.id))
           .returning();
         
-        console.log(`Kết quả cập nhật:`, result);
+        result = updateResult;
+        console.log(`Kết quả cập nhật:`, updateResult);
       } else {
-        console.log(`Cài đặt ${key} chưa tồn tại, đang tạo mới...`);
+        console.log(`Cài đặt [${key}] chưa tồn tại, đang tạo mới...`);
         
         // Create new setting
-        const result = await db.insert(schema.systemSettings)
+        const insertResult = await db.insert(schema.systemSettings)
           .values({
             key,
-            value,
+            value: finalValue,
             category,
             createdAt: new Date(),
             updatedAt: new Date()
           })
           .returning();
         
-        console.log(`Kết quả tạo mới:`, result);
+        result = insertResult;
+        console.log(`Kết quả tạo mới:`, insertResult);
       }
       
       // Kiểm tra kết quả để xác nhận
@@ -630,11 +641,19 @@ class DatabaseStorage implements IStorage {
         where: eq(schema.systemSettings.key, key)
       });
       
-      console.log(`Xác nhận cập nhật cài đặt ${key}: '${verifyUpdate?.value}'`);
-      
-      return true;
+      if (verifyUpdate) {
+        console.log(`Xác nhận cập nhật cài đặt [${key}]:`, {
+          oldValue: existingSetting?.value || "chưa tồn tại",
+          newValue: verifyUpdate.value,
+          success: verifyUpdate.value === finalValue
+        });
+        return verifyUpdate.value === finalValue; // Trả về true nếu giá trị đã được cập nhật đúng
+      } else {
+        console.log(`Không thể xác nhận cài đặt [${key}] sau khi cập nhật!`);
+        return false;
+      }
     } catch (error) {
-      console.error(`Error saving setting [${key}]:`, error);
+      console.error(`Lỗi khi lưu cài đặt [${key}]:`, error);
       return false;
     }
   }
