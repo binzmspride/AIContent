@@ -79,19 +79,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         updatedAt: new Date()
       });
 
-      // Lấy cài đặt webhook URL từ database
-      const contentWebhookUrl = await storage.getSetting('content_webhook_url');
-      const backupWebhookUrl = await storage.getSetting('webhookUrl');
+      // Lấy cài đặt webhook SEO URL từ database - chỉ sử dụng một trường duy nhất
+      const webhookSeoUrl = await storage.getSetting('content_webhook_seo');
       
       // In ra log để debug
       console.log("====== WEBHOOK DEBUG INFO ======");
-      console.log("Webhook URLs trong database:", { 
-        contentWebhookUrl, 
-        backupWebhookUrl 
-      });
+      console.log("Webhook SEO URL trong database:", webhookSeoUrl);
       
-      // Kiểm tra URL webhook
-      let finalWebhookUrl = contentWebhookUrl || backupWebhookUrl;
+      // Sử dụng URL webhook SEO
+      let finalWebhookUrl = webhookSeoUrl;
       
       if (!finalWebhookUrl) {
         console.warn("Không tìm thấy URL webhook, sẽ tạo nội dung mẫu");
