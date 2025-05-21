@@ -276,14 +276,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         creditsUsed: creditsNeeded
       };
       
-      // Get webhook URL from system settings
-      const webhookSettingRes = await db.query.systemSettings.findFirst({
-        where: eq(systemSettings.key, 'notificationWebhookUrl')
-      });
-      
-      const webhookUrl = webhookSettingRes?.value;
       console.log('=== GENERATE CONTENT API CALLED ===');
-      console.log('Webhook URL from database:', webhookUrl);
+      
+      // Ưu tiên lấy webhook URL từ file .env
+      let webhookUrl = process.env.WEBHOOK_URL;
+      
+      // Nếu không có trong .env, lấy từ database
+      if (!webhookUrl) {
+        const webhookSettingRes = await db.query.systemSettings.findFirst({
+          where: eq(systemSettings.key, 'notificationWebhookUrl')
+        });
+        webhookUrl = webhookSettingRes?.value;
+        console.log('Webhook URL from database:', webhookUrl);
+      } else {
+        console.log('Webhook URL from .env:', webhookUrl);
+      }
       
       // Xóa chế độ offline mode theo yêu cầu
       
@@ -294,12 +301,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Lấy webhook secret
-      const webhookSecretRes = await db.query.systemSettings.findFirst({
-        where: eq(systemSettings.key, 'webhook_secret')
-      });
-      const webhookSecret = webhookSecretRes?.value;
-      console.log('Webhook Secret from database:', webhookSecret ? '(exists)' : '(missing)');
+      // Ưu tiên lấy webhook secret từ file .env
+      let webhookSecret = process.env.WEBHOOK_SECRET;
+      
+      // Nếu không có trong .env, lấy từ database
+      if (!webhookSecret) {
+        const webhookSecretRes = await db.query.systemSettings.findFirst({
+          where: eq(systemSettings.key, 'webhook_secret')
+        });
+        webhookSecret = webhookSecretRes?.value;
+        console.log('Webhook Secret from database:', webhookSecret ? '(exists)' : '(missing)');
+      } else {
+        console.log('Webhook Secret from .env:', '(exists)');
+      }
       
       // Gửi request đến webhook
       console.log('Sending content request to webhook:', webhookUrl);
