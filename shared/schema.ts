@@ -259,3 +259,27 @@ export const insertFeedbackSchema = createInsertSchema(feedback, {
 // Feedback types
 export type Feedback = z.infer<typeof selectFeedbackSchema>;
 export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;
+
+// Translations table
+export const translations = pgTable('translations', {
+  id: serial('id').primaryKey(),
+  key: text('key').notNull().unique(),
+  vi: text('vi').notNull(),
+  en: text('en').notNull(),
+  category: text('category').notNull().default('common'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Translations schemas
+export const selectTranslationSchema = createSelectSchema(translations);
+export const insertTranslationSchema = createInsertSchema(translations, {
+  key: (schema) => schema.min(1, "Key cannot be empty"),
+  vi: (schema) => schema.min(1, "Vietnamese translation cannot be empty"),
+  en: (schema) => schema.min(1, "English translation cannot be empty"),
+  category: (schema) => schema.min(1, "Category cannot be empty"),
+});
+
+// Translation types
+export type Translation = z.infer<typeof selectTranslationSchema>;
+export type InsertTranslation = z.infer<typeof insertTranslationSchema>;

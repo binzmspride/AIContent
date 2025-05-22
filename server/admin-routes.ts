@@ -1,5 +1,6 @@
 import { Request, Response, Express } from "express";
 import { storage } from "./storage";
+import { db } from "../db";
 import { z } from "zod";
 import { format, subHours, subDays } from "date-fns";
 
@@ -456,6 +457,220 @@ export function registerAdminRoutes(app: Express) {
       return res.status(500).json({ 
         success: false, 
         error: "Failed to get performance metrics" 
+      });
+    }
+  });
+
+  // Translations management
+  // Get all translations with pagination and filtering
+  app.get("/api/admin/translations", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const category = req.query.category as string;
+      const search = req.query.search as string;
+      const offset = (page - 1) * limit;
+
+      let query = `
+        SELECT * FROM translations 
+        WHERE 1=1
+      `;
+      let countQuery = `
+        SELECT COUNT(*) as total FROM translations 
+        WHERE 1=1
+      `;
+      const params: any[] = [];
+      const countParams: any[] = [];
+
+      if (category && category !== 'all') {
+        query += ` AND category = $${params.length + 1}`;
+        countQuery += ` AND category = $${countParams.length + 1}`;
+        params.push(category);
+        countParams.push(category);
+      }
+
+      if (search) {
+        query += ` AND (key ILIKE $${params.length + 1} OR vi ILIKE $${params.length + 2} OR en ILIKE $${params.length + 3})`;
+        countQuery += ` AND (key ILIKE $${countParams.length + 1} OR vi ILIKE $${countParams.length + 2} OR en ILIKE $${countParams.length + 3})`;
+        const searchPattern = `%${search}%`;
+        params.push(searchPattern, searchPattern, searchPattern);
+        countParams.push(searchPattern, searchPattern, searchPattern);
+      }
+
+      query += ` ORDER BY category, key LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+      params.push(limit, offset);
+
+      const { rows: translations } = await storage.db.query(query, params);
+      const { rows: countResult } = await storage.db.query(countQuery, countParams);
+      const total = parseInt(countResult[0].total);
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          translations,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+          }
+        }
+      });
+    } catch (error) {
+      console.error("Error getting translations:", error);
+      return res.status(500).json({ 
+        success: false, 
+        error: "Failed to get translations" 
+      });
+    }
+  });
+
+  // Add new translation
+  app.post("/api/admin/translations", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const { key, vi, en, category } = req.body;
+
+      if (!key || !vi || !en || !category) {
+        return res.status(400).json({
+          success: false,
+          error: "Key, Vietnamese text, English text, and category are required"
+        });
+      }
+
+      const { rows } = await storage.db.query(
+        `INSERT INTO translations (key, vi, en, category) 
+         VALUES ($1, $2, $3, $4) 
+         RETURNING *`,
+        [key, vi, en, category]
+      );
+
+      return res.status(201).json({
+        success: true,
+        data: rows[0]
+      });
+    } catch (error: any) {
+      console.error("Error adding translation:", error);
+      if (error.constraint === 'translations_key_key') {
+        return res.status(400).json({
+          success: false,
+          error: "Translation key already exists"
+        });
+      }
+      return res.status(500).json({ 
+        success: false, 
+        error: "Failed to add translation" 
+      });
+    }
+  });
+
+  // Update translation
+  app.patch("/api/admin/translations/:id", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body;
+
+      const allowedFields = ['key', 'vi', 'en', 'category'];
+      const updateFields = Object.keys(updates).filter(field => allowedFields.includes(field));
+      
+      if (updateFields.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: "No valid fields to update"
+        });
+      }
+
+      const setClause = updateFields.map((field, index) => `${field} = $${index + 1}`).join(', ');
+      const values = updateFields.map(field => updates[field]);
+      values.push(id);
+
+      const { rows } = await storage.db.query(
+        `UPDATE translations 
+         SET ${setClause}, updated_at = NOW() 
+         WHERE id = $${values.length} 
+         RETURNING *`,
+        values
+      );
+
+      if (rows.length === 0) {
+        return res.status(404).json({
+          success: false,
+          error: "Translation not found"
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: rows[0]
+      });
+    } catch (error: any) {
+      console.error("Error updating translation:", error);
+      if (error.constraint === 'translations_key_key') {
+        return res.status(400).json({
+          success: false,
+          error: "Translation key already exists"
+        });
+      }
+      return res.status(500).json({ 
+        success: false, 
+        error: "Failed to update translation" 
+      });
+    }
+  });
+
+  // Delete translation
+  app.delete("/api/admin/translations/:id", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const id = parseInt(req.params.id);
+
+      const { rows } = await storage.db.query(
+        `DELETE FROM translations WHERE id = $1 RETURNING *`,
+        [id]
+      );
+
+      if (rows.length === 0) {
+        return res.status(404).json({
+          success: false,
+          error: "Translation not found"
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Translation deleted successfully"
+      });
+    } catch (error) {
+      console.error("Error deleting translation:", error);
+      return res.status(500).json({ 
+        success: false, 
+        error: "Failed to delete translation" 
       });
     }
   });

@@ -112,7 +112,7 @@ export default function AdminTranslations() {
   // Add translation
   const addMutation = useMutation({
     mutationFn: (data: TranslationFormValues) =>
-      apiRequest('POST', '/api/admin/translations', data),
+      apiRequest('/api/admin/translations', 'POST', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/translations'] });
       toast({
