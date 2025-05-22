@@ -103,36 +103,36 @@ function FeatureCard({ title, description, icon: Icon, iconColor, bgColor, index
 }
 
 export function Features() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   const mainFeatures = [
     {
       icon: Bot,
       iconColor: "text-blue-50 dark:text-blue-100",
       bgColor: "bg-gradient-to-br from-blue-500 to-indigo-600",
-      title: t("landing.features.ai.title") || "AI Content Creation",
-      description: t("landing.features.ai.description") || "Advanced AI system automatically analyzes and creates high-quality content with appropriate tone for every industry."
+      title: language === "en" ? "AI Content Creation" : "Nội dung AI",
+      description: language === "en" ? "Advanced AI system automatically analyzes and creates high-quality content with appropriate tone for every industry." : "Tạo nội dung SEO tự động với AI tiên tiến"
     },
     {
       icon: Search,
       iconColor: "text-amber-50 dark:text-amber-100",
       bgColor: "bg-gradient-to-br from-amber-500 to-orange-600", 
-      title: t("landing.features.seo.title") || "Multilingual Support",
-      description: t("landing.features.seo.description") || "Support Vietnamese and multiple languages for global reach."
+      title: language === "en" ? "Multilingual Support" : "Đa ngôn ngữ",
+      description: language === "en" ? "Support Vietnamese and multiple languages for global reach." : "Hỗ trợ tiếng Việt và nhiều ngôn ngữ"
     },
     {
       icon: Share2,
       iconColor: "text-emerald-50 dark:text-emerald-100",
       bgColor: "bg-gradient-to-br from-emerald-500 to-teal-600",
-      title: t("landing.features.integration.title") || "Platform Integration",
-      description: t("landing.features.integration.description") || "Connect with WordPress, Facebook, TikTok and other social channels seamlessly."
+      title: language === "en" ? "Platform Integration" : "Tích hợp",
+      description: language === "en" ? "Connect with WordPress, Facebook, TikTok and other social channels seamlessly." : "Kết nối WordPress, Facebook, TikTok"
     },
     {
       icon: BarChart4,
       iconColor: "text-purple-50 dark:text-purple-100",
       bgColor: "bg-gradient-to-br from-purple-500 to-pink-600",
-      title: t("landing.features.analysis.title") || "Performance Analytics",
-      description: t("landing.features.analysis.description") || "Track performance and optimize content effectively with detailed insights."
+      title: language === "en" ? "Performance Analytics" : "Phân tích",
+      description: language === "en" ? "Track performance and optimize content effectively with detailed insights." : "Theo dõi hiệu suất và tối ưu nội dung"
     }
   ];
 
