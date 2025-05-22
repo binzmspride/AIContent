@@ -38,6 +38,7 @@ import AdminHistory from "@/pages/admin/history";
 import AdminSettings from "@/pages/admin/settings";
 import AdminPerformance from "@/pages/admin/performance";
 import AdminFeedback from "@/pages/admin/feedback";
+import AdminTranslations from "@/pages/admin/translations";
 
 function Router() {
   return (
@@ -70,6 +71,7 @@ function Router() {
       <ProtectedRoute path="/admin/payments" component={AdminPayments} adminOnly={true} />
       <ProtectedRoute path="/admin/integrations" component={AdminIntegrations} adminOnly={true} />
       <ProtectedRoute path="/admin/feedback" component={AdminFeedback} adminOnly={true} />
+      <ProtectedRoute path="/admin/translations" component={AdminTranslations} adminOnly={true} />
       <ProtectedRoute path="/admin/history" component={AdminHistory} adminOnly={true} />
       <ProtectedRoute path="/admin/settings" component={AdminSettings} adminOnly={true} />
       <ProtectedRoute path="/admin/performance" component={AdminPerformance} adminOnly={true} />

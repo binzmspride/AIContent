@@ -16,6 +16,7 @@ import {
   BarChart3,
   Activity,
   MessageSquare,
+  Languages,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -80,6 +81,11 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       href: "/admin/feedback",
       label: "Feedback",
       icon: <MessageSquare className="h-5 w-5" />,
+    },
+    {
+      href: "/admin/translations",
+      label: "Bản dịch",
+      icon: <Languages className="h-5 w-5" />,
     },
     {
       href: "/admin/history",
