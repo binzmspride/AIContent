@@ -186,16 +186,16 @@ export default function AdminFeedback() {
           </div>
 
           {/* Feedback Table */}
-          <div className="bg-white dark:bg-secondary-800 rounded-lg border border-secondary-200 dark:border-secondary-700">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-secondary-200 dark:border-gray-700">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Người gửi</TableHead>
-                  <TableHead>Chủ đề</TableHead>
-                  <TableHead>Trang</TableHead>
-                  <TableHead>Trạng thái</TableHead>
-                  <TableHead>Ngày gửi</TableHead>
-                  <TableHead className="text-right">Thao tác</TableHead>
+                  <TableHead className="text-white font-medium">Người gửi</TableHead>
+                  <TableHead className="text-white font-medium">Chủ đề</TableHead>
+                  <TableHead className="text-white font-medium">Trang</TableHead>
+                  <TableHead className="text-white font-medium">Trạng thái</TableHead>
+                  <TableHead className="text-white font-medium">Ngày gửi</TableHead>
+                  <TableHead className="text-right text-white font-medium">Thao tác</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
