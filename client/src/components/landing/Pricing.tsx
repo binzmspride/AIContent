@@ -180,7 +180,7 @@ export function Pricing() {
               key={index}
               className={cn(
                 "relative z-0 overflow-hidden group",
-                pkg.isPopular ? "md:mt-8 md:mb-8" : ""
+                pkg.isPopular ? "md:mt-4 md:mb-4" : ""
               )}
             >
               {/* Background with gradient border effect */}
