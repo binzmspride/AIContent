@@ -36,54 +36,67 @@ interface FeatureCardProps {
 function FeatureCard({ title, description, icon: Icon, iconColor, bgColor, index }: FeatureCardProps) {
   return (
     <div className={cn(
-      "rounded-xl p-8 h-full",
+      "rounded-xl p-8 h-full group cursor-pointer",
       "border border-gray-200 dark:border-gray-700",
       "bg-white dark:bg-gray-800/50",
-      "transition-all duration-300 hover:shadow-lg",
-      "hover:-translate-y-1",
+      "transition-all duration-500 ease-out",
+      "hover:shadow-xl hover:shadow-gray-200/20 dark:hover:shadow-gray-900/20",
+      "hover:-translate-y-2 hover:scale-[1.02]",
+      "hover:border-gray-300 dark:hover:border-gray-600",
+      "relative overflow-hidden"
     )}>
-      <div className={cn(
-        "w-14 h-14 rounded-xl flex items-center justify-center mb-6",
-        bgColor
-      )}>
-        <Icon className={cn("h-7 w-7", iconColor)} />
-      </div>
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-        {title}
-      </h3>
-      <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-        {description}
-      </p>
-      <div className="border-t border-gray-100 dark:border-gray-700 pt-4">
-        <div className="flex items-start text-sm text-gray-600 dark:text-gray-300">
-          <span className="font-medium">Lợi ích nổi bật:</span>
+      {/* Subtle gradient overlay that appears on hover */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 to-purple-50/30 dark:from-blue-900/10 dark:to-purple-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl" />
+      
+      <div className="relative z-10">
+        <div className={cn(
+          "w-14 h-14 rounded-xl flex items-center justify-center mb-6",
+          "transition-all duration-500 group-hover:scale-110 group-hover:rotate-3",
+          bgColor
+        )}>
+          <Icon className={cn(
+            "h-7 w-7 transition-all duration-500",
+            "group-hover:scale-110",
+            iconColor
+          )} />
         </div>
-        <ul className="mt-2 space-y-2">
-          {[1, 2, 3].map(i => (
-            <li key={i} className="flex items-start text-sm">
-              <CheckCircle2 className="h-4 w-4 text-green-500 dark:text-green-400 mr-2 mt-0.5 flex-shrink-0" />
-              <span className="text-gray-600 dark:text-gray-300">
-                {
-                  index === 0 ? [
-                    "Tiết kiệm thời gian soạn thảo",
-                    "Tăng chất lượng nội dung",
-                    "Tự động đề xuất cải thiện"
-                  ][i-1] :
-                  index === 1 ? [
-                    "Cải thiện thứ hạng trên Google",
-                    "Phân tích đối thủ cạnh tranh",
-                    "Đề xuất từ khóa tối ưu"
-                  ][i-1] :
-                  [
-                    "Xuất bản với 1 click",
-                    "Quản lý nội dung tập trung",
-                    "Phân tích hiệu suất đăng bài"
-                  ][i-1]
-                }
-              </span>
-            </li>
-          ))}
-        </ul>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+          {title}
+        </h3>
+        <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6 transition-colors duration-300">
+          {description}
+        </p>
+        <div className="border-t border-gray-100 dark:border-gray-700 pt-4 transition-all duration-300 group-hover:border-gray-200 dark:group-hover:border-gray-600">
+          <div className="flex items-start text-sm text-gray-600 dark:text-gray-300">
+            <span className="font-medium">Lợi ích nổi bật:</span>
+          </div>
+          <ul className="mt-2 space-y-2">
+            {[1, 2, 3].map(i => (
+              <li key={i} className="flex items-start text-sm transform transition-all duration-300 group-hover:translate-x-1">
+                <CheckCircle2 className="h-4 w-4 text-green-500 dark:text-green-400 mr-2 mt-0.5 flex-shrink-0 transition-colors duration-300 group-hover:text-green-600 dark:group-hover:text-green-300" />
+                <span className="text-gray-600 dark:text-gray-300 transition-colors duration-300">
+                  {
+                    index === 0 ? [
+                      "Tiết kiệm thời gian soạn thảo",
+                      "Tăng chất lượng nội dung",
+                      "Tự động đề xuất cải thiện"
+                    ][i-1] :
+                    index === 1 ? [
+                      "Cải thiện thứ hạng trên Google",
+                      "Phân tích đối thủ cạnh tranh",
+                      "Đề xuất từ khóa tối ưu"
+                    ][i-1] :
+                    [
+                      "Xuất bản với 1 click",
+                      "Quản lý nội dung tập trung",
+                      "Phân tích hiệu suất đăng bài"
+                    ][i-1]
+                  }
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
