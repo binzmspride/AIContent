@@ -82,7 +82,7 @@ export function Faq() {
             
             <div className="mt-8 text-center">
               <p className="text-gray-600 dark:text-gray-300">
-                Bạn có câu hỏi khác? <a href="#contact" className="text-primary dark:text-primary-400 hover:underline font-medium">Liên hệ với chúng tôi</a>
+                {t("landing.faq.moreInfo")}
               </p>
             </div>
           </div>

@@ -278,10 +278,7 @@ export function Pricing() {
           
         <div className="mt-16 text-center">
           <p className="text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            {t("landing.pricing.guarantee")} 
-            <a href="#contact" className="text-primary dark:text-primary-400 font-medium hover:underline ml-1">
-              {t("landing.pricing.contactUs")}
-            </a>
+            {t("landing.pricing.guarantee")}
           </p>
         </div>
       </div>
