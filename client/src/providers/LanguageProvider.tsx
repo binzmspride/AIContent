@@ -297,6 +297,22 @@ const translations: TranslationsType = {
       features: {
         title: "Tính năng nổi bật",
         subtitle: "Khám phá những công cụ mạnh mẽ giúp tạo nội dung SEO hiệu quả",
+        ai: {
+          title: "Nội dung AI",
+          description: "Tạo nội dung SEO tự động với AI tiên tiến đội ngũ AI tiên tiến"
+        },
+        seo: {
+          title: "Đa ngôn ngữ",
+          description: "Hỗ trợ tiếng Việt và nhiều ngôn ngữ"
+        },
+        integration: {
+          title: "Tích hợp",
+          description: "Kết nối WordPress, Facebook, TikTok"
+        },
+        analysis: {
+          title: "Phân tích",
+          description: "Theo dõi hiệu suất và tối ưu nội dung"
+        },
         items: [
           {
             title: "Sáng tạo nội dung thông minh",
@@ -890,6 +906,22 @@ const translations: TranslationsType = {
       features: {
         title: "Key Features",
         subtitle: "Discover powerful tools to create effective SEO content",
+        ai: {
+          title: "AI Content",
+          description: "Advanced AI system automatically analyzes and creates high-quality content with appropriate tone for every industry"
+        },
+        seo: {
+          title: "Multilingual",
+          description: "Support Vietnamese and multiple languages"
+        },
+        integration: {
+          title: "Integration",
+          description: "Connect with WordPress, Facebook, TikTok and other social channels seamlessly"
+        },
+        analysis: {
+          title: "Analytics",
+          description: "Track performance and optimize content effectively"
+        },
         items: [
           {
             title: "Intelligent Content Creation",
