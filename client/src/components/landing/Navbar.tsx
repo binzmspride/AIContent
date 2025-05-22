@@ -141,7 +141,7 @@ export function Navbar() {
                 }`}>
                   {t("nav.login")}
                 </Link>
-                <Link href="/auth">
+                <Link href="/auth?tab=register">
                   <Button className="bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all duration-300">
                     {t("nav.register")}
                   </Button>
@@ -233,7 +233,7 @@ export function Navbar() {
                             {t("nav.login")}
                           </Button>
                         </Link>
-                        <Link href="/auth">
+                        <Link href="/auth?tab=register">
                           <Button className="w-full bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-white rounded-full shadow-md py-2.5">
                             {t("nav.register")}
                           </Button>

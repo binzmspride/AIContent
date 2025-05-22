@@ -66,6 +66,15 @@ export default function AuthPage() {
   const [isVerified, setIsVerified] = useState(false);
   const { toast } = useToast();
   
+  // Check URL params to set default tab
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab === 'register') {
+      setActiveTab('register');
+    }
+  }, []);
+  
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
