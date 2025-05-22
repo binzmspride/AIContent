@@ -224,15 +224,15 @@ export default function AdminFeedback() {
                             <User className="h-4 w-4 text-primary" />
                           </div>
                           <div>
-                            <div className="font-medium text-secondary-900 dark:text-secondary-100">
+                            <div className="font-medium text-white">
                               {item.name}
                             </div>
-                            <div className="text-sm text-secondary-500 flex items-center">
+                            <div className="text-sm text-gray-300 flex items-center">
                               <Mail className="h-3 w-3 mr-1" />
                               {item.email}
                             </div>
                             {item.user && (
-                              <div className="text-xs text-secondary-400">
+                              <div className="text-xs text-gray-400">
                                 User: {item.user.fullName || item.user.username}
                               </div>
                             )}
@@ -241,16 +241,16 @@ export default function AdminFeedback() {
                       </TableCell>
                       <TableCell>
                         <div className="max-w-xs">
-                          <div className="font-medium text-secondary-900 dark:text-secondary-100 truncate">
+                          <div className="font-medium text-white truncate">
                             {item.subject}
                           </div>
-                          <div className="text-sm text-secondary-500 truncate">
+                          <div className="text-sm text-gray-300 truncate">
                             {item.message}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center text-sm text-secondary-500">
+                        <div className="flex items-center text-sm text-gray-300">
                           <Globe className="h-3 w-3 mr-1" />
                           {item.page || 'Unknown'}
                         </div>
@@ -259,7 +259,7 @@ export default function AdminFeedback() {
                         {getStatusBadge(item.status)}
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center text-sm text-secondary-500">
+                        <div className="flex items-center text-sm text-gray-300">
                           <Calendar className="h-3 w-3 mr-1" />
                           {format(new Date(item.createdAt), 'dd/MM/yyyy HH:mm')}
                         </div>
