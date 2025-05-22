@@ -197,8 +197,8 @@ export function Pricing() {
                   {/* Popular badge */}
                   {pkg.badge && (
                     <div className={cn(
-                      "absolute top-0 right-0 left-0 mx-auto w-max z-30 transform -translate-y-[14px] px-5 py-2 rounded-full text-sm font-bold text-white shadow-xl border-2 border-white dark:border-gray-800",
-                      `bg-gradient-to-r ${pkg.gradient}`
+                      "absolute top-0 right-0 left-0 mx-auto w-max z-30 transform -translate-y-[16px] px-5 py-2 rounded-full text-sm font-bold text-white shadow-xl border-2 border-white dark:border-gray-800 animate-pulse",
+                      "bg-gradient-to-r from-purple-600 to-indigo-700"
                     )}>
                       {pkg.badge}
                     </div>
