@@ -123,7 +123,6 @@ export function Navbar() {
             >
               <Globe className="w-4 h-4 mr-1" />
               <span className="font-semibold">{language === "vi" ? "VN" : "EN"}</span>
-              <ChevronDown className="w-4 h-4 ml-1" />
             </button>
             
             {user ? (
