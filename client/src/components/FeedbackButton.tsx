@@ -107,32 +107,32 @@ export function FeedbackButton({ page = "unknown", variant = "floating" }: Feedb
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-[500px] bg-slate-800 border border-slate-700">
-        <DialogHeader>
-          <DialogTitle className="text-white flex items-center">
+      <DialogContent className="sm:max-w-[550px] bg-slate-800 border border-slate-700">
+        <DialogHeader className="pb-4">
+          <DialogTitle className="text-white flex items-center text-lg">
             <MessageSquare className="h-5 w-5 mr-2 text-primary" />
             Gửi phản hồi
           </DialogTitle>
-          <DialogDescription className="text-slate-400">
+          <DialogDescription className="text-slate-400 text-sm">
             Chia sẻ ý kiến, đề xuất hoặc báo cáo lỗi để giúp chúng tôi cải thiện dịch vụ.
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-200">
+                    <FormLabel className="text-slate-200 text-sm font-medium">
                       Họ và tên <span className="text-red-400">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Nhập họ và tên"
-                        className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
+                        className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 h-10"
                         {...field} 
                       />
                     </FormControl>
@@ -146,15 +146,15 @@ export function FeedbackButton({ page = "unknown", variant = "floating" }: Feedb
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-200 flex items-center">
-                      <Mail className="h-4 w-4 mr-1" />
+                    <FormLabel className="text-slate-200 text-sm font-medium flex items-center">
+                      <Mail className="h-3 w-3 mr-1" />
                       Email <span className="text-red-400">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input 
                         type="email"
                         placeholder="your@email.com"
-                        className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
+                        className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 h-10"
                         {...field} 
                       />
                     </FormControl>
@@ -169,13 +169,13 @@ export function FeedbackButton({ page = "unknown", variant = "floating" }: Feedb
               name="subject"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-200">
+                  <FormLabel className="text-slate-200 text-sm font-medium">
                     Chủ đề <span className="text-red-400">*</span>
                   </FormLabel>
                   <FormControl>
                     <Input 
                       placeholder="Tóm tắt nội dung bạn muốn chia sẻ"
-                      className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
+                      className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 h-10"
                       {...field} 
                     />
                   </FormControl>
@@ -189,13 +189,13 @@ export function FeedbackButton({ page = "unknown", variant = "floating" }: Feedb
               name="message"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-200">
+                  <FormLabel className="text-slate-200 text-sm font-medium">
                     Nội dung <span className="text-red-400">*</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="Mô tả chi tiết ý kiến hoặc vấn đề..."
-                      className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 min-h-[100px]"
+                      className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 min-h-[110px] resize-none"
                       {...field} 
                     />
                   </FormControl>
@@ -204,18 +204,18 @@ export function FeedbackButton({ page = "unknown", variant = "floating" }: Feedb
               )}
             />
 
-            <div className="flex justify-end space-x-3 pt-4">
+            <div className="flex justify-between items-center pt-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsOpen(false)}
-                className="border-slate-600 text-slate-300 hover:bg-slate-700/50"
+                className="border-slate-600 text-slate-300 hover:bg-slate-700/50 px-6"
               >
                 Hủy
               </Button>
               <Button
                 type="submit"
-                className="bg-primary hover:bg-primary/90 text-white"
+                className="bg-primary hover:bg-primary/90 text-white px-6"
                 disabled={submitFeedbackMutation.isPending}
               >
                 {submitFeedbackMutation.isPending ? (
