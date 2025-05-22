@@ -197,7 +197,7 @@ export function Pricing() {
                   {/* Popular badge */}
                   {pkg.badge && (
                     <div className={cn(
-                      "absolute top-0 right-0 left-0 mx-auto w-max z-20 transform -translate-y-1/2 px-4 py-1.5 rounded-full text-xs font-bold text-white shadow-lg",
+                      "absolute top-0 right-0 left-0 mx-auto w-max z-20 transform -translate-y-1/2 px-4 py-1.5 rounded-full text-sm font-bold text-white shadow-lg border-2 border-white dark:border-gray-800",
                       `bg-gradient-to-r ${pkg.gradient}`,
                       pkg.isPopular ? "mt-2" : ""
                     )}>
