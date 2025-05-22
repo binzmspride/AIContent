@@ -80,11 +80,7 @@ export function Faq() {
               ))}
             </Accordion>
             
-            <div className="mt-8 text-center">
-              <p className="text-gray-600 dark:text-gray-300">
-                {t("landing.faq.moreInfo")}
-              </p>
-            </div>
+
           </div>
         </div>
       </div>
