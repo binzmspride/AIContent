@@ -4,7 +4,10 @@ import { SmtpConfig } from '@shared/types';
 
 // Global app configuration
 export const appConfig = {
-  baseUrl: process.env.APP_BASE_URL || 'http://localhost:5000'
+  baseUrl: process.env.APP_BASE_URL || 'http://localhost:5000',
+  name: process.env.APP_NAME || 'SEO Content Generator',
+  emailFromName: process.env.EMAIL_FROM_NAME || 'SEO Content Generator',
+  emailFrom: process.env.EMAIL_FROM || 'support@example.com'
 };
 
 // Function to update the base URL of the application
@@ -52,14 +55,14 @@ loadAppBaseUrlFromDatabase().catch(err => {
 
 // Global SMTP configuration
 let smtpConfig = {
-  host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
+  host: process.env.SMTP_HOST || '',
   port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587,
   secure: process.env.SMTP_SECURE === 'true',
   auth: {
-    user: process.env.SMTP_USER || 'seoviet.ai@gmail.com',
-    pass: process.env.SMTP_PASS || 'xsmtpsib-06c8a3d8ad2e8f8e943a94b144ba23befe0c4c2fafa01ebe02399f84fa1b10d4-bCqw0LpZkYWBFMGf'
+    user: process.env.SMTP_USER || '',
+    pass: process.env.SMTP_PASS || ''
   },
-  from: process.env.SMTP_FROM || 'SEO AI Writer <seoviet.ai@gmail.com>'
+  from: process.env.EMAIL_FROM ? (process.env.EMAIL_FROM_NAME ? `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>` : process.env.EMAIL_FROM) : ''
 };
 
 // Load SMTP configuration from database
