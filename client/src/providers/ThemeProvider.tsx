@@ -13,8 +13,8 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeType>("system");
-  const [resolvedTheme, setResolvedTheme] = useState<Theme>("light");
+  const [theme, setThemeState] = useState<ThemeType>("dark");
+  const [resolvedTheme, setResolvedTheme] = useState<Theme>("dark");
   
   // Function to get system theme preference
   const getSystemTheme = (): Theme => {
@@ -36,7 +36,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (storedTheme) {
       setThemeState(storedTheme);
     } else {
-      setThemeState("system");
+      setThemeState("dark");
+      localStorage.setItem("theme", "dark");
     }
     
     // Listen for system preference changes
