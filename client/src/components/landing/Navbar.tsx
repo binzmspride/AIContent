@@ -40,7 +40,7 @@ export function Navbar() {
     { href: "#features", label: t("nav.features") },
     { href: "#pricing", label: t("nav.pricing") },
     { href: "#faq", label: t("nav.faq") },
-    { href: "#contact", label: t("nav.contact") }
+    { href: "#feedback", label: t("nav.contact") }
   ];
 
   return (

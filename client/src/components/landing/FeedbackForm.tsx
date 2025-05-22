@@ -76,7 +76,7 @@ export function FeedbackForm() {
   };
 
   return (
-    <section className="py-16 bg-slate-900 relative overflow-hidden">
+    <section id="feedback" className="py-16 bg-slate-900 relative overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-blue-600/5"></div>
       
