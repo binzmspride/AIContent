@@ -122,7 +122,7 @@ export function Navbar() {
               } border border-gray-200 dark:border-gray-700`}
             >
               <Globe className="w-4 h-4 mr-1" />
-              {language === "vi" ? "EN" : "VN"}
+              <span className="font-semibold">{language === "vi" ? "VN" : "EN"}</span>
               <ChevronDown className="w-4 h-4 ml-1" />
             </button>
             
@@ -214,7 +214,10 @@ export function Navbar() {
                       className="flex items-center text-gray-700 dark:text-gray-300 hover:text-primary py-3 px-4 rounded-md w-full"
                     >
                       <Globe className="w-5 h-5 mr-2" />
-                      {language === "vi" ? "English" : "Tiếng Việt"}
+                      <span className="font-semibold">{language === "vi" ? "VN" : "EN"}</span>
+                      <span className="ml-2 text-sm opacity-70">
+                        {language === "vi" ? "- Chuyển sang English" : "- Switch to Tiếng Việt"}
+                      </span>
                     </button>
                     
                     {user ? (
