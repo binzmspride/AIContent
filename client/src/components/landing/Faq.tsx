@@ -49,7 +49,7 @@ export function Faq() {
             Câu hỏi thường gặp
           </div>
           
-          <h2 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-primary-800 to-primary-600 dark:from-primary-400 dark:to-primary-300 bg-clip-text text-transparent font-heading mb-4">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white font-heading mb-4">
             {t("landing.faq.title")}
           </h2>
           
