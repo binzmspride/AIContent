@@ -227,3 +227,35 @@ export const insertApiKeySchema = createInsertSchema(apiKeys);
 // API Keys types
 export type ApiKey = z.infer<typeof selectApiKeySchema>;
 export type InsertApiKey = z.infer<typeof insertApiKeySchema>;
+
+// Feedback table
+export const feedback = pgTable('feedback', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  subject: text('subject').notNull(),
+  message: text('message').notNull(),
+  status: text('status').notNull().default('unread'), // unread, read, replied
+  page: text('page'), // Which page the feedback was submitted from
+  userId: integer('user_id').references(() => users.id), // Optional if user is logged in
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Feedback relations
+export const feedbackRelations = relations(feedback, ({ one }) => ({
+  user: one(users, { fields: [feedback.userId], references: [users.id] }),
+}));
+
+// Feedback schemas
+export const selectFeedbackSchema = createSelectSchema(feedback);
+export const insertFeedbackSchema = createInsertSchema(feedback, {
+  name: (schema) => schema.min(2, "Name must be at least 2 characters"),
+  email: (schema) => schema.email("Must provide a valid email"),
+  subject: (schema) => schema.min(5, "Subject must be at least 5 characters"),
+  message: (schema) => schema.min(10, "Message must be at least 10 characters"),
+});
+
+// Feedback types
+export type Feedback = z.infer<typeof selectFeedbackSchema>;
+export type InsertFeedback = z.infer<typeof insertFeedbackSchema>;
