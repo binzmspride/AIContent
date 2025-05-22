@@ -58,7 +58,7 @@ export function FeedbackButton({ page = "unknown", variant = "floating" }: Feedb
 
   const submitFeedbackMutation = useMutation({
     mutationFn: (data: FeedbackFormValues & { page: string }) =>
-      apiRequest('/api/feedback', 'POST', data),
+      apiRequest('POST', '/api/feedback', data),
     onSuccess: () => {
       toast({
         title: "Cảm ơn bạn!",
