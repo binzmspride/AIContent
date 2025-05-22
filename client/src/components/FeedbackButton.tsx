@@ -126,7 +126,7 @@ export function FeedbackButton({ page = "unknown", variant = "floating" }: Feedb
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-200 text-sm font-medium">
+                    <FormLabel className="text-slate-200 text-sm font-medium h-5 flex items-center">
                       Họ và tên <span className="text-red-400">*</span>
                     </FormLabel>
                     <FormControl>
@@ -146,7 +146,7 @@ export function FeedbackButton({ page = "unknown", variant = "floating" }: Feedb
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-200 text-sm font-medium flex items-center">
+                    <FormLabel className="text-slate-200 text-sm font-medium h-5 flex items-center">
                       <Mail className="h-3 w-3 mr-1" />
                       Email <span className="text-red-400">*</span>
                     </FormLabel>
