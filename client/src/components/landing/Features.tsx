@@ -105,6 +105,9 @@ function FeatureCard({ title, description, icon: Icon, iconColor, bgColor, index
 export function Features() {
   const { t, language } = useLanguage();
   
+  // Debug log to check language value
+  console.log("Current language in Features:", language);
+  
   const mainFeatures = [
     {
       icon: Bot,
