@@ -1,6 +1,6 @@
 import { Request, Response, Express } from "express";
 import { storage } from "./storage";
-import { db } from "../db";
+import { pool } from "../db";
 import { z } from "zod";
 import { format, subHours, subDays } from "date-fns";
 
@@ -507,8 +507,8 @@ export function registerAdminRoutes(app: Express) {
       query += ` ORDER BY category, key LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
       params.push(limit, offset);
 
-      const { rows: translations } = await storage.db.query(query, params);
-      const { rows: countResult } = await storage.db.query(countQuery, countParams);
+      const { rows: translations } = await pool.query(query, params);
+      const { rows: countResult } = await pool.query(countQuery, countParams);
       const total = parseInt(countResult[0].total);
 
       return res.status(200).json({
@@ -551,7 +551,7 @@ export function registerAdminRoutes(app: Express) {
         });
       }
 
-      const { rows } = await storage.db.query(
+      const { rows } = await pool.query(
         `INSERT INTO translations (key, vi, en, category) 
          VALUES ($1, $2, $3, $4) 
          RETURNING *`,
@@ -604,7 +604,7 @@ export function registerAdminRoutes(app: Express) {
       const values = updateFields.map(field => updates[field]);
       values.push(id);
 
-      const { rows } = await storage.db.query(
+      const { rows } = await pool.query(
         `UPDATE translations 
          SET ${setClause}, updated_at = NOW() 
          WHERE id = $${values.length} 
@@ -650,7 +650,7 @@ export function registerAdminRoutes(app: Express) {
     try {
       const id = parseInt(req.params.id);
 
-      const { rows } = await storage.db.query(
+      const { rows } = await pool.query(
         `DELETE FROM translations WHERE id = $1 RETURNING *`,
         [id]
       );
