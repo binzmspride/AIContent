@@ -23,6 +23,7 @@ import {
   Code
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useMemo } from "react";
 
 interface FeatureCardProps {
   title: string;
@@ -108,7 +109,7 @@ export function Features() {
   // Debug log to check language value
   console.log("Current language in Features:", language);
   
-  const mainFeatures = [
+  const mainFeatures = useMemo(() => [
     {
       icon: Bot,
       iconColor: "text-blue-50 dark:text-blue-100",
@@ -137,7 +138,7 @@ export function Features() {
       title: language === "en" ? "Performance Analytics" : "Phân tích",
       description: language === "en" ? "Track performance and optimize content effectively with detailed insights." : "Theo dõi hiệu suất và tối ưu nội dung"
     }
-  ];
+  ], [language]);
 
   const categories = [
     {
