@@ -313,6 +313,53 @@ const translations: TranslationsType = {
           title: "Phân tích",
           description: "Theo dõi hiệu suất và tối ưu nội dung"
         },
+        categories: {
+          content: {
+            title: "Tạo nội dung",
+            blog: {
+              title: "Bài viết blog",
+              description: "Tạo bài viết blog chuyên nghiệp với cấu trúc tối ưu SEO"
+            },
+            social: {
+              title: "Nội dung mạng xã hội",
+              description: "Tạo nội dung hấp dẫn cho Facebook, Instagram và TikTok"
+            },
+            email: {
+              title: "Email marketing",
+              description: "Tạo email chiến dịch chuyên nghiệp với tỷ lệ mở cao"
+            }
+          },
+          analytics: {
+            title: "Tối ưu & Phân tích",
+            keywords: {
+              title: "Nghiên cứu từ khóa",
+              description: "Phân tích và đề xuất từ khóa có tiềm năng chuyển đổi cao"
+            },
+            performance: {
+              title: "Phân tích hiệu suất",
+              description: "Theo dõi và phân tích hiệu quả của nội dung theo thời gian thực"
+            },
+            technical: {
+              title: "Tối ưu kỹ thuật",
+              description: "Tự động tối ưu cấu trúc và thẻ meta để tăng điểm SEO kỹ thuật"
+            }
+          },
+          management: {
+            title: "Quản lý & Xuất bản",
+            templates: {
+              title: "Thư viện mẫu",
+              description: "Truy cập thư viện đa dạng mẫu nội dung chuyên nghiệp"
+            },
+            multilingual: {
+              title: "Hỗ trợ đa ngôn ngữ",
+              description: "Tạo và tối ưu nội dung cho nhiều thị trường ngôn ngữ khác nhau"
+            },
+            dashboard: {
+              title: "Bảng điều khiển",
+              description: "Quản lý tất cả nội dung và lịch xuất bản từ một giao diện"
+            }
+          }
+        },
         items: [
           {
             title: "Sáng tạo nội dung thông minh",
@@ -921,6 +968,53 @@ const translations: TranslationsType = {
         analysis: {
           title: "Analytics",
           description: "Track performance and optimize content effectively"
+        },
+        categories: {
+          content: {
+            title: "Content Creation",
+            blog: {
+              title: "Blog Articles",
+              description: "Create professional blog posts with SEO-optimized structure"
+            },
+            social: {
+              title: "Social Media Content",
+              description: "Create engaging content for Facebook, Instagram and TikTok"
+            },
+            email: {
+              title: "Email Marketing",
+              description: "Create professional email campaigns with high open rates"
+            }
+          },
+          analytics: {
+            title: "Optimization & Analytics",
+            keywords: {
+              title: "Keyword Research",
+              description: "Analyze and suggest keywords with high conversion potential"
+            },
+            performance: {
+              title: "Performance Analysis",
+              description: "Track and analyze content effectiveness in real-time"
+            },
+            technical: {
+              title: "Technical Optimization",
+              description: "Automatically optimize structure and meta tags to improve technical SEO scores"
+            }
+          },
+          management: {
+            title: "Management & Publishing",
+            templates: {
+              title: "Template Library",
+              description: "Access diverse library of professional content templates"
+            },
+            multilingual: {
+              title: "Multilingual Support",
+              description: "Create and optimize content for different language markets"
+            },
+            dashboard: {
+              title: "Dashboard",
+              description: "Manage all content and publishing schedules from one interface"
+            }
+          }
         },
         items: [
           {

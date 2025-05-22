@@ -118,62 +118,62 @@ export function Features() {
 
   const categories = [
     {
-      title: "Tạo nội dung",
+      title: t("landing.features.categories.content.title") || "Tạo nội dung",
       features: [
         {
           icon: Newspaper,
-          title: "Bài viết blog",
-          description: "Tạo bài viết blog chuyên nghiệp với cấu trúc tối ưu SEO"
+          title: t("landing.features.categories.content.blog.title") || "Bài viết blog",
+          description: t("landing.features.categories.content.blog.description") || "Tạo bài viết blog chuyên nghiệp với cấu trúc tối ưu SEO"
         },
         {
           icon: Megaphone,
-          title: "Nội dung mạng xã hội",
-          description: "Tạo nội dung hấp dẫn cho Facebook, Instagram và TikTok"
+          title: t("landing.features.categories.content.social.title") || "Nội dung mạng xã hội",
+          description: t("landing.features.categories.content.social.description") || "Tạo nội dung hấp dẫn cho Facebook, Instagram và TikTok"
         },
         {
           icon: MessageSquare,
-          title: "Email marketing",
-          description: "Tạo email chiến dịch chuyên nghiệp với tỷ lệ mở cao"
+          title: t("landing.features.categories.content.email.title") || "Email marketing",
+          description: t("landing.features.categories.content.email.description") || "Tạo email chiến dịch chuyên nghiệp với tỷ lệ mở cao"
         }
       ]
     },
     {
-      title: "Tối ưu & Phân tích",
+      title: t("landing.features.categories.analytics.title") || "Tối ưu & Phân tích",
       features: [
         {
           icon: Hash,
-          title: "Nghiên cứu từ khóa",
-          description: "Phân tích và đề xuất từ khóa có tiềm năng chuyển đổi cao"
+          title: t("landing.features.categories.analytics.keywords.title") || "Nghiên cứu từ khóa",
+          description: t("landing.features.categories.analytics.keywords.description") || "Phân tích và đề xuất từ khóa có tiềm năng chuyển đổi cao"
         },
         {
           icon: BarChart4,
-          title: "Phân tích hiệu suất",
-          description: "Theo dõi và phân tích hiệu quả của nội dung theo thời gian thực"
+          title: t("landing.features.categories.analytics.performance.title") || "Phân tích hiệu suất",
+          description: t("landing.features.categories.analytics.performance.description") || "Theo dõi và phân tích hiệu quả của nội dung theo thời gian thực"
         },
         {
           icon: Code,
-          title: "Tối ưu kỹ thuật",
-          description: "Tự động tối ưu cấu trúc và thẻ meta để tăng điểm SEO kỹ thuật"
+          title: t("landing.features.categories.analytics.technical.title") || "Tối ưu kỹ thuật",
+          description: t("landing.features.categories.analytics.technical.description") || "Tự động tối ưu cấu trúc và thẻ meta để tăng điểm SEO kỹ thuật"
         }
       ]
     },
     {
-      title: "Quản lý & Xuất bản",
+      title: t("landing.features.categories.management.title") || "Quản lý & Xuất bản",
       features: [
         {
           icon: LayoutTemplate,
-          title: "Thư viện mẫu",
-          description: "Truy cập thư viện đa dạng mẫu nội dung chuyên nghiệp"
+          title: t("landing.features.categories.management.templates.title") || "Thư viện mẫu",
+          description: t("landing.features.categories.management.templates.description") || "Truy cập thư viện đa dạng mẫu nội dung chuyên nghiệp"
         },
         {
           icon: Globe,
-          title: "Hỗ trợ đa ngôn ngữ",
-          description: "Tạo và tối ưu nội dung cho nhiều thị trường ngôn ngữ khác nhau"
+          title: t("landing.features.categories.management.multilingual.title") || "Hỗ trợ đa ngôn ngữ",
+          description: t("landing.features.categories.management.multilingual.description") || "Tạo và tối ưu nội dung cho nhiều thị trường ngôn ngữ khác nhau"
         },
         {
           icon: PanelTop,
-          title: "Bảng điều khiển",
-          description: "Quản lý tất cả nội dung và lịch xuất bản từ một giao diện"
+          title: t("landing.features.categories.management.dashboard.title") || "Bảng điều khiển",
+          description: t("landing.features.categories.management.dashboard.description") || "Quản lý tất cả nội dung và lịch xuất bản từ một giao diện"
         }
       ]
     }
