@@ -78,14 +78,16 @@ export default function AdminFeedback() {
         ...(statusFilter !== 'all' && { status: statusFilter }),
         ...(searchTerm && { search: searchTerm }),
       });
-      return apiRequest(`/api/admin/feedback?${params}`);
+      return fetch(`/api/admin/feedback?${params}`, {
+        credentials: 'include'
+      }).then(res => res.json());
     },
   });
 
   // Update feedback status
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: number; status: string }) =>
-      apiRequest(`/api/admin/feedback/${id}`, 'PATCH', { status }),
+      apiRequest('PATCH', `/api/admin/feedback/${id}`, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/feedback'] });
       toast({
@@ -104,7 +106,7 @@ export default function AdminFeedback() {
 
   // Delete feedback
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/admin/feedback/${id}`, 'DELETE'),
+    mutationFn: (id: number) => apiRequest('DELETE', `/api/admin/feedback/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/feedback'] });
       toast({

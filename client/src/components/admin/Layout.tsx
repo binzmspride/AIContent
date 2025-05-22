@@ -15,6 +15,7 @@ import {
   LogOut,
   BarChart3,
   Activity,
+  MessageSquare,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -74,6 +75,11 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         <path d="M3 7.5L6.5 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         <path d="M18 4L15 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>,
+    },
+    {
+      href: "/admin/feedback",
+      label: "Feedback",
+      icon: <MessageSquare className="h-5 w-5" />,
     },
     {
       href: "/admin/history",
