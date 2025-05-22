@@ -38,7 +38,6 @@ export function Pricing() {
       name: t("landing.pricing.packages.advanced"),
       price: 900000,
       icon: <Sparkles className="h-7 w-7 text-white" />,
-      badge: "Phổ biến nhất",
       features: [
         `100 ${t("landing.pricing.features.credits")}`,
         `~1500 ${t("landing.pricing.features.wordsPerCredit")}`,
@@ -180,29 +179,21 @@ export function Pricing() {
               key={index}
               className={cn(
                 "relative z-0 overflow-hidden group",
-                pkg.isPopular ? "md:mt-4 md:mb-4" : ""
+                pkg.isPopular ? "md:-mt-4 md:mb-4 scale-105 hover:scale-110 transition-transform duration-300" : "hover:scale-105 transition-transform duration-300"
               )}
             >
               {/* Background with gradient border effect */}
               <div className={cn(
                 "absolute -z-10 rounded-[2rem] inset-0 p-0.5",
                 pkg.isPopular 
-                  ? `bg-gradient-to-b ${pkg.gradient}`
+                  ? `bg-gradient-to-b ${pkg.gradient} shadow-2xl shadow-indigo-500/25`
                   : "bg-gradient-to-b from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600"
               )}></div>
               
               {/* Main card */}
               <div className="bg-white dark:bg-gray-800 rounded-[2rem] h-full flex flex-col p-1">
                 <div className="flex flex-col flex-grow p-7 md:p-8">
-                  {/* Popular badge */}
-                  {pkg.badge && (
-                    <div className={cn(
-                      "absolute top-0 right-0 left-0 mx-auto w-max z-30 transform -translate-y-[16px] px-5 py-2 rounded-full text-sm font-bold text-white shadow-xl border-2 border-white dark:border-gray-800 animate-pulse",
-                      "bg-gradient-to-r from-purple-600 to-indigo-700"
-                    )}>
-                      {pkg.badge}
-                    </div>
-                  )}
+
                   
                   {/* Header */}
                   <div className="text-center mb-8">
