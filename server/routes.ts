@@ -1151,5 +1151,197 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== Feedback API ==========
+  // Submit feedback
+  app.post('/api/feedback', async (req, res) => {
+    try {
+      const { name, email, subject, message, page } = req.body;
+      
+      if (!name || !email || !subject || !message) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Name, email, subject and message are required' 
+        });
+      }
+      
+      // Get user ID if authenticated
+      const userId = req.isAuthenticated() ? req.user.id : null;
+      
+      // Insert feedback into database
+      const [feedback] = await db.insert(schema.feedback).values({
+        name,
+        email,
+        subject,
+        message,
+        page: page || 'unknown',
+        userId,
+        status: 'unread'
+      }).returning();
+      
+      // Send email notification to admin
+      try {
+        const { sendEmail } = await import('./email-service');
+        
+        const adminEmail = 'admin@seoaiwriter.com'; // This should come from settings
+        
+        await sendEmail({
+          to: adminEmail,
+          subject: `New Feedback: ${subject}`,
+          html: `
+            <h3>New Feedback Received</h3>
+            <p><strong>From:</strong> ${name} (${email})</p>
+            <p><strong>Page:</strong> ${page || 'Unknown'}</p>
+            <p><strong>Subject:</strong> ${subject}</p>
+            <p><strong>Message:</strong></p>
+            <p>${message.replace(/\n/g, '<br>')}</p>
+            <hr>
+            <p><em>This feedback was submitted at ${new Date().toLocaleString()}</em></p>
+          `
+        });
+      } catch (emailError) {
+        console.error('Failed to send email notification:', emailError);
+        // Don't fail the request if email fails
+      }
+      
+      res.status(201).json({ success: true, data: feedback });
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      res.status(500).json({ success: false, error: 'Failed to submit feedback' });
+    }
+  });
+
+  // Get all feedback (admin only)
+  app.get('/api/admin/feedback', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+
+      const page = parseInt(req.query.page as string || '1');
+      const limit = parseInt(req.query.limit as string || '10');
+      const status = req.query.status as string;
+      
+      let query = db.query.feedback.findMany({
+        orderBy: [sql`created_at DESC`],
+        limit,
+        offset: (page - 1) * limit,
+        with: {
+          user: {
+            columns: {
+              id: true,
+              username: true,
+              fullName: true
+            }
+          }
+        }
+      });
+      
+      // Filter by status if provided
+      if (status && status !== 'all') {
+        query = db.query.feedback.findMany({
+          where: eq(schema.feedback.status, status),
+          orderBy: [sql`created_at DESC`],
+          limit,
+          offset: (page - 1) * limit,
+          with: {
+            user: {
+              columns: {
+                id: true,
+                username: true,
+                fullName: true
+              }
+            }
+          }
+        });
+      }
+      
+      const feedbackList = await query;
+      
+      // Get total count
+      const [{ count: total }] = await db
+        .select({ count: sql`count(*)`.mapWith(Number) })
+        .from(schema.feedback)
+        .where(status && status !== 'all' ? eq(schema.feedback.status, status) : undefined);
+      
+      res.json({
+        success: true,
+        data: {
+          feedback: feedbackList,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch feedback' });
+    }
+  });
+
+  // Update feedback status (admin only)
+  app.patch('/api/admin/feedback/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+
+      const feedbackId = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!status || !['unread', 'read', 'replied'].includes(status)) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Valid status is required (unread, read, replied)' 
+        });
+      }
+      
+      const [updatedFeedback] = await db
+        .update(schema.feedback)
+        .set({ 
+          status,
+          updatedAt: new Date()
+        })
+        .where(eq(schema.feedback.id, feedbackId))
+        .returning();
+      
+      if (!updatedFeedback) {
+        return res.status(404).json({ success: false, error: 'Feedback not found' });
+      }
+      
+      res.json({ success: true, data: updatedFeedback });
+    } catch (error) {
+      console.error('Error updating feedback:', error);
+      res.status(500).json({ success: false, error: 'Failed to update feedback' });
+    }
+  });
+
+  // Delete feedback (admin only)
+  app.delete('/api/admin/feedback/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+
+      const feedbackId = parseInt(req.params.id);
+      
+      const [deletedFeedback] = await db
+        .delete(schema.feedback)
+        .where(eq(schema.feedback.id, feedbackId))
+        .returning();
+      
+      if (!deletedFeedback) {
+        return res.status(404).json({ success: false, error: 'Feedback not found' });
+      }
+      
+      res.json({ success: true, data: deletedFeedback });
+    } catch (error) {
+      console.error('Error deleting feedback:', error);
+      res.status(500).json({ success: false, error: 'Failed to delete feedback' });
+    }
+  });
+
   return httpServer;
 }

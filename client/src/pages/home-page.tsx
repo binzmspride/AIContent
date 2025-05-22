@@ -4,6 +4,7 @@ import { Hero } from "@/components/landing/Hero";
 import { Features } from "@/components/landing/Features";
 import { Pricing } from "@/components/landing/Pricing";
 import { Faq } from "@/components/landing/Faq";
+import { FeedbackForm } from "@/components/landing/FeedbackForm";
 import { Footer } from "@/components/landing/Footer";
 import Head from "@/components/head";
 
@@ -23,6 +24,7 @@ export default function HomePage() {
         <Features />
         <Pricing />
         <Faq />
+        <FeedbackForm />
         <Footer />
       </div>
     </>
