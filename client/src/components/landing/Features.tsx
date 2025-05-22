@@ -110,22 +110,29 @@ export function Features() {
       icon: Bot,
       iconColor: "text-blue-50 dark:text-blue-100",
       bgColor: "bg-gradient-to-br from-blue-500 to-indigo-600",
-      title: t("landing.features.ai.title") || "Tạo nội dung AI tự động",
-      description: t("landing.features.ai.description") || "Hệ thống AI tiên tiến tự động phân tích và tạo nội dung chất lượng cao với giọng điệu phù hợp cho mọi ngành nghề."
+      title: t("landing.features.ai.title") || "AI Content Creation",
+      description: t("landing.features.ai.description") || "Advanced AI system automatically analyzes and creates high-quality content with appropriate tone for every industry."
     },
     {
       icon: Search,
       iconColor: "text-amber-50 dark:text-amber-100",
       bgColor: "bg-gradient-to-br from-amber-500 to-orange-600", 
-      title: t("landing.features.seo.title") || "Tối ưu hóa SEO chuyên sâu",
-      description: t("landing.features.seo.description") || "Phân tích từ khóa và tối ưu nội dung dựa trên thuật toán tìm kiếm mới nhất của Google để tăng thứ hạng trang web."
+      title: t("landing.features.seo.title") || "Multilingual Support",
+      description: t("landing.features.seo.description") || "Support Vietnamese and multiple languages for global reach."
     },
     {
       icon: Share2,
       iconColor: "text-emerald-50 dark:text-emerald-100",
       bgColor: "bg-gradient-to-br from-emerald-500 to-teal-600",
-      title: t("landing.features.integration.title") || "Tích hợp đa nền tảng",
-      description: t("landing.features.integration.description") || "Xuất bản nội dung liền mạch sang WordPress, Facebook, TikTok và các kênh xã hội khác chỉ với vài cú nhấp chuột."
+      title: t("landing.features.integration.title") || "Platform Integration",
+      description: t("landing.features.integration.description") || "Connect with WordPress, Facebook, TikTok and other social channels seamlessly."
+    },
+    {
+      icon: BarChart4,
+      iconColor: "text-purple-50 dark:text-purple-100",
+      bgColor: "bg-gradient-to-br from-purple-500 to-pink-600",
+      title: t("landing.features.analysis.title") || "Performance Analytics",
+      description: t("landing.features.analysis.description") || "Track performance and optimize content effectively with detailed insights."
     }
   ];
 
