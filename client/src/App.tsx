@@ -7,7 +7,9 @@ import { LanguageProvider } from "@/providers/LanguageProvider";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { FloatingThemeIndicator } from "@/components/common/FloatingThemeIndicator";
+import { FeedbackButton } from "@/components/FeedbackButton";
 import { useEffect } from "react";
+import { useLocation } from "wouter";
 
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/home-page";
@@ -35,6 +37,7 @@ import AdminIntegrations from "@/pages/admin/integrations-fixed";
 import AdminHistory from "@/pages/admin/history";
 import AdminSettings from "@/pages/admin/settings";
 import AdminPerformance from "@/pages/admin/performance";
+import AdminFeedback from "@/pages/admin/feedback";
 
 function Router() {
   return (
@@ -66,6 +69,7 @@ function Router() {
       <ProtectedRoute path="/admin/plans" component={AdminPlans} adminOnly={true} />
       <ProtectedRoute path="/admin/payments" component={AdminPayments} adminOnly={true} />
       <ProtectedRoute path="/admin/integrations" component={AdminIntegrations} adminOnly={true} />
+      <ProtectedRoute path="/admin/feedback" component={AdminFeedback} adminOnly={true} />
       <ProtectedRoute path="/admin/history" component={AdminHistory} adminOnly={true} />
       <ProtectedRoute path="/admin/settings" component={AdminSettings} adminOnly={true} />
       <ProtectedRoute path="/admin/performance" component={AdminPerformance} adminOnly={true} />
@@ -77,6 +81,7 @@ function Router() {
 }
 
 function App() {
+  const [location] = useLocation();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -86,6 +91,7 @@ function App() {
             <Router />
             <Toaster />
             <FloatingThemeIndicator position="bottom-right" />
+            <FeedbackButton page={location} variant="floating" />
           </AuthProvider>
         </LanguageProvider>
       </ThemeProvider>
