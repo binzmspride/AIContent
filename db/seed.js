@@ -1,6 +1,9 @@
 import { Pool } from 'pg';
 import { scrypt, randomBytes } from 'crypto';
 import { promisify } from 'util';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const scryptAsync = promisify(scrypt);
 
