@@ -2,12 +2,10 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import * as dotenv from 'dotenv';
-import { join } from 'path';
 
-// Tải biến môi trường từ file .env trong thư mục dist
-const envPath = join(__dirname, '..', 'dist', '.env');
-dotenv.config({ path: envPath });
-console.log(`Đã tải biến môi trường từ ${envPath}`);
+// Tải biến môi trường từ file .env
+dotenv.config();
+console.log("Đã tải biến môi trường từ file .env");
 
 const app = express();
 app.use(express.json());
