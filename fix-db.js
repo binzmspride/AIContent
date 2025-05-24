@@ -55,8 +55,20 @@ async function fixDatabase() {
     
     console.log('Admin user created with password: admin@1238');
     
-    // Create translations table if not exists
+    // Create all remaining tables
     await pool.query(`
+      CREATE TABLE IF NOT EXISTS plans (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        description TEXT,
+        type TEXT NOT NULL,
+        price INTEGER NOT NULL,
+        value BIGINT NOT NULL,
+        duration INTEGER,
+        created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+        updated_at TIMESTAMP DEFAULT NOW() NOT NULL
+      );
+      
       CREATE TABLE IF NOT EXISTS translations (
         id SERIAL PRIMARY KEY,
         key TEXT NOT NULL UNIQUE,
@@ -68,7 +80,7 @@ async function fixDatabase() {
       );
     `);
     
-    console.log('Translations table ensured');
+    console.log('Plans and translations tables ensured');
     
     console.log('Database fix completed successfully!');
     
