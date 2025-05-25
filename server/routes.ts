@@ -95,6 +95,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user's current plans
+  app.get('/api/dashboard/user-plans', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const userPlans = await storage.getUserPlans(userId);
+      
+      res.json({
+        success: true,
+        data: {
+          userPlans
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching user plans:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch user plans' });
+    }
+  });
+
   // Get user's articles
   app.get('/api/dashboard/articles', async (req, res) => {
     try {
