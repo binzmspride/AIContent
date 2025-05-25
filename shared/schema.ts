@@ -36,10 +36,14 @@ export const plans = pgTable('plans', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
   description: text('description'),
-  type: planTypeEnum('type').notNull(),
-  price: integer('price').notNull(),
-  value: bigint('value', { mode: 'number' }).notNull(), // Credits or storage amount
-  duration: integer('duration'), // In days, null means one-time purchase
+  type: text('type').notNull(),
+  price: text('price').notNull(), // Changed to match database numeric type
+  credits: integer('credits').notNull(),
+  durationDays: integer('duration_days'),
+  features: jsonb('features'),
+  isActive: boolean('is_active').notNull().default(true),
+  value: bigint('value', { mode: 'number' }).default(0),
+  duration: integer('duration'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
