@@ -140,9 +140,21 @@ export function setupAuth(app: Express) {
         });
       }
 
-      // Tạo tín dụng miễn phí cho người dùng mới
+      // Tự động gán gói free cho người dùng mới
       if (result.user) {
-        await storage.addUserCredits(result.user.id, 5, undefined, 'Welcome bonus');
+        // Tìm gói free (type = 'free') 
+        const freePlans = await storage.getPlans();
+        const freePlan = freePlans.find(plan => plan.type === 'free');
+        
+        if (freePlan) {
+          // Gán gói free cho user mới
+          await storage.assignPlanToUser(result.user.id, freePlan.id);
+          // Thêm credits từ gói free
+          await storage.addUserCredits(result.user.id, freePlan.credits, freePlan.id, 'Gói miễn phí khi đăng ký');
+        } else {
+          // Fallback nếu không tìm thấy gói free
+          await storage.addUserCredits(result.user.id, 10, undefined, 'Welcome bonus');
+        }
       }
 
       // Trả về thành công nhưng không đăng nhập tự động

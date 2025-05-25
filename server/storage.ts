@@ -428,6 +428,46 @@ class DatabaseStorage implements IStorage {
     return newUserPlan;
   }
   
+  async assignPlanToUser(userId: number, planId: number): Promise<schema.UserPlan> {
+    // Check if user already has this plan
+    const existingPlan = await db.query.userPlans.findFirst({
+      where: and(
+        eq(schema.userPlans.userId, userId),
+        eq(schema.userPlans.planId, planId),
+        eq(schema.userPlans.isActive, true)
+      )
+    });
+    
+    if (existingPlan) {
+      return existingPlan;
+    }
+    
+    // Get plan details to set end date
+    const plan = await db.query.plans.findFirst({
+      where: eq(schema.plans.id, planId)
+    });
+    
+    let endDate = null;
+    if (plan?.durationDays) {
+      endDate = new Date();
+      endDate.setDate(endDate.getDate() + plan.durationDays);
+    }
+    
+    // Create new user plan
+    const [newUserPlan] = await db.insert(schema.userPlans)
+      .values({
+        userId,
+        planId,
+        startDate: new Date(),
+        endDate,
+        isActive: true,
+        usedStorage: 0
+      })
+      .returning();
+      
+    return newUserPlan;
+  }
+  
   // Credit transactions
   async getUserCredits(userId: number): Promise<number> {
     const user = await this.getUser(userId);
