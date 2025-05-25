@@ -100,9 +100,9 @@ export default function Plans() {
     up => up.plan.type === 'storage' && up.isActive
   );
   
-  // Get active credit plan
+  // Get active credit plan (including free plans)
   const activeCreditPlan = userPlans?.userPlans?.find(
-    up => up.plan.type === 'credit' && up.isActive
+    up => (up.plan.type === 'credit' || up.plan.type === 'free') && up.isActive
   );
 
   return (
