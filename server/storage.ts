@@ -45,6 +45,7 @@ export interface IStorage {
   deletePlan(id: number): Promise<boolean>;
   getUserPlans(userId: number): Promise<(schema.UserPlan & { plan: schema.Plan })[]>;
   createUserPlan(userPlan: schema.InsertUserPlan): Promise<schema.UserPlan>;
+  assignPlanToUser(userId: number, planId: number): Promise<schema.UserPlan>;
   
   // Credit transactions
   getUserCredits(userId: number): Promise<number>;
