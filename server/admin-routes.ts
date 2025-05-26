@@ -303,6 +303,7 @@ export function registerAdminRoutes(app: Express) {
         description,
         type,
         price: String(price), // Ensure price is string to match schema
+        credits: value, // Map value to credits field
         value,
         duration
       });

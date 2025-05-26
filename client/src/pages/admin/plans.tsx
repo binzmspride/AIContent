@@ -167,8 +167,22 @@ export default function AdminPlans() {
   const updatePlanMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: any }) => {
       try {
+        console.log('Sending update data:', data);
         const res = await apiRequest("PATCH", `/api/admin/plans/${id}`, data);
-        return await res.json();
+        
+        // Check content type before parsing
+        const contentType = res.headers.get('content-type');
+        console.log('Response content type:', contentType);
+        
+        if (!contentType || !contentType.includes('application/json')) {
+          const responseText = await res.text();
+          console.error('Non-JSON response:', responseText);
+          throw new Error('Server returned invalid response format');
+        }
+        
+        const result = await res.json();
+        console.log('Update response:', result);
+        return result;
       } catch (error) {
         console.error('API Error:', error);
         throw error;
