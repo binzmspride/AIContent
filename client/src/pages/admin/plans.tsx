@@ -53,7 +53,7 @@ import Head from "@/components/head";
 const planFormSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
   description: z.string().optional(),
-  type: z.enum(["credit", "storage", "free", "subscription"]),
+  type: z.string(),
   price: z.coerce.number().min(0, "Price must be a positive number"),
   value: z.coerce.number().min(1, "Value must be at least 1"),
   duration: z.coerce.number().optional(),
@@ -165,23 +165,33 @@ export default function AdminPlans() {
 
   // Update plan mutation
   const updatePlanMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: PlanFormValues }) => {
-      const res = await apiRequest("PATCH", `/api/admin/plans/${id}`, data);
-      const result = await res.json();
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to update plan');
+    mutationFn: async ({ id, data }: { id: number; data: any }) => {
+      try {
+        const res = await apiRequest("PATCH", `/api/admin/plans/${id}`, data);
+        return await res.json();
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
       }
-      return result;
     },
-    onSuccess: () => {
-      toast({
-        title: "Cập nhật thành công",
-        description: "Gói dịch vụ đã được cập nhật thành công",
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/plans"] });
-      setIsEditDialogOpen(false);
+    onSuccess: (result) => {
+      if (result.success) {
+        toast({
+          title: "Cập nhật thành công",
+          description: "Gói dịch vụ đã được cập nhật thành công",
+        });
+        queryClient.invalidateQueries({ queryKey: ["/api/plans"] });
+        setIsEditDialogOpen(false);
+      } else {
+        toast({
+          title: "Lỗi cập nhật",
+          description: result.error || "Có lỗi xảy ra",
+          variant: "destructive",
+        });
+      }
     },
     onError: (error: Error) => {
+      console.error('Update plan error:', error);
       toast({
         title: "Lỗi cập nhật",
         description: error.message,
@@ -258,8 +268,8 @@ export default function AdminPlans() {
     editForm.reset({
       name: plan.name,
       description: plan.description || "",
-      type: plan.type as "credit" | "storage" | "free" | "subscription",
-      price: plan.price,
+      type: plan.type,
+      price: Number(plan.price),
       value: plan.value ?? 0,
       duration: plan.duration ?? undefined,
     });
