@@ -254,7 +254,7 @@ export default function AdminPlans() {
     editForm.reset({
       name: plan.name,
       description: plan.description || "",
-      type: plan.type,
+      type: plan.type as "credit" | "storage" | "free" | "subscription",
       price: plan.price,
       value: plan.value,
       duration: plan.duration || undefined,
