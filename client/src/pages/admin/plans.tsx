@@ -167,19 +167,23 @@ export default function AdminPlans() {
   const updatePlanMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: PlanFormValues }) => {
       const res = await apiRequest("PATCH", `/api/admin/plans/${id}`, data);
-      return res.json();
+      const result = await res.json();
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to update plan');
+      }
+      return result;
     },
     onSuccess: () => {
       toast({
-        title: "Plan updated",
-        description: "The plan has been updated successfully",
+        title: "Cập nhật thành công",
+        description: "Gói dịch vụ đã được cập nhật thành công",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/plans"] });
       setIsEditDialogOpen(false);
     },
     onError: (error: Error) => {
       toast({
-        title: "Failed to update plan",
+        title: "Lỗi cập nhật",
         description: error.message,
         variant: "destructive",
       });
@@ -256,8 +260,8 @@ export default function AdminPlans() {
       description: plan.description || "",
       type: plan.type as "credit" | "storage" | "free" | "subscription",
       price: plan.price,
-      value: plan.value,
-      duration: plan.duration || undefined,
+      value: plan.value ?? 0,
+      duration: plan.duration ?? undefined,
     });
     setIsEditDialogOpen(true);
   };
