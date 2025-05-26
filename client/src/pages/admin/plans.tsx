@@ -100,8 +100,8 @@ export default function AdminPlans() {
   
   const plans = plansResponse?.data || [];
   
-  // Filter plans by type
-  const creditPlans = plans.filter(plan => plan.type === "credit");
+  // Filter plans by type - include all credit-related plans
+  const creditPlans = plans.filter(plan => plan.type === "credit" || plan.type === "free" || plan.type === "subscription");
   const storagePlans = plans.filter(plan => plan.type === "storage");
 
   // Form for adding new plan
