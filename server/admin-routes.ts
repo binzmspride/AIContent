@@ -302,10 +302,17 @@ export function registerAdminRoutes(app: Express) {
         name,
         description,
         type,
-        price,
+        price: String(price), // Ensure price is string to match schema
         value,
         duration
       });
+      
+      if (!updatedPlan) {
+        return res.status(500).json({
+          success: false,
+          error: "Failed to update plan in database"
+        });
+      }
       
       return res.status(200).json({
         success: true,
