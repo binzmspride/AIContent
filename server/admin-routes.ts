@@ -1,8 +1,10 @@
 import { Request, Response, Express } from "express";
 import { storage } from "./storage";
-import { pool } from "../db";
+import { pool, db } from "../db";
 import { z } from "zod";
 import { format, subHours, subDays } from "date-fns";
+import * as schema from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 /**
  * Registers admin routes for admin panel functionality
@@ -277,6 +279,9 @@ export function registerAdminRoutes(app: Express) {
   
   // Update an existing plan
   app.patch("/api/admin/plans/:id", async (req: Request, res: Response) => {
+    // Ensure response is always JSON
+    res.setHeader('Content-Type', 'application/json');
+    
     if (!req.isAuthenticated() || req.user.role !== "admin") {
       return res.status(403).json({ 
         success: false, 
@@ -288,6 +293,8 @@ export function registerAdminRoutes(app: Express) {
       const planId = parseInt(req.params.id);
       const { name, description, type, price, value, duration } = req.body;
       
+      console.log("Updating plan:", planId, { name, description, type, price, value, duration });
+      
       // Check if plan exists
       const existingPlan = await storage.getPlan(planId);
       if (!existingPlan) {
@@ -297,16 +304,20 @@ export function registerAdminRoutes(app: Express) {
         });
       }
       
-      // Update plan
-      const updatedPlan = await storage.updatePlan(planId, {
-        name,
-        description,
-        type,
-        price: String(price), // Ensure price is string to match schema
-        credits: value, // Map value to credits field
-        value,
-        duration
-      });
+      // Prepare update data
+      const updateData = {
+        name: name || existingPlan.name,
+        description: description || existingPlan.description,
+        type: type || existingPlan.type,
+        price: String(price || existingPlan.price),
+        value: value || existingPlan.value,
+        duration: duration || existingPlan.duration
+      };
+      
+      console.log("Update data prepared:", updateData);
+      
+      // Update plan using storage function
+      const updatedPlan = await storage.updatePlan(planId, updateData);
       
       if (!updatedPlan) {
         return res.status(500).json({
@@ -314,6 +325,8 @@ export function registerAdminRoutes(app: Express) {
           error: "Failed to update plan in database"
         });
       }
+      
+      console.log("Plan updated successfully:", updatedPlan);
       
       return res.status(200).json({
         success: true,
