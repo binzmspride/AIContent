@@ -53,7 +53,7 @@ import Head from "@/components/head";
 const planFormSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
   description: z.string().optional(),
-  type: z.enum(["credit", "storage"]),
+  type: z.enum(["credit", "storage", "free", "subscription"]),
   price: z.coerce.number().min(0, "Price must be a positive number"),
   value: z.coerce.number().min(1, "Value must be at least 1"),
   duration: z.coerce.number().optional(),
@@ -359,6 +359,8 @@ export default function AdminPlans() {
                               </FormControl>
                               <SelectContent>
                                 <SelectItem value="credit">Credit</SelectItem>
+                                <SelectItem value="free">Free</SelectItem>
+                                <SelectItem value="subscription">Subscription</SelectItem>
                                 <SelectItem value="storage">Storage</SelectItem>
                               </SelectContent>
                             </Select>
@@ -618,9 +620,9 @@ export default function AdminPlans() {
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent className="sm:max-w-[550px]">
             <DialogHeader>
-              <DialogTitle>Edit Plan</DialogTitle>
+              <DialogTitle>Chỉnh sửa gói dịch vụ</DialogTitle>
               <DialogDescription>
-                Make changes to the plan details. Click save when you're done.
+                Thay đổi thông tin gói dịch vụ. Nhấn lưu khi hoàn thành.
               </DialogDescription>
             </DialogHeader>
             
@@ -631,9 +633,9 @@ export default function AdminPlans() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Plan Name</FormLabel>
+                      <FormLabel>Tên gói</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g. Basic Plan" {...field} />
+                        <Input placeholder="VD: Gói Cơ Bản" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -645,9 +647,9 @@ export default function AdminPlans() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel>Mô tả</FormLabel>
                       <FormControl>
-                        <Input placeholder="Brief description of the plan" {...field} />
+                        <Input placeholder="Mô tả ngắn về gói dịch vụ" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -660,7 +662,7 @@ export default function AdminPlans() {
                     name="price"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Price (VND)</FormLabel>
+                        <FormLabel>Giá (VND)</FormLabel>
                         <FormControl>
                           <Input type="number" {...field} min={0} step={1000} />
                         </FormControl>
@@ -675,7 +677,7 @@ export default function AdminPlans() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          {editForm.watch("type") === "credit" ? "Credits" : "Storage (MB)"}
+                          {editForm.watch("type") === "credit" || editForm.watch("type") === "free" || editForm.watch("type") === "subscription" ? "Tín dụng" : "Dung lượng (MB)"}
                         </FormLabel>
                         <FormControl>
                           <Input type="number" {...field} min={1} />
@@ -691,7 +693,7 @@ export default function AdminPlans() {
                   name="duration"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Duration (days)</FormLabel>
+                      <FormLabel>Thời hạn (ngày)</FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
@@ -702,11 +704,11 @@ export default function AdminPlans() {
                             const value = e.target.value === "" ? undefined : parseInt(e.target.value);
                             field.onChange(value);
                           }}
-                          placeholder="Leave empty for one-time"
+                          placeholder="Để trống nếu mua một lần"
                         />
                       </FormControl>
                       <FormDescription>
-                        Leave empty for one-time purchase
+                        Để trống cho gói mua một lần
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -719,13 +721,13 @@ export default function AdminPlans() {
                     variant="outline" 
                     onClick={() => setIsEditDialogOpen(false)}
                   >
-                    Cancel
+                    Hủy
                   </Button>
                   <Button 
                     type="submit"
                     disabled={updatePlanMutation.isPending}
                   >
-                    {updatePlanMutation.isPending ? "Saving..." : "Save Changes"}
+                    {updatePlanMutation.isPending ? "Đang lưu..." : "Lưu thay đổi"}
                   </Button>
                 </DialogFooter>
               </form>
