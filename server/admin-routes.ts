@@ -279,17 +279,17 @@ export function registerAdminRoutes(app: Express) {
   
   // Update an existing plan
   app.patch("/api/admin/plans/:id", async (req: Request, res: Response) => {
-    // Ensure response is always JSON
-    res.setHeader('Content-Type', 'application/json');
-    
-    if (!req.isAuthenticated() || req.user.role !== "admin") {
-      return res.status(403).json({ 
-        success: false, 
-        error: "Unauthorized. Only admin users can perform this action." 
-      });
-    }
-
     try {
+      // Ensure response is always JSON
+      res.setHeader('Content-Type', 'application/json');
+      
+      if (!req.isAuthenticated() || req.user.role !== "admin") {
+        return res.status(403).json({ 
+          success: false, 
+          error: "Unauthorized. Only admin users can perform this action." 
+        });
+      }
+
       const planId = parseInt(req.params.id);
       const { name, description, type, price, value, duration } = req.body;
       
@@ -311,7 +311,7 @@ export function registerAdminRoutes(app: Express) {
         type: type || existingPlan.type,
         price: String(price !== undefined ? price : existingPlan.price),
         credits: Number(value !== undefined ? value : existingPlan.credits),
-        durationDays: Number(duration !== undefined ? duration : existingPlan.durationDays)
+        durationDays: duration !== undefined ? Number(duration) : existingPlan.durationDays
       };
       
       console.log("Update data prepared:", updateData);
@@ -320,6 +320,7 @@ export function registerAdminRoutes(app: Express) {
       const updatedPlan = await storage.updatePlan(planId, updateData);
       
       if (!updatedPlan) {
+        console.error("Storage.updatePlan returned null");
         return res.status(500).json({
           success: false,
           error: "Failed to update plan in database"
@@ -328,13 +329,15 @@ export function registerAdminRoutes(app: Express) {
       
       console.log("Plan updated successfully:", updatedPlan);
       
-      return res.status(200).json({
+      // Send success response
+      res.status(200).json({
         success: true,
         data: updatedPlan
       });
+      
     } catch (error) {
       console.error("Error updating plan:", error);
-      return res.status(500).json({
+      res.status(500).json({
         success: false,
         error: "Failed to update plan"
       });
