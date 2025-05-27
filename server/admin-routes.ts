@@ -278,77 +278,60 @@ export function registerAdminRoutes(app: Express) {
   });
   
   // Update an existing plan
-  app.patch("/api/admin/plans/:id", (req: Request, res: Response) => {
-    // Force JSON response
+  app.patch("/api/admin/plans/:id", async (req: Request, res: Response) => {
     res.setHeader('Content-Type', 'application/json');
     
-    // Wrap everything in try-catch to prevent any HTML responses
-    (async () => {
-      try {
-        if (!req.isAuthenticated() || req.user.role !== "admin") {
-          return res.status(403).json({ 
-            success: false, 
-            error: "Unauthorized. Only admin users can perform this action." 
-          });
-        }
+    try {
+      if (!req.isAuthenticated() || req.user.role !== "admin") {
+        return res.json({ 
+          success: false, 
+          error: "Unauthorized" 
+        });
+      }
 
-        const planId = parseInt(req.params.id);
-        const { name, description, type, price, value } = req.body;
-        
-        console.log("Updating plan:", planId, { name, description, type, price, value });
-        
-        // Get existing plan
-        const existingPlan = await storage.getPlan(planId);
-        if (!existingPlan) {
-          return res.status(404).json({
-            success: false,
-            error: "Plan not found"
-          });
-        }
-        
-        // Simple update with only the fields we care about
-        const updateData: any = {};
-        if (name !== undefined) updateData.name = name;
-        if (description !== undefined) updateData.description = description;
-        if (type !== undefined) updateData.type = type;
-        if (price !== undefined) updateData.price = String(price);
-        if (value !== undefined) updateData.credits = Number(value);
-        
-        console.log("Update data:", updateData);
-        
-        // Update the plan
-        const updatedPlan = await storage.updatePlan(planId, updateData);
-        
-        if (!updatedPlan) {
-          return res.status(500).json({
-            success: false,
-            error: "Failed to update plan"
-          });
-        }
-        
-        console.log("Plan updated successfully");
-        
-        return res.status(200).json({
-          success: true,
-          data: updatedPlan
-        });
-        
-      } catch (error) {
-        console.error("Update plan error:", error);
-        return res.status(500).json({
+      const planId = parseInt(req.params.id);
+      const { name, description, type, price, value } = req.body;
+      
+      console.log("Updating plan:", planId, { name, description, type, price, value });
+      
+      // Direct database update using raw SQL to avoid any ORM issues
+      const query = `
+        UPDATE plans 
+        SET name = $1, description = $2, type = $3, price = $4, credits = $5, updated_at = NOW()
+        WHERE id = $6 
+        RETURNING *
+      `;
+      
+      const result = await pool.query(query, [
+        name, 
+        description, 
+        type, 
+        String(price), 
+        Number(value), 
+        planId
+      ]);
+      
+      if (result.rows.length === 0) {
+        return res.json({
           success: false,
-          error: "Internal server error"
+          error: "Plan not found"
         });
       }
-    })().catch(error => {
-      console.error("Async error:", error);
-      if (!res.headersSent) {
-        res.status(500).json({
-          success: false,
-          error: "Server error"
-        });
-      }
-    });
+      
+      console.log("Plan updated successfully");
+      
+      return res.json({
+        success: true,
+        data: result.rows[0]
+      });
+      
+    } catch (error) {
+      console.error("Update plan error:", error);
+      return res.json({
+        success: false,
+        error: "Failed to update plan"
+      });
+    }
   });
   
   // Delete a plan
