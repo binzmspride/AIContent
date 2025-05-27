@@ -163,33 +163,15 @@ export default function AdminPlans() {
     },
   });
 
-  // Update plan mutation
+  // Update plan mutation using new endpoint
   const updatePlanMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: any }) => {
-      try {
-        const res = await apiRequest("PATCH", `/api/admin/plans/${id}`, data);
-        
-        // Check if response is ok
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(`Failed to update plan: ${errorText}`);
-        }
-        
-        // Check content type
-        const contentType = res.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          const responseText = await res.text();
-          console.error('Non-JSON response received:', responseText);
-          throw new Error('Server trả về định dạng không hợp lệ');
-        }
-        
-        const result = await res.json();
-        console.log('Update successful:', result);
-        return result;
-      } catch (error) {
-        console.error('Update plan mutation error:', error);
-        throw error;
-      }
+      const res = await apiRequest("POST", "/api/admin/update-plan", { 
+        id, 
+        ...data 
+      });
+      const result = await res.json();
+      return result;
     },
     onSuccess: (result) => {
       if (result.success) {

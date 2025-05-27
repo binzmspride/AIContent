@@ -277,7 +277,64 @@ export function registerAdminRoutes(app: Express) {
     }
   });
   
-  // Update an existing plan
+  // Update an existing plan - new endpoint to avoid Vite conflicts
+  app.post("/api/admin/update-plan", async (req: Request, res: Response) => {
+    res.setHeader('Content-Type', 'application/json');
+    
+    try {
+      if (!req.isAuthenticated() || req.user.role !== "admin") {
+        return res.json({ 
+          success: false, 
+          error: "Unauthorized" 
+        });
+      }
+
+      const { id, name, description, type, price, value } = req.body;
+      const planId = parseInt(id);
+      
+      console.log("Updating plan:", planId, { name, description, type, price, value });
+      
+      // Direct database update using raw SQL to avoid any ORM issues
+      const query = `
+        UPDATE plans 
+        SET name = $1, description = $2, type = $3, price = $4, credits = $5, updated_at = NOW()
+        WHERE id = $6 
+        RETURNING *
+      `;
+      
+      const result = await pool.query(query, [
+        name, 
+        description, 
+        type, 
+        String(price), 
+        Number(value), 
+        planId
+      ]);
+      
+      if (result.rows.length === 0) {
+        return res.json({
+          success: false,
+          error: "Plan not found"
+        });
+      }
+      
+      console.log("Plan updated successfully");
+      
+      return res.json({
+        success: true,
+        data: result.rows[0]
+      });
+      
+    } catch (error) {
+      console.error("Update plan error:", error);
+      return res.json({
+        success: false,
+        error: "Failed to update plan"
+      });
+    }
+  });
+
+  // Keep the old PATCH endpoint for backward compatibility
   app.patch("/api/admin/plans/:id", async (req: Request, res: Response) => {
     res.setHeader('Content-Type', 'application/json');
     
