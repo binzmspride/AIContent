@@ -304,14 +304,14 @@ export function registerAdminRoutes(app: Express) {
         });
       }
       
-      // Prepare update data
+      // Prepare update data with proper field mapping
       const updateData = {
         name: name || existingPlan.name,
         description: description || existingPlan.description,
         type: type || existingPlan.type,
-        price: String(price || existingPlan.price),
-        value: value || existingPlan.value,
-        duration: duration || existingPlan.duration
+        price: String(price !== undefined ? price : existingPlan.price),
+        credits: Number(value !== undefined ? value : existingPlan.credits),
+        durationDays: Number(duration !== undefined ? duration : existingPlan.durationDays)
       };
       
       console.log("Update data prepared:", updateData);
