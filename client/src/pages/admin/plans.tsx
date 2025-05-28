@@ -163,22 +163,45 @@ export default function AdminPlans() {
     },
   });
 
-  // Update plan mutation using new endpoint
+  // Update plan mutation using simple fetch
   const updatePlanMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: any }) => {
-      const res = await apiRequest("POST", "/api/admin/update-plan", { 
-        id, 
-        ...data 
-      });
-      
-      const result = await res.json();
-      console.log('API Response:', result);
-      
-      if (!result.success) {
-        throw new Error(result.error || 'Cập nhật không thành công');
+      try {
+        const response = await fetch("/api/admin/update-plan", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ 
+            id, 
+            ...data 
+          }),
+          credentials: "include",
+        });
+
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers.get('content-type'));
+        
+        const responseText = await response.text();
+        console.log('Response text:', responseText);
+        
+        let result;
+        try {
+          result = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error('JSON parse error:', parseError);
+          throw new Error('Server trả về định dạng không hợp lệ');
+        }
+        
+        if (!result.success) {
+          throw new Error(result.error || 'Cập nhật không thành công');
+        }
+        
+        return result;
+      } catch (error) {
+        console.error('Update error:', error);
+        throw error;
       }
-      
-      return result;
     },
     onSuccess: (result) => {
       if (result.success) {
