@@ -779,6 +779,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update plan (admin only)
+  app.patch('/api/admin/plans/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+
+      const planId = parseInt(req.params.id);
+      const { name, description, price, value, duration, isActive } = req.body;
+
+      if (!planId || isNaN(planId)) {
+        return res.status(400).json({ success: false, error: 'Valid plan ID is required' });
+      }
+
+      if (!name || !description) {
+        return res.status(400).json({ success: false, error: 'Name and description are required' });
+      }
+
+      if (typeof price !== 'number' || price < 0) {
+        return res.status(400).json({ success: false, error: 'Valid price is required' });
+      }
+
+      if (typeof value !== 'number' || value <= 0) {
+        return res.status(400).json({ success: false, error: 'Valid value is required' });
+      }
+
+      // Update plan
+      const [updatedPlan] = await db
+        .update(schema.plans)
+        .set({
+          name: name.trim(),
+          description: description.trim(),
+          price,
+          value,
+          duration: duration ? parseInt(duration) : null,
+          isActive: isActive !== undefined ? isActive : true,
+          updatedAt: new Date()
+        })
+        .where(eq(schema.plans.id, planId))
+        .returning();
+
+      if (!updatedPlan) {
+        return res.status(404).json({ success: false, error: 'Plan not found' });
+      }
+
+      res.json({ success: true, data: updatedPlan });
+    } catch (error) {
+      console.error('Error updating plan:', error);
+      res.status(500).json({ success: false, error: 'Failed to update plan' });
+    }
+  });
+
   // ========== Admin API ==========
   // Get all users
   app.get('/api/admin/users', async (req, res) => {
