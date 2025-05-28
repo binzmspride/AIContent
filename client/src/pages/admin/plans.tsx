@@ -167,7 +167,7 @@ export default function AdminPlans() {
   const updatePlanMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: any }) => {
       try {
-        const response = await fetch("/api/admin/update-plan", {
+        const response = await fetch("/admin-api/update-plan", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

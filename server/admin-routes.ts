@@ -277,8 +277,8 @@ export function registerAdminRoutes(app: Express) {
     }
   });
   
-  // Update an existing plan - new endpoint to avoid Vite conflicts
-  app.post("/api/admin/update-plan", async (req: Request, res: Response) => {
+  // Update plan endpoint with different path to avoid Vite conflicts
+  app.post("/admin-api/update-plan", async (req: Request, res: Response) => {
     // Ensure JSON response at the beginning
     res.setHeader('Content-Type', 'application/json');
     
