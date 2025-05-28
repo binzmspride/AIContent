@@ -1,6 +1,3 @@
-The code has been modified to fix error handling and validation in the edit plan dialog.
-```
-```replit_final_file
 import { useState } from "react";
 import { AdminLayout } from "@/components/admin/Layout";
 import { useLanguage } from "@/hooks/use-language";
@@ -85,7 +82,7 @@ export default function AdminPlans() {
   const { data: plansResponse, isLoading: isLoadingPlans } = useQuery<{success: boolean, data: Plan[]}>({
     queryKey: ["/api/plans"],
   });
-
+  
   // Fetch trial plan info
   const { data: trialPlanResponse, isLoading: isLoadingTrialPlan } = useQuery<{ success: boolean, data: Plan }>({
     queryKey: ["/api/admin/trial-plan"],
@@ -100,9 +97,9 @@ export default function AdminPlans() {
       return await response.json();
     },
   });
-
+  
   const plans = plansResponse?.data || [];
-
+  
   // Filter plans by type - include all credit-related plans
   const creditPlans = plans.filter(plan => plan.type === "credit" || plan.type === "free" || plan.type === "subscription");
   const storagePlans = plans.filter(plan => plan.type === "storage");
@@ -132,7 +129,7 @@ export default function AdminPlans() {
       duration: undefined,
     },
   });
-
+  
   // Form for trial plan settings
   const trialPlanForm = useForm<TrialPlanFormValues>({
     resolver: zodResolver(trialPlanSchema),
@@ -184,10 +181,10 @@ export default function AdminPlans() {
 
         console.log('Response status:', response.status);
         console.log('Response headers:', response.headers.get('content-type'));
-
+        
         const responseText = await response.text();
         console.log('Response text:', responseText);
-
+        
         let result;
         try {
           result = JSON.parse(responseText);
@@ -195,11 +192,11 @@ export default function AdminPlans() {
           console.error('JSON parse error:', parseError);
           throw new Error('Server trả về định dạng không hợp lệ');
         }
-
+        
         if (!result.success) {
           throw new Error(result.error || 'Cập nhật không thành công');
         }
-
+        
         return result;
       } catch (error) {
         console.error('Update error:', error);
@@ -255,7 +252,7 @@ export default function AdminPlans() {
       });
     },
   });
-
+  
   // Trial plan mutation
   const updateTrialPlanMutation = useMutation({
     mutationFn: async (data: TrialPlanFormValues) => {
@@ -290,7 +287,7 @@ export default function AdminPlans() {
       updatePlanMutation.mutate({ id: selectedPlan.id, data });
     }
   };
-
+  
   const onTrialPlanSubmit = (data: TrialPlanFormValues) => {
     updateTrialPlanMutation.mutate(data);
   };
@@ -324,7 +321,7 @@ export default function AdminPlans() {
       <Head>
         <title>{t("admin.plans")} - {t("common.appName")}</title>
       </Head>
-
+      
       <AdminLayout title={t("admin.plans")}>
         <div className="mb-6 flex justify-between items-center">
           <Tabs defaultValue="credit" className="w-[400px]" onValueChange={(value) => setActiveTab(value as "credit" | "storage")}>
@@ -333,7 +330,7 @@ export default function AdminPlans() {
               <TabsTrigger value="storage">Storage Plans</TabsTrigger>
             </TabsList>
           </Tabs>
-
+          
           <div className="space-x-2">
             <Button 
               variant="outline" 
@@ -341,7 +338,7 @@ export default function AdminPlans() {
             >
               Configure Trial Plan
             </Button>
-
+            
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="flex items-center">
@@ -356,7 +353,7 @@ export default function AdminPlans() {
                     Create a new plan for users to purchase. Click save when you're done.
                   </DialogDescription>
                 </DialogHeader>
-
+                
                 <Form {...addForm}>
                   <form onSubmit={addForm.handleSubmit(onAddSubmit)} className="space-y-4">
                     <FormField
@@ -372,7 +369,7 @@ export default function AdminPlans() {
                         </FormItem>
                       )}
                     />
-
+                    
                     <FormField
                       control={addForm.control}
                       name="description"
@@ -386,7 +383,7 @@ export default function AdminPlans() {
                         </FormItem>
                       )}
                     />
-
+                    
                     <div className="grid grid-cols-2 gap-4">
                       <FormField
                         control={addForm.control}
@@ -414,7 +411,7 @@ export default function AdminPlans() {
                           </FormItem>
                         )}
                       />
-
+                      
                       <FormField
                         control={addForm.control}
                         name="price"
@@ -429,7 +426,7 @@ export default function AdminPlans() {
                         )}
                       />
                     </div>
-
+                    
                     <div className="grid grid-cols-2 gap-4">
                       <FormField
                         control={addForm.control}
@@ -446,7 +443,7 @@ export default function AdminPlans() {
                           </FormItem>
                         )}
                       />
-
+                      
                       <FormField
                         control={addForm.control}
                         name="duration"
@@ -474,7 +471,7 @@ export default function AdminPlans() {
                         )}
                       />
                     </div>
-
+                    
                     <DialogFooter>
                       <Button 
                         type="button" 
@@ -496,7 +493,7 @@ export default function AdminPlans() {
             </Dialog>
           </div>
         </div>
-
+        
         {/* Trial Plan Dialog */}
         <Dialog open={isTrialPlanDialogOpen} onOpenChange={setIsTrialPlanDialogOpen}>
           <DialogContent className="sm:max-w-[500px]">
@@ -506,7 +503,7 @@ export default function AdminPlans() {
                 Set which plan should be given to new users as a trial plan
               </DialogDescription>
             </DialogHeader>
-
+            
             <Form {...trialPlanForm}>
               <form onSubmit={trialPlanForm.handleSubmit(onTrialPlanSubmit)} className="space-y-4">
                 <FormField
@@ -544,7 +541,7 @@ export default function AdminPlans() {
                     </FormItem>
                   )}
                 />
-
+                
                 <DialogFooter>
                   <Button
                     type="button"
@@ -564,7 +561,7 @@ export default function AdminPlans() {
             </Form>
           </DialogContent>
         </Dialog>
-
+        
         <Card>
           <CardHeader>
             <CardTitle>
@@ -661,7 +658,7 @@ export default function AdminPlans() {
             </Table>
           </CardContent>
         </Card>
-
+        
         {/* Edit Plan Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent className="sm:max-w-[550px]">
@@ -671,7 +668,7 @@ export default function AdminPlans() {
                 Thay đổi thông tin gói dịch vụ. Nhấn lưu khi hoàn thành.
               </DialogDescription>
             </DialogHeader>
-
+            
             <Form {...editForm}>
               <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="space-y-4">
                 <FormField
@@ -687,7 +684,7 @@ export default function AdminPlans() {
                     </FormItem>
                   )}
                 />
-
+                
                 <FormField
                   control={editForm.control}
                   name="description"
@@ -701,7 +698,7 @@ export default function AdminPlans() {
                     </FormItem>
                   )}
                 />
-
+                
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={editForm.control}
@@ -716,7 +713,7 @@ export default function AdminPlans() {
                       </FormItem>
                     )}
                   />
-
+                  
                   <FormField
                     control={editForm.control}
                     name="value"
@@ -733,7 +730,7 @@ export default function AdminPlans() {
                     )}
                   />
                 </div>
-
+                
                 <FormField
                   control={editForm.control}
                   name="duration"
@@ -760,7 +757,7 @@ export default function AdminPlans() {
                     </FormItem>
                   )}
                 />
-
+                
                 <DialogFooter>
                   <Button 
                     type="button" 
@@ -780,7 +777,7 @@ export default function AdminPlans() {
             </Form>
           </DialogContent>
         </Dialog>
-
+        
         {/* Delete Plan Dialog */}
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DialogContent className="sm:max-w-[425px]">
@@ -790,7 +787,7 @@ export default function AdminPlans() {
                 Are you sure you want to delete this plan? This action cannot be undone.
               </DialogDescription>
             </DialogHeader>
-
+            
             {selectedPlan && (
               <div className="py-4">
                 <p><strong>Name:</strong> {selectedPlan.name}</p>
@@ -799,7 +796,7 @@ export default function AdminPlans() {
                 <p><strong>Price:</strong> {formatCurrency(selectedPlan.price)}</p>
               </div>
             )}
-
+            
             <DialogFooter>
               <Button 
                 type="button" 
