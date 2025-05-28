@@ -279,11 +279,18 @@ export function registerAdminRoutes(app: Express) {
   
   // Update an existing plan - new endpoint to avoid Vite conflicts
   app.post("/api/admin/update-plan", async (req: Request, res: Response) => {
+    // Ensure JSON response at the beginning
     res.setHeader('Content-Type', 'application/json');
     
     try {
+      console.log("=== UPDATE PLAN REQUEST START ===");
+      console.log("Request body:", req.body);
+      console.log("User authenticated:", req.isAuthenticated());
+      console.log("User role:", req.user?.role);
+      
       if (!req.isAuthenticated() || req.user.role !== "admin") {
-        return res.json({ 
+        console.log("Authorization failed");
+        return res.status(403).json({ 
           success: false, 
           error: "Unauthorized" 
         });
@@ -292,9 +299,10 @@ export function registerAdminRoutes(app: Express) {
       const { id, name, description, type, price, value } = req.body;
       const planId = parseInt(id);
       
-      console.log("Updating plan:", planId, { name, description, type, price, value });
+      console.log("Parsed plan ID:", planId);
+      console.log("Update data:", { name, description, type, price, value });
       
-      // Direct database update using raw SQL to avoid any ORM issues
+      // Direct database update using raw SQL
       const query = `
         UPDATE plans 
         SET name = $1, description = $2, type = $3, price = $4, credits = $5, updated_at = NOW()
@@ -302,6 +310,7 @@ export function registerAdminRoutes(app: Express) {
         RETURNING *
       `;
       
+      console.log("Executing SQL query...");
       const result = await pool.query(query, [
         name, 
         description, 
@@ -311,26 +320,38 @@ export function registerAdminRoutes(app: Express) {
         planId
       ]);
       
+      console.log("SQL result:", result.rows);
+      
       if (result.rows.length === 0) {
-        return res.json({
+        console.log("No plan found with ID:", planId);
+        return res.status(404).json({
           success: false,
           error: "Plan not found"
         });
       }
       
-      console.log("Plan updated successfully");
-      
-      return res.json({
+      const response = {
         success: true,
         data: result.rows[0]
-      });
+      };
+      
+      console.log("Sending success response:", response);
+      console.log("=== UPDATE PLAN REQUEST END ===");
+      
+      return res.status(200).json(response);
       
     } catch (error) {
-      console.error("Update plan error:", error);
-      return res.json({
+      console.error("=== UPDATE PLAN ERROR ===");
+      console.error("Error details:", error);
+      console.error("Error stack:", error.stack);
+      
+      const errorResponse = {
         success: false,
         error: "Failed to update plan"
-      });
+      };
+      
+      console.log("Sending error response:", errorResponse);
+      return res.status(500).json(errorResponse);
     }
   });
 
