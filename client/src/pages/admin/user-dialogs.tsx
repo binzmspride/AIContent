@@ -89,13 +89,21 @@ export function AdjustCreditsDialog({ isOpen, onOpenChange, user }: AdjustCredit
       return result;
     },
     onSuccess: (data) => {
-      toast({
-        title: "Thành công",
-        description: `Tín dụng đã được điều chỉnh. Số dư hiện tại: ${data.data.currentCredits}`,
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
-      onOpenChange(false);
-      adjustCreditsForm.reset();
+      if (data && data.success) {
+        toast({
+          title: "Thành công",
+          description: `Tín dụng đã được điều chỉnh thành công!`,
+        });
+        queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
+        onOpenChange(false);
+        adjustCreditsForm.reset();
+      } else {
+        toast({
+          title: "Lỗi",
+          description: "Không thể điều chỉnh tín dụng",
+          variant: "destructive",
+        });
+      }
     },
     onError: (error: Error) => {
       toast({

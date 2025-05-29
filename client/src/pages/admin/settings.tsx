@@ -994,12 +994,12 @@ export default function AdminSettings() {
                           name="defaultUserCredits"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>{t("admin.settingsPage.defaultUserCredits") || "Credits mặc định"}</FormLabel>
+                              <FormLabel>{t("admin.settingsPage.defaultUserCredits") || "Tín dụng mặc định"}</FormLabel>
                               <FormControl>
                                 <Input type="number" min="0" {...field} />
                               </FormControl>
                               <FormDescription>
-                                {t("admin.settingsPage.defaultUserCreditsDescription") || "Credits cấp cho người dùng mới"}
+                                {t("admin.settingsPage.defaultUserCreditsDescription") || "Tín dụng cấp cho người dùng mới"}
                               </FormDescription>
                               <FormMessage />
                             </FormItem>
