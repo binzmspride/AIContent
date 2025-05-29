@@ -79,11 +79,14 @@ export function AdjustCreditsDialog({ isOpen, onOpenChange, user }: AdjustCredit
   // Adjust credits mutation
   const adjustCreditsMutation = useMutation({
     mutationFn: async ({ userId, amount, description }: { userId: number, amount: number, description?: string }) => {
+      console.log("API Request: POST /api/admin/users/" + userId + "/credits", { amount, description });
       const res = await apiRequest("POST", `/api/admin/users/${userId}/credits`, {
         amount,
         description
       });
-      return res.json();
+      const result = await res.json();
+      console.log("API Response:", result);
+      return result;
     },
     onSuccess: (data) => {
       toast({
