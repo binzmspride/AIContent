@@ -88,7 +88,7 @@ export function AdjustCreditsDialog({ isOpen, onOpenChange, user }: AdjustCredit
     onSuccess: (data) => {
       toast({
         title: "Thành công",
-        description: `Credits đã được điều chỉnh. Số dư hiện tại: ${data.data.currentCredits}`,
+        description: `Tín dụng đã được điều chỉnh. Số dư hiện tại: ${data.data.currentCredits}`,
       });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
       onOpenChange(false);
@@ -117,11 +117,11 @@ export function AdjustCreditsDialog({ isOpen, onOpenChange, user }: AdjustCredit
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[450px]">
         <DialogHeader>
-          <DialogTitle>{t("admin.usersManagement.adjustCredits") || "Điều chỉnh credits"}</DialogTitle>
+          <DialogTitle>{t("admin.usersManagement.adjustCredits") || "Điều chỉnh tín dụng"}</DialogTitle>
           <DialogDescription>
             {user && (
               <span>
-                {t("admin.usersManagement.adjustCreditsForUser") || "Điều chỉnh credits cho người dùng"}: <strong>{user.username}</strong><br/>
+                {t("admin.usersManagement.adjustCreditsForUser") || "Điều chỉnh tín dụng cho người dùng"}: <strong>{user.username}</strong><br/>
                 {t("admin.usersManagement.currentCredits") || "Số dư hiện tại"}: <strong>{user.credits}</strong>
               </span>
             )}
@@ -137,7 +137,7 @@ export function AdjustCreditsDialog({ isOpen, onOpenChange, user }: AdjustCredit
                 <FormItem>
                   <FormLabel>{t("admin.usersManagement.adjustmentAmount") || "Số lượng điều chỉnh"}</FormLabel>
                   <FormDescription>
-                    {t("admin.usersManagement.adjustmentAmountDescription") || "Nhập số dương để thêm credits, số âm để trừ credits."}
+                    {t("admin.usersManagement.adjustmentAmountDescription") || "Nhập số dương để thêm tín dụng, số âm để trừ tín dụng."}
                   </FormDescription>
                   <FormControl>
                     <Input 
