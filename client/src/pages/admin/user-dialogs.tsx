@@ -38,7 +38,7 @@ import {
 // Form schema for adjusting credits
 const adjustCreditsSchema = z.object({
   amount: z.number()
-    .refine(val => val !== 0, "Số lượng credits không thể bằng 0"),
+    .refine(val => val !== 0, "Số lượng tín dụng không thể bằng 0"),
   description: z.string().optional(),
 });
 
