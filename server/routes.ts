@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth } from "./auth";
+import { registerAdminRoutes } from "./admin-routes";
 import * as schema from "@shared/schema";
 import { db } from "../db";
 import { sql, eq } from "drizzle-orm";
@@ -13,6 +14,9 @@ import { promisify } from "util";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
+  
+  // Register admin routes
+  registerAdminRoutes(app);
 
   // API routes
   const httpServer = createServer(app);
