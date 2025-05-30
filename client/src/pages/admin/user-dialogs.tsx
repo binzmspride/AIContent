@@ -84,6 +84,19 @@ export function AdjustCreditsDialog({ isOpen, onOpenChange, user }: AdjustCredit
         amount,
         description
       });
+      
+      // Check if response is ok and has proper content type
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await res.text();
+        console.error("Expected JSON but got:", text);
+        throw new Error('Server returned non-JSON response');
+      }
+      
       const result = await res.json();
       console.log("API Response:", result);
       return result;

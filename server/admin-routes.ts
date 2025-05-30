@@ -98,6 +98,16 @@ export function registerAdminRoutes(app: Express) {
   });
   // Credit adjustment
   app.post("/api/admin/users/:id/credits", async (req: Request, res: Response) => {
+    // Set proper headers
+    res.setHeader('Content-Type', 'application/json');
+    
+    console.log("Credit adjustment request received:", {
+      params: req.params,
+      body: req.body,
+      authenticated: req.isAuthenticated(),
+      userRole: req.user?.role
+    });
+
     if (!req.isAuthenticated() || req.user.role !== "admin") {
       return res.status(403).json({ 
         success: false, 
@@ -108,6 +118,8 @@ export function registerAdminRoutes(app: Express) {
     try {
       const userId = parseInt(req.params.id);
       const { amount, description } = req.body;
+      
+      console.log("Processing credit adjustment:", { userId, amount, description });
       
       // Validate input
       if (typeof amount !== "number" || amount === 0) {
@@ -125,20 +137,24 @@ export function registerAdminRoutes(app: Express) {
         newBalance = await storage.subtractUserCredits(userId, Math.abs(amount), description || "Admin adjustment");
       }
 
-      return res.status(200).json({ 
+      const response = { 
         success: true, 
         data: { 
           userId, 
           adjustmentAmount: amount,
           currentCredits: newBalance
         } 
-      });
+      };
+      
+      console.log("Credit adjustment successful:", response);
+      return res.status(200).json(response);
     } catch (error) {
       console.error("Error adjusting user credits:", error);
-      return res.status(500).json({ 
+      const errorResponse = { 
         success: false, 
         error: "Failed to adjust user credits" 
-      });
+      };
+      return res.status(500).json(errorResponse);
     }
   });
 
