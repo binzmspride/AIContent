@@ -68,10 +68,10 @@ export interface IStorage {
   // API key management
   getApiKey(id: number): Promise<schema.ApiKey | null>;
   getApiKeyByKey(key: string): Promise<schema.ApiKey | null>;
-  createApiKey(data: schema.InsertApiKey): Promise<schema.ApiKey>;
-  updateApiKey(id: number, data: Partial<schema.ApiKey>): Promise<schema.ApiKey | null>;
-  deleteApiKey(id: number): Promise<boolean>;
-  listApiKeys(userId: number): Promise<schema.ApiKey[]>;
+  createApiKey(userId: number, name: string, scopes: string[]): Promise<{ key: string; secret: string; id: number; name: string }>;
+  updateApiKey(id: number, userId: number, data: Partial<schema.ApiKey>): Promise<schema.ApiKey | null>;
+  deleteApiKey(id: number, userId: number): Promise<boolean>;
+  getApiKeys(userId: number): Promise<schema.ApiKey[]>;
   
   // Session store
   sessionStore: session.SessionStore;
@@ -670,30 +670,45 @@ class DatabaseStorage implements IStorage {
     }
   }
   
-  async createApiKey(data: schema.InsertApiKey): Promise<schema.ApiKey> {
+  async createApiKey(userId: number, name: string, scopes: string[]): Promise<{ key: string; secret: string; id: number; name: string }> {
     try {
+      // Generate API key and secret
+      const key = `sk_${randomBytes(16).toString('hex')}`;
+      const secret = randomBytes(32).toString('hex');
+      
       const [newApiKey] = await db.insert(schema.apiKeys)
         .values({
-          ...data,
+          userId,
+          name,
+          key,
+          secret,
+          scopes,
+          isActive: true,
           createdAt: new Date(),
           updatedAt: new Date()
         })
         .returning();
-      return newApiKey;
+      
+      return {
+        key: newApiKey.key,
+        secret: newApiKey.secret,
+        id: newApiKey.id,
+        name: newApiKey.name
+      };
     } catch (error) {
       console.error('Error creating API key:', error);
       throw error;
     }
   }
   
-  async updateApiKey(id: number, data: Partial<schema.ApiKey>): Promise<schema.ApiKey | null> {
+  async updateApiKey(id: number, userId: number, data: Partial<schema.ApiKey>): Promise<schema.ApiKey | null> {
     try {
       const [updatedApiKey] = await db.update(schema.apiKeys)
         .set({
           ...data,
           updatedAt: new Date()
         })
-        .where(eq(schema.apiKeys.id, id))
+        .where(and(eq(schema.apiKeys.id, id), eq(schema.apiKeys.userId, userId)))
         .returning();
       return updatedApiKey || null;
     } catch (error) {
@@ -702,18 +717,19 @@ class DatabaseStorage implements IStorage {
     }
   }
   
-  async deleteApiKey(id: number): Promise<boolean> {
+  async deleteApiKey(id: number, userId: number): Promise<boolean> {
     try {
-      await db.delete(schema.apiKeys)
-        .where(eq(schema.apiKeys.id, id));
-      return true;
+      const result = await db.delete(schema.apiKeys)
+        .where(and(eq(schema.apiKeys.id, id), eq(schema.apiKeys.userId, userId)))
+        .returning();
+      return result.length > 0;
     } catch (error) {
       console.error('Error deleting API key:', error);
       return false;
     }
   }
   
-  async listApiKeys(userId: number): Promise<schema.ApiKey[]> {
+  async getApiKeys(userId: number): Promise<schema.ApiKey[]> {
     try {
       const apiKeys = await db.query.apiKeys.findMany({
         where: eq(schema.apiKeys.userId, userId),
