@@ -1369,5 +1369,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== API Keys Management ==========
+  // Get user's API keys
+  app.get('/api/keys', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const apiKeys = await storage.getApiKeys(userId);
+      
+      res.json({ success: true, data: apiKeys });
+    } catch (error) {
+      console.error('Error fetching API keys:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch API keys' });
+    }
+  });
+
+  // Create new API key
+  app.post('/api/keys', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { name, scopes } = req.body;
+      
+      if (!name || !scopes || !Array.isArray(scopes)) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Name and scopes are required' 
+        });
+      }
+
+      const apiKey = await storage.createApiKey(userId, name, scopes);
+      
+      res.status(201).json({ success: true, data: apiKey });
+    } catch (error) {
+      console.error('Error creating API key:', error);
+      res.status(500).json({ success: false, error: 'Failed to create API key' });
+    }
+  });
+
+  // Update API key
+  app.patch('/api/keys/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const keyId = parseInt(req.params.id);
+      const { isActive } = req.body;
+      
+      const apiKey = await storage.updateApiKey(keyId, userId, { isActive });
+      
+      if (!apiKey) {
+        return res.status(404).json({ success: false, error: 'API key not found' });
+      }
+      
+      res.json({ success: true, data: apiKey });
+    } catch (error) {
+      console.error('Error updating API key:', error);
+      res.status(500).json({ success: false, error: 'Failed to update API key' });
+    }
+  });
+
+  // Delete API key
+  app.delete('/api/keys/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const keyId = parseInt(req.params.id);
+      
+      const deleted = await storage.deleteApiKey(keyId, userId);
+      
+      if (!deleted) {
+        return res.status(404).json({ success: false, error: 'API key not found' });
+      }
+      
+      res.json({ success: true, message: 'API key deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting API key:', error);
+      res.status(500).json({ success: false, error: 'Failed to delete API key' });
+    }
+  });
+
   return httpServer;
 }
