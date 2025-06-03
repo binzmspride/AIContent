@@ -10,7 +10,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Link } from "wouter";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatDateTime } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -152,7 +152,7 @@ export default function MyArticles() {
     {
       accessorKey: "createdAt",
       header: t("dashboard.articles.columns.createdAt"),
-      cell: ({ row }) => formatDate(row.original.createdAt),
+      cell: ({ row }) => formatDateTime(row.original.createdAt),
     },
     {
       accessorKey: "status",
