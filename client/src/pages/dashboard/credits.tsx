@@ -176,8 +176,8 @@ export default function Credits() {
 
         <Tabs defaultValue="packages" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="packages">Gói tín dụng</TabsTrigger>
-            <TabsTrigger value="history">Lịch sử</TabsTrigger>
+            <TabsTrigger value="packages">{t("dashboard.credits.buyCredits")}</TabsTrigger>
+            <TabsTrigger value="history">{t("dashboard.credits.history")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="packages">
@@ -264,9 +264,9 @@ export default function Credits() {
                   </TableCaption>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Ngày</TableHead>
-                      <TableHead>Mô tả</TableHead>
-                      <TableHead className="text-right">Số lượng</TableHead>
+                      <TableHead>{t("dashboard.credits.date")}</TableHead>
+                      <TableHead>{t("dashboard.credits.description")}</TableHead>
+                      <TableHead className="text-right">{t("dashboard.credits.amount")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -286,13 +286,13 @@ export default function Credits() {
                             {(() => {
                               const desc = transaction.description;
                               if (desc.includes('Content generation')) {
-                                return 'Tạo nội dung';
+                                return t("dashboard.credits.transactions.contentGeneration");
                               } else if (desc.includes('Created article:')) {
-                                return desc.replace('Created article:', 'Tạo bài viết:');
+                                return desc.replace('Created article:', t("dashboard.credits.transactions.createdArticle"));
                               } else if (desc.includes('Purchase')) {
-                                return desc.replace('Purchase', 'Mua');
+                                return desc.replace('Purchase', t("dashboard.credits.transactions.purchase"));
                               } else if (desc.includes('Refund')) {
-                                return desc.replace('Refund', 'Hoàn tiền');
+                                return desc.replace('Refund', t("dashboard.credits.transactions.refund"));
                               } else {
                                 return desc;
                               }

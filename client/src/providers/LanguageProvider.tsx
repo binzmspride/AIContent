@@ -488,7 +488,6 @@ const translations: TranslationsType = {
         renew: "Gia hạn"
       },
       connections: "Kết nối",
-      credits: "Tín dụng",
       settings: "Cài đặt",
       apiKeys: "API Keys",
       logout: "Đăng xuất",
@@ -674,6 +673,29 @@ const translations: TranslationsType = {
         },
         social: {
           connected: "Đã kết nối"
+        }
+      },
+      
+      credits: {
+        title: "Tín dụng",
+        currentBalance: "Số dư hiện tại",
+        history: "Lịch sử",
+        buyCredits: "Mua tín dụng",
+        date: "Ngày",
+        description: "Mô tả",
+        amount: "Số lượng",
+        previous: "Trước",
+        next: "Tiếp theo",
+        loading: "Đang tải...",
+        loadingHistory: "Đang tải lịch sử giao dịch...",
+        noTransactions: "Không tìm thấy giao dịch nào",
+        creditHistory: "Lịch sử giao dịch tín dụng của bạn",
+        page: "Trang",
+        transactions: {
+          contentGeneration: "Tạo nội dung",
+          createdArticle: "Tạo bài viết:",
+          purchase: "Mua",
+          refund: "Hoàn tiền"
         }
       }
     }
