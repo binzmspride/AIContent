@@ -1460,5 +1460,128 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== AI API Keys Management ==========
+  // Get AI API keys for current user
+  app.get('/api/ai-api-keys', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const keys = await db.query.aiApiKeys.findMany({
+        where: eq(schema.aiApiKeys.userId, userId),
+        orderBy: [schema.aiApiKeys.createdAt],
+      });
+
+      // Mask API keys for security
+      const maskedKeys = keys.map(key => ({
+        ...key,
+        apiKey: key.apiKey.substring(0, 4) + '***' + key.apiKey.substring(key.apiKey.length - 4),
+      }));
+
+      res.json({ success: true, data: maskedKeys });
+    } catch (error) {
+      console.error('Error fetching AI API keys:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch AI API keys' });
+    }
+  });
+
+  // Create new AI API key
+  app.post('/api/ai-api-keys', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { name, provider, apiKey } = req.body;
+
+      if (!name || !provider || !apiKey) {
+        return res.status(400).json({ success: false, error: 'Missing required fields' });
+      }
+
+      if (!['openai', 'claude', 'gemini'].includes(provider)) {
+        return res.status(400).json({ success: false, error: 'Invalid provider' });
+      }
+
+      // Encrypt API key (simple encryption for demo - use proper encryption in production)
+      const encryptedApiKey = Buffer.from(apiKey).toString('base64');
+
+      const [newKey] = await db.insert(schema.aiApiKeys).values({
+        userId,
+        name,
+        provider,
+        apiKey: encryptedApiKey,
+        isActive: true,
+      }).returning();
+
+      res.json({ success: true, data: newKey });
+    } catch (error) {
+      console.error('Error creating AI API key:', error);
+      res.status(500).json({ success: false, error: 'Failed to create AI API key' });
+    }
+  });
+
+  // Update AI API key
+  app.patch('/api/ai-api-keys/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const keyId = parseInt(req.params.id);
+      const { isActive } = req.body;
+
+      if (isNaN(keyId)) {
+        return res.status(400).json({ success: false, error: 'Invalid key ID' });
+      }
+
+      const [updatedKey] = await db.update(schema.aiApiKeys)
+        .set({ isActive, updatedAt: new Date() })
+        .where(sql`${schema.aiApiKeys.id} = ${keyId} AND ${schema.aiApiKeys.userId} = ${userId}`)
+        .returning();
+
+      if (!updatedKey) {
+        return res.status(404).json({ success: false, error: 'API key not found' });
+      }
+
+      res.json({ success: true, data: updatedKey });
+    } catch (error) {
+      console.error('Error updating AI API key:', error);
+      res.status(500).json({ success: false, error: 'Failed to update AI API key' });
+    }
+  });
+
+  // Delete AI API key
+  app.delete('/api/ai-api-keys/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const keyId = parseInt(req.params.id);
+
+      if (isNaN(keyId)) {
+        return res.status(400).json({ success: false, error: 'Invalid key ID' });
+      }
+
+      const [deletedKey] = await db.delete(schema.aiApiKeys)
+        .where(sql`${schema.aiApiKeys.id} = ${keyId} AND ${schema.aiApiKeys.userId} = ${userId}`)
+        .returning();
+
+      if (!deletedKey) {
+        return res.status(404).json({ success: false, error: 'API key not found' });
+      }
+
+      res.json({ success: true, data: deletedKey });
+    } catch (error) {
+      console.error('Error deleting AI API key:', error);
+      res.status(500).json({ success: false, error: 'Failed to delete AI API key' });
+    }
+  });
+
   return httpServer;
 }

@@ -75,6 +75,11 @@ export function Sidebar() {
       icon: <Key className="h-5 w-5 mr-3" />,
     },
     {
+      href: "/dashboard/ai-api-keys",
+      label: "API Keys AI",
+      icon: <Key className="h-5 w-5 mr-3" />,
+    },
+    {
       href: "/dashboard/settings",
       label: t("dashboard.navigationItems.settings"),
       icon: <Settings className="h-5 w-5 mr-3" />,
