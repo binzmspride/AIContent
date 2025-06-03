@@ -166,7 +166,7 @@ export default function MyArticles() {
         const keywords = row.original.keywords;
         if (!keywords) return null;
         return keywords.split(',').slice(0, 3).map((kw, i) => (
-          <span key={i} className="inline-block bg-secondary-100 text-secondary-800 text-xs px-2 py-1 rounded mr-1 mb-1">
+          <span key={i} className="inline-block bg-blue-100 dark:bg-blue-900 text-gray-900 dark:text-gray-100 text-xs px-2 py-1 rounded mr-1 mb-1">
             {kw.trim()}
           </span>
         ));
