@@ -260,7 +260,7 @@ export default function Credits() {
               <CardContent>
                 <Table>
                   <TableCaption>
-                    {isLoadingHistory ? "Đang tải lịch sử giao dịch..." : "Lịch sử giao dịch tín dụng của bạn"}
+                    {isLoadingHistory ? t("dashboard.credits.loadingHistory") : t("dashboard.credits.creditHistory")}
                   </TableCaption>
                   <TableHeader>
                     <TableRow>
@@ -272,11 +272,11 @@ export default function Credits() {
                   <TableBody>
                     {isLoadingHistory ? (
                       <TableRow>
-                        <TableCell colSpan={3} className="text-center">Đang tải...</TableCell>
+                        <TableCell colSpan={3} className="text-center">{t("dashboard.credits.loading")}</TableCell>
                       </TableRow>
                     ) : creditHistory?.transactions.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={3} className="text-center">Không tìm thấy giao dịch nào</TableCell>
+                        <TableCell colSpan={3} className="text-center">{t("dashboard.credits.noTransactions")}</TableCell>
                       </TableRow>
                     ) : (
                       creditHistory?.transactions.map((transaction) => (
@@ -313,17 +313,17 @@ export default function Credits() {
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage <= 1 || isLoadingHistory}
                 >
-                  Trước
+                  {t("dashboard.credits.previous")}
                 </Button>
                 <span className="text-sm text-muted-foreground">
-                  Trang {currentPage} / {creditHistory?.pagination.totalPages || 1}
+                  {t("dashboard.credits.page")} {currentPage} / {creditHistory?.pagination.totalPages || 1}
                 </span>
                 <Button
                   variant="outline"
                   onClick={() => setCurrentPage((prev) => prev + 1)}
                   disabled={(currentPage >= (creditHistory?.pagination.totalPages || 1)) || isLoadingHistory}
                 >
-                  Sau
+                  {t("dashboard.credits.next")}
                 </Button>
               </CardFooter>
             </Card>
