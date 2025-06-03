@@ -176,8 +176,8 @@ export default function Credits() {
 
         <Tabs defaultValue="packages" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="packages">{t("dashboard.credits.packages.title")}</TabsTrigger>
-            <TabsTrigger value="history">{t("dashboard.credits.history")}</TabsTrigger>
+            <TabsTrigger value="packages">Gói tín dụng</TabsTrigger>
+            <TabsTrigger value="history">Lịch sử</TabsTrigger>
           </TabsList>
 
           <TabsContent value="packages">
@@ -264,9 +264,9 @@ export default function Credits() {
                   </TableCaption>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{t("dashboard.credits.date")}</TableHead>
-                      <TableHead>{t("dashboard.credits.description")}</TableHead>
-                      <TableHead className="text-right">{t("dashboard.credits.amount")}</TableHead>
+                      <TableHead>Ngày</TableHead>
+                      <TableHead>Mô tả</TableHead>
+                      <TableHead className="text-right">Số lượng</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -282,7 +282,22 @@ export default function Credits() {
                       creditHistory?.transactions.map((transaction) => (
                         <TableRow key={transaction.id}>
                           <TableCell>{formatDate(transaction.createdAt)}</TableCell>
-                          <TableCell>{transaction.description}</TableCell>
+                          <TableCell>
+                            {(() => {
+                              const desc = transaction.description;
+                              if (desc.includes('Content generation')) {
+                                return 'Tạo nội dung';
+                              } else if (desc.includes('Created article:')) {
+                                return desc.replace('Created article:', 'Tạo bài viết:');
+                              } else if (desc.includes('Purchase')) {
+                                return desc.replace('Purchase', 'Mua');
+                              } else if (desc.includes('Refund')) {
+                                return desc.replace('Refund', 'Hoàn tiền');
+                              } else {
+                                return desc;
+                              }
+                            })()}
+                          </TableCell>
                           <TableCell className={`text-right font-medium ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
                             {transaction.amount > 0 ? '+' : ''}{transaction.amount} tín dụng
                           </TableCell>
