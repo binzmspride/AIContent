@@ -8,6 +8,7 @@ export const roleEnum = pgEnum('role', ['admin', 'user']);
 export const articleStatusEnum = pgEnum('article_status', ['draft', 'published', 'deleted']);
 export const planTypeEnum = pgEnum('plan_type', ['credit', 'storage']);
 export const connectionTypeEnum = pgEnum('connection_type', ['wordpress', 'facebook', 'tiktok', 'twitter']);
+export const aiProviderEnum = pgEnum('ai_provider', ['openai', 'claude', 'gemini']);
 
 // Enum types for TypeScript
 export type PlanType = 'credit' | 'storage';
@@ -287,3 +288,31 @@ export const insertTranslationSchema = createInsertSchema(translations, {
 // Translation types
 export type Translation = z.infer<typeof selectTranslationSchema>;
 export type InsertTranslation = z.infer<typeof insertTranslationSchema>;
+
+// AI API Keys table
+export const aiApiKeys = pgTable('ai_api_keys', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  name: text('name').notNull(),
+  provider: aiProviderEnum('provider').notNull(),
+  apiKey: text('api_key').notNull(),
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// AI API Keys relations
+export const aiApiKeysRelations = relations(aiApiKeys, ({ one }) => ({
+  user: one(users, { fields: [aiApiKeys.userId], references: [users.id] }),
+}));
+
+// AI API Keys schemas
+export const selectAiApiKeySchema = createSelectSchema(aiApiKeys);
+export const insertAiApiKeySchema = createInsertSchema(aiApiKeys, {
+  name: (schema) => schema.min(1, "Name cannot be empty"),
+  apiKey: (schema) => schema.min(1, "API key cannot be empty"),
+});
+
+// AI API Keys types
+export type AiApiKey = z.infer<typeof selectAiApiKeySchema>;
+export type InsertAiApiKey = z.infer<typeof insertAiApiKeySchema>;
