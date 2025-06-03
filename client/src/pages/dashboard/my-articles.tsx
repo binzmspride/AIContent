@@ -55,6 +55,8 @@ export default function MyArticles() {
   const [articleToDelete, setArticleToDelete] = useState<number | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [viewingArticle, setViewingArticle] = useState<Article | null>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
   // Fetch articles with pagination
   const {
@@ -114,6 +116,11 @@ export default function MyArticles() {
     if (articleToDelete) {
       deleteArticleMutation.mutate(articleToDelete);
     }
+  };
+
+  const handleViewArticle = (article: Article) => {
+    setViewingArticle(article);
+    setIsViewDialogOpen(true);
   };
 
   const copyArticleContent = async (article: Article) => {
@@ -180,9 +187,9 @@ export default function MyArticles() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => window.open(`/article/${article.id}` || '', '_blank')}>
+              <DropdownMenuItem onClick={() => handleViewArticle(article)}>
                 <Eye className="mr-2 h-4 w-4" />
-                <span>View</span>
+                <span>Xem nội dung</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => copyArticleContent(article)}>
                 <Copy className="mr-2 h-4 w-4" />
@@ -335,6 +342,43 @@ export default function MyArticles() {
             </div>
           </div>
         )}
+
+        {/* Dialog for viewing article content */}
+        <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+          <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-semibold">
+                {viewingArticle?.title?.replace(/"/g, '') || 'Xem nội dung bài viết'}
+              </DialogTitle>
+              <DialogDescription>
+                Nội dung HTML của bài viết. Bạn có thể cuộn để xem toàn bộ nội dung.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="py-4">
+              {viewingArticle?.content ? (
+                <div 
+                  className="prose prose-blue dark:prose-invert prose-headings:font-semibold prose-img:rounded-lg max-w-none"
+                  dangerouslySetInnerHTML={{ __html: viewingArticle.content }} 
+                />
+              ) : (
+                <p className="text-gray-500 dark:text-gray-400">Không có nội dung để hiển thị.</p>
+              )}
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsViewDialogOpen(false)}>
+                Đóng
+              </Button>
+              {viewingArticle && (
+                <Button onClick={() => copyArticleContent(viewingArticle)}>
+                  <Copy className="mr-2 h-4 w-4" />
+                  Sao chép nội dung
+                </Button>
+              )}
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DialogContent>
