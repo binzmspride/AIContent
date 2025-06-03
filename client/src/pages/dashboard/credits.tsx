@@ -128,43 +128,43 @@ export default function Credits() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="col-span-1 md:col-span-2">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center text-gray-900 dark:text-gray-100">
                 <Coins className="mr-2 h-5 w-5 text-primary-600" />
-                {t("dashboard.credits.currentBalance")}
+                Số dư hiện tại
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-4xl font-bold text-primary-600">
                 {user?.credits || 0}
-                <span className="ml-2 text-lg text-secondary-500">tín dụng</span>
+                <span className="ml-2 text-lg text-gray-700 dark:text-gray-300">tín dụng</span>
               </div>
-              <p className="mt-2 text-sm text-secondary-500">
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Sử dụng tín dụng để tạo nội dung SEO. Mỗi lần tạo nội dung tốn 1-3 tín dụng tùy thuộc vào độ dài.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-accent-50 border-accent-200">
+          <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
             <CardHeader>
-              <CardTitle className="text-accent-800">Special Promotion</CardTitle>
-              <CardDescription>Limited time offer</CardDescription>
+              <CardTitle className="text-gray-900 dark:text-gray-100">Khuyến mãi đặc biệt</CardTitle>
+              <CardDescription className="text-gray-600 dark:text-gray-400">Ưu đãi có thời hạn</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-accent-900 font-semibold">
-                Get 5 extra credits with any package purchase!
+              <p className="text-gray-900 dark:text-gray-100 font-semibold">
+                Nhận thêm 5 tín dụng khi mua bất kỳ gói nào!
               </p>
-              <p className="text-sm text-accent-700 mt-2">
-                Valid until the end of this month
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                Có hiệu lực đến cuối tháng này
               </p>
             </CardContent>
             <CardFooter>
               <Button 
                 variant="outline" 
-                className="w-full border-accent-300 text-accent-700 hover:bg-accent-100"
+                className="w-full border-blue-300 dark:border-blue-700 text-gray-900 dark:text-gray-100 hover:bg-blue-100 dark:hover:bg-blue-800/50"
                 onClick={() => {
                   toast({
-                    title: "Promo code copied!",
-                    description: "Use EXTRA5 at checkout",
+                    title: "Đã sao chép mã khuyến mãi!",
+                    description: "Sử dụng EXTRA5 khi thanh toán",
                   });
                 }}
               >
