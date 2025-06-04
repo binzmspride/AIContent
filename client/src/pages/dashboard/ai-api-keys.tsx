@@ -210,7 +210,7 @@ export default function AIApiKeysPage() {
 
   return (
     <div className="flex h-full">
-      {/* Sidebar */}
+      {/* Left sidebar for AI providers */}
       <div className="w-64 bg-card dark:bg-card border-r border-border dark:border-border">
         <div className="p-4">
           <h2 className="text-lg font-semibold mb-4">API Keys AI</h2>
@@ -246,8 +246,8 @@ export default function AIApiKeysPage() {
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 p-6">
+      {/* Main content area */}
+      <div className="flex-1 p-6 overflow-auto">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold">
