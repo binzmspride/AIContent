@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
@@ -16,6 +17,8 @@ import {
   Settings,
   LogOut,
   Key,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -28,6 +31,7 @@ interface SidebarLink {
 export function Sidebar() {
   const { t } = useLanguage();
   const { user, logoutMutation } = useAuth();
+  const [aiKeysExpanded, setAiKeysExpanded] = useState(false);
   const [location] = useLocation();
   
   // Lấy thông tin người dùng từ user object
@@ -69,16 +73,7 @@ export function Sidebar() {
       label: t("dashboard.navigationItems.connections"),
       icon: <Link2 className="h-5 w-5 mr-3" />,
     },
-    {
-      href: "/dashboard/api-keys",
-      label: t("common.apiKeys.title"),
-      icon: <Key className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/ai-api-keys",
-      label: "API Keys AI",
-      icon: <Key className="h-5 w-5 mr-3" />,
-    },
+
     {
       href: "/dashboard/settings",
       label: t("dashboard.navigationItems.settings"),
@@ -117,6 +112,86 @@ export function Sidebar() {
               </Link>
             </li>
           ))}
+          
+          {/* API Keys AI submenu */}
+          <li>
+            <button
+              onClick={() => setAiKeysExpanded(!aiKeysExpanded)}
+              className={cn(
+                "flex items-center justify-between w-full py-3 px-4 rounded-md text-sm font-medium transition-colors",
+                location.startsWith("/dashboard/ai-api-keys")
+                  ? "bg-sidebar-accent dark:bg-primary-800 text-white font-semibold dark:text-white"
+                  : "text-white font-semibold dark:text-white hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
+              )}
+            >
+              <div className="flex items-center">
+                <Key className="h-5 w-5 mr-3" />
+                API Keys AI
+              </div>
+              {aiKeysExpanded ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
+            </button>
+            
+            {aiKeysExpanded && (
+              <ul className="ml-8 mt-2 space-y-1">
+                <li>
+                  <Link
+                    href="/dashboard/ai-api-keys"
+                    className={cn(
+                      "flex items-center py-2 px-4 rounded-md text-sm transition-colors",
+                      location === "/dashboard/ai-api-keys"
+                        ? "bg-sidebar-accent dark:bg-primary-800 text-white font-semibold dark:text-white"
+                        : "text-white/80 dark:text-white/80 hover:text-white dark:hover:text-white hover:bg-sidebar-accent/30 dark:hover:bg-primary-900/30"
+                    )}
+                  >
+                    Tất cả API Keys
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/dashboard/ai-api-keys?provider=openai"
+                    className={cn(
+                      "flex items-center py-2 px-4 rounded-md text-sm transition-colors",
+                      location === "/dashboard/ai-api-keys" && location.includes("openai")
+                        ? "bg-sidebar-accent dark:bg-primary-800 text-white font-semibold dark:text-white"
+                        : "text-white/80 dark:text-white/80 hover:text-white dark:hover:text-white hover:bg-sidebar-accent/30 dark:hover:bg-primary-900/30"
+                    )}
+                  >
+                    OpenAI Keys
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/dashboard/ai-api-keys?provider=claude"
+                    className={cn(
+                      "flex items-center py-2 px-4 rounded-md text-sm transition-colors",
+                      location === "/dashboard/ai-api-keys" && location.includes("claude")
+                        ? "bg-sidebar-accent dark:bg-primary-800 text-white font-semibold dark:text-white"
+                        : "text-white/80 dark:text-white/80 hover:text-white dark:hover:text-white hover:bg-sidebar-accent/30 dark:hover:bg-primary-900/30"
+                    )}
+                  >
+                    Claude Keys
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/dashboard/ai-api-keys?provider=gemini"
+                    className={cn(
+                      "flex items-center py-2 px-4 rounded-md text-sm transition-colors",
+                      location === "/dashboard/ai-api-keys" && location.includes("gemini")
+                        ? "bg-sidebar-accent dark:bg-primary-800 text-white font-semibold dark:text-white"
+                        : "text-white/80 dark:text-white/80 hover:text-white dark:hover:text-white hover:bg-sidebar-accent/30 dark:hover:bg-primary-900/30"
+                    )}
+                  >
+                    Gemini Keys
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
           
           {/* Tạo thủ công một component Link đến trang Admin dựa vào role */}
           {(() => {
