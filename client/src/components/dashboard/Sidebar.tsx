@@ -20,6 +20,14 @@ import {
   ChevronDown,
   ChevronRight,
   Database,
+  BarChart3,
+  Users,
+  Globe,
+  Image,
+  MessageSquare,
+  Bell,
+  Calendar,
+  TrendingUp,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -78,6 +86,51 @@ export function Sidebar() {
       href: "/dashboard/content-separation",
       label: "Tách riêng Content",
       icon: <Database className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/analytics",
+      label: "Phân tích & Báo cáo",
+      icon: <BarChart3 className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/seo-tools",
+      label: "Công cụ SEO",
+      icon: <TrendingUp className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/templates",
+      label: "Mẫu nội dung",
+      icon: <FileText className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/media-library",
+      label: "Thư viện Media",
+      icon: <Image className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/translations",
+      label: "Đa ngôn ngữ",
+      icon: <Globe className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/collaboration",
+      label: "Cộng tác",
+      icon: <Users className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/notifications",
+      label: "Thông báo",
+      icon: <Bell className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/scheduler",
+      label: "Lập lịch đăng",
+      icon: <Calendar className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/feedback",
+      label: "Phản hồi",
+      icon: <MessageSquare className="h-5 w-5 mr-3" />,
     },
 
     {
