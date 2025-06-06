@@ -68,6 +68,8 @@ export const articles = pgTable('articles', {
   userId: integer('user_id').references(() => users.id).notNull(),
   title: text('title').notNull(),
   content: text('content').notNull(),
+  textContent: text('text_content'), // Pure text content without images
+  imageUrls: jsonb('image_urls'), // Array of image URLs
   keywords: text('keywords'),
   status: articleStatusEnum('status').notNull().default('draft'),
   publishedUrl: text('published_url'),
