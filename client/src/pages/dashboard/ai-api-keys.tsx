@@ -210,14 +210,25 @@ export default function AIApiKeysPage() {
     : (apiKeys || []).filter(key => key.provider === selectedProvider);
 
   return (
-    <div className="flex h-full">
-      {/* Left sidebar for AI providers */}
-      <div className="w-64 bg-card dark:bg-card border-r border-border dark:border-border">
-        <div className="p-4">
-          <h2 className="text-lg font-semibold mb-4">API Keys AI</h2>
-          <nav className="space-y-1">
-            <button
-              onClick={() => setSelectedProvider('all')}
+    <DashboardLayout>
+      <div className="container py-6">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold">Quản lý API Keys AI</h1>
+            <p className="text-muted-foreground mt-2">
+              Cấu hình và quản lý API keys cho các nhà cung cấp AI
+            </p>
+          </div>
+        </div>
+
+        <div className="flex h-full">
+        {/* Left sidebar for AI providers */}
+        <div className="w-64 bg-card dark:bg-card border-r border-border dark:border-border">
+          <div className="p-4">
+            <h2 className="text-lg font-semibold mb-4">API Keys AI</h2>
+            <nav className="space-y-1">
+              <button
+                onClick={() => setSelectedProvider('all')}
               className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 selectedProvider === 'all'
                   ? 'bg-primary text-primary-foreground'
@@ -453,7 +464,9 @@ export default function AIApiKeysPage() {
             ))}
           </div>
         )}
+        </div>
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
