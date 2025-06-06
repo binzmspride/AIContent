@@ -19,6 +19,7 @@ import {
   Key,
   ChevronDown,
   ChevronRight,
+  Database,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -72,6 +73,11 @@ export function Sidebar() {
       href: "/dashboard/connections",
       label: t("dashboard.navigationItems.connections"),
       icon: <Link2 className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/content-separation",
+      label: "Tách riêng Content",
+      icon: <Database className="h-5 w-5 mr-3" />,
     },
 
     {

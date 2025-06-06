@@ -23,6 +23,7 @@ import Connections from "@/pages/dashboard/connections";
 import Settings from "@/pages/dashboard/settings";
 import ApiKeys from "@/pages/dashboard/api-keys";
 import AIApiKeys from "@/pages/dashboard/ai-api-keys";
+import ContentSeparation from "@/pages/dashboard/content-separation";
 import EditArticle from "@/pages/dashboard/edit-article";
 import Article from "@/pages/article";
 import VerifyEmail from "@/pages/verify-email";
@@ -62,6 +63,7 @@ function Router() {
       <ProtectedRoute path="/dashboard/connections" component={Connections} />
       <ProtectedRoute path="/dashboard/api-keys" component={ApiKeys} />
       <ProtectedRoute path="/dashboard/ai-api-keys" component={AIApiKeys} />
+      <ProtectedRoute path="/dashboard/content-separation" component={ContentSeparation} />
       <ProtectedRoute path="/dashboard/settings" component={Settings} />
       <Route path="/article/:id" component={Article} />
       
