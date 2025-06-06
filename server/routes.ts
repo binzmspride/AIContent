@@ -243,11 +243,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ success: false, error: 'Insufficient credits' });
       }
       
-      // Create article
+      // Extract images from content
+      const imageRegex = /<img[^>]+src="([^"]+)"[^>]*>/g;
+      const imageUrls = [];
+      let match;
+      
+      while ((match = imageRegex.exec(content)) !== null) {
+        imageUrls.push(match[1]);
+      }
+      
+      // Remove img tags from content to get text content
+      const textContent = content.replace(/<img[^>]*>/g, '').trim();
+      
+      // Create article with separated content and images
       const article = await storage.createArticle({
         userId,
         title,
         content,
+        textContent,
+        imageUrls,
         keywords,
         creditsUsed,
         status: 'draft'
