@@ -24,6 +24,15 @@ import Settings from "@/pages/dashboard/settings";
 import ApiKeys from "@/pages/dashboard/api-keys";
 import AIApiKeys from "@/pages/dashboard/ai-api-keys";
 import ContentSeparation from "@/pages/dashboard/content-separation";
+import Analytics from "@/pages/dashboard/analytics";
+import SEOTools from "@/pages/dashboard/seo-tools";
+import Templates from "@/pages/dashboard/templates";
+import MediaLibrary from "@/pages/dashboard/media-library";
+import Translations from "@/pages/dashboard/translations";
+import Collaboration from "@/pages/dashboard/collaboration";
+import Notifications from "@/pages/dashboard/notifications";
+import Scheduler from "@/pages/dashboard/scheduler";
+import Feedback from "@/pages/dashboard/feedback";
 import EditArticle from "@/pages/dashboard/edit-article";
 import Article from "@/pages/article";
 import VerifyEmail from "@/pages/verify-email";
@@ -64,6 +73,15 @@ function Router() {
       <ProtectedRoute path="/dashboard/api-keys" component={ApiKeys} />
       <ProtectedRoute path="/dashboard/ai-api-keys" component={AIApiKeys} />
       <ProtectedRoute path="/dashboard/content-separation" component={ContentSeparation} />
+      <ProtectedRoute path="/dashboard/analytics" component={Analytics} />
+      <ProtectedRoute path="/dashboard/seo-tools" component={SEOTools} />
+      <ProtectedRoute path="/dashboard/templates" component={Templates} />
+      <ProtectedRoute path="/dashboard/media-library" component={MediaLibrary} />
+      <ProtectedRoute path="/dashboard/translations" component={Translations} />
+      <ProtectedRoute path="/dashboard/collaboration" component={Collaboration} />
+      <ProtectedRoute path="/dashboard/notifications" component={Notifications} />
+      <ProtectedRoute path="/dashboard/scheduler" component={Scheduler} />
+      <ProtectedRoute path="/dashboard/feedback" component={Feedback} />
       <ProtectedRoute path="/dashboard/settings" component={Settings} />
       <Route path="/article/:id" component={Article} />
       
