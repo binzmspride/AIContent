@@ -175,7 +175,7 @@ export default function Dashboard() {
                     <div className="ml-4">
                       <h2 className="text-sm font-medium text-white">{t("dashboard.stats.creditsLeft")}</h2>
                       <p className="text-2xl font-semibold text-white">
-                        {user?.credits || 0} tín dụng
+                        {stats?.creditBalance ?? 0} tín dụng
                       </p>
                     </div>
                   </div>

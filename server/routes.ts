@@ -69,11 +69,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       // Prepare storage stats
-      const storageStats = storagePlan 
+      const storageStats = storagePlan && storagePlan.plan?.value
         ? {
-            current: storagePlan.usedStorage,
+            current: storagePlan.usedStorage || 0,
             total: storagePlan.plan.value,
-            percentage: (storagePlan.usedStorage / storagePlan.plan.value) * 100
+            percentage: ((storagePlan.usedStorage || 0) / storagePlan.plan.value) * 100
           }
         : {
             current: 0,
