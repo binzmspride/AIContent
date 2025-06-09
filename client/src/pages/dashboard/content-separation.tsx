@@ -211,8 +211,18 @@ export default function ContentSeparationPage() {
                     <div>
                       <Label>Text View (Không bao gồm hình ảnh và video):</Label>
                       <div className="mt-2 p-4 border rounded-md bg-white max-h-64 overflow-y-auto">
+                        <style>{`
+                          .text-view-content * {
+                            color: #000000 !important;
+                            background-color: transparent !important;
+                          }
+                          .text-view-content {
+                            color: #000000 !important;
+                            background-color: #ffffff !important;
+                          }
+                        `}</style>
                         <div 
-                          className="text-sm prose prose-sm max-w-none"
+                          className="text-sm prose prose-sm max-w-none text-view-content"
                           dangerouslySetInnerHTML={{ 
                             __html: (separationData.content || 'Không có content')
                               .replace(/<img[^>]*>/gi, '') // Remove img tags
