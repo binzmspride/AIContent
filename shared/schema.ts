@@ -218,13 +218,14 @@ export const apiKeysRelations = relations(apiKeys, ({ one }) => ({
   user: one(users, { fields: [apiKeys.userId], references: [users.id] }),
 }));
 
-// Update user relations to include API keys
+// Update user relations to include API keys and images
 export const usersRelationsWithApiKeys = relations(users, ({ many }) => ({
   articles: many(articles),
   connections: many(connections),
   userPlans: many(userPlans),
   creditTransactions: many(creditTransactions),
   apiKeys: many(apiKeys),
+  images: many(images),
 }));
 
 // API Keys schemas
@@ -234,6 +235,21 @@ export const insertApiKeySchema = createInsertSchema(apiKeys);
 // API Keys types
 export type ApiKey = z.infer<typeof selectApiKeySchema>;
 export type InsertApiKey = z.infer<typeof insertApiKeySchema>;
+
+// Images table
+export const images = pgTable('images', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  articleId: integer('article_id').references(() => articles.id),
+  title: text('title').notNull(),
+  prompt: text('prompt').notNull(),
+  imageUrl: text('image_url').notNull(),
+  sourceText: text('source_text'), // Text content from SEO article
+  creditsUsed: integer('credits_used').notNull().default(1),
+  status: text('status').notNull().default('generated'), // generated, approved, rejected
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
 
 // Feedback table
 export const feedback = pgTable('feedback', {
@@ -249,10 +265,28 @@ export const feedback = pgTable('feedback', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+// Images relations
+export const imagesRelations = relations(images, ({ one }) => ({
+  user: one(users, { fields: [images.userId], references: [users.id] }),
+  article: one(articles, { fields: [images.articleId], references: [articles.id] }),
+}));
+
 // Feedback relations
 export const feedbackRelations = relations(feedback, ({ one }) => ({
   user: one(users, { fields: [feedback.userId], references: [users.id] }),
 }));
+
+// Images schemas
+export const selectImageSchema = createSelectSchema(images);
+export const insertImageSchema = createInsertSchema(images, {
+  title: (schema) => schema.min(1, "Title is required"),
+  prompt: (schema) => schema.min(1, "Prompt is required"),
+  imageUrl: (schema) => schema.url("Must be a valid URL"),
+});
+
+// Images types
+export type Image = z.infer<typeof selectImageSchema>;
+export type InsertImage = z.infer<typeof insertImageSchema>;
 
 // Feedback schemas
 export const selectFeedbackSchema = createSelectSchema(feedback);
