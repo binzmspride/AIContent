@@ -968,6 +968,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Integration settings retrieved:', integrationSettings);
       const apiSettings = await storage.getSettingsByCategory('api');
       const firebaseSettings = await storage.getSettingsByCategory('firebase');
+      const imageSettings = await storage.getSettingsByCategory('image_generation');
       
       // Chuẩn bị đối tượng cài đặt
       const settings = {
@@ -1013,6 +1014,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         notificationWebhookUrl: integrationSettings.notificationWebhookUrl || "",
         // Sử dụng notificationWebhookUrl thay cho webhook_url để thống nhất
         webhook_url: integrationSettings.notificationWebhookUrl || "",
+        
+        // Image generation settings
+        imageWebhookUrl: imageSettings.imageWebhookUrl || "",
+        imageCreditsPerGeneration: parseInt(imageSettings.imageCreditsPerGeneration || "1"),
+        enableImageGeneration: imageSettings.enableImageGeneration === "true",
         
         // Firebase settings
         firebaseApiKey: firebaseSettings.firebaseApiKey || "",
@@ -1099,13 +1105,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ success: false, error: 'Admin access required' });
       }
       
-      const { webhookSecret, notificationWebhookUrl } = req.body;
+      const { 
+        webhookSecret, 
+        notificationWebhookUrl, 
+        imageWebhookUrl, 
+        imageCreditsPerGeneration, 
+        enableImageGeneration 
+      } = req.body;
+      
       console.log('Webhook settings update request received:');
       console.log('- notificationWebhookUrl:', notificationWebhookUrl);
       console.log('- webhookSecret provided:', webhookSecret !== undefined);
+      console.log('- imageWebhookUrl:', imageWebhookUrl);
+      console.log('- imageCreditsPerGeneration:', imageCreditsPerGeneration);
+      console.log('- enableImageGeneration:', enableImageGeneration);
       
       let webhookUrlResult = true;
       let webhookSecretResult = true;
+      let imageWebhookResult = true;
+      let imageCreditsResult = true;
+      let enableImageResult = true;
       
       // Update notification webhook URL if provided
       if (notificationWebhookUrl !== undefined) {
@@ -1119,7 +1138,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('- webhookSecret update result:', webhookSecretResult);
       }
       
-      if (!webhookUrlResult || !webhookSecretResult) {
+      // Update image generation webhook URL if provided
+      if (imageWebhookUrl !== undefined) {
+        imageWebhookResult = await storage.setSetting('imageWebhookUrl', imageWebhookUrl, 'image_generation');
+        console.log('- imageWebhookUrl update result:', imageWebhookResult);
+      }
+      
+      // Update image credits per generation if provided
+      if (imageCreditsPerGeneration !== undefined) {
+        imageCreditsResult = await storage.setSetting('imageCreditsPerGeneration', String(imageCreditsPerGeneration), 'image_generation');
+        console.log('- imageCreditsPerGeneration update result:', imageCreditsResult);
+      }
+      
+      // Update enable image generation if provided
+      if (enableImageGeneration !== undefined) {
+        enableImageResult = await storage.setSetting('enableImageGeneration', String(enableImageGeneration), 'image_generation');
+        console.log('- enableImageGeneration update result:', enableImageResult);
+      }
+      
+      if (!webhookUrlResult || !webhookSecretResult || !imageWebhookResult || !imageCreditsResult || !enableImageResult) {
         return res.status(500).json({ 
           success: false, 
           error: 'Failed to save one or more webhook settings' 
@@ -1129,17 +1166,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Kiểm tra xem cài đặt đã được lưu thành công hay chưa
       const savedWebhookUrl = await storage.getSetting('notificationWebhookUrl');
       const savedWebhookSecret = await storage.getSetting('webhookSecret');
+      const savedImageWebhookUrl = await storage.getSetting('imageWebhookUrl', 'image_generation');
+      const savedImageCredits = await storage.getSetting('imageCreditsPerGeneration', 'image_generation');
+      const savedEnableImage = await storage.getSetting('enableImageGeneration', 'image_generation');
       
       console.log('Verification after save:');
       console.log('- Saved notificationWebhookUrl:', savedWebhookUrl);
       console.log('- Saved webhookSecret exists:', savedWebhookSecret !== null);
+      console.log('- Saved imageWebhookUrl:', savedImageWebhookUrl);
+      console.log('- Saved imageCreditsPerGeneration:', savedImageCredits);
+      console.log('- Saved enableImageGeneration:', savedEnableImage);
       
       res.json({ 
         success: true, 
         data: { 
           message: 'Webhook settings updated successfully',
           webhookUrl: savedWebhookUrl,
-          webhookSecretExists: savedWebhookSecret !== null
+          webhookSecretExists: savedWebhookSecret !== null,
+          imageWebhookUrl: savedImageWebhookUrl,
+          imageCreditsPerGeneration: savedImageCredits,
+          enableImageGeneration: savedEnableImage
         } 
       });
     } catch (error) {
