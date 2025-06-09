@@ -84,6 +84,10 @@ interface SystemSettings {
   // Webhook settings
   webhookSecret: string;
   notificationWebhookUrl: string;
+  // Image generation settings
+  imageWebhookUrl: string;
+  imageCreditsPerGeneration: number;
+  enableImageGeneration: boolean;
   // Firebase settings
   firebaseApiKey: string;
   firebaseProjectId: string;
@@ -145,6 +149,9 @@ const apiSettingsSchema = z.object({
 const webhookSettingsSchema = z.object({
   webhookSecret: z.string().optional().or(z.literal("")),
   notificationWebhookUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  imageWebhookUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  imageCreditsPerGeneration: z.coerce.number().min(1).max(100),
+  enableImageGeneration: z.boolean(),
 });
 
 // Firebase settings form schema
@@ -280,6 +287,9 @@ export default function AdminSettings() {
     defaultValues: {
       webhookSecret: settings?.webhookSecret || "",
       notificationWebhookUrl: settings?.notificationWebhookUrl || "",
+      imageWebhookUrl: settings?.imageWebhookUrl || "",
+      imageCreditsPerGeneration: settings?.imageCreditsPerGeneration || 1,
+      enableImageGeneration: settings?.enableImageGeneration || false,
     },
   });
   
@@ -340,6 +350,9 @@ export default function AdminSettings() {
       webhookForm.reset({
         webhookSecret: settings.webhookSecret,
         notificationWebhookUrl: settings.notificationWebhookUrl || "",
+        imageWebhookUrl: settings.imageWebhookUrl || "",
+        imageCreditsPerGeneration: settings.imageCreditsPerGeneration || 1,
+        enableImageGeneration: settings.enableImageGeneration || false,
       });
       
       firebaseForm.reset({
@@ -1380,6 +1393,78 @@ export default function AdminSettings() {
                           </FormItem>
                         )}
                       />
+                      
+                      <div className="border-t pt-6 mt-6">
+                        <h3 className="text-lg font-semibold mb-4 flex items-center">
+                          <Sparkles className="h-5 w-5 mr-2" />
+                          {t("admin.settingsPage.imageGeneration") || "Cài đặt tạo ảnh AI"}
+                        </h3>
+                        
+                        <div className="space-y-4">
+                          <FormField
+                            control={webhookForm.control}
+                            name="enableImageGeneration"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                <div className="space-y-0.5">
+                                  <FormLabel className="text-base">
+                                    {t("admin.settingsPage.enableImageGeneration") || "Kích hoạt tạo ảnh AI"}
+                                  </FormLabel>
+                                  <FormDescription>
+                                    {t("admin.settingsPage.enableImageGenerationDescription") || "Cho phép người dùng tạo ảnh bằng AI"}
+                                  </FormDescription>
+                                </div>
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={webhookForm.control}
+                            name="imageWebhookUrl"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>{t("admin.settingsPage.imageWebhook") || "Webhook tạo ảnh"}</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="https://api.example.com/generate-image" {...field} value={field.value || ""} />
+                                </FormControl>
+                                <FormDescription>
+                                  {t("admin.settingsPage.imageWebhookDescription") || "URL webhook để gửi yêu cầu tạo ảnh AI"}
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={webhookForm.control}
+                            name="imageCreditsPerGeneration"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>{t("admin.settingsPage.imageCreditsPerGeneration") || "Credits per tạo ảnh"}</FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    type="number" 
+                                    min="1" 
+                                    max="100" 
+                                    {...field} 
+                                    onChange={(e) => field.onChange(Number(e.target.value))}
+                                  />
+                                </FormControl>
+                                <FormDescription>
+                                  {t("admin.settingsPage.imageCreditsPerGenerationDescription") || "Số credits cần thiết để tạo một ảnh"}
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
                       
                       <div className="rounded-md border p-4 mt-6 bg-muted/50">
                         <h3 className="text-sm font-medium mb-2">{t("admin.settingsPage.availableWebhookEvents") || "Sự kiện webhook có sẵn"}</h3>
