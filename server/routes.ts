@@ -1425,6 +1425,216 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== Image Generation API ==========
+  // Get user's generated images
+  app.get('/api/dashboard/images', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const page = parseInt(req.query.page as string || '1');
+      const limit = parseInt(req.query.limit as string || '10');
+      
+      const { images, total } = await storage.getImagesByUser(userId, page, limit);
+      
+      res.json({
+        success: true,
+        data: {
+          images,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching user images:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch images' });
+    }
+  });
+
+  // Generate new image
+  app.post('/api/dashboard/images/generate', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { title, prompt, sourceText, articleId } = req.body;
+      
+      if (!title || !prompt) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Title and prompt are required' 
+        });
+      }
+      
+      // Get image generation settings
+      const imageSettings = await storage.getSettingsByCategory('image_generation');
+      const imageWebhookUrl = imageSettings.imageWebhookUrl;
+      const creditsPerGeneration = parseInt(imageSettings.imageCreditsPerGeneration || '1');
+      const enableImageGeneration = imageSettings.enableImageGeneration === 'true';
+      
+      if (!enableImageGeneration) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Image generation is currently disabled' 
+        });
+      }
+      
+      if (!imageWebhookUrl) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Image generation webhook is not configured' 
+        });
+      }
+      
+      // Check if user has enough credits
+      const userCredits = await storage.getUserCredits(userId);
+      if (userCredits < creditsPerGeneration) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Insufficient credits' 
+        });
+      }
+      
+      // Prepare webhook payload
+      const webhookPayload = {
+        title,
+        prompt,
+        sourceText,
+        userId,
+        articleId
+      };
+      
+      try {
+        // Call image generation webhook
+        const webhookResponse = await fetch(imageWebhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(webhookPayload),
+          signal: AbortSignal.timeout(30000) // 30 second timeout
+        });
+        
+        if (!webhookResponse.ok) {
+          throw new Error(`Webhook returned ${webhookResponse.status}`);
+        }
+        
+        const webhookResult = await webhookResponse.json();
+        
+        if (!webhookResult.success || !webhookResult.imageUrl) {
+          throw new Error('Webhook did not return a valid image URL');
+        }
+        
+        // Deduct credits
+        await storage.subtractUserCredits(userId, creditsPerGeneration, 'Image generation');
+        
+        // Save generated image to database
+        const image = await storage.createImage({
+          userId,
+          articleId: articleId || null,
+          title,
+          prompt,
+          imageUrl: webhookResult.imageUrl,
+          sourceText: sourceText || null,
+          creditsUsed: creditsPerGeneration,
+          status: 'generated'
+        });
+        
+        res.json({ success: true, data: image });
+        
+      } catch (webhookError: any) {
+        console.error('Error calling image generation webhook:', webhookError);
+        
+        if (webhookError.name === 'AbortError' || webhookError.name === 'TimeoutError') {
+          return res.status(504).json({
+            success: false,
+            error: 'Image generation service timeout. Please try again.'
+          });
+        }
+        
+        return res.status(500).json({
+          success: false,
+          error: 'Image generation service is not available. Please check webhook configuration.'
+        });
+      }
+    } catch (error) {
+      console.error('Error generating image:', error);
+      res.status(500).json({ success: false, error: 'Failed to generate image' });
+    }
+  });
+
+  // Get image by ID
+  app.get('/api/dashboard/images/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+      
+      const userId = req.user.id;
+      const imageId = parseInt(req.params.id, 10);
+      
+      if (isNaN(imageId)) {
+        return res.status(400).json({ success: false, error: 'Invalid image ID' });
+      }
+      
+      const image = await storage.getImageById(imageId);
+      
+      if (!image) {
+        return res.status(404).json({ success: false, error: 'Image not found' });
+      }
+      
+      // Check ownership
+      if (image.userId !== userId && req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Access denied' });
+      }
+      
+      res.json({ success: true, data: image });
+    } catch (error) {
+      console.error('Error fetching image details:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch image details' });
+    }
+  });
+
+  // Delete image
+  app.delete('/api/dashboard/images/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+      
+      const userId = req.user.id;
+      const imageId = parseInt(req.params.id, 10);
+      
+      if (isNaN(imageId)) {
+        return res.status(400).json({ success: false, error: 'Invalid image ID' });
+      }
+      
+      const image = await storage.getImageById(imageId);
+      
+      if (!image) {
+        return res.status(404).json({ success: false, error: 'Image not found' });
+      }
+      
+      // Check ownership
+      if (image.userId !== userId && req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Access denied' });
+      }
+      
+      await storage.deleteImage(imageId);
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      res.status(500).json({ success: false, error: 'Failed to delete image' });
+    }
+  });
+
   // ========== API Keys Management ==========
   // Get user's API keys
   app.get('/api/keys', async (req, res) => {

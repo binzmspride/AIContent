@@ -66,6 +66,7 @@ function Router() {
       {/* Protected Dashboard routes */}
       <ProtectedRoute path="/dashboard" component={Dashboard} />
       <ProtectedRoute path="/dashboard/create-content" component={CreateContent} />
+      <ProtectedRoute path="/dashboard/create-image" component={CreateImage} />
       <ProtectedRoute path="/dashboard/my-articles" component={MyArticles} />
       <ProtectedRoute path="/dashboard/edit-article/:id" component={EditArticle} />
       <ProtectedRoute path="/dashboard/credits" component={Credits} />

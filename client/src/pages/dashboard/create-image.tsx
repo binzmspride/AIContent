@@ -32,6 +32,7 @@ interface GeneratedImage {
   sourceText?: string;
   creditsUsed: number;
   status: string;
+  createdAt?: string;
 }
 
 export default function CreateImagePage() {

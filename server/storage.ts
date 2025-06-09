@@ -73,6 +73,13 @@ export interface IStorage {
   deleteApiKey(id: number, userId: number): Promise<boolean>;
   getApiKeys(userId: number): Promise<schema.ApiKey[]>;
   
+  // Image management
+  getImagesByUser(userId: number, page: number, limit: number): Promise<{ images: schema.Image[], total: number }>;
+  getImageById(id: number): Promise<schema.Image | null>;
+  createImage(image: schema.InsertImage): Promise<schema.Image>;
+  updateImage(id: number, data: Partial<schema.Image>): Promise<schema.Image | null>;
+  deleteImage(id: number): Promise<boolean>;
+  
   // Session store
   sessionStore: session.SessionStore;
 }
@@ -739,6 +746,94 @@ class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error('Error listing API keys:', error);
       return [];
+    }
+  }
+
+  // Image management
+  async getImagesByUser(userId: number, page: number, limit: number): Promise<{ images: schema.Image[], total: number }> {
+    try {
+      const offset = (page - 1) * limit;
+      
+      const images = await db.query.images.findMany({
+        where: eq(schema.images.userId, userId),
+        orderBy: [desc(schema.images.createdAt)],
+        limit,
+        offset,
+        with: {
+          article: true
+        }
+      });
+      
+      const totalResult = await db.select({ count: sql<number>`count(*)` })
+        .from(schema.images)
+        .where(eq(schema.images.userId, userId));
+      
+      const total = totalResult[0]?.count || 0;
+      
+      return { images, total };
+    } catch (error) {
+      console.error('Error fetching user images:', error);
+      return { images: [], total: 0 };
+    }
+  }
+
+  async getImageById(id: number): Promise<schema.Image | null> {
+    try {
+      const image = await db.query.images.findFirst({
+        where: eq(schema.images.id, id),
+        with: {
+          user: true,
+          article: true
+        }
+      });
+      return image || null;
+    } catch (error) {
+      console.error('Error fetching image by ID:', error);
+      return null;
+    }
+  }
+
+  async createImage(image: schema.InsertImage): Promise<schema.Image> {
+    try {
+      const [newImage] = await db.insert(schema.images)
+        .values({
+          ...image,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      return newImage;
+    } catch (error) {
+      console.error('Error creating image:', error);
+      throw error;
+    }
+  }
+
+  async updateImage(id: number, data: Partial<schema.Image>): Promise<schema.Image | null> {
+    try {
+      const [updatedImage] = await db.update(schema.images)
+        .set({
+          ...data,
+          updatedAt: new Date()
+        })
+        .where(eq(schema.images.id, id))
+        .returning();
+      return updatedImage || null;
+    } catch (error) {
+      console.error('Error updating image:', error);
+      return null;
+    }
+  }
+
+  async deleteImage(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(schema.images)
+        .where(eq(schema.images.id, id))
+        .returning();
+      return result.length > 0;
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      return false;
     }
   }
 }
