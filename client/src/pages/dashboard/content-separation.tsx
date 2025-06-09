@@ -155,10 +155,11 @@ export default function ContentSeparationPage() {
                 <p className="text-sm text-muted-foreground">Đang tải dữ liệu...</p>
               ) : separationData ? (
                 <Tabs defaultValue="overview" className="w-full">
-                  <TabsList className="grid w-full grid-cols-4">
+                  <TabsList className="grid w-full grid-cols-5">
                     <TabsTrigger value="overview">Tổng quan</TabsTrigger>
-                    <TabsTrigger value="content">Content</TabsTrigger>
-                    <TabsTrigger value="text">Text</TabsTrigger>
+                    <TabsTrigger value="content">Text View</TabsTrigger>
+                    <TabsTrigger value="html">HTML Code</TabsTrigger>
+                    <TabsTrigger value="text">Text Only</TabsTrigger>
                     <TabsTrigger value="images">Images</TabsTrigger>
                   </TabsList>
 
@@ -210,9 +211,23 @@ export default function ContentSeparationPage() {
 
                   <TabsContent value="content" className="space-y-4">
                     <div>
-                      <Label>Content gốc (HTML):</Label>
+                      <Label>Content hiển thị (Text view):</Label>
+                      <div className="mt-2 p-4 border rounded-md bg-white max-h-64 overflow-y-auto">
+                        <div 
+                          className="text-sm prose prose-sm max-w-none"
+                          dangerouslySetInnerHTML={{ 
+                            __html: separationData.content || 'Không có content' 
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="html" className="space-y-4">
+                    <div>
+                      <Label>HTML Source Code:</Label>
                       <div className="mt-2 p-4 border rounded-md bg-muted max-h-64 overflow-y-auto">
-                        <pre className="text-xs whitespace-pre-wrap">
+                        <pre className="text-xs whitespace-pre-wrap font-mono">
                           {separationData.content || 'Không có content'}
                         </pre>
                       </div>
@@ -281,10 +296,10 @@ export default function ContentSeparationPage() {
               <div className="p-4 border rounded-md">
                 <h4 className="font-medium mb-2 flex items-center gap-2">
                   <FileText className="h-4 w-4 text-blue-500" />
-                  Content gốc
+                  Content Views
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  Lưu trữ toàn bộ HTML content như người dùng tạo, bao gồm cả text và hình ảnh
+                  Text View: Hiển thị content dạng văn bản được format, HTML Code: Xem mã nguồn HTML
                 </p>
               </div>
               <div className="p-4 border rounded-md">
