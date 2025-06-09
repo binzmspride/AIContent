@@ -155,11 +155,9 @@ export default function ContentSeparationPage() {
                 <p className="text-sm text-muted-foreground">Đang tải dữ liệu...</p>
               ) : separationData ? (
                 <Tabs defaultValue="overview" className="w-full">
-                  <TabsList className="grid w-full grid-cols-5">
+                  <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="overview">Tổng quan</TabsTrigger>
                     <TabsTrigger value="content">Text View</TabsTrigger>
-                    <TabsTrigger value="html">HTML Code</TabsTrigger>
-                    <TabsTrigger value="text">Text Only</TabsTrigger>
                     <TabsTrigger value="images">Images</TabsTrigger>
                   </TabsList>
 
@@ -211,36 +209,19 @@ export default function ContentSeparationPage() {
 
                   <TabsContent value="content" className="space-y-4">
                     <div>
-                      <Label>Content hiển thị (Text view):</Label>
+                      <Label>Text View (Không bao gồm hình ảnh và video):</Label>
                       <div className="mt-2 p-4 border rounded-md bg-white max-h-64 overflow-y-auto">
                         <div 
                           className="text-sm prose prose-sm max-w-none"
                           dangerouslySetInnerHTML={{ 
-                            __html: separationData.content || 'Không có content' 
+                            __html: (separationData.content || 'Không có content')
+                              .replace(/<img[^>]*>/gi, '') // Remove img tags
+                              .replace(/<video[^>]*>.*?<\/video>/gi, '') // Remove video tags
+                              .replace(/<iframe[^>]*>.*?<\/iframe>/gi, '') // Remove iframe tags
+                              .replace(/<embed[^>]*>/gi, '') // Remove embed tags
+                              .replace(/<object[^>]*>.*?<\/object>/gi, '') // Remove object tags
                           }}
                         />
-                      </div>
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="html" className="space-y-4">
-                    <div>
-                      <Label>HTML Source Code:</Label>
-                      <div className="mt-2 p-4 border rounded-md bg-muted max-h-64 overflow-y-auto">
-                        <pre className="text-xs whitespace-pre-wrap font-mono">
-                          {separationData.content || 'Không có content'}
-                        </pre>
-                      </div>
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="text" className="space-y-4">
-                    <div>
-                      <Label>Text content (đã loại bỏ HTML tags):</Label>
-                      <div className="mt-2 p-4 border rounded-md bg-muted max-h-64 overflow-y-auto">
-                        <p className="text-sm whitespace-pre-wrap">
-                          {separationData.textContent || 'Không có text content'}
-                        </p>
                       </div>
                     </div>
                   </TabsContent>
@@ -296,19 +277,19 @@ export default function ContentSeparationPage() {
               <div className="p-4 border rounded-md">
                 <h4 className="font-medium mb-2 flex items-center gap-2">
                   <FileText className="h-4 w-4 text-blue-500" />
-                  Content Views
+                  Tổng quan
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  Text View: Hiển thị content dạng văn bản được format, HTML Code: Xem mã nguồn HTML
+                  Hiển thị thống kê tổng quan về content, text và hình ảnh trong bài viết
                 </p>
               </div>
               <div className="p-4 border rounded-md">
                 <h4 className="font-medium mb-2 flex items-center gap-2">
                   <FileText className="h-4 w-4 text-green-500" />
-                  Text Content
+                  Text View
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  Chỉ chứa văn bản thuần túy, đã loại bỏ tất cả thẻ HTML và hình ảnh
+                  Hiển thị nội dung văn bản được format, bỏ qua hình ảnh và video
                 </p>
               </div>
               <div className="p-4 border rounded-md">
