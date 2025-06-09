@@ -1635,6 +1635,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== Demo Image Generation Webhook ==========
+  // Demo webhook endpoint for testing image generation
+  app.post('/api/demo/image-generation', async (req, res) => {
+    try {
+      console.log('Demo image generation webhook called with:', req.body);
+      
+      const { title, prompt, sourceText, userId, articleId } = req.body;
+      
+      if (!title || !prompt) {
+        return res.status(400).json({
+          success: false,
+          error: 'Title and prompt are required'
+        });
+      }
+      
+      // Simulate image generation delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Return a demo image URL (placeholder)
+      const demoImageUrl = `https://picsum.photos/800/600?random=${Date.now()}`;
+      
+      res.json({
+        success: true,
+        imageUrl: demoImageUrl,
+        message: 'Demo image generated successfully'
+      });
+    } catch (error) {
+      console.error('Demo image generation error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Demo image generation failed'
+      });
+    }
+  });
+
   // ========== API Keys Management ==========
   // Get user's API keys
   app.get('/api/keys', async (req, res) => {

@@ -103,7 +103,7 @@ export default function CreateImagePage() {
 
   const handleArticleSelect = (articleId: string) => {
     setSelectedArticleId(articleId);
-    if (articleId && articlesData?.articles) {
+    if (articleId && articleId !== 'none' && articlesData?.articles) {
       const article = articlesData.articles.find((a: Article) => a.id.toString() === articleId);
       if (article) {
         setSourceText(article.textContent || '');
@@ -130,7 +130,7 @@ export default function CreateImagePage() {
       title: title.trim(),
       prompt: prompt.trim(),
       sourceText: sourceText.trim() || undefined,
-      articleId: selectedArticleId ? parseInt(selectedArticleId) : undefined,
+      articleId: selectedArticleId && selectedArticleId !== 'none' ? parseInt(selectedArticleId) : undefined,
     });
   };
 
@@ -216,7 +216,7 @@ export default function CreateImagePage() {
                       <SelectValue placeholder="Chọn bài viết để lấy nội dung..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Không chọn bài viết nào</SelectItem>
+                      <SelectItem value="none">Không chọn bài viết nào</SelectItem>
                       {articlesData?.articles?.map((article: Article) => (
                         <SelectItem key={article.id} value={article.id.toString()}>
                           {article.title}
