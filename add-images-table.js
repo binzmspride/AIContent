@@ -31,6 +31,18 @@ async function addImagesTable() {
 
     console.log('Images table created successfully');
 
+    // Create settings table if not exists
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS settings (
+        id SERIAL PRIMARY KEY,
+        key TEXT UNIQUE NOT NULL,
+        value TEXT,
+        category TEXT DEFAULT 'general',
+        created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+        updated_at TIMESTAMP DEFAULT NOW() NOT NULL
+      );
+    `);
+
     // Add image generation settings to settings table
     await client.query(`
       INSERT INTO settings (key, value, category) VALUES 

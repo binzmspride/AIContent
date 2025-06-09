@@ -63,6 +63,11 @@ export function Sidebar() {
       icon: <PenSquare className="h-5 w-5 mr-3" />,
     },
     {
+      href: "/dashboard/create-image",
+      label: "Tạo hình ảnh",
+      icon: <Image className="h-5 w-5 mr-3" />,
+    },
+    {
       href: "/dashboard/my-articles",
       label: t("dashboard.navigationItems.myArticles"),
       icon: <FileText className="h-5 w-5 mr-3" />,

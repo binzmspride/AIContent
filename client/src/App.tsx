@@ -16,6 +16,7 @@ import HomePage from "@/pages/home-page";
 import AuthPage from "@/pages/auth-page";
 import Dashboard from "@/pages/dashboard";
 import CreateContent from "@/pages/dashboard/create-content";
+import CreateImage from "@/pages/dashboard/create-image";
 import MyArticles from "@/pages/dashboard/my-articles";
 import Credits from "@/pages/dashboard/credits";
 import Plans from "@/pages/dashboard/plans";
