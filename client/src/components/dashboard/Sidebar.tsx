@@ -18,10 +18,10 @@ import {
   LogOut,
   Key,
   ChevronDown,
+  Users,
   ChevronRight,
   Database,
   BarChart3,
-  Users,
   Globe,
   Image,
   Images,
@@ -72,6 +72,11 @@ export function Sidebar() {
       href: "/dashboard/image-library",
       label: "Thư viện hình ảnh",
       icon: <Images className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/workspaces",
+      label: "Workspace cộng tác",
+      icon: <Users className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/my-articles",

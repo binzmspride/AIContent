@@ -35,6 +35,8 @@ import Collaboration from "@/pages/dashboard/collaboration";
 import Notifications from "@/pages/dashboard/notifications";
 import Scheduler from "@/pages/dashboard/scheduler";
 import Feedback from "@/pages/dashboard/feedback";
+import Workspaces from "@/pages/dashboard/workspaces";
+import WorkspaceDetail from "@/pages/dashboard/workspace-detail";
 import EditArticle from "@/pages/dashboard/edit-article";
 import Article from "@/pages/article";
 import VerifyEmail from "@/pages/verify-email";
