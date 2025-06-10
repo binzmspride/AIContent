@@ -87,6 +87,8 @@ function Router() {
       <ProtectedRoute path="/dashboard/notifications" component={Notifications} />
       <ProtectedRoute path="/dashboard/scheduler" component={Scheduler} />
       <ProtectedRoute path="/dashboard/feedback" component={Feedback} />
+      <ProtectedRoute path="/dashboard/workspaces" component={Workspaces} />
+      <ProtectedRoute path="/dashboard/workspaces/:id" component={WorkspaceDetail} />
       <ProtectedRoute path="/dashboard/settings" component={Settings} />
       <Route path="/article/:id" component={Article} />
       

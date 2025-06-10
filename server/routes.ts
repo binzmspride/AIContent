@@ -839,6 +839,177 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== Workspace API ==========
+  // Get user's workspaces
+  app.get('/api/workspaces', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const workspaces = await storage.getUserWorkspaces(userId);
+      res.json({ success: true, workspaces });
+    } catch (error) {
+      console.error('Error fetching workspaces:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch workspaces' });
+    }
+  });
+
+  // Create new workspace
+  app.post('/api/workspaces', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { name, description, isPublic, maxMembers } = req.body;
+
+      if (!name) {
+        return res.status(400).json({ success: false, error: 'Workspace name is required' });
+      }
+
+      const workspace = await storage.createWorkspace({
+        name,
+        description,
+        ownerId: userId,
+        isPublic: isPublic || false,
+        maxMembers: maxMembers || 10,
+        status: 'active',
+        inviteCode: Math.random().toString(36).substring(2, 15)
+      });
+
+      // Add creator as owner member
+      await storage.addWorkspaceMember({
+        workspaceId: workspace.id,
+        userId: userId,
+        role: 'owner',
+        invitedBy: userId
+      });
+
+      res.json({ success: true, workspace });
+    } catch (error) {
+      console.error('Error creating workspace:', error);
+      res.status(500).json({ success: false, error: 'Failed to create workspace' });
+    }
+  });
+
+  // Get workspace details
+  app.get('/api/workspaces/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const workspaceId = parseInt(req.params.id);
+      const userId = req.user.id;
+
+      // Check if user is member of workspace
+      const isMember = await storage.isWorkspaceMember(workspaceId, userId);
+      if (!isMember) {
+        return res.status(403).json({ success: false, error: 'Access denied' });
+      }
+
+      const workspace = await storage.getWorkspace(workspaceId);
+      if (!workspace) {
+        return res.status(404).json({ success: false, error: 'Workspace not found' });
+      }
+
+      res.json({ success: true, workspace });
+    } catch (error) {
+      console.error('Error fetching workspace:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch workspace' });
+    }
+  });
+
+  // Get workspace members
+  app.get('/api/workspaces/:id/members', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const workspaceId = parseInt(req.params.id);
+      const userId = req.user.id;
+
+      // Check if user is member of workspace
+      const isMember = await storage.isWorkspaceMember(workspaceId, userId);
+      if (!isMember) {
+        return res.status(403).json({ success: false, error: 'Access denied' });
+      }
+
+      const members = await storage.getWorkspaceMembers(workspaceId);
+      res.json({ success: true, members });
+    } catch (error) {
+      console.error('Error fetching workspace members:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch workspace members' });
+    }
+  });
+
+  // Get workspace sessions
+  app.get('/api/workspaces/:id/sessions', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const workspaceId = parseInt(req.params.id);
+      const userId = req.user.id;
+
+      // Check if user is member of workspace
+      const isMember = await storage.isWorkspaceMember(workspaceId, userId);
+      if (!isMember) {
+        return res.status(403).json({ success: false, error: 'Access denied' });
+      }
+
+      const sessions = await storage.getWorkspaceSessions(workspaceId);
+      res.json({ success: true, sessions });
+    } catch (error) {
+      console.error('Error fetching workspace sessions:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch workspace sessions' });
+    }
+  });
+
+  // Create new collaborative session
+  app.post('/api/workspaces/:id/sessions', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const workspaceId = parseInt(req.params.id);
+      const userId = req.user.id;
+      const { name, description, prompt, imageStyle, targetImageCount } = req.body;
+
+      // Check if user has editor/admin/owner permissions
+      const memberRole = await storage.getWorkspaceMemberRole(workspaceId, userId);
+      if (!memberRole || !['owner', 'admin', 'editor'].includes(memberRole)) {
+        return res.status(403).json({ success: false, error: 'Insufficient permissions' });
+      }
+
+      if (!name) {
+        return res.status(400).json({ success: false, error: 'Session name is required' });
+      }
+
+      const session = await storage.createCollaborativeSession({
+        workspaceId,
+        name,
+        description,
+        createdBy: userId,
+        status: 'active',
+        prompt,
+        imageStyle: imageStyle || 'realistic',
+        targetImageCount: targetImageCount || 1
+      });
+
+      res.json({ success: true, session });
+    } catch (error) {
+      console.error('Error creating session:', error);
+      res.status(500).json({ success: false, error: 'Failed to create session' });
+    }
+  });
+
   // ========== Admin API ==========
   // Get all users
   app.get('/api/admin/users', async (req, res) => {
