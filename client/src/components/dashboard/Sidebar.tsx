@@ -71,7 +71,7 @@ export function Sidebar() {
     {
       href: "/dashboard/image-library",
       label: "Thư viện hình ảnh",
-      icon: <Gallery className="h-5 w-5 mr-3" />,
+      icon: <Images className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/my-articles",
