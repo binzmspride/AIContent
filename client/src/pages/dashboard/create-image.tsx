@@ -53,6 +53,7 @@ export default function CreateImagePage() {
   const [savedImageIds, setSavedImageIds] = useState<Set<number>>(new Set());
   const [selectedImageForDetail, setSelectedImageForDetail] = useState<GeneratedImage | null>(null);
   const [showImageDetailDialog, setShowImageDetailDialog] = useState(false);
+  const [activePreviewFormat, setActivePreviewFormat] = useState<string>('original');
 
   // Confetti animation function
   const triggerConfetti = () => {
@@ -379,6 +380,24 @@ export default function CreateImagePage() {
     }
   };
 
+  // Get preview style for social media formats
+  const getPreviewStyle = (format: string) => {
+    switch (format) {
+      case 'facebook':
+        return { aspectRatio: '1.91/1', maxWidth: '500px', description: 'Facebook Post (1200x630px)' };
+      case 'instagram':
+        return { aspectRatio: '1/1', maxWidth: '400px', description: 'Instagram Post (1080x1080px)' };
+      case 'twitter':
+        return { aspectRatio: '16/9', maxWidth: '500px', description: 'Twitter Post (1200x675px)' };
+      case 'linkedin':
+        return { aspectRatio: '1.91/1', maxWidth: '500px', description: 'LinkedIn Post (1200x630px)' };
+      case 'youtube':
+        return { aspectRatio: '16/9', maxWidth: '560px', description: 'YouTube Thumbnail (1280x720px)' };
+      default:
+        return { aspectRatio: 'auto', maxWidth: '100%', description: 'Kích thước gốc' };
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="container py-6">
@@ -563,6 +582,7 @@ export default function CreateImagePage() {
                         className="border rounded-lg p-3 cursor-pointer hover:bg-muted/50 transition-colors"
                         onClick={() => {
                           setSelectedImageForDetail(image);
+                          setActivePreviewFormat('original');
                           setShowImageDetailDialog(true);
                         }}
                       >
@@ -810,27 +830,57 @@ export default function CreateImagePage() {
               <div className="space-y-6">
                 {/* Social Media Preview Tabs */}
                 <div className="flex gap-1 bg-muted p-1 rounded-lg">
-                  <Button size="sm" variant="default" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant={activePreviewFormat === 'original' ? 'default' : 'outline'} 
+                    className="flex-1"
+                    onClick={() => setActivePreviewFormat('original')}
+                  >
                     <Link className="mr-1 h-3 w-3" />
                     Kích thước gốc
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant={activePreviewFormat === 'facebook' ? 'default' : 'outline'} 
+                    className="flex-1"
+                    onClick={() => setActivePreviewFormat('facebook')}
+                  >
                     <Hash className="mr-1 h-3 w-3" />
                     Facebook Post
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant={activePreviewFormat === 'instagram' ? 'default' : 'outline'} 
+                    className="flex-1"
+                    onClick={() => setActivePreviewFormat('instagram')}
+                  >
                     <Hash className="mr-1 h-3 w-3" />
                     Instagram Post
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant={activePreviewFormat === 'twitter' ? 'default' : 'outline'} 
+                    className="flex-1"
+                    onClick={() => setActivePreviewFormat('twitter')}
+                  >
                     <MessageCircle className="mr-1 h-3 w-3" />
                     Twitter Post
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant={activePreviewFormat === 'linkedin' ? 'default' : 'outline'} 
+                    className="flex-1"
+                    onClick={() => setActivePreviewFormat('linkedin')}
+                  >
                     <Users className="mr-1 h-3 w-3" />
                     LinkedIn Post
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant={activePreviewFormat === 'youtube' ? 'default' : 'outline'} 
+                    className="flex-1"
+                    onClick={() => setActivePreviewFormat('youtube')}
+                  >
                     <Play className="mr-1 h-3 w-3" />
                     YouTube Thumbnail
                   </Button>
