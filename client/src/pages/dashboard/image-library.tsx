@@ -192,45 +192,73 @@ export default function ImageLibraryPage() {
             <p className="text-muted-foreground">Đang tải thư viện hình ảnh...</p>
           </div>
         ) : filteredImages.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {filteredImages.map((image: GeneratedImage) => (
-              <Card key={image.id} className="group cursor-pointer hover:shadow-lg transition-shadow">
-                <div className="aspect-square bg-muted rounded-t-lg overflow-hidden">
-                  <img 
-                    src={image.imageUrl} 
-                    alt={image.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = '/placeholder-image.svg';
-                    }}
-                    onClick={() => handleImageClick(image)}
-                  />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-semibold text-sm mb-2 line-clamp-2">{image.title}</h3>
-                  <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{image.prompt}</p>
+              <div 
+                key={image.id} 
+                className="group relative cursor-pointer transform transition-all duration-500 hover:scale-[1.02] hover:-translate-y-3"
+                onClick={() => handleImageClick(image)}
+              >
+                {/* Main Card Container with Enhanced Parallax */}
+                <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden">
+                  {/* Gradient Overlay for Depth */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/10 dark:to-white/10 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-xs">
-                        {image.creditsUsed} tín dụng
-                      </Badge>
-                      <Badge variant="outline" className="text-xs">
+                  {/* Enhanced Image Container with Multi-Layer Parallax */}
+                  <div className="relative aspect-square overflow-hidden rounded-t-2xl">
+                    {/* Background Layer (slowest movement) */}
+                    <div className="absolute inset-0 transform group-hover:scale-125 transition-transform duration-1000 ease-out">
+                      <img 
+                        src={image.imageUrl} 
+                        alt={image.title}
+                        className="w-full h-full object-cover blur-lg opacity-20"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/placeholder-image.svg';
+                        }}
+                      />
+                    </div>
+                    
+                    {/* Middle Layer (medium movement) */}
+                    <div className="absolute inset-0 transform group-hover:scale-110 transition-transform duration-700 ease-out">
+                      <img 
+                        src={image.imageUrl} 
+                        alt={image.title}
+                        className="w-full h-full object-cover blur-sm opacity-40"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/placeholder-image.svg';
+                        }}
+                      />
+                    </div>
+                    
+                    {/* Foreground Image (fastest movement) */}
+                    <div className="relative z-20 transform group-hover:scale-105 group-hover:-translate-y-2 transition-all duration-500 ease-out">
+                      <img 
+                        src={image.imageUrl} 
+                        alt={image.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/placeholder-image.svg';
+                        }}
+                      />
+                    </div>
+                    
+                    {/* Enhanced Shine Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1200 ease-out"></div>
+                    
+                    {/* Status Badge with Animation */}
+                    <div className="absolute top-3 right-3 z-30 transform group-hover:scale-110 transition-transform duration-300">
+                      <Badge variant="secondary" className="bg-green-100/90 dark:bg-green-900/90 text-green-800 dark:text-green-200 shadow-lg backdrop-blur-sm">
+                        <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
                         {image.status}
                       </Badge>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between mt-3 pt-3 border-t">
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3" />
-                      {new Date(image.createdAt).toLocaleDateString('vi-VN')}
-                    </div>
                     
-                    <div className="flex gap-1">
+                    {/* Floating Action Buttons */}
+                    <div className="absolute top-3 left-3 z-30 flex gap-2 opacity-0 group-hover:opacity-100 transform -translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                       <Button
                         size="sm"
-                        variant="ghost"
+                        variant="secondary"
+                        className="h-8 w-8 p-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleImageClick(image);
@@ -240,7 +268,8 @@ export default function ImageLibraryPage() {
                       </Button>
                       <Button
                         size="sm"
-                        variant="ghost"
+                        variant="secondary"
+                        className="h-8 w-8 p-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-700"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDownloadImage(image.imageUrl, image.title);
@@ -250,8 +279,66 @@ export default function ImageLibraryPage() {
                       </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                  
+                  {/* Content Area with Floating Effect */}
+                  <div className="p-4 relative z-20 transform group-hover:-translate-y-1 transition-transform duration-300">
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                        {image.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                        {image.prompt}
+                      </p>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                            {image.creditsUsed} credits
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Calendar className="h-3 w-3" />
+                          {new Date(image.createdAt).toLocaleDateString('vi-VN')}
+                        </div>
+                      </div>
+                      
+                      {/* Hover Actions */}
+                      <div className="flex gap-2 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="h-7 px-2 text-xs flex-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleImageClick(image);
+                          }}
+                        >
+                          <Eye className="h-3 w-3 mr-1" />
+                          Xem
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="h-7 px-2 text-xs flex-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownloadImage(image.imageUrl, image.title);
+                          }}
+                        >
+                          <Download className="h-3 w-3 mr-1" />
+                          Tải
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Bottom Glow Effect */}
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                
+                {/* Floating Shadow */}
+                <div className="absolute inset-0 bg-black/10 dark:bg-white/5 rounded-2xl -z-10 transform translate-y-2 scale-95 opacity-0 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-4 transition-all duration-500"></div>
+              </div>
             ))}
           </div>
         ) : (
