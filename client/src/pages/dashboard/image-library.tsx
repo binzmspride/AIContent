@@ -113,6 +113,14 @@ export default function ImageLibraryPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    // Trigger confetti for successful download
+    triggerDownloadConfetti();
+    
+    toast({
+      title: "Thành công",
+      description: "Hình ảnh đã được tải xuống!",
+    });
   };
 
   // Social media format configurations
