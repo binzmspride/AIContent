@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Image, Coins, FileText, Loader2, RefreshCw, Download, Eye, Save } from 'lucide-react';
+import { Image, Coins, FileText, Loader2, RefreshCw, Download, Eye, Save, ChevronDown, ChevronUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import confetti from 'canvas-confetti';
 
@@ -49,6 +49,7 @@ export default function CreateImagePage() {
   const [showPreview, setShowPreview] = useState(false);
   const [showLibraryDialog, setShowLibraryDialog] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<GeneratedImage | null>(null);
+  const [expandedPrompts, setExpandedPrompts] = useState<Record<string, boolean>>({});
 
   // Confetti animation function
   const triggerConfetti = () => {
@@ -288,6 +289,43 @@ export default function CreateImagePage() {
     setImageStyle('realistic');
     setGeneratedImage(null);
     setShowPreview(false);
+  };
+
+  // Truncate text component
+  const TruncatedText = ({ text, maxLength = 100, id }: { text: string; maxLength?: number; id: string }) => {
+    const isExpanded = expandedPrompts[id] || false;
+    const shouldTruncate = text.length > maxLength;
+    
+    const toggleExpanded = () => {
+      setExpandedPrompts(prev => ({
+        ...prev,
+        [id]: !prev[id]
+      }));
+    };
+
+    if (!shouldTruncate) {
+      return <span className="text-sm text-muted-foreground">{text}</span>;
+    }
+
+    return (
+      <div className="text-sm text-muted-foreground">
+        <span>{isExpanded ? text : `${text.slice(0, maxLength)}...`}</span>
+        <button
+          onClick={toggleExpanded}
+          className="ml-2 text-blue-600 hover:text-blue-800 underline text-xs inline-flex items-center gap-1"
+        >
+          {isExpanded ? (
+            <>
+              Thu gọn <ChevronUp className="h-3 w-3" />
+            </>
+          ) : (
+            <>
+              Xem thêm <ChevronDown className="h-3 w-3" />
+            </>
+          )}
+        </button>
+      </div>
+    );
   };
 
   // Save image to library mutation
@@ -575,10 +613,14 @@ export default function CreateImagePage() {
                 <div className="space-y-2">
                   <div className="space-y-1">
                     <p className="text-sm"><span className="font-medium">Chủ đề:</span> {generatedImage.title}</p>
-                    <p className="text-sm">
-                      <span className="font-medium">Mô tả (prompt):</span> 
-                      <span className="text-muted-foreground"> {generatedImage.prompt.split(', photorealistic')[0].split(', cartoon style')[0].split(', anime style')[0].split(', watercolor')[0].split(', oil painting')[0].split(', pencil sketch')[0].split(', minimalist')[0].split(', vintage')[0].split(', futuristic')[0].split(', abstract')[0].split(', pop art')[0].split(', cyberpunk')[0]}</span>
-                    </p>
+                    <div className="text-sm">
+                      <span className="font-medium">Mô tả (prompt):</span>
+                      <TruncatedText 
+                        text={generatedImage.prompt.split(', photorealistic')[0].split(', cartoon style')[0].split(', anime style')[0].split(', watercolor')[0].split(', oil painting')[0].split(', pencil sketch')[0].split(', minimalist')[0].split(', vintage')[0].split(', futuristic')[0].split(', abstract')[0].split(', pop art')[0].split(', cyberpunk')[0]}
+                        maxLength={100}
+                        id={`preview-prompt-${generatedImage.id || 'current'}`}
+                      />
+                    </div>
                     <p className="text-sm">
                       <span className="font-medium">Phong cách:</span> 
                       <span className="text-muted-foreground">
