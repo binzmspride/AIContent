@@ -106,7 +106,7 @@ export default function WorkspacesPage() {
     createWorkspaceMutation.mutate(data);
   };
 
-  const workspaces = workspacesData?.workspaces || [];
+  const workspaces = workspacesData?.data?.workspaces || workspacesData?.workspaces || [];
 
   return (
     <DashboardLayout>

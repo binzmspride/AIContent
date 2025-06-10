@@ -233,9 +233,9 @@ export default function WorkspaceDetailPage() {
     );
   }
 
-  const workspace: Workspace = workspaceData?.workspace;
-  const members: WorkspaceMember[] = membersData?.members || [];
-  const sessions: CollaborativeSession[] = sessionsData?.sessions || [];
+  const workspace: Workspace = workspaceData?.data?.workspace || workspaceData?.workspace;
+  const members: WorkspaceMember[] = membersData?.data?.members || membersData?.members || [];
+  const sessions: CollaborativeSession[] = sessionsData?.data?.sessions || sessionsData?.sessions || [];
 
   if (!workspace) {
     return (
@@ -433,7 +433,7 @@ export default function WorkspaceDetailPage() {
                             </p>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge variant={session.status === 'active' ? 'default' : session.status === 'completed' ? 'success' : 'secondary'}>
+                            <Badge variant={session.status === 'active' ? 'default' : 'secondary'}>
                               {session.status === 'active' ? (
                                 <>
                                   <Play className="h-3 w-3 mr-1" />

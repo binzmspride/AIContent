@@ -80,6 +80,17 @@ export interface IStorage {
   updateImage(id: number, data: Partial<schema.Image>): Promise<schema.Image | null>;
   deleteImage(id: number): Promise<boolean>;
   
+  // Workspace management
+  getUserWorkspaces(userId: number): Promise<any[]>;
+  createWorkspace(workspace: schema.InsertWorkspace): Promise<schema.Workspace>;
+  getWorkspace(id: number): Promise<schema.Workspace | null>;
+  isWorkspaceMember(workspaceId: number, userId: number): Promise<boolean>;
+  addWorkspaceMember(member: schema.InsertWorkspaceMember): Promise<schema.WorkspaceMember>;
+  getWorkspaceMembers(workspaceId: number): Promise<any[]>;
+  getWorkspaceMemberRole(workspaceId: number, userId: number): Promise<string | null>;
+  getWorkspaceSessions(workspaceId: number): Promise<any[]>;
+  createCollaborativeSession(session: schema.InsertCollaborativeSession): Promise<schema.CollaborativeSession>;
+  
   // Session store
   sessionStore: session.SessionStore;
 }
@@ -834,6 +845,161 @@ class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error('Error deleting image:', error);
       return false;
+    }
+  }
+
+  // Workspace methods
+  async getUserWorkspaces(userId: number): Promise<any[]> {
+    try {
+      const workspaces = await db.query.workspaceMembers.findMany({
+        where: eq(schema.workspaceMembers.userId, userId),
+        with: {
+          workspace: {
+            with: {
+              owner: {
+                columns: { username: true, fullName: true }
+              }
+            }
+          }
+        }
+      });
+
+      return workspaces.map(member => ({
+        ...member.workspace,
+        memberCount: 0, // TODO: Add member count query
+        role: member.role
+      }));
+    } catch (error) {
+      console.error('Error fetching user workspaces:', error);
+      return [];
+    }
+  }
+
+  async createWorkspace(workspace: schema.InsertWorkspace): Promise<schema.Workspace> {
+    try {
+      const [newWorkspace] = await db.insert(schema.workspaces)
+        .values({
+          ...workspace,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      return newWorkspace;
+    } catch (error) {
+      console.error('Error creating workspace:', error);
+      throw error;
+    }
+  }
+
+  async getWorkspace(id: number): Promise<schema.Workspace | null> {
+    try {
+      const workspace = await db.query.workspaces.findFirst({
+        where: eq(schema.workspaces.id, id)
+      });
+      return workspace || null;
+    } catch (error) {
+      console.error('Error getting workspace:', error);
+      return null;
+    }
+  }
+
+  async isWorkspaceMember(workspaceId: number, userId: number): Promise<boolean> {
+    try {
+      const member = await db.query.workspaceMembers.findFirst({
+        where: and(
+          eq(schema.workspaceMembers.workspaceId, workspaceId),
+          eq(schema.workspaceMembers.userId, userId)
+        )
+      });
+      return !!member;
+    } catch (error) {
+      console.error('Error checking workspace membership:', error);
+      return false;
+    }
+  }
+
+  async addWorkspaceMember(member: schema.InsertWorkspaceMember): Promise<schema.WorkspaceMember> {
+    try {
+      const [newMember] = await db.insert(schema.workspaceMembers)
+        .values({
+          ...member,
+          joinedAt: new Date(),
+          lastActiveAt: new Date()
+        })
+        .returning();
+      return newMember;
+    } catch (error) {
+      console.error('Error adding workspace member:', error);
+      throw error;
+    }
+  }
+
+  async getWorkspaceMembers(workspaceId: number): Promise<any[]> {
+    try {
+      const members = await db.query.workspaceMembers.findMany({
+        where: eq(schema.workspaceMembers.workspaceId, workspaceId),
+        with: {
+          user: {
+            columns: { id: true, username: true, fullName: true, profileImageUrl: true }
+          }
+        }
+      });
+      return members;
+    } catch (error) {
+      console.error('Error fetching workspace members:', error);
+      return [];
+    }
+  }
+
+  async getWorkspaceMemberRole(workspaceId: number, userId: number): Promise<string | null> {
+    try {
+      const member = await db.query.workspaceMembers.findFirst({
+        where: and(
+          eq(schema.workspaceMembers.workspaceId, workspaceId),
+          eq(schema.workspaceMembers.userId, userId)
+        )
+      });
+      return member?.role || null;
+    } catch (error) {
+      console.error('Error getting workspace member role:', error);
+      return null;
+    }
+  }
+
+  async getWorkspaceSessions(workspaceId: number): Promise<any[]> {
+    try {
+      const sessions = await db.query.collaborativeSessions.findMany({
+        where: eq(schema.collaborativeSessions.workspaceId, workspaceId),
+        with: {
+          creator: {
+            columns: { username: true, fullName: true }
+          }
+        }
+      });
+
+      return sessions.map(session => ({
+        ...session,
+        imageCount: 0 // TODO: Add image count query
+      }));
+    } catch (error) {
+      console.error('Error fetching workspace sessions:', error);
+      return [];
+    }
+  }
+
+  async createCollaborativeSession(session: schema.InsertCollaborativeSession): Promise<schema.CollaborativeSession> {
+    try {
+      const [newSession] = await db.insert(schema.collaborativeSessions)
+        .values({
+          ...session,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      return newSession;
+    } catch (error) {
+      console.error('Error creating collaborative session:', error);
+      throw error;
     }
   }
 }
