@@ -888,13 +888,25 @@ export default function CreateImagePage() {
 
                 {/* Image Preview */}
                 <div className="bg-white p-8 rounded-lg border-2 border-dashed border-muted">
-                  <div className="max-w-2xl mx-auto">
-                    <h3 className="text-center font-medium mb-4">Kích thước gốc của hình ảnh</h3>
-                    <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+                  <div className="mx-auto flex flex-col items-center">
+                    <h3 className="text-center font-medium mb-4">
+                      {getPreviewStyle(activePreviewFormat).description}
+                    </h3>
+                    <div 
+                      className="rounded-lg shadow-lg overflow-hidden bg-muted"
+                      style={{
+                        aspectRatio: getPreviewStyle(activePreviewFormat).aspectRatio,
+                        maxWidth: getPreviewStyle(activePreviewFormat).maxWidth,
+                        width: '100%'
+                      }}
+                    >
                       <img 
                         src={selectedImageForDetail.imageUrl} 
                         alt={selectedImageForDetail.title}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/placeholder-image.svg';
+                        }}
                       />
                     </div>
                   </div>
