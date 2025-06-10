@@ -557,9 +557,31 @@ export default function CreateImagePage() {
                 </div>
                 
                 <div className="space-y-2">
-                  <h3 className="font-semibold">{generatedImage.title}</h3>
-                  <p className="text-sm text-muted-foreground">{generatedImage.prompt}</p>
-                  <div className="flex items-center gap-2">
+                  <div className="space-y-1">
+                    <p className="text-sm"><span className="font-medium">Chủ đề:</span> {generatedImage.title}</p>
+                    <p className="text-sm">
+                      <span className="font-medium">Mô tả (prompt):</span> 
+                      <span className="text-muted-foreground"> {generatedImage.prompt.split(', photorealistic')[0].split(', cartoon style')[0].split(', anime style')[0].split(', watercolor')[0].split(', oil painting')[0].split(', pencil sketch')[0].split(', minimalist')[0].split(', vintage')[0].split(', futuristic')[0].split(', abstract')[0].split(', pop art')[0].split(', cyberpunk')[0]}</span>
+                    </p>
+                    <p className="text-sm">
+                      <span className="font-medium">Phong cách:</span> 
+                      <span className="text-muted-foreground">
+                        {imageStyle === 'realistic' && ' Thực tế (Realistic)'}
+                        {imageStyle === 'cartoon' && ' Hoạt hình (Cartoon)'}
+                        {imageStyle === 'anime' && ' Anime/Manga'}
+                        {imageStyle === 'watercolor' && ' Màu nước (Watercolor)'}
+                        {imageStyle === 'oil_painting' && ' Sơn dầu (Oil Painting)'}
+                        {imageStyle === 'sketch' && ' Phác thảo (Sketch)'}
+                        {imageStyle === 'minimalist' && ' Tối giản (Minimalist)'}
+                        {imageStyle === 'vintage' && ' Cổ điển (Vintage)'}
+                        {imageStyle === 'futuristic' && ' Tương lai (Futuristic)'}
+                        {imageStyle === 'abstract' && ' Trừu tượng (Abstract)'}
+                        {imageStyle === 'pop_art' && ' Pop Art'}
+                        {imageStyle === 'cyberpunk' && ' Cyberpunk'}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 pt-2">
                     <Badge variant="secondary">
                       {generatedImage.creditsUsed} tín dụng đã sử dụng
                     </Badge>
