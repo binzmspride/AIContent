@@ -24,6 +24,7 @@ import {
   Users,
   Globe,
   Image,
+  Images,
   MessageSquare,
   Bell,
   Calendar,
@@ -66,6 +67,11 @@ export function Sidebar() {
       href: "/dashboard/create-image",
       label: "Tạo hình ảnh",
       icon: <Image className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/image-library",
+      label: "Thư viện hình ảnh",
+      icon: <Gallery className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/my-articles",
