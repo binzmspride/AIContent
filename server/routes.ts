@@ -1166,9 +1166,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Kiểm tra xem cài đặt đã được lưu thành công hay chưa
       const savedWebhookUrl = await storage.getSetting('notificationWebhookUrl');
       const savedWebhookSecret = await storage.getSetting('webhookSecret');
-      const savedImageWebhookUrl = await storage.getSetting('imageWebhookUrl', 'image_generation');
-      const savedImageCredits = await storage.getSetting('imageCreditsPerGeneration', 'image_generation');
-      const savedEnableImage = await storage.getSetting('enableImageGeneration', 'image_generation');
+      const imageSettings = await storage.getSettingsByCategory('image_generation');
+      const savedImageWebhookUrl = imageSettings.imageWebhookUrl;
+      const savedImageCredits = imageSettings.imageCreditsPerGeneration;
+      const savedEnableImage = imageSettings.enableImageGeneration;
       
       console.log('Verification after save:');
       console.log('- Saved notificationWebhookUrl:', savedWebhookUrl);
@@ -1549,35 +1550,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
+      // Generate unique request ID for tracking
+      const requestId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+      
       // Prepare webhook payload
       const webhookPayload = {
+        requestId,
         title,
         prompt,
         sourceText,
         userId,
-        articleId
+        articleId,
+        timestamp: new Date().toISOString(),
+        creditsUsed: creditsPerGeneration
       };
+      
+      console.log(`Image generation request ${requestId}:`, {
+        userId,
+        title,
+        prompt: prompt.substring(0, 100) + '...',
+        webhookUrl: imageWebhookUrl
+      });
       
       try {
         // Call image generation webhook
         const webhookResponse = await fetch(imageWebhookUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'User-Agent': 'SEO-AI-Writer/1.0',
+            'X-Request-ID': requestId
+          },
           body: JSON.stringify(webhookPayload),
-          signal: AbortSignal.timeout(30000) // 30 second timeout
+          signal: AbortSignal.timeout(60000) // 60 second timeout for image generation
+        });
+        
+        console.log(`Webhook response for ${requestId}:`, {
+          status: webhookResponse.status,
+          statusText: webhookResponse.statusText,
+          headers: Object.fromEntries(webhookResponse.headers.entries())
         });
         
         if (!webhookResponse.ok) {
-          throw new Error(`Webhook returned ${webhookResponse.status}`);
+          const errorText = await webhookResponse.text();
+          console.error(`Webhook error for ${requestId}:`, errorText);
+          throw new Error(`Webhook returned ${webhookResponse.status}: ${errorText}`);
         }
         
         const webhookResult = await webhookResponse.json();
+        console.log(`Webhook result for ${requestId}:`, webhookResult);
         
-        if (!webhookResult.success || !webhookResult.imageUrl) {
+        if (!webhookResult.success) {
+          throw new Error(`Webhook failed: ${webhookResult.error || 'Unknown error'}`);
+        }
+        
+        if (!webhookResult.imageUrl && !webhookResult.data?.imageUrl) {
           throw new Error('Webhook did not return a valid image URL');
         }
         
-        // Deduct credits
+        // Extract image URL from response (support multiple response formats)
+        const imageUrl = webhookResult.imageUrl || webhookResult.data?.imageUrl || webhookResult.url;
+        
+        // Deduct credits first
         await storage.subtractUserCredits(userId, creditsPerGeneration, 'Image generation');
         
         // Save generated image to database
@@ -1586,13 +1620,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
           articleId: articleId || null,
           title,
           prompt,
-          imageUrl: webhookResult.imageUrl,
+          imageUrl,
           sourceText: sourceText || null,
           creditsUsed: creditsPerGeneration,
           status: 'generated'
         });
         
-        res.json({ success: true, data: image });
+        console.log(`Image generation completed for ${requestId}:`, {
+          imageId: image.id,
+          imageUrl: imageUrl,
+          creditsDeducted: creditsPerGeneration
+        });
+        
+        res.json({ 
+          success: true, 
+          data: {
+            ...image,
+            requestId,
+            webhookResponse: {
+              success: webhookResult.success,
+              message: webhookResult.message || 'Image generated successfully'
+            }
+          }
+        });
         
       } catch (webhookError: any) {
         console.error('Error calling image generation webhook:', webhookError);
