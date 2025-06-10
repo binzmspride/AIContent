@@ -108,9 +108,7 @@ export default function ImageLibraryPage() {
   const socialFormats = {
     original: { name: 'Kích thước gốc', aspect: 'aspect-auto', description: 'Kích thước gốc của hình ảnh' },
     facebook_post: { name: 'Facebook Post', aspect: 'aspect-[1.91/1]', description: '1200 x 630px - Tối ưu cho bài đăng Facebook' },
-    facebook_story: { name: 'Facebook Story', aspect: 'aspect-[9/16]', description: '1080 x 1920px - Tối ưu cho Facebook Story' },
     instagram_post: { name: 'Instagram Post', aspect: 'aspect-square', description: '1080 x 1080px - Tối ưu cho bài đăng Instagram' },
-    instagram_story: { name: 'Instagram Story', aspect: 'aspect-[9/16]', description: '1080 x 1920px - Tối ưu cho Instagram Story' },
     twitter_post: { name: 'Twitter Post', aspect: 'aspect-[16/9]', description: '1200 x 675px - Tối ưu cho bài đăng Twitter' },
     linkedin_post: { name: 'LinkedIn Post', aspect: 'aspect-[1.91/1]', description: '1200 x 630px - Tối ưu cho LinkedIn' },
     youtube_thumbnail: { name: 'YouTube Thumbnail', aspect: 'aspect-[16/9]', description: '1280 x 720px - Tối ưu cho thumbnail YouTube' }
@@ -266,13 +264,11 @@ export default function ImageLibraryPage() {
               <div className="space-y-6">
                 {/* Social Media Format Tabs */}
                 <Tabs value={selectedSocialFormat} onValueChange={setSelectedSocialFormat} className="w-full">
-                  <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-1">
+                  <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-1">
                     {Object.entries(socialFormats).map(([key, format]) => (
                       <TabsTrigger key={key} value={key} className="text-xs flex items-center gap-1">
                         {key === 'facebook_post' && <Facebook className="h-3 w-3" />}
-                        {key === 'facebook_story' && <Facebook className="h-3 w-3" />}
                         {key === 'instagram_post' && <Instagram className="h-3 w-3" />}
-                        {key === 'instagram_story' && <Instagram className="h-3 w-3" />}
                         {key === 'twitter_post' && <Twitter className="h-3 w-3" />}
                         {key === 'original' && <Image className="h-3 w-3" />}
                         <span className="truncate">{format.name}</span>
