@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Image, Coins, FileText, Loader2, RefreshCw, Download, Eye, Save, ChevronDown, ChevronUp } from 'lucide-react';
+import { Image, Coins, FileText, Loader2, RefreshCw, Download, Eye, Save, ChevronDown, ChevronUp, Link, X, Hash, Users, MessageCircle, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import confetti from 'canvas-confetti';
 
@@ -50,6 +50,9 @@ export default function CreateImagePage() {
   const [showLibraryDialog, setShowLibraryDialog] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<GeneratedImage | null>(null);
   const [expandedPrompts, setExpandedPrompts] = useState<Record<string, boolean>>({});
+  const [savedImageIds, setSavedImageIds] = useState<Set<number>>(new Set());
+  const [selectedImageForDetail, setSelectedImageForDetail] = useState<GeneratedImage | null>(null);
+  const [showImageDetailDialog, setShowImageDetailDialog] = useState(false);
 
   // Confetti animation function
   const triggerConfetti = () => {
@@ -345,8 +348,13 @@ export default function CreateImagePage() {
       }
       return data.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard/images'] });
+      
+      // Mark this image as saved
+      if (generatedImage?.id) {
+        setSavedImageIds(prev => new Set(prev.add(generatedImage.id!)));
+      }
       
       // Trigger confetti animation for successful save
       triggerConfetti();
@@ -550,7 +558,14 @@ export default function CreateImagePage() {
                       .filter((image: GeneratedImage) => image.status === 'saved') // Only show saved images
                       .slice(0, 3) // Limit to 3 images
                       .map((image: GeneratedImage) => (
-                      <div key={image.id} className="border rounded-lg p-3">
+                      <div 
+                        key={image.id} 
+                        className="border rounded-lg p-3 cursor-pointer hover:bg-muted/50 transition-colors"
+                        onClick={() => {
+                          setSelectedImageForDetail(image);
+                          setShowImageDetailDialog(true);
+                        }}
+                      >
                         <div className="aspect-video bg-muted rounded-md mb-2 overflow-hidden">
                           <img 
                             src={image.imageUrl} 
@@ -648,23 +663,25 @@ export default function CreateImagePage() {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button 
-                    onClick={handleSaveImage}
-                    disabled={saveImageMutation.isPending}
-                    className="flex-1"
-                  >
-                    {saveImageMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Đang lưu...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="mr-2 h-4 w-4" />
-                        Lưu
-                      </>
-                    )}
-                  </Button>
+                  {!savedImageIds.has(generatedImage.id || 0) && generatedImage.status !== 'saved' && (
+                    <Button 
+                      onClick={handleSaveImage}
+                      disabled={saveImageMutation.isPending}
+                      className="flex-1"
+                    >
+                      {saveImageMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Đang lưu...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="mr-2 h-4 w-4" />
+                          Lưu
+                        </>
+                      )}
+                    </Button>
+                  )}
                   <Button 
                     onClick={handleRegenerateImage}
                     disabled={generateImageMutation.isPending}
@@ -773,6 +790,112 @@ export default function CreateImagePage() {
                 Đóng
               </Button>
             </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Image Detail Dialog */}
+        <Dialog open={showImageDetailDialog} onOpenChange={setShowImageDetailDialog}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Image className="h-5 w-5" />
+                Chi tiết hình ảnh
+              </DialogTitle>
+              <DialogDescription>
+                Xem chi tiết và xem hình ảnh với các kích thước mạng xã hội
+              </DialogDescription>
+            </DialogHeader>
+            
+            {selectedImageForDetail && (
+              <div className="space-y-6">
+                {/* Social Media Preview Tabs */}
+                <div className="flex gap-1 bg-muted p-1 rounded-lg">
+                  <Button size="sm" variant="default" className="flex-1">
+                    <Link className="mr-1 h-3 w-3" />
+                    Kích thước gốc
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <Hash className="mr-1 h-3 w-3" />
+                    Facebook Post
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <Hash className="mr-1 h-3 w-3" />
+                    Instagram Post
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <MessageCircle className="mr-1 h-3 w-3" />
+                    Twitter Post
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <Users className="mr-1 h-3 w-3" />
+                    LinkedIn Post
+                  </Button>
+                  <Button size="sm" variant="outline" className="flex-1">
+                    <Play className="mr-1 h-3 w-3" />
+                    YouTube Thumbnail
+                  </Button>
+                </div>
+
+                {/* Image Preview */}
+                <div className="bg-white p-8 rounded-lg border-2 border-dashed border-muted">
+                  <div className="max-w-2xl mx-auto">
+                    <h3 className="text-center font-medium mb-4">Kích thước gốc của hình ảnh</h3>
+                    <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+                      <img 
+                        src={selectedImageForDetail.imageUrl} 
+                        alt={selectedImageForDetail.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Image Details */}
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-medium text-lg">{selectedImageForDetail.title}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedImageForDetail.prompt && (
+                        <TruncatedText 
+                          text={selectedImageForDetail.prompt} 
+                          maxLength={100}
+                          id={`detail-${selectedImageForDetail.id}`}
+                        />
+                      )}
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Badge variant="outline">{selectedImageForDetail.creditsUsed} tín dụng đã sử dụng</Badge>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Badge variant="outline">saved</Badge>
+                    </div>
+                    <div>
+                      Tạo ngày: {new Date(selectedImageForDetail.createdAt || '').toLocaleDateString('vi-VN')}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <Button asChild className="flex-1">
+                    <a href={selectedImageForDetail.imageUrl} download target="_blank">
+                      <Download className="mr-2 h-4 w-4" />
+                      Tải xuống
+                    </a>
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowImageDetailDialog(false)}>
+                    <X className="mr-2 h-4 w-4" />
+                    Xóa
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowImageDetailDialog(false)}>
+                    Đóng
+                  </Button>
+                </div>
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       </div>
