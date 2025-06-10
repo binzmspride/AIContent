@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Image, Loader2, Search, Download, Eye, Trash2, Calendar, Filter, Facebook, Instagram, Twitter } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import confetti from 'canvas-confetti';
 
 interface GeneratedImage {
   id: number;
@@ -36,6 +37,16 @@ export default function ImageLibraryPage() {
   const [selectedImage, setSelectedImage] = useState<GeneratedImage | null>(null);
   const [showImageDialog, setShowImageDialog] = useState(false);
   const [selectedSocialFormat, setSelectedSocialFormat] = useState('original');
+
+  // Simple confetti function for downloads
+  const triggerDownloadConfetti = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4']
+    });
+  };
 
   // Fetch user's generated images
   const { data: imagesData, isLoading: imagesLoading } = useQuery({

@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Image, Coins, FileText, Loader2, RefreshCw, Download, Eye, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import confetti from 'canvas-confetti';
 
 interface Article {
   id: number;
@@ -46,6 +47,56 @@ export default function CreateImagePage() {
   const [sourceText, setSourceText] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<GeneratedImage | null>(null);
+
+  // Confetti animation function
+  const triggerConfetti = () => {
+    // Create multiple bursts for better effect
+    const count = 200;
+    const defaults = {
+      origin: { y: 0.7 }
+    };
+
+    function fire(particleRatio: number, opts: any) {
+      confetti({
+        ...defaults,
+        ...opts,
+        particleCount: Math.floor(count * particleRatio)
+      });
+    }
+
+    // Multiple confetti bursts with different colors and shapes
+    fire(0.25, {
+      spread: 26,
+      startVelocity: 55,
+      colors: ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7']
+    });
+    
+    fire(0.2, {
+      spread: 60,
+      colors: ['#FF6B6B', '#4ECDC4', '#45B7D1']
+    });
+    
+    fire(0.35, {
+      spread: 100,
+      decay: 0.91,
+      scalar: 0.8,
+      colors: ['#FFD700', '#FFEAA7', '#96CEB4']
+    });
+    
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 25,
+      decay: 0.92,
+      scalar: 1.2,
+      colors: ['#FF6B6B', '#45B7D1', '#4ECDC4']
+    });
+    
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 45,
+      colors: ['#FFD700', '#FFEAA7']
+    });
+  };
 
   // Fetch user's articles
   const { data: articlesData, isLoading: articlesLoading } = useQuery({
@@ -92,6 +143,12 @@ export default function CreateImagePage() {
       setShowPreview(true);
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard/images'] });
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard/stats'] });
+      
+      // Trigger confetti animation
+      setTimeout(() => {
+        triggerConfetti();
+      }, 500); // Small delay to let the dialog open first
+      
       toast({
         title: "Thành công",
         description: "Hình ảnh đã được tạo thành công!",
@@ -178,6 +235,10 @@ export default function CreateImagePage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard/images'] });
+      
+      // Trigger confetti animation for successful save
+      triggerConfetti();
+      
       toast({
         title: "Thành công",
         description: "Hình ảnh đã được lưu vào thư viện của bạn!",
