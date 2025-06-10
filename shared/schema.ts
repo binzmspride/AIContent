@@ -352,3 +352,142 @@ export const insertAiApiKeySchema = createInsertSchema(aiApiKeys, {
 // AI API Keys types
 export type AiApiKey = z.infer<typeof selectAiApiKeySchema>;
 export type InsertAiApiKey = z.infer<typeof insertAiApiKeySchema>;
+
+// Collaborative Workspace Enums
+export const workspaceRoleEnum = pgEnum('workspace_role', ['owner', 'admin', 'editor', 'viewer']);
+export const workspaceStatusEnum = pgEnum('workspace_status', ['active', 'archived', 'deleted']);
+export const sessionStatusEnum = pgEnum('session_status', ['active', 'completed', 'cancelled']);
+
+// Workspaces table
+export const workspaces = pgTable('workspaces', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  description: text('description'),
+  ownerId: integer('owner_id').references(() => users.id).notNull(),
+  status: workspaceStatusEnum('status').notNull().default('active'),
+  settings: jsonb('settings').default({}),
+  inviteCode: text('invite_code').unique(),
+  isPublic: boolean('is_public').notNull().default(false),
+  maxMembers: integer('max_members').notNull().default(10),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Workspace Members table
+export const workspaceMembers = pgTable('workspace_members', {
+  id: serial('id').primaryKey(),
+  workspaceId: integer('workspace_id').references(() => workspaces.id).notNull(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  role: workspaceRoleEnum('role').notNull().default('viewer'),
+  invitedBy: integer('invited_by').references(() => users.id),
+  joinedAt: timestamp('joined_at').defaultNow().notNull(),
+  lastActiveAt: timestamp('last_active_at').defaultNow(),
+});
+
+// Collaborative Sessions table
+export const collaborativeSessions = pgTable('collaborative_sessions', {
+  id: serial('id').primaryKey(),
+  workspaceId: integer('workspace_id').references(() => workspaces.id).notNull(),
+  name: text('name').notNull(),
+  description: text('description'),
+  createdBy: integer('created_by').references(() => users.id).notNull(),
+  status: sessionStatusEnum('status').notNull().default('active'),
+  prompt: text('prompt'),
+  imageStyle: text('image_style').notNull().default('realistic'),
+  targetImageCount: integer('target_image_count').notNull().default(1),
+  settings: jsonb('settings').default({}),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Session Images table
+export const sessionImages = pgTable('session_images', {
+  id: serial('id').primaryKey(),
+  sessionId: integer('session_id').references(() => collaborativeSessions.id).notNull(),
+  imageId: integer('image_id').references(() => images.id).notNull(),
+  contributedBy: integer('contributed_by').references(() => users.id).notNull(),
+  version: integer('version').notNull().default(1),
+  isApproved: boolean('is_approved').notNull().default(false),
+  approvedBy: integer('approved_by').references(() => users.id),
+  approvedAt: timestamp('approved_at'),
+  feedback: text('feedback'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// Session Activity table
+export const sessionActivity = pgTable('session_activity', {
+  id: serial('id').primaryKey(),
+  sessionId: integer('session_id').references(() => collaborativeSessions.id).notNull(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  activityType: text('activity_type').notNull(), // joined, left, image_added, image_approved, etc.
+  data: jsonb('data').default({}),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// Workspace Relations
+export const workspacesRelations = relations(workspaces, ({ one, many }) => ({
+  owner: one(users, { fields: [workspaces.ownerId], references: [users.id] }),
+  members: many(workspaceMembers),
+  sessions: many(collaborativeSessions),
+}));
+
+export const workspaceMembersRelations = relations(workspaceMembers, ({ one }) => ({
+  workspace: one(workspaces, { fields: [workspaceMembers.workspaceId], references: [workspaces.id] }),
+  user: one(users, { fields: [workspaceMembers.userId], references: [users.id] }),
+  inviter: one(users, { fields: [workspaceMembers.invitedBy], references: [users.id] }),
+}));
+
+export const collaborativeSessionsRelations = relations(collaborativeSessions, ({ one, many }) => ({
+  workspace: one(workspaces, { fields: [collaborativeSessions.workspaceId], references: [workspaces.id] }),
+  creator: one(users, { fields: [collaborativeSessions.createdBy], references: [users.id] }),
+  sessionImages: many(sessionImages),
+  activities: many(sessionActivity),
+}));
+
+export const sessionImagesRelations = relations(sessionImages, ({ one }) => ({
+  session: one(collaborativeSessions, { fields: [sessionImages.sessionId], references: [collaborativeSessions.id] }),
+  image: one(images, { fields: [sessionImages.imageId], references: [images.id] }),
+  contributor: one(users, { fields: [sessionImages.contributedBy], references: [users.id] }),
+  approver: one(users, { fields: [sessionImages.approvedBy], references: [users.id] }),
+}));
+
+export const sessionActivityRelations = relations(sessionActivity, ({ one }) => ({
+  session: one(collaborativeSessions, { fields: [sessionActivity.sessionId], references: [collaborativeSessions.id] }),
+  user: one(users, { fields: [sessionActivity.userId], references: [users.id] }),
+}));
+
+// Workspace Schemas
+export const selectWorkspaceSchema = createSelectSchema(workspaces);
+export const insertWorkspaceSchema = createInsertSchema(workspaces, {
+  name: (schema) => schema.min(1, "Workspace name is required"),
+  maxMembers: (schema) => schema.min(1, "Max members must be at least 1").max(100, "Max members cannot exceed 100"),
+});
+
+export const selectWorkspaceMemberSchema = createSelectSchema(workspaceMembers);
+export const insertWorkspaceMemberSchema = createInsertSchema(workspaceMembers);
+
+export const selectCollaborativeSessionSchema = createSelectSchema(collaborativeSessions);
+export const insertCollaborativeSessionSchema = createInsertSchema(collaborativeSessions, {
+  name: (schema) => schema.min(1, "Session name is required"),
+  targetImageCount: (schema) => schema.min(1, "Target image count must be at least 1").max(10, "Target image count cannot exceed 10"),
+});
+
+export const selectSessionImageSchema = createSelectSchema(sessionImages);
+export const insertSessionImageSchema = createInsertSchema(sessionImages);
+
+export const selectSessionActivitySchema = createSelectSchema(sessionActivity);
+export const insertSessionActivitySchema = createInsertSchema(sessionActivity, {
+  activityType: (schema) => schema.min(1, "Activity type is required"),
+});
+
+// Workspace Types
+export type Workspace = z.infer<typeof selectWorkspaceSchema>;
+export type InsertWorkspace = z.infer<typeof insertWorkspaceSchema>;
+export type WorkspaceMember = z.infer<typeof selectWorkspaceMemberSchema>;
+export type InsertWorkspaceMember = z.infer<typeof insertWorkspaceMemberSchema>;
+export type CollaborativeSession = z.infer<typeof selectCollaborativeSessionSchema>;
+export type InsertCollaborativeSession = z.infer<typeof insertCollaborativeSessionSchema>;
+export type SessionImage = z.infer<typeof selectSessionImageSchema>;
+export type InsertSessionImage = z.infer<typeof insertSessionImageSchema>;
+export type SessionActivity = z.infer<typeof selectSessionActivitySchema>;
+export type InsertSessionActivity = z.infer<typeof insertSessionActivitySchema>;
