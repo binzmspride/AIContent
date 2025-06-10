@@ -815,21 +815,23 @@ export default function CreateImagePage() {
 
         {/* Image Detail Dialog */}
         <Dialog open={showImageDetailDialog} onOpenChange={setShowImageDetailDialog}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Image className="h-5 w-5" />
-                Chi tiết hình ảnh
-              </DialogTitle>
-              <DialogDescription>
-                Xem chi tiết và xem hình ảnh với các kích thước mạng xã hội
-              </DialogDescription>
-            </DialogHeader>
+          <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto p-0">
+            <div className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b p-6">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-xl">
+                  <Image className="h-6 w-6" />
+                  Chi tiết hình ảnh
+                </DialogTitle>
+                <DialogDescription className="text-base">
+                  Xem chi tiết và xem hình ảnh với các kích thước mạng xã hội
+                </DialogDescription>
+              </DialogHeader>
+            </div>
             
             {selectedImageForDetail && (
-              <div className="space-y-6">
+              <div className="p-6 space-y-8">
                 {/* Social Media Preview Tabs */}
-                <div className="flex gap-1 bg-muted p-1 rounded-lg">
+                <div className="flex gap-1 bg-muted p-1 rounded-lg overflow-x-auto">
                   <Button 
                     size="sm" 
                     variant={activePreviewFormat === 'original' ? 'default' : 'outline'} 
@@ -886,75 +888,250 @@ export default function CreateImagePage() {
                   </Button>
                 </div>
 
-                {/* Image Preview */}
-                <div className="bg-white p-8 rounded-lg border-2 border-dashed border-muted">
-                  <div className="mx-auto flex flex-col items-center">
-                    <h3 className="text-center font-medium mb-4">
-                      {getPreviewStyle(activePreviewFormat).description}
-                    </h3>
-                    <div 
-                      className="rounded-lg shadow-lg overflow-hidden bg-muted"
-                      style={{
-                        aspectRatio: getPreviewStyle(activePreviewFormat).aspectRatio,
-                        maxWidth: getPreviewStyle(activePreviewFormat).maxWidth,
-                        width: '100%'
-                      }}
-                    >
-                      <img 
-                        src={selectedImageForDetail.imageUrl} 
-                        alt={selectedImageForDetail.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = '/placeholder-image.svg';
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Image Details */}
+                {/* Enhanced Social Media Preview */}
                 <div className="space-y-4">
-                  <div>
-                    <h4 className="font-medium text-lg">{selectedImageForDetail.title}</h4>
+                  {/* Format Title and Description */}
+                  <div className="text-center">
+                    <h3 className="text-xl font-semibold mb-2">
+                      {getPreviewStyle(activePreviewFormat).description.split('(')[0].trim()}
+                    </h3>
                     <p className="text-sm text-muted-foreground">
-                      {selectedImageForDetail.prompt && (
-                        <TruncatedText 
-                          text={selectedImageForDetail.prompt} 
-                          maxLength={100}
-                          id={`detail-${selectedImageForDetail.id}`}
-                        />
-                      )}
+                      {getPreviewStyle(activePreviewFormat).description.includes('(') 
+                        ? getPreviewStyle(activePreviewFormat).description.split('(')[1].replace(')', '')
+                        : 'Kích thước gốc'
+                      }
                     </p>
                   </div>
-                  
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Badge variant="outline">{selectedImageForDetail.creditsUsed} tín dụng đã sử dụng</Badge>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Badge variant="outline">saved</Badge>
-                    </div>
-                    <div>
-                      Tạo ngày: {new Date(selectedImageForDetail.createdAt || '').toLocaleDateString('vi-VN')}
+
+                  {/* Social Media Mockup Container */}
+                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-8 rounded-xl border shadow-inner">
+                    <div className="mx-auto flex flex-col items-center">
+                      {activePreviewFormat !== 'original' && (
+                        <div className="w-full max-w-md mb-4">
+                          {/* Social Media Header Mockup */}
+                          <div className="bg-white dark:bg-gray-800 rounded-t-lg p-3 border-b border-gray-200 dark:border-gray-700">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-600 rounded-full flex items-center justify-center">
+                                {activePreviewFormat === 'instagram' && <Hash className="h-4 w-4 text-white" />}
+                                {activePreviewFormat === 'facebook' && <Hash className="h-4 w-4 text-white" />}
+                                {activePreviewFormat === 'twitter' && <MessageCircle className="h-4 w-4 text-white" />}
+                                {activePreviewFormat === 'linkedin' && <Users className="h-4 w-4 text-white" />}
+                                {activePreviewFormat === 'youtube' && <Play className="h-4 w-4 text-white" />}
+                              </div>
+                              <div>
+                                <p className="font-medium text-sm">your_account</p>
+                                <p className="text-xs text-muted-foreground">Sponsored</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Image Preview */}
+                      <div 
+                        className={`rounded-lg overflow-hidden shadow-xl ${
+                          activePreviewFormat === 'original' ? 'border-2 border-dashed border-primary/30' : 'border border-gray-200 dark:border-gray-700'
+                        }`}
+                        style={{
+                          aspectRatio: getPreviewStyle(activePreviewFormat).aspectRatio,
+                          maxWidth: getPreviewStyle(activePreviewFormat).maxWidth,
+                          width: '100%'
+                        }}
+                      >
+                        <img 
+                          src={selectedImageForDetail.imageUrl} 
+                          alt={selectedImageForDetail.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/placeholder-image.svg';
+                          }}
+                        />
+                      </div>
+
+                      {activePreviewFormat !== 'original' && (
+                        <div className="w-full max-w-md mt-0">
+                          {/* Social Media Footer Mockup */}
+                          <div className="bg-white dark:bg-gray-800 rounded-b-lg p-3 border-t border-gray-200 dark:border-gray-700">
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              Caption của bạn... #hashtag
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
+
+                  {/* Usage Guidelines */}
+                  {activePreviewFormat !== 'original' && (
+                    <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                      <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+                        Hướng dẫn sử dụng cho {getPreviewStyle(activePreviewFormat).description.split('(')[0].trim()}:
+                      </h4>
+                      <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                        {activePreviewFormat === 'instagram' && (
+                          <>
+                            <li>• Tối ưu cho thuật toán Instagram</li>
+                            <li>• Phù hợp với định dạng hiển thị của Instagram</li>
+                          </>
+                        )}
+                        {activePreviewFormat === 'facebook' && (
+                          <>
+                            <li>• Tối ưu cho Facebook News Feed</li>
+                            <li>• Kích thước lý tưởng cho chia sẻ trên Facebook</li>
+                          </>
+                        )}
+                        {activePreviewFormat === 'twitter' && (
+                          <>
+                            <li>• Tối ưu cho Twitter timeline</li>
+                            <li>• Hiển thị tốt trên cả desktop và mobile</li>
+                          </>
+                        )}
+                        {activePreviewFormat === 'linkedin' && (
+                          <>
+                            <li>• Chuyên nghiệp cho LinkedIn</li>
+                            <li>• Phù hợp với nội dung kinh doanh</li>
+                          </>
+                        )}
+                        {activePreviewFormat === 'youtube' && (
+                          <>
+                            <li>• Kích thước thumbnail chuẩn YouTube</li>
+                            <li>• Tối ưu cho hiển thị trong danh sách video</li>
+                          </>
+                        )}
+                      </ul>
+                    </div>
+                  )}
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <Button asChild className="flex-1">
-                    <a href={selectedImageForDetail.imageUrl} download target="_blank">
-                      <Download className="mr-2 h-4 w-4" />
-                      Tải xuống
-                    </a>
-                  </Button>
-                  <Button variant="outline" onClick={() => setShowImageDetailDialog(false)}>
-                    <X className="mr-2 h-4 w-4" />
-                    Xóa
-                  </Button>
-                  <Button variant="outline" onClick={() => setShowImageDetailDialog(false)}>
-                    Đóng
-                  </Button>
+                {/* Image Details Section */}
+                <div className="grid md:grid-cols-2 gap-8">
+                  {/* Basic Information */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <Info className="h-5 w-5" />
+                      Thông tin cơ bản
+                    </h3>
+                    <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-6 space-y-4">
+                      <div className="space-y-2">
+                        <span className="text-sm font-medium text-muted-foreground">Tên hình ảnh:</span>
+                        <h4 className="font-medium text-lg">{selectedImageForDetail.title}</h4>
+                      </div>
+                      <div className="space-y-2">
+                        <span className="text-sm font-medium text-muted-foreground">Prompt:</span>
+                        <p className="text-sm leading-relaxed bg-white dark:bg-gray-800 p-3 rounded-lg border">
+                          {selectedImageForDetail.prompt && (
+                            <TruncatedText 
+                              text={selectedImageForDetail.prompt} 
+                              maxLength={200}
+                              id={`detail-${selectedImageForDetail.id}`}
+                            />
+                          )}
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-muted-foreground">Credits sử dụng:</span>
+                        <Badge variant="secondary" className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                          {selectedImageForDetail.creditsUsed} credits
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-muted-foreground">Trạng thái:</span>
+                        <Badge variant="outline" className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-200 dark:border-green-800">
+                          Đã lưu
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-muted-foreground">Ngày tạo:</span>
+                        <span className="text-sm">{new Date(selectedImageForDetail.createdAt || '').toLocaleDateString('vi-VN', { 
+                          year: 'numeric', 
+                          month: 'long', 
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quick Actions */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      <Zap className="h-5 w-5" />
+                      Thao tác nhanh
+                    </h3>
+                    <div className="space-y-3">
+                      <Button 
+                        className="w-full justify-start gap-3 h-12" 
+                        variant="outline"
+                        onClick={() => {
+                          navigator.clipboard.writeText(selectedImageForDetail.imageUrl);
+                          toast({ 
+                            title: "Thành công!", 
+                            description: "Đã sao chép URL hình ảnh vào clipboard" 
+                          });
+                        }}
+                      >
+                        <Copy className="h-4 w-4" />
+                        Sao chép URL hình ảnh
+                      </Button>
+                      <Button 
+                        className="w-full justify-start gap-3 h-12" 
+                        variant="outline"
+                        onClick={() => {
+                          const link = document.createElement('a');
+                          link.href = selectedImageForDetail.imageUrl;
+                          link.download = selectedImageForDetail.title + '.jpg';
+                          link.click();
+                          toast({ 
+                            title: "Đang tải xuống...", 
+                            description: "Hình ảnh sẽ được tải xuống shortly" 
+                          });
+                        }}
+                      >
+                        <Download className="h-4 w-4" />
+                        Tải xuống hình ảnh
+                      </Button>
+                      <Button 
+                        className="w-full justify-start gap-3 h-12" 
+                        variant="outline"
+                        onClick={() => {
+                          navigator.clipboard.writeText(selectedImageForDetail.prompt);
+                          toast({ 
+                            title: "Thành công!", 
+                            description: "Đã sao chép prompt vào clipboard" 
+                          });
+                        }}
+                      >
+                        <FileText className="h-4 w-4" />
+                        Sao chép prompt
+                      </Button>
+                      <Button 
+                        className="w-full justify-start gap-3 h-12" 
+                        variant="destructive"
+                        onClick={() => {
+                          // Add delete functionality here if needed
+                          toast({ 
+                            title: "Chức năng đang phát triển", 
+                            description: "Tính năng xóa hình ảnh sẽ sớm được bổ sung" 
+                          });
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Xóa hình ảnh
+                      </Button>
+                    </div>
+                    
+                    {/* Close Button */}
+                    <div className="pt-4 border-t">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setShowImageDetailDialog(false)}
+                        className="w-full"
+                      >
+                        Đóng
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
