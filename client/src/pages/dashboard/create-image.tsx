@@ -184,23 +184,22 @@ export default function CreateImagePage() {
       .replace(/\n\s*\n/g, '\n') // Replace multiple newlines with single newline
       .trim(); // Remove leading/trailing whitespace
     
-    // If the text is still too long or contains meta descriptions, extract the main content
-    if (text.includes('Meta Description:') || text.length > 500) {
-      // Try to extract meaningful paragraphs
+    // If the text contains meta descriptions, extract the main content
+    if (text.includes('Meta Description:')) {
+      // Try to extract meaningful paragraphs, excluding meta descriptions
       const paragraphs = tempDiv.querySelectorAll('p, h1, h2, h3, h4, h5, h6');
       const meaningfulText = Array.from(paragraphs)
         .map(p => p.textContent?.trim())
-        .filter(text => text && text.length > 20 && !text.includes('Meta Description:'))
-        .slice(0, 3) // Take first 3 meaningful paragraphs
+        .filter(text => text && text.length > 10 && !text.includes('Meta Description:') && !text.includes('```'))
         .join('. ');
       
       if (meaningfulText) {
-        return meaningfulText.length > 300 ? meaningfulText.substring(0, 300) + '...' : meaningfulText;
+        return meaningfulText;
       }
     }
     
-    // Fallback: return first 300 characters of cleaned text
-    return text.length > 300 ? text.substring(0, 300) + '...' : text;
+    // Return the full cleaned text without any character limits
+    return text;
   };
 
   const handleArticleSelect = (articleId: string) => {
