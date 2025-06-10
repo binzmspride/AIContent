@@ -45,6 +45,7 @@ export default function CreateImagePage() {
   const [prompt, setPrompt] = useState('');
   const [selectedArticleId, setSelectedArticleId] = useState<string>('');
   const [sourceText, setSourceText] = useState('');
+  const [imageStyle, setImageStyle] = useState('realistic');
   const [showPreview, setShowPreview] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<GeneratedImage | null>(null);
 
@@ -210,13 +211,35 @@ export default function CreateImagePage() {
         // Use the content field (which contains HTML) and clean it
         const cleanedText = cleanHtmlContent(article.content);
         setSourceText(cleanedText);
+        // Auto-fill the prompt/description field with the cleaned text
+        setPrompt(cleanedText);
         if (!title) {
           setTitle(`Hình ảnh cho: "${article.title}"`);
         }
       }
     } else {
       setSourceText('');
+      setPrompt('');
     }
+  };
+
+  // Function to get style description for prompt
+  const getStyleDescription = (style: string): string => {
+    const styleDescriptions: Record<string, string> = {
+      realistic: "photorealistic, high quality, detailed",
+      cartoon: "cartoon style, colorful, animated",
+      anime: "anime style, manga art, Japanese animation",
+      watercolor: "watercolor painting, soft brushstrokes, artistic",
+      oil_painting: "oil painting style, classic art, textured brushwork",
+      sketch: "pencil sketch, hand-drawn, artistic linework",
+      minimalist: "minimalist design, clean, simple, modern",
+      vintage: "vintage style, retro, classic, aged",
+      futuristic: "futuristic, sci-fi, modern technology, sleek",
+      abstract: "abstract art, creative, artistic interpretation",
+      pop_art: "pop art style, bold colors, graphic design",
+      cyberpunk: "cyberpunk style, neon colors, futuristic urban"
+    };
+    return styleDescriptions[style] || "high quality, detailed";
   };
 
   const handleGenerateImage = () => {
@@ -229,9 +252,13 @@ export default function CreateImagePage() {
       return;
     }
 
+    // Combine the user prompt with style description
+    const styleDescription = getStyleDescription(imageStyle);
+    const enhancedPrompt = `${prompt.trim()}, ${styleDescription}`;
+
     generateImageMutation.mutate({
       title: title.trim(),
-      prompt: prompt.trim(),
+      prompt: enhancedPrompt,
       sourceText: sourceText.trim() || undefined,
       articleId: selectedArticleId && selectedArticleId !== 'none' ? parseInt(selectedArticleId) : undefined,
     });
@@ -239,9 +266,13 @@ export default function CreateImagePage() {
 
   const handleRegenerateImage = () => {
     if (generatedImage) {
+      // Combine the original prompt with current style
+      const styleDescription = getStyleDescription(imageStyle);
+      const enhancedPrompt = `${generatedImage.prompt}, ${styleDescription}`;
+      
       generateImageMutation.mutate({
         title: generatedImage.title,
-        prompt: generatedImage.prompt,
+        prompt: enhancedPrompt,
         sourceText: generatedImage.sourceText,
         articleId: selectedArticleId ? parseInt(selectedArticleId) : undefined,
       });
@@ -253,6 +284,7 @@ export default function CreateImagePage() {
     setPrompt('');
     setSelectedArticleId('');
     setSourceText('');
+    setImageStyle('realistic');
     setGeneratedImage(null);
     setShowPreview(false);
   };
@@ -351,6 +383,32 @@ export default function CreateImagePage() {
                     placeholder="Mô tả chi tiết hình ảnh bạn muốn tạo..."
                     rows={4}
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="imageStyle">Phong cách hình ảnh</Label>
+                  <Select value={imageStyle} onValueChange={setImageStyle}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Chọn phong cách hình ảnh..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="realistic">Thực tế (Realistic)</SelectItem>
+                      <SelectItem value="cartoon">Hoạt hình (Cartoon)</SelectItem>
+                      <SelectItem value="anime">Anime/Manga</SelectItem>
+                      <SelectItem value="watercolor">Màu nước (Watercolor)</SelectItem>
+                      <SelectItem value="oil_painting">Sơn dầu (Oil Painting)</SelectItem>
+                      <SelectItem value="sketch">Phác thảo (Sketch)</SelectItem>
+                      <SelectItem value="minimalist">Tối giản (Minimalist)</SelectItem>
+                      <SelectItem value="vintage">Cổ điển (Vintage)</SelectItem>
+                      <SelectItem value="futuristic">Tương lai (Futuristic)</SelectItem>
+                      <SelectItem value="abstract">Trừu tượng (Abstract)</SelectItem>
+                      <SelectItem value="pop_art">Pop Art</SelectItem>
+                      <SelectItem value="cyberpunk">Cyberpunk</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Chọn phong cách nghệ thuật cho hình ảnh của bạn
+                  </p>
                 </div>
 
                 <Separator />
