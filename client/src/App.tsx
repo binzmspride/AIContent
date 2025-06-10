@@ -29,7 +29,7 @@ import ContentSeparation from "@/pages/dashboard/content-separation";
 import Analytics from "@/pages/dashboard/analytics";
 import SEOTools from "@/pages/dashboard/seo-tools";
 import Templates from "@/pages/dashboard/templates";
-import MediaLibrary from "@/pages/dashboard/media-library";
+
 import Translations from "@/pages/dashboard/translations";
 import Collaboration from "@/pages/dashboard/collaboration";
 import Notifications from "@/pages/dashboard/notifications";
@@ -80,7 +80,6 @@ function Router() {
       <ProtectedRoute path="/dashboard/analytics" component={Analytics} />
       <ProtectedRoute path="/dashboard/seo-tools" component={SEOTools} />
       <ProtectedRoute path="/dashboard/templates" component={Templates} />
-      <ProtectedRoute path="/dashboard/media-library" component={MediaLibrary} />
       <ProtectedRoute path="/dashboard/translations" component={Translations} />
       <ProtectedRoute path="/dashboard/collaboration" component={Collaboration} />
       <ProtectedRoute path="/dashboard/notifications" component={Notifications} />

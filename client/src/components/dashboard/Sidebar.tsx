@@ -114,11 +114,6 @@ export function Sidebar() {
       icon: <FileText className="h-5 w-5 mr-3" />,
     },
     {
-      href: "/dashboard/media-library",
-      label: "Thư viện Media",
-      icon: <Image className="h-5 w-5 mr-3" />,
-    },
-    {
       href: "/dashboard/translations",
       label: "Đa ngôn ngữ",
       icon: <Globe className="h-5 w-5 mr-3" />,
