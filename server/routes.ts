@@ -1625,6 +1625,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
             success = true;
             console.log(`Converted fileName ${fileName} to imageUrl: ${imageUrl}`);
           }
+          // Format 2b: Array format [{imageUrl: "full_url"}]
+          else if (Array.isArray(webhookResult) && webhookResult.length > 0 && webhookResult[0].imageUrl) {
+            imageUrl = webhookResult[0].imageUrl;
+            success = true;
+            console.log(`Using imageUrl from array: ${imageUrl}`);
+          }
+          // Format 2c: Array format [{image1: "full_url"}] or other image field names
+          else if (Array.isArray(webhookResult) && webhookResult.length > 0) {
+            const firstItem = webhookResult[0];
+            // Look for common image field names
+            const imageFields = ['image1', 'image', 'url', 'src', 'path'];
+            for (const field of imageFields) {
+              if (firstItem[field]) {
+                imageUrl = firstItem[field];
+                success = true;
+                console.log(`Using ${field} from array: ${imageUrl}`);
+                break;
+              }
+            }
+          }
           // Format 3: Single object {fileName: "file.jpg"}
           else if (webhookResult.fileName) {
             const fileName = webhookResult.fileName;
