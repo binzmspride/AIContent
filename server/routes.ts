@@ -1645,18 +1645,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
         
       } catch (webhookError: any) {
-        console.error('Error calling image generation webhook:', webhookError);
+        console.error(`Webhook error for ${requestId}:`, webhookError);
         
         if (webhookError.name === 'AbortError' || webhookError.name === 'TimeoutError') {
           return res.status(504).json({
             success: false,
-            error: 'Image generation service timeout. Please try again.'
+            error: 'Image generation service timeout. Please try again.',
+            details: 'Webhook request timed out after 60 seconds'
           });
+        }
+        
+        // Parse webhook error message for more specific feedback
+        let errorMessage = 'Image generation service is not available. Please check webhook configuration.';
+        let errorDetails = webhookError.message;
+        
+        if (webhookError.message.includes('404')) {
+          errorMessage = 'Webhook endpoint not found or not configured for POST requests.';
+          errorDetails = 'The webhook URL may be incorrect or the endpoint is not set up to handle image generation requests.';
+        } else if (webhookError.message.includes('403')) {
+          errorMessage = 'Webhook access denied.';
+          errorDetails = 'The webhook URL requires authentication or proper permissions.';
+        } else if (webhookError.message.includes('500')) {
+          errorMessage = 'Webhook server error.';
+          errorDetails = 'The webhook service encountered an internal error.';
+        } else if (webhookError.message.includes('ECONNREFUSED') || webhookError.message.includes('ENOTFOUND')) {
+          errorMessage = 'Cannot connect to webhook service.';
+          errorDetails = 'The webhook URL is unreachable. Please verify the URL is correct and the service is running.';
         }
         
         return res.status(500).json({
           success: false,
-          error: 'Image generation service is not available. Please check webhook configuration.'
+          error: errorMessage,
+          details: errorDetails,
+          webhookUrl: imageWebhookUrl,
+          requestId
         });
       }
     } catch (error) {
@@ -1762,6 +1784,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({
         success: false,
         error: 'Demo image generation failed'
+      });
+    }
+  });
+
+  // Test webhook connectivity endpoint
+  app.post('/api/webhook/test', async (req, res) => {
+    try {
+      if (!req.isAuthenticated() || req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Admin access required' });
+      }
+
+      const { webhookUrl } = req.body;
+      
+      if (!webhookUrl) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Webhook URL is required' 
+        });
+      }
+
+      console.log('Testing webhook connectivity to:', webhookUrl);
+
+      // Test payload
+      const testPayload = {
+        requestId: 'test_' + Date.now(),
+        title: 'Test Image',
+        prompt: 'A test image for webhook connectivity',
+        userId: req.user.id,
+        timestamp: new Date().toISOString(),
+        creditsUsed: 1,
+        test: true
+      };
+
+      try {
+        const response = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'User-Agent': 'SEO-AI-Writer/1.0 (Test)',
+            'X-Test-Request': 'true'
+          },
+          body: JSON.stringify(testPayload),
+          signal: AbortSignal.timeout(30000)
+        });
+
+        const responseText = await response.text();
+        let responseData;
+        
+        try {
+          responseData = JSON.parse(responseText);
+        } catch {
+          responseData = { rawResponse: responseText };
+        }
+
+        console.log('Webhook test response:', {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries()),
+          data: responseData
+        });
+
+        res.json({
+          success: true,
+          data: {
+            status: response.status,
+            statusText: response.statusText,
+            ok: response.ok,
+            headers: Object.fromEntries(response.headers.entries()),
+            response: responseData,
+            message: response.ok ? 'Webhook is reachable and responding' : 'Webhook returned an error'
+          }
+        });
+
+      } catch (fetchError: any) {
+        console.error('Webhook test error:', fetchError);
+        
+        let errorType = 'Unknown error';
+        let suggestion = 'Please check the webhook URL and ensure the service is running.';
+        
+        if (fetchError.name === 'AbortError' || fetchError.name === 'TimeoutError') {
+          errorType = 'Timeout';
+          suggestion = 'The webhook took too long to respond. Check if the service is running and responsive.';
+        } else if (fetchError.message.includes('ECONNREFUSED')) {
+          errorType = 'Connection refused';
+          suggestion = 'The webhook service is not accepting connections. Verify the URL and port.';
+        } else if (fetchError.message.includes('ENOTFOUND')) {
+          errorType = 'DNS resolution failed';
+          suggestion = 'The webhook domain cannot be resolved. Check the URL spelling and DNS.';
+        } else if (fetchError.message.includes('ECONNRESET')) {
+          errorType = 'Connection reset';
+          suggestion = 'The webhook service closed the connection. Check server logs.';
+        }
+
+        res.json({
+          success: false,
+          error: `Webhook test failed: ${errorType}`,
+          details: fetchError.message,
+          suggestion,
+          webhookUrl
+        });
+      }
+
+    } catch (error) {
+      console.error('Error testing webhook:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to test webhook' 
       });
     }
   });
