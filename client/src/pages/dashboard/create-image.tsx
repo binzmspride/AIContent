@@ -53,7 +53,12 @@ export default function CreateImagePage() {
     queryFn: async () => {
       const res = await apiRequest('GET', '/api/dashboard/articles');
       const data = await res.json();
-      return data.success ? data.data : { articles: [] };
+      console.log('Articles API response:', data);
+      if (data.success && data.data) {
+        console.log('Articles array:', data.data.articles);
+        return data.data;
+      }
+      return { articles: [] };
     },
   });
 
@@ -250,19 +255,44 @@ export default function CreateImagePage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="article">Lấy nội dung từ bài viết (Tùy chọn)</Label>
-                  <Select value={selectedArticleId} onValueChange={handleArticleSelect}>
+                  <Select value={selectedArticleId} onValueChange={handleArticleSelect} disabled={articlesLoading}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Chọn bài viết để lấy nội dung..." />
+                      <SelectValue placeholder={
+                        articlesLoading 
+                          ? "Đang tải bài viết..." 
+                          : articlesData?.articles?.length > 0 
+                            ? "Chọn bài viết để lấy nội dung..." 
+                            : "Không có bài viết nào"
+                      } />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">Không chọn bài viết nào</SelectItem>
-                      {articlesData?.articles?.map((article: Article) => (
-                        <SelectItem key={article.id} value={article.id.toString()}>
-                          {article.title}
-                        </SelectItem>
-                      ))}
+                      {articlesData?.articles?.length > 0 ? (
+                        articlesData.articles.map((article: Article) => (
+                          <SelectItem key={article.id} value={article.id.toString()}>
+                            {article.title}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        !articlesLoading && (
+                          <SelectItem value="no-articles" disabled>
+                            Không có bài viết nào
+                          </SelectItem>
+                        )
+                      )}
                     </SelectContent>
                   </Select>
+                  {articlesLoading && (
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      Đang tải danh sách bài viết...
+                    </p>
+                  )}
+                  {!articlesLoading && articlesData?.articles?.length === 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      Bạn chưa có bài viết nào. Hãy tạo bài viết trước để sử dụng nội dung.
+                    </p>
+                  )}
                 </div>
 
                 {sourceText && (
