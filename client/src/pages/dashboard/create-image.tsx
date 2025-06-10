@@ -154,6 +154,45 @@ export default function CreateImagePage() {
     setShowPreview(false);
   };
 
+  // Save image to library mutation
+  const saveImageMutation = useMutation({
+    mutationFn: async (imageData: GeneratedImage) => {
+      const response = await apiRequest('POST', '/api/dashboard/images/save', {
+        title: imageData.title,
+        prompt: imageData.prompt,
+        imageUrl: imageData.imageUrl,
+        sourceText: imageData.sourceText,
+        creditsUsed: imageData.creditsUsed
+      });
+      
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to save image');
+      }
+      return data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/dashboard/images'] });
+      toast({
+        title: "Thành công",
+        description: "Hình ảnh đã được lưu vào thư viện của bạn!",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Lỗi",
+        description: error.message || "Không thể lưu hình ảnh",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSaveImage = () => {
+    if (generatedImage) {
+      saveImageMutation.mutate(generatedImage);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="container py-6">
@@ -340,6 +379,23 @@ export default function CreateImagePage() {
 
                 <div className="flex gap-2">
                   <Button 
+                    onClick={handleSaveImage}
+                    disabled={saveImageMutation.isPending}
+                    className="flex-1"
+                  >
+                    {saveImageMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Đang lưu...
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="mr-2 h-4 w-4" />
+                        Lưu
+                      </>
+                    )}
+                  </Button>
+                  <Button 
                     onClick={handleRegenerateImage}
                     disabled={generateImageMutation.isPending}
                     variant="outline"
@@ -356,7 +412,7 @@ export default function CreateImagePage() {
                       </>
                     )}
                   </Button>
-                  <Button asChild>
+                  <Button asChild variant="outline">
                     <a href={generatedImage.imageUrl} download target="_blank">
                       <Download className="mr-2 h-4 w-4" />
                       Tải xuống

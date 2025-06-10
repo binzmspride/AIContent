@@ -1787,6 +1787,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Save image to user's library
+  app.post('/api/dashboard/images/save', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Authentication required' });
+      }
+
+      const { title, prompt, imageUrl, sourceText, creditsUsed } = req.body;
+      const userId = req.user.id;
+
+      if (!title || !prompt || !imageUrl) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Title, prompt, and image URL are required' 
+        });
+      }
+
+      // Create a new image record in the user's library
+      const savedImage = await storage.createImage({
+        userId,
+        title,
+        prompt,
+        imageUrl,
+        sourceText: sourceText || null,
+        creditsUsed: creditsUsed || 0,
+        status: 'saved',
+        articleId: null
+      });
+
+      res.json({ 
+        success: true, 
+        data: savedImage,
+        message: 'Image saved to library successfully'
+      });
+    } catch (error) {
+      console.error('Error saving image:', error);
+      res.status(500).json({ success: false, error: 'Failed to save image to library' });
+    }
+  });
+
   // Delete image
   app.delete('/api/dashboard/images/:id', async (req, res) => {
     try {
