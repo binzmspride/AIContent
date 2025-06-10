@@ -47,6 +47,7 @@ export default function CreateImagePage() {
   const [sourceText, setSourceText] = useState('');
   const [imageStyle, setImageStyle] = useState('realistic');
   const [showPreview, setShowPreview] = useState(false);
+  const [showLibraryDialog, setShowLibraryDialog] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<GeneratedImage | null>(null);
 
   // Confetti animation function
@@ -507,7 +508,10 @@ export default function CreateImagePage() {
                   </div>
                 ) : imagesData?.images?.length > 0 ? (
                   <div className="space-y-3">
-                    {imagesData.images.slice(0, 5).map((image: GeneratedImage) => (
+                    {imagesData.images
+                      .filter((image: GeneratedImage) => image.status === 'saved') // Only show saved images
+                      .slice(0, 3) // Limit to 3 images
+                      .map((image: GeneratedImage) => (
                       <div key={image.id} className="border rounded-lg p-3">
                         <div className="aspect-video bg-muted rounded-md mb-2 overflow-hidden">
                           <img 
@@ -525,6 +529,18 @@ export default function CreateImagePage() {
                         </p>
                       </div>
                     ))}
+                    
+                    {/* View More Button */}
+                    {imagesData.images.filter((image: GeneratedImage) => image.status === 'saved').length > 3 && (
+                      <Button 
+                        variant="outline" 
+                        className="w-full mt-3"
+                        onClick={() => setShowLibraryDialog(true)}
+                      >
+                        <Eye className="mr-2 h-4 w-4" />
+                        Xem thêm ({imagesData.images.filter((image: GeneratedImage) => image.status === 'saved').length - 3} ảnh)
+                      </Button>
+                    )}
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground text-center py-4">
@@ -636,6 +652,78 @@ export default function CreateImagePage() {
                 </div>
               </div>
             )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Image Library Dialog */}
+        <Dialog open={showLibraryDialog} onOpenChange={setShowLibraryDialog}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
+            <DialogHeader>
+              <DialogTitle>Thư viện hình ảnh</DialogTitle>
+              <DialogDescription>
+                Tất cả hình ảnh đã lưu trong thư viện của bạn
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="overflow-y-auto max-h-[60vh]">
+              {imagesLoading ? (
+                <div className="text-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+                  <p className="text-sm text-muted-foreground mt-2">Đang tải...</p>
+                </div>
+              ) : imagesData?.images?.filter((image: GeneratedImage) => image.status === 'saved').length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {imagesData.images
+                    .filter((image: GeneratedImage) => image.status === 'saved')
+                    .map((image: GeneratedImage) => (
+                    <div key={image.id} className="border rounded-lg overflow-hidden">
+                      <div className="aspect-video bg-muted overflow-hidden">
+                        <img 
+                          src={image.imageUrl} 
+                          alt={image.title}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = '/placeholder-image.svg';
+                          }}
+                        />
+                      </div>
+                      <div className="p-3">
+                        <h4 className="font-medium text-sm truncate mb-1">{image.title}</h4>
+                        <p className="text-xs text-muted-foreground mb-2">
+                          {image.creditsUsed} tín dụng • {new Date(image.createdAt || '').toLocaleDateString('vi-VN')}
+                        </p>
+                        <div className="flex gap-1">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            className="flex-1 text-xs"
+                            asChild
+                          >
+                            <a href={image.imageUrl} download target="_blank">
+                              <Download className="mr-1 h-3 w-3" />
+                              Tải xuống
+                            </a>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Image className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-sm text-muted-foreground">
+                    Chưa có hình ảnh nào trong thư viện
+                  </p>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex justify-end mt-4">
+              <Button variant="outline" onClick={() => setShowLibraryDialog(false)}>
+                Đóng
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
