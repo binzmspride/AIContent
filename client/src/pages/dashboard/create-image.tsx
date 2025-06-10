@@ -683,25 +683,6 @@ export default function CreateImagePage() {
                 </div>
 
                 <div className="flex gap-2">
-                  {!savedImageIds.has(generatedImage.id || 0) && generatedImage.status !== 'saved' && (
-                    <Button 
-                      onClick={handleSaveImage}
-                      disabled={saveImageMutation.isPending}
-                      className="flex-1"
-                    >
-                      {saveImageMutation.isPending ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Đang lưu...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="mr-2 h-4 w-4" />
-                          Lưu
-                        </>
-                      )}
-                    </Button>
-                  )}
                   <Button 
                     onClick={handleRegenerateImage}
                     disabled={generateImageMutation.isPending}
