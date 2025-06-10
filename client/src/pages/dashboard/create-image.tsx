@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Image, Coins, FileText, Loader2, RefreshCw, Download, Eye, Save, ChevronDown, ChevronUp, Link, X, Hash, Users, MessageCircle, Play, CheckCircle, Calendar, Zap, Copy, Info, Trash2 } from 'lucide-react';
+import { Image, Coins, FileText, Loader2, RefreshCw, Download, Eye, Save, ChevronDown, ChevronUp, Link, X, Hash, Users, MessageCircle, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import confetti from 'canvas-confetti';
 
@@ -572,121 +572,34 @@ export default function CreateImagePage() {
                     <p className="text-sm text-muted-foreground mt-2">Đang tải...</p>
                   </div>
                 ) : imagesData?.images?.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="space-y-3">
                     {imagesData.images
                       .filter((image: GeneratedImage) => image.status === 'saved') // Only show saved images
                       .slice(0, 3) // Limit to 3 images
                       .map((image: GeneratedImage) => (
                       <div 
                         key={image.id} 
-                        className="group relative cursor-pointer transform transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2"
+                        className="border rounded-lg p-3 cursor-pointer hover:bg-muted/50 transition-colors"
                         onClick={() => {
                           setSelectedImageForDetail(image);
                           setActivePreviewFormat('original');
                           setShowImageDetailDialog(true);
                         }}
                       >
-                        {/* Main Card Container with Parallax Effect */}
-                        <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden">
-                          {/* Gradient Overlay for Depth */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/5 dark:to-white/5 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                          
-                          {/* Image Container with Parallax */}
-                          <div className="relative aspect-video overflow-hidden rounded-t-xl">
-                            {/* Background Layer (moves slower) */}
-                            <div className="absolute inset-0 transform group-hover:scale-110 transition-transform duration-700 ease-out">
-                              <img 
-                                src={image.imageUrl} 
-                                alt={image.title}
-                                className="w-full h-full object-cover blur-sm opacity-30"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).src = '/placeholder-image.svg';
-                                }}
-                              />
-                            </div>
-                            
-                            {/* Foreground Image (moves faster) */}
-                            <div className="relative z-20 transform group-hover:scale-105 group-hover:-translate-y-1 transition-all duration-500 ease-out">
-                              <img 
-                                src={image.imageUrl} 
-                                alt={image.title}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).src = '/placeholder-image.svg';
-                                }}
-                              />
-                            </div>
-                            
-                            {/* Shine Effect */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
-                            
-                            {/* Status Badge */}
-                            <div className="absolute top-2 right-2 z-30">
-                              <Badge variant="secondary" className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 shadow-sm">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                Đã lưu
-                              </Badge>
-                            </div>
-                          </div>
-                          
-                          {/* Content Area with Floating Effect */}
-                          <div className="p-4 relative z-20 transform group-hover:-translate-y-1 transition-transform duration-300">
-                            <div className="space-y-2">
-                              <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
-                                {image.title}
-                              </h4>
-                              
-                              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                <div className="flex items-center gap-1">
-                                  <Zap className="h-3 w-3" />
-                                  <span>{image.creditsUsed} credits</span>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <Calendar className="h-3 w-3" />
-                                  <span>{new Date(image.createdAt || '').toLocaleDateString('vi-VN')}</span>
-                                </div>
-                              </div>
-                              
-                              {/* Hover Actions */}
-                              <div className="flex gap-2 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                                <Button 
-                                  size="sm" 
-                                  variant="outline" 
-                                  className="h-7 px-2 text-xs"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigator.clipboard.writeText(image.imageUrl);
-                                    toast({ title: "Đã sao chép URL!" });
-                                  }}
-                                >
-                                  <Copy className="h-3 w-3 mr-1" />
-                                  Copy
-                                </Button>
-                                <Button 
-                                  size="sm" 
-                                  variant="outline" 
-                                  className="h-7 px-2 text-xs"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    const link = document.createElement('a');
-                                    link.href = image.imageUrl;
-                                    link.download = image.title + '.jpg';
-                                    link.click();
-                                  }}
-                                >
-                                  <Download className="h-3 w-3 mr-1" />
-                                  Tải
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {/* Bottom Glow Effect */}
-                          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="aspect-video bg-muted rounded-md mb-2 overflow-hidden">
+                          <img 
+                            src={image.imageUrl} 
+                            alt={image.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/placeholder-image.svg';
+                            }}
+                          />
                         </div>
-                        
-                        {/* Floating Shadow */}
-                        <div className="absolute inset-0 bg-black/10 dark:bg-white/5 rounded-xl -z-10 transform translate-y-1 scale-95 opacity-0 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-3 transition-all duration-500"></div>
+                        <h4 className="font-medium text-sm truncate">{image.title}</h4>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {image.creditsUsed} tín dụng • {new Date(image.createdAt || '').toLocaleDateString('vi-VN')}
+                        </p>
                       </div>
                     ))}
                     
