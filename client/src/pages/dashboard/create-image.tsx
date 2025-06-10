@@ -163,14 +163,56 @@ export default function CreateImagePage() {
     },
   });
 
+  // Function to clean HTML content and extract meaningful text
+  const cleanHtmlContent = (htmlContent: string): string => {
+    if (!htmlContent) return '';
+    
+    // Create a temporary div to parse HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+    
+    // Remove script and style elements
+    const scripts = tempDiv.querySelectorAll('script, style');
+    scripts.forEach(el => el.remove());
+    
+    // Get text content
+    let text = tempDiv.textContent || tempDiv.innerText || '';
+    
+    // Clean up the text
+    text = text
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .replace(/\n\s*\n/g, '\n') // Replace multiple newlines with single newline
+      .trim(); // Remove leading/trailing whitespace
+    
+    // If the text is still too long or contains meta descriptions, extract the main content
+    if (text.includes('Meta Description:') || text.length > 500) {
+      // Try to extract meaningful paragraphs
+      const paragraphs = tempDiv.querySelectorAll('p, h1, h2, h3, h4, h5, h6');
+      const meaningfulText = Array.from(paragraphs)
+        .map(p => p.textContent?.trim())
+        .filter(text => text && text.length > 20 && !text.includes('Meta Description:'))
+        .slice(0, 3) // Take first 3 meaningful paragraphs
+        .join('. ');
+      
+      if (meaningfulText) {
+        return meaningfulText.length > 300 ? meaningfulText.substring(0, 300) + '...' : meaningfulText;
+      }
+    }
+    
+    // Fallback: return first 300 characters of cleaned text
+    return text.length > 300 ? text.substring(0, 300) + '...' : text;
+  };
+
   const handleArticleSelect = (articleId: string) => {
     setSelectedArticleId(articleId);
     if (articleId && articleId !== 'none' && articlesData?.articles) {
       const article = articlesData.articles.find((a: Article) => a.id.toString() === articleId);
       if (article) {
-        setSourceText(article.textContent || '');
+        // Use the content field (which contains HTML) and clean it
+        const cleanedText = cleanHtmlContent(article.content);
+        setSourceText(cleanedText);
         if (!title) {
-          setTitle(`Hình ảnh cho: ${article.title}`);
+          setTitle(`Hình ảnh cho: "${article.title}"`);
         }
       }
     } else {
