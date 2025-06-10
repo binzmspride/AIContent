@@ -731,6 +731,13 @@ export default function CreateImagePage() {
                       </div>
                       <div className="p-3">
                         <h4 className="font-medium text-sm truncate mb-1">{image.title}</h4>
+                        <div className="mb-2">
+                          <TruncatedText 
+                            text={image.prompt}
+                            maxLength={100}
+                            id={`library-prompt-${image.id}`}
+                          />
+                        </div>
                         <p className="text-xs text-muted-foreground mb-2">
                           {image.creditsUsed} tín dụng • {new Date(image.createdAt || '').toLocaleDateString('vi-VN')}
                         </p>
