@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Image, Coins, FileText, Loader2, RefreshCw, Download, Eye } from 'lucide-react';
+import { Image, Coins, FileText, Loader2, RefreshCw, Download, Eye, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Article {
@@ -390,7 +390,7 @@ export default function CreateImagePage() {
                       </>
                     ) : (
                       <>
-                        <Eye className="mr-2 h-4 w-4" />
+                        <Save className="mr-2 h-4 w-4" />
                         Lưu
                       </>
                     )}
