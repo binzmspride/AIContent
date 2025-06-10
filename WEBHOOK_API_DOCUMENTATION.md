@@ -43,12 +43,30 @@ X-Request-ID: {unique_request_id}
 
 ## Expected Response Format
 
-### Success Response
+The system supports multiple response formats for flexibility:
+
+### Format 1: Standard Success Response
 ```json
 {
   "success": true,
   "imageUrl": "https://your-cdn.com/generated-image.jpg",
   "message": "Image generated successfully"
+}
+```
+
+### Format 2: Array with fileName (Supported)
+```json
+[
+  {
+    "fileName": "con-ca-map-20250610_032536.jpg"
+  }
+]
+```
+
+### Format 3: Single Object with fileName
+```json
+{
+  "fileName": "generated-image-20250610_032536.jpg"
 }
 ```
 
@@ -61,10 +79,16 @@ X-Request-ID: {unique_request_id}
 ```
 
 ### Response Field Requirements
-- `success`: Boolean indicating if the generation was successful
-- `imageUrl`: Direct URL to the generated image (required if success=true)
-- `message`: Optional success message
-- `error`: Error description (required if success=false)
+- **Standard format**: `success` boolean and `imageUrl` string required
+- **fileName format**: `fileName` string will be converted to full URL automatically
+- **Error format**: `success: false` and `error` message required
+
+### URL Construction for fileName Format
+When webhook returns fileName format, the system constructs the full image URL using:
+1. `imageCdnUrl` setting (if configured in admin settings)
+2. Webhook domain + `/images/` path (fallback)
+
+Example: `fileName: "image.jpg"` becomes `https://your-webhook-domain.com/images/image.jpg`
 
 ## HTTP Status Codes
 - `200 OK`: Image generated successfully

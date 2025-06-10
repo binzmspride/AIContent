@@ -1600,16 +1600,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const webhookResult = await webhookResponse.json();
         console.log(`Webhook result for ${requestId}:`, webhookResult);
         
-        if (!webhookResult.success) {
-          throw new Error(`Webhook failed: ${webhookResult.error || 'Unknown error'}`);
+        let imageUrl = null;
+        let success = false;
+        
+        // Handle different webhook response formats
+        if (webhookResult && typeof webhookResult === 'object') {
+          // Format 1: Standard {success: true, imageUrl: "url"}
+          if (webhookResult.success && webhookResult.imageUrl) {
+            imageUrl = webhookResult.imageUrl;
+            success = true;
+          }
+          // Format 2: Array format [{fileName: "file.jpg"}]
+          else if (Array.isArray(webhookResult) && webhookResult.length > 0 && webhookResult[0].fileName) {
+            const fileName = webhookResult[0].fileName;
+            // Get image base URL from settings or use webhook URL domain
+            const imageCdnUrl = await storage.getSetting('imageCdnUrl');
+            if (imageCdnUrl) {
+              imageUrl = `${imageCdnUrl}/${fileName}`;
+            } else {
+              // Extract domain from webhook URL and assume images are served from there
+              const webhookDomain = new URL(imageWebhookUrl).origin;
+              imageUrl = `${webhookDomain}/images/${fileName}`;
+            }
+            success = true;
+            console.log(`Converted fileName ${fileName} to imageUrl: ${imageUrl}`);
+          }
+          // Format 3: Single object {fileName: "file.jpg"}
+          else if (webhookResult.fileName) {
+            const fileName = webhookResult.fileName;
+            // Get image base URL from settings or use webhook URL domain
+            const imageCdnUrl = await storage.getSetting('imageCdnUrl');
+            if (imageCdnUrl) {
+              imageUrl = `${imageCdnUrl}/${fileName}`;
+            } else {
+              // Extract domain from webhook URL and assume images are served from there
+              const webhookDomain = new URL(imageWebhookUrl).origin;
+              imageUrl = `${webhookDomain}/images/${fileName}`;
+            }
+            success = true;
+            console.log(`Converted single fileName ${fileName} to imageUrl: ${imageUrl}`);
+          }
+          // Format 4: Alternative formats
+          else if (webhookResult.data?.imageUrl) {
+            imageUrl = webhookResult.data.imageUrl;
+            success = true;
+          }
+          else if (webhookResult.url) {
+            imageUrl = webhookResult.url;
+            success = true;
+          }
+          // Format 5: Error response
+          else if (webhookResult.success === false) {
+            throw new Error(`Webhook returned error: ${webhookResult.error || 'Unknown error'}`);
+          }
         }
         
-        if (!webhookResult.imageUrl && !webhookResult.data?.imageUrl) {
-          throw new Error('Webhook did not return a valid image URL');
+        if (!success || !imageUrl) {
+          throw new Error(`Invalid webhook response format. Expected {success: true, imageUrl: "url"} or [{fileName: "file.jpg"}], got: ${JSON.stringify(webhookResult)}`);
         }
-        
-        // Extract image URL from response (support multiple response formats)
-        const imageUrl = webhookResult.imageUrl || webhookResult.data?.imageUrl || webhookResult.url;
         
         // Deduct credits first
         await storage.subtractUserCredits(userId, creditsPerGeneration, 'Image generation');
@@ -1771,14 +1819,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Simulate image generation delay
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Return a demo image URL (placeholder)
-      const demoImageUrl = `https://picsum.photos/800/600?random=${Date.now()}`;
+      // Test both response formats randomly
+      const useFileNameFormat = Math.random() > 0.5;
       
-      res.json({
-        success: true,
-        imageUrl: demoImageUrl,
-        message: 'Demo image generated successfully'
-      });
+      if (useFileNameFormat) {
+        // Return fileName format like your webhook
+        const fileName = `${title.replace(/\s+/g, '-').toLowerCase()}-${Date.now()}.jpg`;
+        res.json([{
+          fileName: fileName
+        }]);
+      } else {
+        // Return standard format
+        const demoImageUrl = `https://picsum.photos/800/600?random=${Date.now()}`;
+        res.json({
+          success: true,
+          imageUrl: demoImageUrl,
+          message: 'Demo image generated successfully'
+        });
+      }
     } catch (error) {
       console.error('Demo image generation error:', error);
       res.status(500).json({
