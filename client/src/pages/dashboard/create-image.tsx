@@ -574,7 +574,6 @@ export default function CreateImagePage() {
                 ) : imagesData?.images?.length > 0 ? (
                   <div className="space-y-3">
                     {imagesData.images
-                      .filter((image: GeneratedImage) => image.status === 'saved') // Only show saved images
                       .slice(0, 3) // Limit to 3 images
                       .map((image: GeneratedImage) => (
                       <div 
@@ -604,14 +603,14 @@ export default function CreateImagePage() {
                     ))}
                     
                     {/* View More Button */}
-                    {imagesData.images.filter((image: GeneratedImage) => image.status === 'saved').length > 3 && (
+                    {imagesData.images.length > 3 && (
                       <Button 
                         variant="outline" 
                         className="w-full mt-3"
                         onClick={() => setShowLibraryDialog(true)}
                       >
                         <Eye className="mr-2 h-4 w-4" />
-                        Xem thêm ({imagesData.images.filter((image: GeneratedImage) => image.status === 'saved').length - 3} ảnh)
+                        Xem thêm ({imagesData.images.length - 3} ảnh)
                       </Button>
                     )}
                   </div>
