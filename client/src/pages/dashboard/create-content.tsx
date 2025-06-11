@@ -108,7 +108,7 @@ const formSchema = z.object({
     })
   ).default([]),
   imageSize: z.enum(["small", "medium", "large"]).default("medium"),
-  generateImages: z.boolean().default(false),
+  generateImages: z.boolean().default(true),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -157,7 +157,7 @@ export default function CreateContent() {
       aiModel: "chatgpt",
       linkItems: [],
       imageSize: "medium",
-      generateImages: false,
+      generateImages: true,
     },
     mode: "onSubmit",
   });
