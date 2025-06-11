@@ -4,7 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { LanguageProvider } from "@/providers/LanguageProvider";
-import { AuthProvider } from "@/hooks/use-auth";
+import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { FloatingThemeIndicator } from "@/components/common/FloatingThemeIndicator";
 import { FeedbackButton } from "@/components/FeedbackButton";
@@ -56,6 +56,26 @@ import AdminFeedback from "@/pages/admin/feedback";
 import AdminTranslations from "@/pages/admin/translations";
 
 function Router() {
+  const { user, isLoading } = useAuth();
+  const [location, setLocation] = useLocation();
+
+  // Global authentication guard for production builds
+  useEffect(() => {
+    if (!isLoading && !user) {
+      const protectedPaths = ['/dashboard', '/admin'];
+      const isProtectedPath = protectedPaths.some(path => location.startsWith(path));
+      
+      if (isProtectedPath) {
+        console.log('Global auth guard: Redirecting to /auth from', location);
+        if (typeof window !== 'undefined') {
+          window.location.href = '/auth';
+        } else {
+          setLocation('/auth');
+        }
+      }
+    }
+  }, [user, isLoading, location, setLocation]);
+
   return (
     <Switch>
       {/* Public routes */}

@@ -1,6 +1,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
-import { Redirect, Route } from "wouter";
+import { Redirect, Route, useLocation } from "wouter";
+import { useEffect } from "react";
 
 export function ProtectedRoute({
   path,
@@ -12,42 +13,61 @@ export function ProtectedRoute({
   adminOnly?: boolean;
 }) {
   const { user, isLoading } = useAuth();
+  const [location, setLocation] = useLocation();
 
-  if (isLoading) {
-    return (
-      <Route path={path}>
-        <div className="flex items-center justify-center min-h-screen">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </Route>
-    );
-  }
+  // Enhanced redirect logic for production builds
+  useEffect(() => {
+    if (!isLoading && !user && location.startsWith('/dashboard')) {
+      console.log('Redirecting unauthenticated user to /auth from:', location);
+      setLocation('/auth');
+    }
+    if (!isLoading && user && adminOnly && user.role !== 'admin') {
+      console.log('Redirecting non-admin user to /dashboard from:', location);
+      setLocation('/dashboard');
+    }
+    if (!isLoading && user && path.startsWith('/admin') && user.role !== 'admin') {
+      console.log('Redirecting non-admin user from admin path to /dashboard');
+      setLocation('/dashboard');
+    }
+  }, [user, isLoading, location, setLocation, adminOnly, path]);
 
-  if (!user) {
-    return (
-      <Route path={path}>
-        <Redirect to="/auth" />
-      </Route>
-    );
-  }
+  return (
+    <Route path={path}>
+      {() => {
+        if (isLoading) {
+          return (
+            <div className="flex items-center justify-center min-h-screen">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          );
+        }
 
-  // Kiểm tra quyền admin
-  if (adminOnly && user.role !== 'admin') {
-    return (
-      <Route path={path}>
-        <Redirect to="/dashboard" />
-      </Route>
-    );
-  }
+        if (!user) {
+          // Force immediate redirect for unauthenticated users
+          if (typeof window !== 'undefined') {
+            window.location.href = '/auth';
+          }
+          return <Redirect to="/auth" />;
+        }
 
-  // Cũng kiểm tra các trang admin qua đường dẫn
-  if (path.startsWith('/admin') && user.role !== 'admin') {
-    return (
-      <Route path={path}>
-        <Redirect to="/dashboard" />
-      </Route>
-    );
-  }
+        // Check admin permissions
+        if (adminOnly && user.role !== 'admin') {
+          if (typeof window !== 'undefined') {
+            window.location.href = '/dashboard';
+          }
+          return <Redirect to="/dashboard" />;
+        }
 
-  return <Route path={path} component={Component} />;
+        // Check admin paths
+        if (path.startsWith('/admin') && user.role !== 'admin') {
+          if (typeof window !== 'undefined') {
+            window.location.href = '/dashboard';
+          }
+          return <Redirect to="/dashboard" />;
+        }
+
+        return <Component />;
+      }}
+    </Route>
+  );
 }

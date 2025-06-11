@@ -47,6 +47,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } = useQuery<User | null, Error>({
     queryKey: ["/api/user"],
     queryFn: getQueryFn({ on401: "returnNull" }),
+    retry: (failureCount, error) => {
+      // Don't retry on 401 errors
+      if (error.message.includes('401')) {
+        return false;
+      }
+      return failureCount < 3;
+    },
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   const loginMutation = useMutation<User, Error, LoginData>({
