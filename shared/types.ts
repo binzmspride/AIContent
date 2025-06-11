@@ -29,6 +29,10 @@ export interface GenerateContentRequest {
   useBullets?: boolean; // Sử dụng định dạng danh sách
   linkItems?: Array<{ keyword?: string; url?: string }>; // Danh sách liên kết
   imageSize?: 'small' | 'medium' | 'large'; // Kích thước hình ảnh cũ (
+  generateImages?: boolean; // Tự động tạo hình ảnh cho bài viết
+  imagePrompt?: string; // Mô tả hình ảnh muốn tạo
+  imageCount?: number; // Số lượng hình ảnh (1-10)
+  useWebhook?: boolean; // Sử dụng webhook (true) hay trực tiếp (false)
   // Các trường được thêm vào từ server
   userId?: number; // ID người dùng gửi yêu cầu
   username?: string; // Tên người dùng gửi yêu cầu
