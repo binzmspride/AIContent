@@ -4,6 +4,7 @@ import { Express } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
+import path from "path";
 import { storage } from "./storage";
 import * as schema from "@shared/schema";
 import { registerUser, verifyEmail, requestPasswordReset, resetPassword } from "./user-service";
@@ -282,6 +283,7 @@ export function setupAuth(app: Express) {
     }
   });
 
+  // POST login endpoint (existing functionality)
   app.post("/api/login", (req, res, next) => {
     passport.authenticate('local', (err: any, user: schema.User | false, info: { message: string } | undefined) => {
       if (err) return next(err);
@@ -304,11 +306,66 @@ export function setupAuth(app: Express) {
     })(req, res, next);
   });
 
+  // GET login endpoint for server compatibility
+  app.get("/api/login", (req, res) => {
+    const { username, password } = req.query;
+    
+    if (!username || !password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Username and password are required'
+      });
+    }
+    
+    // Use passport authentication with query parameters
+    passport.authenticate('local', (err: any, user: schema.User | false, info: { message: string } | undefined) => {
+      if (err) return res.status(500).json({ success: false, error: 'Authentication error' });
+      if (!user) {
+        return res.status(401).json({ 
+          success: false, 
+          error: info?.message || 'Invalid username or password' 
+        });
+      }
+      
+      req.login(user, (err) => {
+        if (err) return res.status(500).json({ success: false, error: 'Login error' });
+        // Don't include password in response
+        const { password, ...userWithoutPassword } = user;
+        return res.status(200).json({ 
+          success: true, 
+          data: userWithoutPassword 
+        });
+      });
+    })(Object.assign(req, { body: { username, password } }), res);
+  });
+
   app.post("/api/logout", (req, res, next) => {
     req.logout((err) => {
       if (err) return next(err);
       res.status(200).json({ success: true });
     });
+  });
+
+  // GET route for /auth to serve the authentication page
+  app.get("/auth", (req, res) => {
+    // If user is already authenticated, redirect to dashboard
+    if (req.isAuthenticated()) {
+      return res.redirect('/dashboard');
+    }
+    
+    // Serve the main app HTML which will handle the /auth route
+    res.sendFile(path.join(process.cwd(), 'client/dist/index.html'));
+  });
+
+  // GET route for /login (alternative path for server compatibility)
+  app.get("/login", (req, res) => {
+    // If user is already authenticated, redirect to dashboard
+    if (req.isAuthenticated()) {
+      return res.redirect('/dashboard');
+    }
+    
+    // Serve the main app HTML which will handle the login route
+    res.sendFile(path.join(process.cwd(), 'client/dist/index.html'));
   });
 
   app.get("/api/user", (req, res) => {
