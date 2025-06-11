@@ -720,7 +720,7 @@ export default function CreateImagePage() {
             <DialogHeader>
               <DialogTitle>Thư viện hình ảnh</DialogTitle>
               <DialogDescription>
-                Tất cả hình ảnh đã lưu trong thư viện của bạn
+                Tất cả hình ảnh đã tạo trong thư viện của bạn
               </DialogDescription>
             </DialogHeader>
             
@@ -730,10 +730,9 @@ export default function CreateImagePage() {
                   <Loader2 className="h-8 w-8 animate-spin mx-auto" />
                   <p className="text-sm text-muted-foreground mt-2">Đang tải...</p>
                 </div>
-              ) : imagesData?.images?.filter((image: GeneratedImage) => image.status === 'saved').length > 0 ? (
+              ) : imagesData?.images?.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {imagesData.images
-                    .filter((image: GeneratedImage) => image.status === 'saved')
                     .map((image: GeneratedImage) => (
                     <div key={image.id} className="border rounded-lg overflow-hidden">
                       <div className="aspect-video bg-muted overflow-hidden">
@@ -887,7 +886,7 @@ export default function CreateImagePage() {
                   <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-8 rounded-xl border shadow-inner">
                     <div className="mx-auto flex flex-col items-center">
                       {activePreviewFormat !== 'original' && (
-                        <div className="w-full max-w-md mb-4">
+                        <div className="mx-auto" style={{ maxWidth: getPreviewStyle(activePreviewFormat).maxWidth }}>
                           {/* Social Media Header Mockup */}
                           <div className="bg-white dark:bg-gray-800 rounded-t-lg p-3 border-b border-gray-200 dark:border-gray-700">
                             <div className="flex items-center gap-2">
@@ -909,19 +908,20 @@ export default function CreateImagePage() {
                       
                       {/* Image Preview */}
                       <div 
-                        className={`rounded-lg overflow-hidden shadow-xl ${
+                        className={`rounded-lg overflow-hidden shadow-xl mx-auto ${
                           activePreviewFormat === 'original' ? 'border-2 border-dashed border-primary/30' : 'border border-gray-200 dark:border-gray-700'
                         }`}
                         style={{
                           aspectRatio: getPreviewStyle(activePreviewFormat).aspectRatio,
                           maxWidth: getPreviewStyle(activePreviewFormat).maxWidth,
-                          width: '100%'
+                          width: '100%',
+                          maxHeight: '500px'
                         }}
                       >
                         <img 
                           src={selectedImageForDetail.imageUrl} 
                           alt={selectedImageForDetail.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = '/placeholder-image.svg';
                           }}
@@ -929,7 +929,7 @@ export default function CreateImagePage() {
                       </div>
 
                       {activePreviewFormat !== 'original' && (
-                        <div className="w-full max-w-md mt-0">
+                        <div className="mx-auto" style={{ maxWidth: getPreviewStyle(activePreviewFormat).maxWidth }}>
                           {/* Social Media Footer Mockup */}
                           <div className="bg-white dark:bg-gray-800 rounded-b-lg p-3 border-t border-gray-200 dark:border-gray-700">
                             <p className="text-sm text-gray-600 dark:text-gray-400">
