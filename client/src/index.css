@@ -255,6 +255,26 @@ input, select, textarea, label {
   background-color: hsl(var(--background));
 }
 
+/* Fix link colors in ReactQuill editor for dark mode */
+.dark .ql-editor a {
+  color: #000000 !important;
+  text-decoration: underline;
+}
+
+.dark .ql-editor a:hover {
+  color: #333333 !important;
+}
+
+/* Ensure links are visible in light mode too */
+.ql-editor a {
+  color: #0066cc !important;
+  text-decoration: underline;
+}
+
+.ql-editor a:hover {
+  color: #004499 !important;
+}
+
 @layer base {
   :root {
     /* Bảng màu mới đẹp và hiện đại */
