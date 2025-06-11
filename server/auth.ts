@@ -347,25 +347,25 @@ export function setupAuth(app: Express) {
   });
 
   // GET route for /auth to serve the authentication page
-  app.get("/auth", (req, res) => {
+  app.get("/auth", (req, res, next) => {
     // If user is already authenticated, redirect to dashboard
     if (req.isAuthenticated()) {
       return res.redirect('/dashboard');
     }
     
-    // Serve the main app HTML which will handle the /auth route
-    res.sendFile(path.join(process.cwd(), 'client/dist/index.html'));
+    // Let Vite handle the SPA routing for /auth
+    next();
   });
 
   // GET route for /login (alternative path for server compatibility)
-  app.get("/login", (req, res) => {
+  app.get("/login", (req, res, next) => {
     // If user is already authenticated, redirect to dashboard
     if (req.isAuthenticated()) {
       return res.redirect('/dashboard');
     }
     
-    // Serve the main app HTML which will handle the login route
-    res.sendFile(path.join(process.cwd(), 'client/dist/index.html'));
+    // Let Vite handle the SPA routing for /login
+    next();
   });
 
   app.get("/api/user", (req, res) => {
