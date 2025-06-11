@@ -111,10 +111,7 @@ export default function CreateImagePage() {
     queryFn: async () => {
       const res = await apiRequest('GET', '/api/dashboard/articles');
       const data = await res.json();
-      console.log('Articles API response:', data);
-      if (data.success && data.data) {
-        console.log('Articles array:', data.data.articles);
-        console.log('Articles length:', data.data.articles?.length);
+      if (data.success && data.data && Array.isArray(data.data.articles)) {
         return data.data;
       }
       return { articles: [] };
@@ -519,13 +516,6 @@ export default function CreateImagePage() {
                     <p className="text-xs text-muted-foreground">
                       Bạn chưa có bài viết nào. Hãy tạo bài viết trước để sử dụng nội dung.
                     </p>
-                  )}
-                  {/* Debug information */}
-                  {process.env.NODE_ENV === 'development' && (
-                    <div className="text-xs text-muted-foreground">
-                      Debug: Articles loading: {articlesLoading ? 'true' : 'false'}, 
-                      Articles data: {JSON.stringify(articlesData)}
-                    </div>
                   )}
                 </div>
 

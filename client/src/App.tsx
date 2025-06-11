@@ -59,7 +59,7 @@ function Router() {
   const { user, isLoading } = useAuth();
   const [location, setLocation] = useLocation();
 
-  // Global authentication guard for production builds
+  // Global authentication guard with improved state management
   useEffect(() => {
     if (!isLoading && !user) {
       const protectedPaths = ['/dashboard', '/admin'];
@@ -67,11 +67,7 @@ function Router() {
       
       if (isProtectedPath) {
         console.log('Global auth guard: Redirecting to /auth from', location);
-        if (typeof window !== 'undefined') {
-          window.location.href = '/auth';
-        } else {
-          setLocation('/auth');
-        }
+        setLocation('/auth');
       }
     }
   }, [user, isLoading, location, setLocation]);

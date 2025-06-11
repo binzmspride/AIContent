@@ -34,19 +34,25 @@ export async function initializeFirebase() {
     // Tải cấu hình Firebase từ server
     const response = await fetch('/api/firebase/config');
     if (!response.ok) {
-      throw new Error('Failed to load Firebase configuration');
+      // Silently fail if Firebase config endpoint doesn't exist
+      isInitialized = true;
+      return { auth: null, googleProvider: null, facebookProvider: null };
     }
 
     const data = await response.json();
     if (!data.success || !data.data) {
-      throw new Error('Invalid Firebase configuration data');
+      // Silently fail if no Firebase config is available
+      isInitialized = true;
+      return { auth: null, googleProvider: null, facebookProvider: null };
     }
 
     const { firebaseApiKey, firebaseProjectId, firebaseAppId, enableGoogleAuth, enableFacebookAuth } = data.data;
 
     // Kiểm tra xem cấu hình có đầy đủ không
     if (!firebaseApiKey || !firebaseProjectId || !firebaseAppId) {
-      throw new Error('Firebase configuration is incomplete');
+      // Silently fail if Firebase configuration is incomplete
+      isInitialized = true;
+      return { auth: null, googleProvider: null, facebookProvider: null };
     }
 
     // Tạo cấu hình Firebase
@@ -78,7 +84,8 @@ export async function initializeFirebase() {
     
     return { auth, googleProvider, facebookProvider };
   } catch (error) {
-    console.error('Error initializing Firebase:', error);
+    // Silently fail and mark as initialized to prevent retries
+    isInitialized = true;
     return { auth: null, googleProvider: null, facebookProvider: null };
   }
 }

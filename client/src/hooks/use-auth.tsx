@@ -54,8 +54,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       return failureCount < 3;
     },
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
     refetchOnMount: true,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
   const loginMutation = useMutation<User, Error, LoginData>({
@@ -131,15 +133,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await apiRequest("POST", "/api/logout");
     },
     onSuccess: () => {
+      // Clear all cached data immediately
+      queryClient.clear();
+      // Set user to null explicitly
       queryClient.setQueryData(["/api/user"], null);
+      // Force invalidate all queries
+      queryClient.invalidateQueries();
+      
       toast({
         title: "Đăng xuất thành công",
         description: "Bạn đã đăng xuất khỏi hệ thống",
       });
     },
     onError: (error: Error) => {
+      // Even on error, clear the cache to ensure logout
+      queryClient.clear();
+      queryClient.setQueryData(["/api/user"], null);
+      
       toast({
-        title: "Đăng xuất thất bại",
+        title: "Đăng xuất thất bại", 
         description: error.message,
         variant: "destructive",
       });
