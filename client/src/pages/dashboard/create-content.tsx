@@ -109,9 +109,6 @@ const formSchema = z.object({
   ).default([]),
   imageSize: z.enum(["small", "medium", "large"]).default("medium"),
   generateImages: z.boolean().default(false),
-  imagePrompt: z.string().optional(),
-  imageCount: z.number().min(1).max(10).default(1),
-  useWebhook: z.boolean().default(true),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -161,9 +158,6 @@ export default function CreateContent() {
       linkItems: [],
       imageSize: "medium",
       generateImages: false,
-      imagePrompt: "",
-      imageCount: 1,
-      useWebhook: true,
     },
     mode: "onSubmit",
   });
@@ -377,9 +371,6 @@ export default function CreateContent() {
       imageSize: data.imageSize || 'medium',
       // Image generation parameters
       generateImages: data.generateImages || false,
-      imagePrompt: data.imagePrompt || '',
-      imageCount: data.imageCount || 1,
-      useWebhook: data.useWebhook !== undefined ? data.useWebhook : true,
       // Thêm cấu trúc image_size mới theo định dạng width/height
       image_size: (() => {
         const size = data.imageSize || 'medium';
@@ -1618,80 +1609,7 @@ export default function CreateContent() {
                               )}
                             />
 
-                            {form.watch("generateImages") && (
-                              <div className="space-y-4 mt-4">
-                                <FormField
-                                  control={form.control}
-                                  name="imagePrompt"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel className="font-medium">Mô tả hình ảnh</FormLabel>
-                                      <p className="text-sm text-muted-foreground">
-                                        Mô tả chi tiết về hình ảnh bạn muốn tạo (nếu để trống, hệ thống sẽ tự động tạo từ nội dung)
-                                      </p>
-                                      <FormControl>
-                                        <Textarea
-                                          placeholder="Ví dụ: Một hình ảnh minh họa về công nghệ AI với màu sắc hiện đại..."
-                                          className="h-24 resize-none"
-                                          {...field}
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                  <FormField
-                                    control={form.control}
-                                    name="imageCount"
-                                    render={({ field }) => (
-                                      <FormItem>
-                                        <FormLabel className="font-medium">Số lượng hình ảnh</FormLabel>
-                                        <Select onValueChange={(value) => field.onChange(parseInt(value))} value={field.value?.toString()}>
-                                          <FormControl>
-                                            <SelectTrigger>
-                                              <SelectValue placeholder="Chọn số lượng" />
-                                            </SelectTrigger>
-                                          </FormControl>
-                                          <SelectContent>
-                                            {[1, 2, 3, 4, 5].map(num => (
-                                              <SelectItem key={num} value={num.toString()}>{num} hình ảnh</SelectItem>
-                                            ))}
-                                          </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-
-                                  <FormField
-                                    control={form.control}
-                                    name="useWebhook"
-                                    render={({ field }) => (
-                                      <FormItem>
-                                        <FormLabel className="font-medium">Phương thức tạo</FormLabel>
-                                        <Select onValueChange={(value) => field.onChange(value === 'true')} value={field.value?.toString()}>
-                                          <FormControl>
-                                            <SelectTrigger>
-                                              <SelectValue placeholder="Chọn phương thức" />
-                                            </SelectTrigger>
-                                          </FormControl>
-                                          <SelectContent>
-                                            <SelectItem value="true">Webhook (Nhanh)</SelectItem>
-                                            <SelectItem value="false">Trực tiếp (Chậm)</SelectItem>
-                                          </SelectContent>
-                                        </Select>
-                                        <p className="text-xs text-muted-foreground mt-1">
-                                          Webhook: Tạo nhanh, nhận kết quả sau | Trực tiếp: Chờ hoàn thành
-                                        </p>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                </div>
-                              </div>
-                            )}
                           </div>
                         </div>
                       </TabsContent>
