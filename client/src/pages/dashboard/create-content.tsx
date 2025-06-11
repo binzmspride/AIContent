@@ -375,6 +375,11 @@ export default function CreateContent() {
       aiModel: data.aiModel || 'chatgpt',
       linkItems: filteredLinkItems,
       imageSize: data.imageSize || 'medium',
+      // Image generation parameters
+      generateImages: data.generateImages || false,
+      imagePrompt: data.imagePrompt || '',
+      imageCount: data.imageCount || 1,
+      useWebhook: data.useWebhook !== undefined ? data.useWebhook : true,
       // Thêm cấu trúc image_size mới theo định dạng width/height
       image_size: (() => {
         const size = data.imageSize || 'medium';
