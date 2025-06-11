@@ -114,6 +114,7 @@ export default function CreateImagePage() {
       console.log('Articles API response:', data);
       if (data.success && data.data) {
         console.log('Articles array:', data.data.articles);
+        console.log('Articles length:', data.data.articles?.length);
         return data.data;
       }
       return { articles: [] };
@@ -486,14 +487,14 @@ export default function CreateImagePage() {
                       <SelectValue placeholder={
                         articlesLoading 
                           ? "Đang tải bài viết..." 
-                          : articlesData?.articles?.length > 0 
+                          : (articlesData?.articles && articlesData.articles.length > 0)
                             ? "Chọn bài viết để lấy nội dung..." 
                             : "Không có bài viết nào"
                       } />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">Không chọn bài viết nào</SelectItem>
-                      {articlesData?.articles?.length > 0 ? (
+                      {articlesData?.articles && articlesData.articles.length > 0 ? (
                         articlesData.articles.map((article: Article) => (
                           <SelectItem key={article.id} value={article.id.toString()}>
                             {article.title}
@@ -518,6 +519,13 @@ export default function CreateImagePage() {
                     <p className="text-xs text-muted-foreground">
                       Bạn chưa có bài viết nào. Hãy tạo bài viết trước để sử dụng nội dung.
                     </p>
+                  )}
+                  {/* Debug information */}
+                  {process.env.NODE_ENV === 'development' && (
+                    <div className="text-xs text-muted-foreground">
+                      Debug: Articles loading: {articlesLoading ? 'true' : 'false'}, 
+                      Articles data: {JSON.stringify(articlesData)}
+                    </div>
                   )}
                 </div>
 
