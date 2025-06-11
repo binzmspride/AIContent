@@ -414,9 +414,9 @@ export default function CreateImagePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Input Form */}
-          <div className="lg:col-span-2">
+          <div>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -554,13 +554,59 @@ export default function CreateImagePage() {
             </Card>
           </div>
 
-          {/* Recent Images */}
-          <div>
+          {/* Right Sidebar */}
+          <div className="space-y-6">
+            {/* Tips & Guidelines */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  Hình ảnh gần đây
+                  <Info className="h-5 w-5" />
+                  Hướng dẫn tạo ảnh
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <h4 className="font-medium text-sm text-blue-900 dark:text-blue-100 mb-1">Mô tả chi tiết</h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-200">
+                      Cung cấp mô tả càng chi tiết càng tốt để có hình ảnh chính xác
+                    </p>
+                  </div>
+                  
+                  <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                    <h4 className="font-medium text-sm text-green-900 dark:text-green-100 mb-1">Phong cách rõ ràng</h4>
+                    <p className="text-xs text-green-700 dark:text-green-200">
+                      Chọn phong cách phù hợp với mục đích sử dụng của bạn
+                    </p>
+                  </div>
+                  
+                  <div className="p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                    <h4 className="font-medium text-sm text-orange-900 dark:text-orange-100 mb-1">Tối ưu SEO</h4>
+                    <p className="text-xs text-orange-700 dark:text-orange-200">
+                      Sử dụng từ khóa từ bài viết để tăng hiệu quả SEO
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Recent Images */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Hình ảnh gần đây
+                  </div>
+                  {imagesData?.images && imagesData.images.length > 0 && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => setShowLibraryDialog(true)}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -572,11 +618,11 @@ export default function CreateImagePage() {
                 ) : imagesData?.images?.length > 0 ? (
                   <div className="space-y-3">
                     {imagesData.images
-                      .slice(0, 3) // Limit to 3 images
+                      .slice(0, 4) // Show 4 images instead of 3
                       .map((image: GeneratedImage) => (
                       <div 
                         key={image.id} 
-                        className="border rounded-lg p-3 cursor-pointer hover:bg-muted/50 transition-colors"
+                        className="border rounded-lg p-3 cursor-pointer hover:bg-muted/50 transition-colors group"
                         onClick={() => {
                           setSelectedImageForDetail(image);
                           setActivePreviewFormat('original');
@@ -587,7 +633,7 @@ export default function CreateImagePage() {
                           <img 
                             src={image.imageUrl} 
                             alt={image.title}
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = '/placeholder-image.svg';
                             }}
@@ -601,22 +647,54 @@ export default function CreateImagePage() {
                     ))}
                     
                     {/* View More Button */}
-                    {imagesData.images.length > 3 && (
+                    {imagesData.images.length > 4 && (
                       <Button 
                         variant="outline" 
                         className="w-full mt-3"
                         onClick={() => setShowLibraryDialog(true)}
                       >
                         <Eye className="mr-2 h-4 w-4" />
-                        Xem thêm ({imagesData.images.length - 3} ảnh)
+                        Xem thêm ({imagesData.images.length - 4} ảnh)
                       </Button>
                     )}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground text-center py-4">
-                    Chưa có hình ảnh nào được tạo
-                  </p>
+                  <div className="text-center py-8">
+                    <Image className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
+                    <p className="text-sm text-muted-foreground">
+                      Chưa có hình ảnh nào được tạo
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Tạo hình ảnh đầu tiên để bắt đầu
+                    </p>
+                  </div>
                 )}
+              </CardContent>
+            </Card>
+
+            {/* Quick Stats */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="h-5 w-5" />
+                  Thống kê nhanh
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center p-3 bg-muted/50 rounded-lg">
+                    <div className="text-lg font-bold text-primary">
+                      {imagesData?.images?.length || 0}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Tổng ảnh</div>
+                  </div>
+                  <div className="text-center p-3 bg-muted/50 rounded-lg">
+                    <div className="text-lg font-bold text-primary">
+                      {user?.credits || 0}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Tín dụng còn</div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
