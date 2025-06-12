@@ -1,437 +1,309 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Link } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar, Clock, Plus, Eye, Edit, Trash2, Play, Pause } from 'lucide-react';
+import { Calendar, Clock, Plus, ExternalLink, Share2, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { format } from 'date-fns';
+import { vi } from 'date-fns/locale';
+
+const platformLabels = {
+  wordpress: "WordPress",
+  facebook: "Facebook", 
+  twitter: "Twitter",
+  linkedin: "LinkedIn",
+  instagram: "Instagram"
+};
+
+const statusLabels = {
+  pending: "Đang chờ",
+  processing: "Đang xử lý", 
+  completed: "Hoàn thành",
+  failed: "Thất bại",
+  cancelled: "Đã hủy"
+};
+
+const statusColors = {
+  pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+  processing: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+  completed: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300", 
+  failed: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+  cancelled: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
+};
 
 export default function SchedulerPage() {
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  // Fetch scheduled posts
+  const { data: postsData } = useQuery({
+    queryKey: ['/api/scheduled-posts'],
+  });
 
-  const scheduledPosts = [
-    {
-      id: 1,
-      title: 'Hướng dẫn SEO On-page 2024',
-      platform: 'website',
-      scheduledTime: '2024-06-07T09:00:00',
-      status: 'scheduled',
-      category: 'SEO',
-      author: 'Nguyễn Văn An'
-    },
-    {
-      id: 2,
-      title: 'Content Marketing Strategy',
-      platform: 'facebook',
-      scheduledTime: '2024-06-07T14:30:00',
-      status: 'published',
-      category: 'Marketing',
-      author: 'Trần Thị Bình'
-    },
-    {
-      id: 3,
-      title: 'AI trong Content Creation',
-      platform: 'linkedin',
-      scheduledTime: '2024-06-08T10:15:00',
-      status: 'scheduled',
-      category: 'Technology',
-      author: 'Lê Minh Cường'
-    },
-    {
-      id: 4,
-      title: 'Digital Marketing Trends',
-      platform: 'twitter',
-      scheduledTime: '2024-06-08T16:45:00',
-      status: 'draft',
-      category: 'Marketing',
-      author: 'Nguyễn Văn An'
-    },
-    {
-      id: 5,
-      title: 'Social Media Best Practices',
-      platform: 'instagram',
-      scheduledTime: '2024-06-09T11:00:00',
-      status: 'failed',
-      category: 'Social Media',
-      author: 'Trần Thị Bình'
-    }
-  ];
+  // Fetch social connections  
+  const { data: connectionsData } = useQuery({
+    queryKey: ['/api/social-connections'],
+  });
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'scheduled': return 'default';
-      case 'published': return 'secondary';
-      case 'draft': return 'outline';
-      case 'failed': return 'destructive';
-      default: return 'outline';
-    }
-  };
+  const posts = postsData?.data?.posts || [];
+  const connections = connectionsData?.data || [];
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'scheduled': return 'Đã lên lịch';
-      case 'published': return 'Đã đăng';
-      case 'draft': return 'Bản nháp';
-      case 'failed': return 'Thất bại';
-      default: return 'Không xác định';
-    }
-  };
-
-  const getPlatformIcon = (platform: string) => {
-    switch (platform) {
-      case 'website': return '🌐';
-      case 'facebook': return '📘';
-      case 'linkedin': return '💼';
-      case 'twitter': return '🐦';
-      case 'instagram': return '📷';
-      default: return '📱';
-    }
-  };
-
-  const getPlatformName = (platform: string) => {
-    switch (platform) {
-      case 'website': return 'Website';
-      case 'facebook': return 'Facebook';
-      case 'linkedin': return 'LinkedIn';
-      case 'twitter': return 'Twitter';
-      case 'instagram': return 'Instagram';
-      default: return 'Unknown';
-    }
-  };
-
-  const todaysPosts = scheduledPosts.filter(post => 
-    post.scheduledTime.startsWith(new Date().toISOString().split('T')[0])
-  );
-
-  const upcomingPosts = scheduledPosts.filter(post => 
-    new Date(post.scheduledTime) > new Date()
-  );
+  // Stats calculations
+  const activeConnections = connections.filter((conn: any) => conn.isActive).length;
+  const pendingPosts = posts.filter((post: any) => post.status === 'pending').length;
+  const completedPosts = posts.filter((post: any) => post.status === 'completed').length;
+  const upcomingPosts = posts.filter((post: any) => {
+    const scheduledTime = new Date(post.scheduledTime);
+    const now = new Date();
+    const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    return scheduledTime > now && scheduledTime <= nextWeek && post.status === 'pending';
+  }).length;
 
   return (
-    <div className="container py-6">
-      <div className="flex justify-between items-center mb-6">
+    <div className="container mx-auto p-6 space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Lập lịch đăng</h1>
-          <p className="text-muted-foreground mt-2">
-            Quản lý và lên lịch đăng nội dung trên các nền tảng
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Lập lịch đăng bài
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Tổng quan hệ thống đăng bài tự động
           </p>
         </div>
-        <Button className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Tạo lịch đăng mới
-        </Button>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="overview">Tổng quan</TabsTrigger>
-          <TabsTrigger value="calendar">Lịch</TabsTrigger>
-          <TabsTrigger value="scheduled">Đã lên lịch</TabsTrigger>
-          <TabsTrigger value="published">Đã đăng</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Hôm nay</CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{todaysPosts.length}</div>
-                <p className="text-xs text-muted-foreground">
-                  bài đăng được lên lịch
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Kết nối hoạt động
                 </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Sắp tới</CardTitle>
-                <Clock className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{upcomingPosts.length}</div>
-                <p className="text-xs text-muted-foreground">
-                  bài đăng trong tuần
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {activeConnections}
                 </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Đã đăng</CardTitle>
-                <Play className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {scheduledPosts.filter(p => p.status === 'published').length}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  bài trong tháng này
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Thất bại</CardTitle>
-                <Pause className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {scheduledPosts.filter(p => p.status === 'failed').length}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  cần xem lại
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Lịch đăng hôm nay</CardTitle>
-                <CardDescription>
-                  Các bài đăng được lên lịch cho ngày hôm nay
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {todaysPosts.length > 0 ? (
-                  <div className="space-y-4">
-                    {todaysPosts.map((post) => (
-                      <div key={post.id} className="flex items-center gap-3 p-3 border rounded-md">
-                        <div className="text-2xl">{getPlatformIcon(post.platform)}</div>
-                        <div className="flex-1">
-                          <h4 className="font-medium text-sm">{post.title}</h4>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(post.scheduledTime).toLocaleTimeString('vi-VN', { 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                              })}
-                            </span>
-                            <Badge variant={getStatusColor(post.status)} className="text-xs">
-                              {getStatusText(post.status)}
-                            </Badge>
-                          </div>
-                        </div>
-                        <Button size="sm" variant="outline">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Calendar className="h-12 w-12 mx-auto mb-4" />
-                    <p>Không có bài đăng nào được lên lịch cho hôm nay</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Thống kê nền tảng</CardTitle>
-                <CardDescription>
-                  Phân bố bài đăng theo từng nền tảng
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {['website', 'facebook', 'linkedin', 'twitter', 'instagram'].map((platform) => {
-                    const count = scheduledPosts.filter(p => p.platform === platform).length;
-                    const percentage = scheduledPosts.length > 0 ? (count / scheduledPosts.length) * 100 : 0;
-                    
-                    return (
-                      <div key={platform} className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg">{getPlatformIcon(platform)}</span>
-                            <span className="font-medium">{getPlatformName(platform)}</span>
-                          </div>
-                          <span className="text-sm text-muted-foreground">{count} bài</span>
-                        </div>
-                        <div className="w-full bg-muted rounded-full h-2">
-                          <div 
-                            className="bg-primary h-2 rounded-full transition-all" 
-                            style={{ width: `${percentage}%` }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="calendar" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Lịch đăng bài</CardTitle>
-              <CardDescription>
-                Xem lịch đăng theo ngày, tuần và tháng
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-12 text-muted-foreground">
-                <Calendar className="h-12 w-12 mx-auto mb-4" />
-                <p>Tính năng lịch sẽ được phát triển</p>
-                <p className="text-sm">Sẽ hiển thị lịch với khả năng kéo thả để sắp xếp bài đăng</p>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              <div className="h-12 w-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                <Share2 className="h-6 w-6 text-blue-600 dark:text-blue-300" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <TabsContent value="scheduled" className="space-y-6">
-          <div className="flex flex-col sm:flex-row gap-4 justify-between">
-            <div className="flex gap-2">
-              <Select>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Nền tảng" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tất cả</SelectItem>
-                  <SelectItem value="website">Website</SelectItem>
-                  <SelectItem value="facebook">Facebook</SelectItem>
-                  <SelectItem value="linkedin">LinkedIn</SelectItem>
-                  <SelectItem value="twitter">Twitter</SelectItem>
-                  <SelectItem value="instagram">Instagram</SelectItem>
-                </SelectContent>
-              </Select>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Bài viết đang chờ
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {pendingPosts}
+                </p>
+              </div>
+              <div className="h-12 w-12 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center">
+                <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-300" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Đã hoàn thành
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {completedPosts}
+                </p>
+              </div>
+              <div className="h-12 w-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-300" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Sắp đăng (7 ngày)
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  {upcomingPosts}
+                </p>
+              </div>
+              <div className="h-12 w-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-purple-600 dark:text-purple-300" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Thao tác nhanh</CardTitle>
+          <CardDescription>
+            Các chức năng chính để quản lý hệ thống đăng bài
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link href="/dashboard/scheduled-posts">
+              <Button className="w-full justify-start h-auto p-4" variant="outline">
+                <div className="flex items-center space-x-3">
+                  <div className="h-10 w-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                    <Clock className="h-5 w-5 text-blue-600 dark:text-blue-300" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-medium">Quản lý bài viết đã lên lịch</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Tạo, chỉnh sửa và theo dõi các bài đăng tự động
+                    </p>
+                  </div>
+                </div>
+                <ExternalLink className="h-4 w-4 ml-auto" />
+              </Button>
+            </Link>
+
+            <Link href="/dashboard/social-connections">
+              <Button className="w-full justify-start h-auto p-4" variant="outline">
+                <div className="flex items-center space-x-3">
+                  <div className="h-10 w-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                    <Share2 className="h-5 w-5 text-green-600 dark:text-green-300" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-medium">Kết nối mạng xã hội</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Quản lý kết nối với WordPress, Facebook, Twitter, LinkedIn
+                    </p>
+                  </div>
+                </div>
+                <ExternalLink className="h-4 w-4 ml-auto" />
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Recent Activity */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Hoạt động gần đây</CardTitle>
+          <CardDescription>
+            Các bài viết đã lên lịch mới nhất
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {posts.length === 0 ? (
+            <div className="text-center py-8">
+              <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                Chưa có bài viết nào
+              </h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-4">
+                Bắt đầu bằng cách tạo bài viết đầu tiên
+              </p>
+              <Link href="/dashboard/scheduled-posts">
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Tạo bài đăng mới
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {posts.slice(0, 5).map((post: any) => (
+                <div key={post.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                      {post.title}
+                    </h4>
+                    <div className="flex items-center space-x-4 mt-1">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        {format(new Date(post.scheduledTime), "dd/MM/yyyy HH:mm", { locale: vi })}
+                      </span>
+                      <div className="flex space-x-1">
+                        {post.platforms.map((platform: any, index: number) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {platformLabels[platform.platform as keyof typeof platformLabels] || platform.platform}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <Badge className={statusColors[post.status as keyof typeof statusColors]}>
+                    {statusLabels[post.status as keyof typeof statusLabels]}
+                  </Badge>
+                </div>
+              ))}
               
-              <Select>
-                <SelectTrigger className="w-32">
-                  <SelectValue placeholder="Trạng thái" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tất cả</SelectItem>
-                  <SelectItem value="scheduled">Đã lên lịch</SelectItem>
-                  <SelectItem value="draft">Bản nháp</SelectItem>
-                </SelectContent>
-              </Select>
+              {posts.length > 5 && (
+                <div className="text-center pt-4">
+                  <Link href="/dashboard/scheduled-posts">
+                    <Button variant="outline">
+                      Xem tất cả ({posts.length} bài viết)
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </div>
-            
-            <Button className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Thêm lịch đăng
-            </Button>
-          </div>
+          )}
+        </CardContent>
+      </Card>
 
-          <div className="space-y-4">
-            {scheduledPosts.filter(p => p.status === 'scheduled' || p.status === 'draft').map((post) => (
-              <Card key={post.id}>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="text-3xl">{getPlatformIcon(post.platform)}</div>
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-medium">{post.title}</h4>
-                          <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-                            <span>👤 {post.author}</span>
-                            <span>📂 {post.category}</span>
-                            <span>📅 {new Date(post.scheduledTime).toLocaleString('vi-VN')}</span>
-                          </div>
-                        </div>
-                        <Badge variant={getStatusColor(post.status)}>
-                          {getStatusText(post.status)}
-                        </Badge>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button size="sm" variant="outline">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="destructive">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+      {/* Platform Status */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Trạng thái kết nối</CardTitle>
+          <CardDescription>
+            Tình trạng kết nối với các nền tảng
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {Object.entries(platformLabels).map(([platform, label]) => {
+              const connection = connections.find((conn: any) => conn.platform === platform);
+              const isConnected = !!connection;
+              
+              return (
+                <div key={platform} className="text-center p-4 border rounded-lg">
+                  <div className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center ${
+                    isConnected 
+                      ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300' 
+                      : 'bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500'
+                  }`}>
+                    {isConnected ? <CheckCircle className="h-6 w-6" /> : <XCircle className="h-6 w-6" />}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <h3 className="font-medium text-sm">{label}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {isConnected ? 
+                      (connection.isActive ? 'Hoạt động' : 'Tạm dừng') : 
+                      'Chưa kết nối'
+                    }
+                  </p>
+                </div>
+              );
+            })}
           </div>
-        </TabsContent>
-
-        <TabsContent value="published" className="space-y-6">
-          <div className="flex flex-col sm:flex-row gap-4 justify-between">
-            <div className="flex gap-2">
-              <Input 
-                placeholder="Tìm kiếm bài đăng..." 
-                className="w-64"
-              />
-              <Select>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Nền tảng" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tất cả</SelectItem>
-                  <SelectItem value="website">Website</SelectItem>
-                  <SelectItem value="facebook">Facebook</SelectItem>
-                  <SelectItem value="linkedin">LinkedIn</SelectItem>
-                  <SelectItem value="twitter">Twitter</SelectItem>
-                  <SelectItem value="instagram">Instagram</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          
+          <div className="mt-4 text-center">
+            <Link href="/dashboard/social-connections">
+              <Button variant="outline">
+                <Plus className="h-4 w-4 mr-2" />
+                Thêm kết nối mới
+              </Button>
+            </Link>
           </div>
-
-          <div className="space-y-4">
-            {scheduledPosts.filter(p => p.status === 'published').map((post) => (
-              <Card key={post.id}>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="text-3xl">{getPlatformIcon(post.platform)}</div>
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h4 className="font-medium">{post.title}</h4>
-                          <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-                            <span>👤 {post.author}</span>
-                            <span>📂 {post.category}</span>
-                            <span>📅 Đã đăng: {new Date(post.scheduledTime).toLocaleString('vi-VN')}</span>
-                          </div>
-                        </div>
-                        <Badge variant="secondary">
-                          ✅ Đã đăng
-                        </Badge>
-                      </div>
-                      <div className="flex items-center gap-4 mt-3 text-sm">
-                        <div className="flex items-center gap-1">
-                          <span>👁️ 245 lượt xem</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span>❤️ 18 tương tác</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span>💬 5 bình luận</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button size="sm" variant="outline">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        Xem thống kê
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 }

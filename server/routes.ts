@@ -346,7 +346,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // This would be replaced with actual AI content generation using n8n webhook
       // For now, return mock content
       const mockResponse: GenerateContentResponse = {
-        title: contentRequest.title,
+        title: contentRequest.title || "Default Title",
         content: `<h1>${contentRequest.title}</h1>
           <p>This is a placeholder for AI-generated content. In a real implementation, this would be generated based on the provided parameters using the n8n webhook.</p>
           <h2>About this topic</h2>
@@ -368,7 +368,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const webhookSettingRes = await db.query.systemSettings.findFirst({
           where: eq(systemSettings.key, 'notificationWebhookUrl')
         });
-        webhookUrl = webhookSettingRes?.value;
+        webhookUrl = webhookSettingRes?.value || undefined;
         console.log('Webhook URL from database:', webhookUrl);
       } else {
         console.log('Webhook URL from .env:', webhookUrl);
