@@ -7,6 +7,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme transition animations */
+.theme-transition * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* Page transition loading states */
+.page-loading {
+  pointer-events: none;
+}
+
+/* Enhanced smooth scrolling for better UX */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom animation utilities */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
 /* Thêm các class màu sắc cho chế độ sáng và tối */
 .light {
   --text-color: #000000;

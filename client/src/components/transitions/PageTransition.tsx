@@ -97,10 +97,10 @@ const childVariants = {
 
 export function PageTransition({ children, className = '' }: PageTransitionProps) {
   const [location] = useLocation();
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const [isVisible, setIsVisible] = useState(false);
   
-  const currentTransition = transitions[theme as keyof typeof transitions] || transitions.light;
+  const currentTransition = transitions[resolvedTheme as keyof typeof transitions] || transitions.light;
 
   useEffect(() => {
     setIsVisible(true);
@@ -129,8 +129,8 @@ export function AnimatedSection({ children, className = '', delay = 0 }: {
   className?: string; 
   delay?: number;
 }) {
-  const { theme } = useTheme();
-  const currentChildVariants = childVariants[theme as keyof typeof childVariants] || childVariants.light;
+  const { resolvedTheme } = useTheme();
+  const currentChildVariants = childVariants[resolvedTheme as keyof typeof childVariants] || childVariants.light;
 
   return (
     <motion.div
@@ -192,16 +192,16 @@ export function ScaleIn({ children, className = '', delay = 0 }: {
   className?: string; 
   delay?: number;
 }) {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ 
-        duration: theme === 'dark' ? 0.6 : 0.4, 
+        duration: resolvedTheme === 'dark' ? 0.6 : 0.4, 
         delay: delay / 1000,
-        ease: theme === 'dark' ? [0.175, 0.885, 0.32, 1.275] : [0.25, 0.46, 0.45, 0.94]
+        ease: resolvedTheme === 'dark' ? [0.175, 0.885, 0.32, 1.275] : [0.25, 0.46, 0.45, 0.94]
       }}
       className={className}
     >
