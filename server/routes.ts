@@ -2398,5 +2398,355 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== Social Media & Scheduling API ==========
+  
+  // Get user's social connections
+  app.get('/api/social-connections', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const connections = await storage.getSocialConnections(userId);
+      res.json({ success: true, data: connections });
+    } catch (error) {
+      console.error('Error fetching social connections:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch social connections' });
+    }
+  });
+
+  // Add social connection
+  app.post('/api/social-connections', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { platform, accountName, accessToken, refreshToken, accountId, settings } = req.body;
+
+      if (!platform || !accountName || !accessToken || !accountId) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Platform, account name, access token, and account ID are required' 
+        });
+      }
+
+      const connection = await storage.createSocialConnection({
+        userId,
+        platform,
+        accountName,
+        accessToken,
+        refreshToken,
+        accountId,
+        settings: settings || {}
+      });
+
+      res.json({ success: true, data: connection });
+    } catch (error) {
+      console.error('Error creating social connection:', error);
+      res.status(500).json({ success: false, error: 'Failed to create social connection' });
+    }
+  });
+
+  // Update social connection
+  app.patch('/api/social-connections/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const connectionId = parseInt(req.params.id);
+      const userId = req.user.id;
+      const { accountName, accessToken, refreshToken, isActive, settings } = req.body;
+
+      // Verify connection belongs to user
+      const connection = await storage.getSocialConnection(connectionId);
+      if (!connection || connection.userId !== userId) {
+        return res.status(404).json({ success: false, error: 'Connection not found' });
+      }
+
+      const updatedConnection = await storage.updateSocialConnection(connectionId, {
+        accountName,
+        accessToken,
+        refreshToken,
+        isActive,
+        settings
+      });
+
+      res.json({ success: true, data: updatedConnection });
+    } catch (error) {
+      console.error('Error updating social connection:', error);
+      res.status(500).json({ success: false, error: 'Failed to update social connection' });
+    }
+  });
+
+  // Delete social connection
+  app.delete('/api/social-connections/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const connectionId = parseInt(req.params.id);
+      const userId = req.user.id;
+
+      // Verify connection belongs to user
+      const connection = await storage.getSocialConnection(connectionId);
+      if (!connection || connection.userId !== userId) {
+        return res.status(404).json({ success: false, error: 'Connection not found' });
+      }
+
+      await storage.deleteSocialConnection(connectionId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting social connection:', error);
+      res.status(500).json({ success: false, error: 'Failed to delete social connection' });
+    }
+  });
+
+  // Get user's scheduled posts
+  app.get('/api/scheduled-posts', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const page = parseInt(req.query.page as string || '1');
+      const limit = parseInt(req.query.limit as string || '10');
+      const status = req.query.status as string;
+
+      const { posts, total } = await storage.getScheduledPosts(userId, { page, limit, status });
+      res.json({ 
+        success: true, 
+        data: {
+          posts,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit)
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching scheduled posts:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch scheduled posts' });
+    }
+  });
+
+  // Create scheduled post
+  app.post('/api/scheduled-posts', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { 
+        articleId, 
+        title, 
+        content, 
+        excerpt, 
+        featuredImage, 
+        platforms, 
+        scheduledTime 
+      } = req.body;
+
+      if (!title || !content || !platforms || !scheduledTime) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Title, content, platforms, and scheduled time are required' 
+        });
+      }
+
+      // Validate scheduled time is in the future
+      const scheduledDate = new Date(scheduledTime);
+      if (scheduledDate <= new Date()) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Scheduled time must be in the future' 
+        });
+      }
+
+      // Validate platforms configuration
+      if (!Array.isArray(platforms) || platforms.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'At least one platform must be specified' 
+        });
+      }
+
+      const scheduledPost = await storage.createScheduledPost({
+        userId,
+        articleId,
+        title,
+        content,
+        excerpt,
+        featuredImage,
+        platforms,
+        scheduledTime: scheduledDate
+      });
+
+      res.json({ success: true, data: scheduledPost });
+    } catch (error) {
+      console.error('Error creating scheduled post:', error);
+      res.status(500).json({ success: false, error: 'Failed to create scheduled post' });
+    }
+  });
+
+  // Update scheduled post
+  app.patch('/api/scheduled-posts/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const postId = parseInt(req.params.id);
+      const userId = req.user.id;
+      const { title, content, excerpt, featuredImage, platforms, scheduledTime } = req.body;
+
+      // Verify post belongs to user
+      const post = await storage.getScheduledPost(postId);
+      if (!post || post.userId !== userId) {
+        return res.status(404).json({ success: false, error: 'Scheduled post not found' });
+      }
+
+      // Don't allow editing posts that are processing or completed
+      if (['processing', 'completed'].includes(post.status)) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Cannot edit posts that are processing or completed' 
+        });
+      }
+
+      const updatedPost = await storage.updateScheduledPost(postId, {
+        title,
+        content,
+        excerpt,
+        featuredImage,
+        platforms,
+        scheduledTime: scheduledTime ? new Date(scheduledTime) : undefined
+      });
+
+      res.json({ success: true, data: updatedPost });
+    } catch (error) {
+      console.error('Error updating scheduled post:', error);
+      res.status(500).json({ success: false, error: 'Failed to update scheduled post' });
+    }
+  });
+
+  // Cancel scheduled post
+  app.patch('/api/scheduled-posts/:id/cancel', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const postId = parseInt(req.params.id);
+      const userId = req.user.id;
+
+      // Verify post belongs to user
+      const post = await storage.getScheduledPost(postId);
+      if (!post || post.userId !== userId) {
+        return res.status(404).json({ success: false, error: 'Scheduled post not found' });
+      }
+
+      // Only allow cancelling pending posts
+      if (post.status !== 'pending') {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Can only cancel pending posts' 
+        });
+      }
+
+      const cancelledPost = await storage.updateScheduledPost(postId, {
+        status: 'cancelled'
+      });
+
+      res.json({ success: true, data: cancelledPost });
+    } catch (error) {
+      console.error('Error cancelling scheduled post:', error);
+      res.status(500).json({ success: false, error: 'Failed to cancel scheduled post' });
+    }
+  });
+
+  // Delete scheduled post
+  app.delete('/api/scheduled-posts/:id', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const postId = parseInt(req.params.id);
+      const userId = req.user.id;
+
+      // Verify post belongs to user
+      const post = await storage.getScheduledPost(postId);
+      if (!post || post.userId !== userId) {
+        return res.status(404).json({ success: false, error: 'Scheduled post not found' });
+      }
+
+      await storage.deleteScheduledPost(postId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting scheduled post:', error);
+      res.status(500).json({ success: false, error: 'Failed to delete scheduled post' });
+    }
+  });
+
+  // Get post templates
+  app.get('/api/post-templates', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const platform = req.query.platform as string;
+
+      const templates = await storage.getPostTemplates(userId, platform);
+      res.json({ success: true, data: templates });
+    } catch (error) {
+      console.error('Error fetching post templates:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch post templates' });
+    }
+  });
+
+  // Create post template
+  app.post('/api/post-templates', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { name, description, platform, template, isDefault } = req.body;
+
+      if (!name || !platform || !template) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Name, platform, and template are required' 
+        });
+      }
+
+      const postTemplate = await storage.createPostTemplate({
+        userId,
+        name,
+        description,
+        platform,
+        template,
+        isDefault: isDefault || false
+      });
+
+      res.json({ success: true, data: postTemplate });
+    } catch (error) {
+      console.error('Error creating post template:', error);
+      res.status(500).json({ success: false, error: 'Failed to create post template' });
+    }
+  });
+
   return httpServer;
 }

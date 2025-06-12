@@ -1,14 +1,21 @@
-const { neon } = require('@neondatabase/serverless');
-require('dotenv').config();
+import pkg from 'pg';
+import dotenv from 'dotenv';
 
-const sql = neon(process.env.DATABASE_URL);
+dotenv.config();
+
+const { Client } = pkg;
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 
 async function addSchedulingTables() {
   try {
+    await client.connect();
     console.log('Tạo enum types...');
     
     // Create enums
-    await sql`
+    await client.query(`
       DO $$ BEGIN
         IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'post_status') THEN
           CREATE TYPE post_status AS ENUM ('pending', 'processing', 'completed', 'failed', 'cancelled');
@@ -17,12 +24,12 @@ async function addSchedulingTables() {
           CREATE TYPE platform AS ENUM ('wordpress', 'facebook', 'twitter', 'linkedin', 'instagram');
         END IF;
       END $$;
-    `;
+    `);
     
     console.log('Tạo bảng social_connections...');
     
     // Create social_connections table
-    await sql`
+    await client.query(`
       CREATE TABLE IF NOT EXISTS social_connections (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL REFERENCES users(id),
@@ -37,12 +44,12 @@ async function addSchedulingTables() {
         created_at TIMESTAMP DEFAULT NOW() NOT NULL,
         updated_at TIMESTAMP DEFAULT NOW() NOT NULL
       );
-    `;
+    `);
     
     console.log('Tạo bảng scheduled_posts...');
     
     // Create scheduled_posts table
-    await sql`
+    await client.query(`
       CREATE TABLE IF NOT EXISTS scheduled_posts (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL REFERENCES users(id),
@@ -61,12 +68,12 @@ async function addSchedulingTables() {
         created_at TIMESTAMP DEFAULT NOW() NOT NULL,
         updated_at TIMESTAMP DEFAULT NOW() NOT NULL
       );
-    `;
+    `);
     
     console.log('Tạo bảng post_templates...');
     
     // Create post_templates table
-    await sql`
+    await client.query(`
       CREATE TABLE IF NOT EXISTS post_templates (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL REFERENCES users(id),
@@ -78,12 +85,12 @@ async function addSchedulingTables() {
         created_at TIMESTAMP DEFAULT NOW() NOT NULL,
         updated_at TIMESTAMP DEFAULT NOW() NOT NULL
       );
-    `;
+    `);
     
     console.log('Tạo bảng posting_analytics...');
     
     // Create posting_analytics table
-    await sql`
+    await client.query(`
       CREATE TABLE IF NOT EXISTS posting_analytics (
         id SERIAL PRIMARY KEY,
         scheduled_post_id INTEGER NOT NULL REFERENCES scheduled_posts(id),
@@ -100,12 +107,12 @@ async function addSchedulingTables() {
         created_at TIMESTAMP DEFAULT NOW() NOT NULL,
         updated_at TIMESTAMP DEFAULT NOW() NOT NULL
       );
-    `;
+    `);
     
     console.log('Tạo indexes...');
     
     // Create indexes for better performance
-    await sql`
+    await client.query(`
       CREATE INDEX IF NOT EXISTS idx_social_connections_user_id ON social_connections(user_id);
       CREATE INDEX IF NOT EXISTS idx_social_connections_platform ON social_connections(platform);
       CREATE INDEX IF NOT EXISTS idx_scheduled_posts_user_id ON scheduled_posts(user_id);
@@ -114,12 +121,14 @@ async function addSchedulingTables() {
       CREATE INDEX IF NOT EXISTS idx_post_templates_user_id ON post_templates(user_id);
       CREATE INDEX IF NOT EXISTS idx_post_templates_platform ON post_templates(platform);
       CREATE INDEX IF NOT EXISTS idx_posting_analytics_scheduled_post_id ON posting_analytics(scheduled_post_id);
-    `;
+    `);
     
     console.log('✅ Đã tạo thành công tất cả bảng scheduling!');
   } catch (error) {
     console.error('❌ Lỗi khi tạo bảng scheduling:', error);
     throw error;
+  } finally {
+    await client.end();
   }
 }
 

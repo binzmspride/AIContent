@@ -91,6 +91,25 @@ export interface IStorage {
   getWorkspaceSessions(workspaceId: number): Promise<any[]>;
   createCollaborativeSession(session: schema.InsertCollaborativeSession): Promise<schema.CollaborativeSession>;
   
+  // Social Media & Scheduling management
+  getSocialConnections(userId: number): Promise<schema.SocialConnection[]>;
+  getSocialConnection(id: number): Promise<schema.SocialConnection | null>;
+  createSocialConnection(connection: schema.InsertSocialConnection): Promise<schema.SocialConnection>;
+  updateSocialConnection(id: number, data: Partial<schema.SocialConnection>): Promise<schema.SocialConnection | null>;
+  deleteSocialConnection(id: number): Promise<boolean>;
+  
+  getScheduledPosts(userId: number, options?: { page?: number; limit?: number; status?: string }): Promise<{ posts: schema.ScheduledPost[], total: number }>;
+  getScheduledPost(id: number): Promise<schema.ScheduledPost | null>;
+  createScheduledPost(post: schema.InsertScheduledPost): Promise<schema.ScheduledPost>;
+  updateScheduledPost(id: number, data: Partial<schema.ScheduledPost>): Promise<schema.ScheduledPost | null>;
+  deleteScheduledPost(id: number): Promise<boolean>;
+  
+  getPostTemplates(userId: number, platform?: string): Promise<schema.PostTemplate[]>;
+  getPostTemplate(id: number): Promise<schema.PostTemplate | null>;
+  createPostTemplate(template: schema.InsertPostTemplate): Promise<schema.PostTemplate>;
+  updatePostTemplate(id: number, data: Partial<schema.PostTemplate>): Promise<schema.PostTemplate | null>;
+  deletePostTemplate(id: number): Promise<boolean>;
+  
   // Session store
   sessionStore: session.SessionStore;
 }
