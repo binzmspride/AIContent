@@ -414,9 +414,9 @@ export default function CreateImagePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Input Form */}
-          <div>
+          <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -552,6 +552,82 @@ export default function CreateImagePage() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Generated Image Preview */}
+            {generatedImage && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Eye className="h-5 w-5" />
+                    Hình ảnh đã tạo
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+                    <img 
+                      src={generatedImage.imageUrl} 
+                      alt={generatedImage.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/placeholder-image.svg';
+                      }}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="font-medium">{generatedImage.title}</h3>
+                    <div className="text-sm text-muted-foreground">
+                      <TruncatedText 
+                        text={generatedImage.prompt}
+                        maxLength={150}
+                        id="preview-prompt"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary">
+                        {generatedImage.creditsUsed} tín dụng
+                      </Badge>
+                      <Badge variant="outline">{generatedImage.status}</Badge>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={handleRegenerateImage}
+                      disabled={generateImageMutation.isPending}
+                      variant="outline"
+                      size="sm"
+                    >
+                      {generateImageMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Đang tạo lại...
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw className="mr-2 h-4 w-4" />
+                          Tạo lại
+                        </>
+                      )}
+                    </Button>
+                    <Button asChild variant="outline" size="sm">
+                      <a href={generatedImage.imageUrl} download target="_blank">
+                        <Download className="mr-2 h-4 w-4" />
+                        Tải xuống
+                      </a>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setShowPreview(true)}
+                    >
+                      <Eye className="mr-2 h-4 w-4" />
+                      Xem chi tiết
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Right Sidebar */}
