@@ -9,6 +9,8 @@ export const articleStatusEnum = pgEnum('article_status', ['draft', 'published',
 export const planTypeEnum = pgEnum('plan_type', ['credit', 'storage']);
 export const connectionTypeEnum = pgEnum('connection_type', ['wordpress', 'facebook', 'tiktok', 'twitter']);
 export const aiProviderEnum = pgEnum('ai_provider', ['openai', 'claude', 'gemini']);
+export const postStatusEnum = pgEnum('post_status', ['pending', 'processing', 'completed', 'failed', 'cancelled']);
+export const platformEnum = pgEnum('platform', ['wordpress', 'facebook', 'twitter', 'linkedin', 'instagram']);
 
 // Enum types for TypeScript
 export type PlanType = 'credit' | 'storage';
@@ -491,3 +493,128 @@ export type SessionImage = z.infer<typeof selectSessionImageSchema>;
 export type InsertSessionImage = z.infer<typeof insertSessionImageSchema>;
 export type SessionActivity = z.infer<typeof selectSessionActivitySchema>;
 export type InsertSessionActivity = z.infer<typeof insertSessionActivitySchema>;
+
+// Social Media Connections table
+export const socialConnections = pgTable('social_connections', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  platform: platformEnum('platform').notNull(),
+  accountName: text('account_name').notNull(),
+  accessToken: text('access_token').notNull(),
+  refreshToken: text('refresh_token'),
+  tokenExpiry: timestamp('token_expiry'),
+  accountId: text('account_id').notNull(),
+  isActive: boolean('is_active').notNull().default(true),
+  settings: jsonb('settings').default({}),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Scheduled Posts table
+export const scheduledPosts = pgTable('scheduled_posts', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  articleId: integer('article_id').references(() => articles.id),
+  title: text('title').notNull(),
+  content: text('content').notNull(),
+  excerpt: text('excerpt'),
+  featuredImage: text('featured_image'),
+  platforms: jsonb('platforms').notNull(), // Array of platform configs
+  scheduledTime: timestamp('scheduled_time').notNull(),
+  status: postStatusEnum('status').notNull().default('pending'),
+  publishedUrls: jsonb('published_urls').default({}), // URLs after successful posting
+  errorLogs: jsonb('error_logs').default([]),
+  retryCount: integer('retry_count').notNull().default(0),
+  maxRetries: integer('max_retries').notNull().default(3),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Post Templates table
+export const postTemplates = pgTable('post_templates', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  name: text('name').notNull(),
+  description: text('description'),
+  platform: platformEnum('platform').notNull(),
+  template: jsonb('template').notNull(), // Template structure for each platform
+  isDefault: boolean('is_default').notNull().default(false),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Posting Analytics table
+export const postingAnalytics = pgTable('posting_analytics', {
+  id: serial('id').primaryKey(),
+  scheduledPostId: integer('scheduled_post_id').references(() => scheduledPosts.id).notNull(),
+  platform: platformEnum('platform').notNull(),
+  postId: text('post_id'), // Platform-specific post ID
+  postUrl: text('post_url'),
+  impressions: integer('impressions').default(0),
+  clicks: integer('clicks').default(0),
+  likes: integer('likes').default(0),
+  shares: integer('shares').default(0),
+  comments: integer('comments').default(0),
+  engagement: integer('engagement').default(0),
+  lastSyncAt: timestamp('last_sync_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Social Connections Relations
+export const socialConnectionsRelations = relations(socialConnections, ({ one }) => ({
+  user: one(users, { fields: [socialConnections.userId], references: [users.id] }),
+}));
+
+// Scheduled Posts Relations
+export const scheduledPostsRelations = relations(scheduledPosts, ({ one, many }) => ({
+  user: one(users, { fields: [scheduledPosts.userId], references: [users.id] }),
+  article: one(articles, { fields: [scheduledPosts.articleId], references: [articles.id] }),
+  analytics: many(postingAnalytics),
+}));
+
+// Post Templates Relations
+export const postTemplatesRelations = relations(postTemplates, ({ one }) => ({
+  user: one(users, { fields: [postTemplates.userId], references: [users.id] }),
+}));
+
+// Posting Analytics Relations
+export const postingAnalyticsRelations = relations(postingAnalytics, ({ one }) => ({
+  scheduledPost: one(scheduledPosts, { fields: [postingAnalytics.scheduledPostId], references: [scheduledPosts.id] }),
+}));
+
+// Social Media Schemas
+export const selectSocialConnectionSchema = createSelectSchema(socialConnections);
+export const insertSocialConnectionSchema = createInsertSchema(socialConnections, {
+  accountName: (schema) => schema.min(1, "Account name is required"),
+  accessToken: (schema) => schema.min(1, "Access token is required"),
+  accountId: (schema) => schema.min(1, "Account ID is required"),
+});
+
+export const selectScheduledPostSchema = createSelectSchema(scheduledPosts);
+export const insertScheduledPostSchema = createInsertSchema(scheduledPosts, {
+  title: (schema) => schema.min(1, "Title is required").max(200, "Title too long"),
+  content: (schema) => schema.min(1, "Content is required"),
+  scheduledTime: (schema) => schema.refine(
+    (date) => new Date(date) > new Date(),
+    "Scheduled time must be in the future"
+  ),
+});
+
+export const selectPostTemplateSchema = createSelectSchema(postTemplates);
+export const insertPostTemplateSchema = createInsertSchema(postTemplates, {
+  name: (schema) => schema.min(1, "Template name is required").max(100, "Name too long"),
+});
+
+export const selectPostingAnalyticsSchema = createSelectSchema(postingAnalytics);
+export const insertPostingAnalyticsSchema = createInsertSchema(postingAnalytics);
+
+// Social Media Types
+export type SocialConnection = z.infer<typeof selectSocialConnectionSchema>;
+export type InsertSocialConnection = z.infer<typeof insertSocialConnectionSchema>;
+export type ScheduledPost = z.infer<typeof selectScheduledPostSchema>;
+export type InsertScheduledPost = z.infer<typeof insertScheduledPostSchema>;
+export type PostTemplate = z.infer<typeof selectPostTemplateSchema>;
+export type InsertPostTemplate = z.infer<typeof insertPostTemplateSchema>;
+export type PostingAnalytics = z.infer<typeof selectPostingAnalyticsSchema>;
+export type InsertPostingAnalytics = z.infer<typeof insertPostingAnalyticsSchema>;
