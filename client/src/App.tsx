@@ -31,12 +31,9 @@ import SEOTools from "@/pages/dashboard/seo-tools";
 import Templates from "@/pages/dashboard/templates";
 
 import Translations from "@/pages/dashboard/translations";
-import Collaboration from "@/pages/dashboard/collaboration";
 import Notifications from "@/pages/dashboard/notifications";
 import Scheduler from "@/pages/dashboard/scheduler";
 import Feedback from "@/pages/dashboard/feedback";
-import Workspaces from "@/pages/dashboard/workspaces";
-import WorkspaceDetail from "@/pages/dashboard/workspace-detail";
 import EditArticle from "@/pages/dashboard/edit-article";
 import ScheduledPosts from "@/pages/dashboard/scheduled-posts";
 import SocialConnections from "@/pages/dashboard/social-connections";
@@ -101,12 +98,9 @@ function Router() {
       <ProtectedRoute path="/dashboard/seo-tools" component={SEOTools} />
       <ProtectedRoute path="/dashboard/templates" component={Templates} />
       <ProtectedRoute path="/dashboard/translations" component={Translations} />
-      <ProtectedRoute path="/dashboard/collaboration" component={Collaboration} />
       <ProtectedRoute path="/dashboard/notifications" component={Notifications} />
       <ProtectedRoute path="/dashboard/scheduler" component={Scheduler} />
       <ProtectedRoute path="/dashboard/feedback" component={Feedback} />
-      <ProtectedRoute path="/dashboard/workspaces" component={Workspaces} />
-      <ProtectedRoute path="/dashboard/workspaces/:id" component={WorkspaceDetail} />
       <ProtectedRoute path="/dashboard/scheduled-posts" component={ScheduledPosts} />
       <ProtectedRoute path="/dashboard/social-connections" component={SocialConnections} />
       <ProtectedRoute path="/dashboard/settings" component={Settings} />
