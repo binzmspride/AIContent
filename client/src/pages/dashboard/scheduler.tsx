@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Plus, ExternalLink, Share2, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { Sidebar } from '@/components/dashboard/Sidebar';
 
 const platformLabels = {
   wordpress: "WordPress",
@@ -58,18 +59,21 @@ export default function SchedulerPage() {
   }).length;
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Lập lịch đăng bài
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Tổng quan hệ thống đăng bài tự động
-          </p>
-        </div>
-      </div>
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      <Sidebar />
+      <div className="flex-1 overflow-auto">
+        <div className="container mx-auto p-6 space-y-6">
+          {/* Header */}
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                Lập lịch đăng bài
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">
+                Tổng quan hệ thống đăng bài tự động
+              </p>
+            </div>
+          </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -304,6 +308,8 @@ export default function SchedulerPage() {
           </div>
         </CardContent>
       </Card>
+        </div>
+      </div>
     </div>
   );
 }
