@@ -49,6 +49,7 @@ export default function SocialConnections() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState<SocialConnection | null>(null);
+  const [selectedPlatform, setSelectedPlatform] = useState<string>('');
 
   // Fetch social connections
   const { data: connectionsData, isLoading } = useQuery({
@@ -245,7 +246,15 @@ export default function SocialConnections() {
           </p>
         </div>
         
-        <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <Dialog 
+          open={showCreateDialog} 
+          onOpenChange={(open) => {
+            setShowCreateDialog(open);
+            if (!open) {
+              setSelectedPlatform('');
+            }
+          }}
+        >
           <DialogTrigger asChild>
             <Button className="flex items-center gap-2">
               <Plus className="h-4 w-4" />
@@ -263,7 +272,11 @@ export default function SocialConnections() {
             <form onSubmit={handleCreateConnection} className="space-y-4">
               <div>
                 <Label htmlFor="platform">Nền tảng</Label>
-                <Select name="platform" required>
+                <Select 
+                  name="platform" 
+                  required 
+                  onValueChange={(value) => setSelectedPlatform(value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Chọn nền tảng..." />
                   </SelectTrigger>
@@ -276,6 +289,14 @@ export default function SocialConnections() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {selectedPlatform && (
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    {platformDescriptions[selectedPlatform as keyof typeof platformDescriptions]}
+                  </p>
+                </div>
+              )}
               
               <div>
                 <Label htmlFor="accountName">Tên tài khoản</Label>
@@ -318,44 +339,142 @@ export default function SocialConnections() {
                 />
               </div>
 
-              {/* Platform specific fields */}
-              <div className="space-y-4 border-t pt-4">
-                <h4 className="font-medium">Cài đặt nền tảng</h4>
-                
-                <div>
-                  <Label htmlFor="siteUrl">URL Website (WordPress)</Label>
-                  <Input
-                    id="siteUrl"
-                    name="siteUrl"
-                    placeholder="https://yoursite.com"
-                    type="url"
-                  />
+              {/* WordPress specific fields */}
+              {selectedPlatform === 'wordpress' && (
+                <div className="space-y-4 border-t pt-4">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Cài đặt WordPress</h4>
+                  
+                  <div>
+                    <Label htmlFor="siteUrl">URL Website (WordPress)</Label>
+                    <Input
+                      id="siteUrl"
+                      name="siteUrl"
+                      placeholder="https://yoursite.com"
+                      type="url"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="wpUsername">Username WordPress</Label>
+                    <Input
+                      id="wpUsername"
+                      name="wpUsername"
+                      placeholder="WordPress username..."
+                      required
+                    />
+                  </div>
                 </div>
-                
-                <div>
-                  <Label htmlFor="wpUsername">Username WordPress</Label>
-                  <Input
-                    id="wpUsername"
-                    name="wpUsername"
-                    placeholder="WordPress username..."
-                  />
+              )}
+
+              {/* Facebook specific fields */}
+              {selectedPlatform === 'facebook' && (
+                <div className="space-y-4 border-t pt-4">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Cài đặt Facebook</h4>
+                  
+                  <div>
+                    <Label htmlFor="pageId">Facebook Page ID</Label>
+                    <Input
+                      id="pageId"
+                      name="pageId"
+                      placeholder="ID của Facebook Page..."
+                      required
+                    />
+                  </div>
                 </div>
-                
-                <div>
-                  <Label htmlFor="pageId">Facebook Page ID</Label>
-                  <Input
-                    id="pageId"
-                    name="pageId"
-                    placeholder="ID của Facebook Page..."
-                  />
+              )}
+
+              {/* Twitter specific fields */}
+              {selectedPlatform === 'twitter' && (
+                <div className="space-y-4 border-t pt-4">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Cài đặt Twitter</h4>
+                  
+                  <div>
+                    <Label htmlFor="apiKey">API Key</Label>
+                    <Input
+                      id="apiKey"
+                      name="apiKey"
+                      placeholder="Twitter API Key..."
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="apiSecret">API Secret</Label>
+                    <Input
+                      id="apiSecret"
+                      name="apiSecret"
+                      placeholder="Twitter API Secret..."
+                      type="password"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* LinkedIn specific fields */}
+              {selectedPlatform === 'linkedin' && (
+                <div className="space-y-4 border-t pt-4">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Cài đặt LinkedIn</h4>
+                  
+                  <div>
+                    <Label htmlFor="clientId">Client ID</Label>
+                    <Input
+                      id="clientId"
+                      name="clientId"
+                      placeholder="LinkedIn Client ID..."
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="clientSecret">Client Secret</Label>
+                    <Input
+                      id="clientSecret"
+                      name="clientSecret"
+                      placeholder="LinkedIn Client Secret..."
+                      type="password"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Instagram specific fields */}
+              {selectedPlatform === 'instagram' && (
+                <div className="space-y-4 border-t pt-4">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Cài đặt Instagram</h4>
+                  
+                  <div>
+                    <Label htmlFor="instagramBusinessAccountId">Instagram Business Account ID</Label>
+                    <Input
+                      id="instagramBusinessAccountId"
+                      name="instagramBusinessAccountId"
+                      placeholder="Instagram Business Account ID..."
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="facebookPageId">Connected Facebook Page ID</Label>
+                    <Input
+                      id="facebookPageId"
+                      name="facebookPageId"
+                      placeholder="Facebook Page ID liên kết với Instagram..."
+                      required
+                    />
+                  </div>
+                </div>
+              )}
               
               <div className="flex justify-end gap-2 pt-4">
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setShowCreateDialog(false)}
+                  onClick={() => {
+                    setShowCreateDialog(false);
+                    setSelectedPlatform('');
+                  }}
                 >
                   Hủy
                 </Button>
