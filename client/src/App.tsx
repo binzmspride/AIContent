@@ -46,6 +46,7 @@ import VerifyEmail from "@/pages/verify-email";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
 import ApiDocs from "@/pages/api-docs";
+import TransitionsDemo from "@/pages/transitions-demo";
 import AdminDashboard from "@/pages/admin";
 import AdminUsers from "@/pages/admin/users";
 import AdminArticles from "@/pages/admin/articles";
@@ -85,6 +86,7 @@ function Router() {
         <Route path="/forgot-password" component={ForgotPassword} />
         <Route path="/reset-password" component={ResetPassword} />
         <Route path="/api/docs" component={ApiDocs} />
+        <Route path="/transitions-demo" component={TransitionsDemo} />
         
         {/* Protected Dashboard routes */}
         <ProtectedRoute path="/dashboard" component={Dashboard} />
