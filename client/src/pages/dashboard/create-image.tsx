@@ -414,9 +414,10 @@ export default function CreateImagePage() {
           </div>
         </div>
 
-        <div className="space-y-6">
-          {/* Input Form */}
-          <Card>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Left Column - Input Form */}
+          <div className="xl:col-span-2 space-y-6">
+            <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Image className="h-5 w-5" />
@@ -629,9 +630,11 @@ export default function CreateImagePage() {
             )}
           </div>
 
-          {/* Guidelines Section */}
-          <Card>
-            <CardHeader>
+          {/* Right Column - Guidelines and Stats */}
+          <div className="space-y-6">
+            {/* Guidelines Section */}
+            <Card>
+              <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Info className="h-5 w-5" />
                   Hướng dẫn tạo ảnh
@@ -663,7 +666,36 @@ export default function CreateImagePage() {
               </CardContent>
             </Card>
 
-          {/* Recent Images */}
+            {/* Quick Stats */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="h-5 w-5" />
+                  Thống kê nhanh
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center p-3 bg-muted/50 rounded-lg">
+                    <div className="text-lg font-bold text-primary">
+                      {imagesData?.images?.length || 0}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Tổng ảnh</div>
+                  </div>
+                  <div className="text-center p-3 bg-muted/50 rounded-lg">
+                    <div className="text-lg font-bold text-primary">
+                      {user?.credits || 0}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Tín dụng còn</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Recent Images - Full Width Section */}
+        <div className="mt-6">
           <Card>
             <CardHeader>
                 <CardTitle className="flex items-center justify-between">
@@ -749,32 +781,7 @@ export default function CreateImagePage() {
                 )}
               </CardContent>
             </Card>
-
-          {/* Quick Stats */}
-          <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="h-5 w-5" />
-                  Thống kê nhanh
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="text-center p-3 bg-muted/50 rounded-lg">
-                    <div className="text-lg font-bold text-primary">
-                      {imagesData?.images?.length || 0}
-                    </div>
-                    <div className="text-xs text-muted-foreground">Tổng ảnh</div>
-                  </div>
-                  <div className="text-center p-3 bg-muted/50 rounded-lg">
-                    <div className="text-lg font-bold text-primary">
-                      {user?.credits || 0}
-                    </div>
-                    <div className="text-xs text-muted-foreground">Tín dụng còn</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          </div>
         </div>
 
         {/* Preview Dialog */}
