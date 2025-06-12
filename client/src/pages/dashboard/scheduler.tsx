@@ -59,9 +59,9 @@ export default function SchedulerPage() {
   }).length;
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />
-      <div className="flex-1 overflow-auto">
+      <div className="ml-64 min-h-screen">
         <div className="container mx-auto p-6 space-y-6">
           {/* Header */}
           <div className="flex justify-between items-center">
