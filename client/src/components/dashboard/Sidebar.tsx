@@ -126,11 +126,6 @@ export function Sidebar() {
       icon: <Globe className="h-5 w-5 mr-3" />,
     },
     {
-      href: "/dashboard/collaboration",
-      label: "Cộng tác",
-      icon: <Users className="h-5 w-5 mr-3" />,
-    },
-    {
       href: "/dashboard/notifications",
       label: "Thông báo",
       icon: <Bell className="h-5 w-5 mr-3" />,
