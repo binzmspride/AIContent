@@ -189,7 +189,12 @@ export function Sidebar() {
           <li>
             <button
               onClick={() => setAiKeysExpanded(!aiKeysExpanded)}
-              className="flex items-center justify-between w-full py-3 px-4 rounded-md text-sm font-medium transition-colors text-white font-semibold dark:text-white hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
+              className={cn(
+                "flex items-center justify-between w-full py-3 px-4 rounded-md text-sm font-medium transition-colors",
+                location.startsWith("/dashboard/ai-api-keys")
+                  ? "bg-sidebar-accent dark:bg-primary-800 text-white font-semibold dark:text-white"
+                  : "text-white font-semibold dark:text-white hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
+              )}
             >
               <div className="flex items-center">
                 <Key className="h-5 w-5 mr-3" />
