@@ -31,7 +31,7 @@ import {
   ImageIcon
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
+import { DashboardLayout } from '@/components/dashboard/Layout';
 
 interface Article {
   id: number;
