@@ -69,6 +69,11 @@ export default function CreateImagePage() {
     queryKey: ['/api/dashboard/articles'],
   });
 
+  // Fetch recent images
+  const { data: imagesData, isLoading: imagesLoading } = useQuery({
+    queryKey: ['/api/dashboard/images'],
+  });
+
   // Generate image mutation
   const generateImageMutation = useMutation({
     mutationFn: async (imageData: GeneratedImage) => {
@@ -197,19 +202,20 @@ export default function CreateImagePage() {
           </div>
         </div>
 
-        <div className="space-y-6">
-          {/* Main Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Image className="h-5 w-5" />
-                Tạo hình ảnh với AI
-              </CardTitle>
-              <CardDescription>
-                Tạo hình ảnh từ văn bản mô tả hoặc nội dung bài viết SEO
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+          {/* Main Form - takes 3 columns */}
+          <div className="xl:col-span-3 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Image className="h-5 w-5" />
+                  Tạo hình ảnh với AI
+                </CardTitle>
+                <CardDescription>
+                  Tạo hình ảnh từ văn bản mô tả hoặc nội dung bài viết SEO
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Left column - Basic Info */}
                 <div className="space-y-4">
@@ -422,6 +428,76 @@ export default function CreateImagePage() {
               </div>
             </CardContent>
           </Card>
+          </div>
+
+          {/* Right Sidebar - Recent Images */}
+          <div className="xl:col-span-1 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ImageIcon className="h-5 w-5" />
+                  Hình ảnh gần đây
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {imagesLoading ? (
+                  <div className="text-center py-8">
+                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                    <p className="text-sm text-muted-foreground mt-2">Đang tải...</p>
+                  </div>
+                ) : imagesData?.images?.length > 0 ? (
+                  <div className="space-y-3">
+                    {imagesData.images.slice(0, 6).map((image: GeneratedImage) => (
+                      <div key={image.id} className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div className="aspect-video bg-muted overflow-hidden">
+                          <img 
+                            src={image.imageUrl} 
+                            alt={image.title}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/placeholder-image.svg';
+                            }}
+                          />
+                        </div>
+                        <div className="p-3">
+                          <h4 className="font-medium text-sm truncate mb-1">{image.title}</h4>
+                          <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
+                            {image.prompt}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <Badge variant="secondary" className="text-xs">
+                              {image.creditsUsed} tín dụng
+                            </Badge>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setTitle(image.title);
+                                setPrompt(image.prompt.replace(/\. Style:.*$/, ''));
+                              }}
+                              className="text-xs"
+                            >
+                              Sử dụng lại
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
+                    <p className="text-sm text-muted-foreground">
+                      Chưa có hình ảnh nào
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Tạo hình ảnh đầu tiên của bạn!
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </DashboardLayout>
