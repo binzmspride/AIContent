@@ -416,8 +416,7 @@ export default function CreateImagePage() {
 
         <div className="space-y-6">
           {/* Input Form */}
-          <div className="max-w-4xl mx-auto">
-            <Card>
+          <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Image className="h-5 w-5" />
@@ -631,9 +630,8 @@ export default function CreateImagePage() {
           </div>
 
           {/* Guidelines Section */}
-          <div className="max-w-4xl mx-auto">
-            <Card>
-              <CardHeader>
+          <Card>
+            <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Info className="h-5 w-5" />
                   Hướng dẫn tạo ảnh
@@ -664,12 +662,10 @@ export default function CreateImagePage() {
                 </div>
               </CardContent>
             </Card>
-          </div>
 
           {/* Recent Images */}
-          <div className="max-w-4xl mx-auto">
-            <Card>
-              <CardHeader>
+          <Card>
+            <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <FileText className="h-5 w-5" />
@@ -753,12 +749,10 @@ export default function CreateImagePage() {
                 )}
               </CardContent>
             </Card>
-          </div>
 
           {/* Quick Stats */}
-          <div className="max-w-4xl mx-auto">
-            <Card>
-              <CardHeader>
+          <Card>
+            <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Zap className="h-5 w-5" />
                   Thống kê nhanh
@@ -781,7 +775,6 @@ export default function CreateImagePage() {
                 </div>
               </CardContent>
             </Card>
-          </div>
         </div>
 
         {/* Preview Dialog */}
