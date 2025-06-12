@@ -135,7 +135,7 @@ export default function ImageLibraryPage() {
 
   return (
     <DashboardLayout>
-      <div className="container py-6">
+      <div className="flex-1 overflow-auto p-4 md:p-6">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold">Thư viện hình ảnh AI</h1>
