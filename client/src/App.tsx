@@ -8,7 +8,6 @@ import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import { FloatingThemeIndicator } from "@/components/common/FloatingThemeIndicator";
 import { FeedbackButton } from "@/components/FeedbackButton";
-import { PageTransition } from "@/components/transitions/PageTransition";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 
@@ -46,7 +45,6 @@ import VerifyEmail from "@/pages/verify-email";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
 import ApiDocs from "@/pages/api-docs";
-import TransitionsDemo from "@/pages/transitions-demo";
 import AdminDashboard from "@/pages/admin";
 import AdminUsers from "@/pages/admin/users";
 import AdminArticles from "@/pages/admin/articles";
@@ -77,62 +75,59 @@ function Router() {
   }, [user, isLoading, location, setLocation]);
 
   return (
-    <PageTransition>
-      <Switch>
-        {/* Public routes */}
-        <Route path="/" component={HomePage} />
-        <Route path="/auth" component={AuthPage} />
-        <Route path="/verify-email" component={VerifyEmail} />
-        <Route path="/forgot-password" component={ForgotPassword} />
-        <Route path="/reset-password" component={ResetPassword} />
-        <Route path="/api/docs" component={ApiDocs} />
-        <Route path="/transitions-demo" component={TransitionsDemo} />
-        
-        {/* Protected Dashboard routes */}
-        <ProtectedRoute path="/dashboard" component={Dashboard} />
-        <ProtectedRoute path="/dashboard/create-content" component={CreateContent} />
-        <ProtectedRoute path="/dashboard/create-image" component={CreateImage} />
-        <ProtectedRoute path="/dashboard/image-library" component={ImageLibrary} />
-        <ProtectedRoute path="/dashboard/my-articles" component={MyArticles} />
-        <ProtectedRoute path="/dashboard/edit-article/:id" component={EditArticle} />
-        <ProtectedRoute path="/dashboard/credits" component={Credits} />
-        <ProtectedRoute path="/dashboard/plans" component={Plans} />
-        <ProtectedRoute path="/dashboard/connections" component={Connections} />
-        <ProtectedRoute path="/dashboard/api-keys" component={ApiKeys} />
-        <ProtectedRoute path="/dashboard/ai-api-keys" component={AIApiKeys} />
-        <ProtectedRoute path="/dashboard/content-separation" component={ContentSeparation} />
-        <ProtectedRoute path="/dashboard/analytics" component={Analytics} />
-        <ProtectedRoute path="/dashboard/seo-tools" component={SEOTools} />
-        <ProtectedRoute path="/dashboard/templates" component={Templates} />
-        <ProtectedRoute path="/dashboard/translations" component={Translations} />
-        <ProtectedRoute path="/dashboard/collaboration" component={Collaboration} />
-        <ProtectedRoute path="/dashboard/notifications" component={Notifications} />
-        <ProtectedRoute path="/dashboard/scheduler" component={Scheduler} />
-        <ProtectedRoute path="/dashboard/feedback" component={Feedback} />
-        <ProtectedRoute path="/dashboard/workspaces" component={Workspaces} />
-        <ProtectedRoute path="/dashboard/workspaces/:id" component={WorkspaceDetail} />
-        <ProtectedRoute path="/dashboard/scheduled-posts" component={ScheduledPosts} />
-        <ProtectedRoute path="/dashboard/social-connections" component={SocialConnections} />
-        <ProtectedRoute path="/dashboard/settings" component={Settings} />
-        <Route path="/article/:id" component={Article} />
-        
-        {/* Admin routes */}
-        <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} />
-        <ProtectedRoute path="/admin/users" component={AdminUsers} adminOnly={true} />
-        <ProtectedRoute path="/admin/articles" component={AdminArticles} adminOnly={true} />
-        <ProtectedRoute path="/admin/plans" component={AdminPlans} adminOnly={true} />
-        <ProtectedRoute path="/admin/payments" component={AdminPayments} adminOnly={true} />
-        <ProtectedRoute path="/admin/integrations" component={AdminIntegrations} adminOnly={true} />
-        <ProtectedRoute path="/admin/feedback" component={AdminFeedback} adminOnly={true} />
-        <ProtectedRoute path="/admin/translations" component={AdminTranslations} adminOnly={true} />
-        <ProtectedRoute path="/admin/history" component={AdminHistory} adminOnly={true} />
-        <ProtectedRoute path="/admin/settings" component={AdminSettings} adminOnly={true} />
-        <ProtectedRoute path="/admin/performance" component={AdminPerformance} adminOnly={true} />
-        
-        {/* Fallback to 404 */}
-        <Route component={NotFound} />
-      </Switch>
-    </PageTransition>
+    <Switch>
+      {/* Public routes */}
+      <Route path="/" component={HomePage} />
+      <Route path="/auth" component={AuthPage} />
+      <Route path="/verify-email" component={VerifyEmail} />
+      <Route path="/forgot-password" component={ForgotPassword} />
+      <Route path="/reset-password" component={ResetPassword} />
+      <Route path="/api/docs" component={ApiDocs} />
+      
+      {/* Protected Dashboard routes */}
+      <ProtectedRoute path="/dashboard" component={Dashboard} />
+      <ProtectedRoute path="/dashboard/create-content" component={CreateContent} />
+      <ProtectedRoute path="/dashboard/create-image" component={CreateImage} />
+      <ProtectedRoute path="/dashboard/image-library" component={ImageLibrary} />
+      <ProtectedRoute path="/dashboard/my-articles" component={MyArticles} />
+      <ProtectedRoute path="/dashboard/edit-article/:id" component={EditArticle} />
+      <ProtectedRoute path="/dashboard/credits" component={Credits} />
+      <ProtectedRoute path="/dashboard/plans" component={Plans} />
+      <ProtectedRoute path="/dashboard/connections" component={Connections} />
+      <ProtectedRoute path="/dashboard/api-keys" component={ApiKeys} />
+      <ProtectedRoute path="/dashboard/ai-api-keys" component={AIApiKeys} />
+      <ProtectedRoute path="/dashboard/content-separation" component={ContentSeparation} />
+      <ProtectedRoute path="/dashboard/analytics" component={Analytics} />
+      <ProtectedRoute path="/dashboard/seo-tools" component={SEOTools} />
+      <ProtectedRoute path="/dashboard/templates" component={Templates} />
+      <ProtectedRoute path="/dashboard/translations" component={Translations} />
+      <ProtectedRoute path="/dashboard/collaboration" component={Collaboration} />
+      <ProtectedRoute path="/dashboard/notifications" component={Notifications} />
+      <ProtectedRoute path="/dashboard/scheduler" component={Scheduler} />
+      <ProtectedRoute path="/dashboard/feedback" component={Feedback} />
+      <ProtectedRoute path="/dashboard/workspaces" component={Workspaces} />
+      <ProtectedRoute path="/dashboard/workspaces/:id" component={WorkspaceDetail} />
+      <ProtectedRoute path="/dashboard/scheduled-posts" component={ScheduledPosts} />
+      <ProtectedRoute path="/dashboard/social-connections" component={SocialConnections} />
+      <ProtectedRoute path="/dashboard/settings" component={Settings} />
+      <Route path="/article/:id" component={Article} />
+      
+      {/* Admin routes */}
+      <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} />
+      <ProtectedRoute path="/admin/users" component={AdminUsers} adminOnly={true} />
+      <ProtectedRoute path="/admin/articles" component={AdminArticles} adminOnly={true} />
+      <ProtectedRoute path="/admin/plans" component={AdminPlans} adminOnly={true} />
+      <ProtectedRoute path="/admin/payments" component={AdminPayments} adminOnly={true} />
+      <ProtectedRoute path="/admin/integrations" component={AdminIntegrations} adminOnly={true} />
+      <ProtectedRoute path="/admin/feedback" component={AdminFeedback} adminOnly={true} />
+      <ProtectedRoute path="/admin/translations" component={AdminTranslations} adminOnly={true} />
+      <ProtectedRoute path="/admin/history" component={AdminHistory} adminOnly={true} />
+      <ProtectedRoute path="/admin/settings" component={AdminSettings} adminOnly={true} />
+      <ProtectedRoute path="/admin/performance" component={AdminPerformance} adminOnly={true} />
+      
+      {/* Fallback to 404 */}
+      <Route component={NotFound} />
+    </Switch>
   );
 }
 
