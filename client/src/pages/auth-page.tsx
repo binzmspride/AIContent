@@ -26,32 +26,39 @@ import { queryClient } from "@/lib/queryClient";
 
 // Login form schema
 const loginSchema = z.object({
-  username: z.string().min(1, {
-    message: "Please enter your username or email",
-  }),
-  password: z.string().min(1, {
-    message: "Password is required",
-  }),
+  username: z.string()
+    .min(1, { message: "Vui lòng nhập tên đăng nhập hoặc email" })
+    .max(100, { message: "Tên đăng nhập không được quá 100 ký tự" }),
+  password: z.string()
+    .min(1, { message: "Mật khẩu là bắt buộc" })
+    .max(128, { message: "Mật khẩu không được quá 128 ký tự" }),
   rememberMe: z.boolean().optional(),
 });
 
 // Register form schema
 const registerSchema = z.object({
-  fullName: z.string().min(2, {
-    message: "Full name must be at least 2 characters",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters",
-  }),
-  confirmPassword: z.string(),
-  terms: z.boolean().refine((val) => val === true, {
-    message: "You must accept the terms and privacy policy",
-  }),
+  fullName: z.string()
+    .min(2, { message: "Họ tên phải có ít nhất 2 ký tự" })
+    .max(50, { message: "Họ tên không được quá 50 ký tự" })
+    .regex(/^[a-zA-ZÀ-ỹ\s]+$/, { message: "Họ tên chỉ được chứa chữ cái và khoảng trắng" }),
+  email: z.string()
+    .min(1, { message: "Email là bắt buộc" })
+    .email({ message: "Vui lòng nhập email hợp lệ" })
+    .max(100, { message: "Email không được quá 100 ký tự" }),
+  password: z.string()
+    .min(8, { message: "Mật khẩu phải có ít nhất 8 ký tự" })
+    .max(128, { message: "Mật khẩu không được quá 128 ký tự" })
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, { 
+      message: "Mật khẩu phải chứa ít nhất 1 chữ thường, 1 chữ hoa và 1 số" 
+    }),
+  confirmPassword: z.string()
+    .min(1, { message: "Vui lòng xác nhận mật khẩu" }),
+  terms: z.boolean()
+    .refine((val) => val === true, {
+      message: "Bạn phải đồng ý với Điều khoản dịch vụ và Chính sách bảo mật",
+    }),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
+  message: "Mật khẩu xác nhận không khớp",
   path: ["confirmPassword"],
 });
 
@@ -64,6 +71,7 @@ export default function AuthPage() {
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<string>("login");
   const [isVerified, setIsVerified] = useState(false);
+  const [isProcessingOAuth, setIsProcessingOAuth] = useState(false);
   const { toast } = useToast();
   
   // Check URL params to set default tab
@@ -130,6 +138,16 @@ export default function AuthPage() {
   };
 
   const onRegisterSubmit = (data: RegisterFormValues) => {
+    // Additional validation check for terms
+    if (!data.terms) {
+      toast({
+        title: "Lỗi đăng ký",
+        description: "Bạn phải đồng ý với Điều khoản dịch vụ và Chính sách bảo mật để tiếp tục đăng ký.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     registerMutation.mutate({
       username: data.email,
       email: data.email,
@@ -199,8 +217,6 @@ export default function AuthPage() {
     checkAuthRedirect();
   }, [t]);
 
-  const [isProcessingOAuth, setIsProcessingOAuth] = useState(false);
-  
   // Check for initialization errors on mount
   useEffect(() => {
     const checkFirebaseInitialization = async () => {
@@ -410,26 +426,29 @@ export default function AuthPage() {
                           control={registerForm.control}
                           name="terms"
                           render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-2 space-y-0">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                  className="border-slate-500 data-[state=checked]:bg-primary data-[state=checked]:border-primary mt-1"
-                                />
-                              </FormControl>
-                              <div className="space-y-1 leading-none">
-                                <FormLabel className="text-sm font-normal text-slate-300">
-                                  {t("auth.register.termsAgree")}{" "}
-                                  <a href="#" className="text-primary hover:text-primary/80">
-                                    {t("auth.register.terms")}
-                                  </a>{" "}
-                                  {t("auth.register.and")}{" "}
-                                  <a href="#" className="text-primary hover:text-primary/80">
-                                    {t("auth.register.privacy")}
-                                  </a>
-                                </FormLabel>
+                            <FormItem>
+                              <div className="flex flex-row items-start space-x-2 space-y-0">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                    className="border-slate-500 data-[state=checked]:bg-primary data-[state=checked]:border-primary mt-1"
+                                  />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                  <FormLabel className="text-sm font-normal text-slate-300">
+                                    {t("auth.register.termsAgree")}{" "}
+                                    <a href="#" className="text-primary hover:text-primary/80">
+                                      {t("auth.register.terms")}
+                                    </a>{" "}
+                                    {t("auth.register.and")}{" "}
+                                    <a href="#" className="text-primary hover:text-primary/80">
+                                      {t("auth.register.privacy")}
+                                    </a>
+                                  </FormLabel>
+                                </div>
                               </div>
+                              <FormMessage className="text-sm mt-2" />
                             </FormItem>
                           )}
                         />
