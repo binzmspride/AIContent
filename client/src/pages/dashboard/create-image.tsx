@@ -1270,7 +1270,6 @@ export default function CreateImagePage() {
             )}
           </DialogContent>
         </Dialog>
-      </div>
     </DashboardLayout>
   );
 }
