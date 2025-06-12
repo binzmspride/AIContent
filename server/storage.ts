@@ -1021,6 +1021,242 @@ class DatabaseStorage implements IStorage {
       throw error;
     }
   }
+
+  // Social Media & Scheduling management
+  async getSocialConnections(userId: number): Promise<schema.SocialConnection[]> {
+    try {
+      const connections = await db.query.socialConnections.findMany({
+        where: eq(schema.socialConnections.userId, userId),
+        orderBy: desc(schema.socialConnections.createdAt)
+      });
+      return connections;
+    } catch (error) {
+      console.error('Error fetching social connections:', error);
+      return [];
+    }
+  }
+
+  async getSocialConnection(id: number): Promise<schema.SocialConnection | null> {
+    try {
+      const connection = await db.query.socialConnections.findFirst({
+        where: eq(schema.socialConnections.id, id)
+      });
+      return connection || null;
+    } catch (error) {
+      console.error('Error fetching social connection:', error);
+      return null;
+    }
+  }
+
+  async createSocialConnection(connection: schema.InsertSocialConnection): Promise<schema.SocialConnection> {
+    try {
+      const [newConnection] = await db.insert(schema.socialConnections)
+        .values({
+          ...connection,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      return newConnection;
+    } catch (error) {
+      console.error('Error creating social connection:', error);
+      throw error;
+    }
+  }
+
+  async updateSocialConnection(id: number, data: Partial<schema.SocialConnection>): Promise<schema.SocialConnection | null> {
+    try {
+      const [updatedConnection] = await db.update(schema.socialConnections)
+        .set({
+          ...data,
+          updatedAt: new Date()
+        })
+        .where(eq(schema.socialConnections.id, id))
+        .returning();
+      return updatedConnection || null;
+    } catch (error) {
+      console.error('Error updating social connection:', error);
+      return null;
+    }
+  }
+
+  async deleteSocialConnection(id: number): Promise<boolean> {
+    try {
+      await db.delete(schema.socialConnections)
+        .where(eq(schema.socialConnections.id, id));
+      return true;
+    } catch (error) {
+      console.error('Error deleting social connection:', error);
+      return false;
+    }
+  }
+
+  async getScheduledPosts(userId: number, options?: { page?: number; limit?: number; status?: string }): Promise<{ posts: schema.ScheduledPost[], total: number }> {
+    try {
+      const { page = 1, limit = 10, status } = options || {};
+      const offset = (page - 1) * limit;
+
+      let whereClause = eq(schema.scheduledPosts.userId, userId);
+      if (status && status !== 'all') {
+        whereClause = and(whereClause, eq(schema.scheduledPosts.status, status as any));
+      }
+
+      const [posts, totalResult] = await Promise.all([
+        db.query.scheduledPosts.findMany({
+          where: whereClause,
+          orderBy: desc(schema.scheduledPosts.scheduledTime),
+          limit: limit,
+          offset: offset,
+          with: {
+            article: true
+          }
+        }),
+        db.select({ count: sql`count(*)`.mapWith(Number) })
+          .from(schema.scheduledPosts)
+          .where(whereClause)
+      ]);
+
+      return {
+        posts,
+        total: totalResult[0]?.count || 0
+      };
+    } catch (error) {
+      console.error('Error fetching scheduled posts:', error);
+      return { posts: [], total: 0 };
+    }
+  }
+
+  async getScheduledPost(id: number): Promise<schema.ScheduledPost | null> {
+    try {
+      const post = await db.query.scheduledPosts.findFirst({
+        where: eq(schema.scheduledPosts.id, id),
+        with: {
+          article: true,
+          analytics: true
+        }
+      });
+      return post || null;
+    } catch (error) {
+      console.error('Error fetching scheduled post:', error);
+      return null;
+    }
+  }
+
+  async createScheduledPost(post: schema.InsertScheduledPost): Promise<schema.ScheduledPost> {
+    try {
+      const [newPost] = await db.insert(schema.scheduledPosts)
+        .values({
+          ...post,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      return newPost;
+    } catch (error) {
+      console.error('Error creating scheduled post:', error);
+      throw error;
+    }
+  }
+
+  async updateScheduledPost(id: number, data: Partial<schema.ScheduledPost>): Promise<schema.ScheduledPost | null> {
+    try {
+      const [updatedPost] = await db.update(schema.scheduledPosts)
+        .set({
+          ...data,
+          updatedAt: new Date()
+        })
+        .where(eq(schema.scheduledPosts.id, id))
+        .returning();
+      return updatedPost || null;
+    } catch (error) {
+      console.error('Error updating scheduled post:', error);
+      return null;
+    }
+  }
+
+  async deleteScheduledPost(id: number): Promise<boolean> {
+    try {
+      await db.delete(schema.scheduledPosts)
+        .where(eq(schema.scheduledPosts.id, id));
+      return true;
+    } catch (error) {
+      console.error('Error deleting scheduled post:', error);
+      return false;
+    }
+  }
+
+  async getPostTemplates(userId: number, platform?: string): Promise<schema.PostTemplate[]> {
+    try {
+      let whereClause = eq(schema.postTemplates.userId, userId);
+      if (platform) {
+        whereClause = and(whereClause, eq(schema.postTemplates.platform, platform as any));
+      }
+
+      const templates = await db.query.postTemplates.findMany({
+        where: whereClause,
+        orderBy: desc(schema.postTemplates.createdAt)
+      });
+      return templates;
+    } catch (error) {
+      console.error('Error fetching post templates:', error);
+      return [];
+    }
+  }
+
+  async getPostTemplate(id: number): Promise<schema.PostTemplate | null> {
+    try {
+      const template = await db.query.postTemplates.findFirst({
+        where: eq(schema.postTemplates.id, id)
+      });
+      return template || null;
+    } catch (error) {
+      console.error('Error fetching post template:', error);
+      return null;
+    }
+  }
+
+  async createPostTemplate(template: schema.InsertPostTemplate): Promise<schema.PostTemplate> {
+    try {
+      const [newTemplate] = await db.insert(schema.postTemplates)
+        .values({
+          ...template,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      return newTemplate;
+    } catch (error) {
+      console.error('Error creating post template:', error);
+      throw error;
+    }
+  }
+
+  async updatePostTemplate(id: number, data: Partial<schema.PostTemplate>): Promise<schema.PostTemplate | null> {
+    try {
+      const [updatedTemplate] = await db.update(schema.postTemplates)
+        .set({
+          ...data,
+          updatedAt: new Date()
+        })
+        .where(eq(schema.postTemplates.id, id))
+        .returning();
+      return updatedTemplate || null;
+    } catch (error) {
+      console.error('Error updating post template:', error);
+      return null;
+    }
+  }
+
+  async deletePostTemplate(id: number): Promise<boolean> {
+    try {
+      await db.delete(schema.postTemplates)
+        .where(eq(schema.postTemplates.id, id));
+      return true;
+    } catch (error) {
+      console.error('Error deleting post template:', error);
+      return false;
+    }
+  }
 }
 
 export const storage: IStorage = new DatabaseStorage();
