@@ -28,6 +28,8 @@ import {
   MessageSquare,
   Bell,
   Calendar,
+  Clock,
+  Share2,
   TrendingUp,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -137,6 +139,16 @@ export function Sidebar() {
       href: "/dashboard/scheduler",
       label: "Lập lịch đăng",
       icon: <Calendar className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/scheduled-posts",
+      label: "Bài viết đã lên lịch",
+      icon: <Clock className="h-5 w-5 mr-3" />,
+    },
+    {
+      href: "/dashboard/social-connections",
+      label: "Kết nối mạng xã hội",
+      icon: <Share2 className="h-5 w-5 mr-3" />,
     },
     {
       href: "/dashboard/feedback",
