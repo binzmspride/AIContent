@@ -414,9 +414,9 @@ export default function CreateImagePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="space-y-6">
           {/* Input Form */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="max-w-4xl mx-auto">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -630,9 +630,8 @@ export default function CreateImagePage() {
             )}
           </div>
 
-          {/* Right Sidebar */}
-          <div className="space-y-6">
-            {/* Tips & Guidelines */}
+          {/* Guidelines Section */}
+          <div className="max-w-4xl mx-auto">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -640,33 +639,35 @@ export default function CreateImagePage() {
                   Hướng dẫn tạo ảnh
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <h4 className="font-medium text-sm text-blue-900 dark:text-blue-100 mb-1">Mô tả chi tiết</h4>
-                    <p className="text-xs text-blue-700 dark:text-blue-200">
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Mô tả chi tiết</h4>
+                    <p className="text-sm text-blue-700 dark:text-blue-200">
                       Cung cấp mô tả càng chi tiết càng tốt để có hình ảnh chính xác
                     </p>
                   </div>
                   
-                  <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
-                    <h4 className="font-medium text-sm text-green-900 dark:text-green-100 mb-1">Phong cách rõ ràng</h4>
-                    <p className="text-xs text-green-700 dark:text-green-200">
+                  <div className="p-4 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                    <h4 className="font-medium text-green-900 dark:text-green-100 mb-2">Phong cách rõ ràng</h4>
+                    <p className="text-sm text-green-700 dark:text-green-200">
                       Chọn phong cách phù hợp với mục đích sử dụng của bạn
                     </p>
                   </div>
                   
-                  <div className="p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800">
-                    <h4 className="font-medium text-sm text-orange-900 dark:text-orange-100 mb-1">Tối ưu SEO</h4>
-                    <p className="text-xs text-orange-700 dark:text-orange-200">
+                  <div className="p-4 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                    <h4 className="font-medium text-orange-900 dark:text-orange-100 mb-2">Tối ưu SEO</h4>
+                    <p className="text-sm text-orange-700 dark:text-orange-200">
                       Sử dụng từ khóa từ bài viết để tăng hiệu quả SEO
                     </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
+          </div>
 
-            {/* Recent Images */}
+          {/* Recent Images */}
+          <div className="max-w-4xl mx-auto">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
@@ -692,46 +693,51 @@ export default function CreateImagePage() {
                     <p className="text-sm text-muted-foreground mt-2">Đang tải...</p>
                   </div>
                 ) : imagesData?.images?.length > 0 ? (
-                  <div className="space-y-3">
-                    {imagesData.images
-                      .slice(0, 4) // Show 4 images instead of 3
-                      .map((image: GeneratedImage) => (
-                      <div 
-                        key={image.id} 
-                        className="border rounded-lg p-3 cursor-pointer hover:bg-muted/50 transition-colors group"
-                        onClick={() => {
-                          setSelectedImageForDetail(image);
-                          setActivePreviewFormat('original');
-                          setShowImageDetailDialog(true);
-                        }}
-                      >
-                        <div className="aspect-video bg-muted rounded-md mb-2 overflow-hidden">
-                          <img 
-                            src={image.imageUrl} 
-                            alt={image.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = '/placeholder-image.svg';
-                            }}
-                          />
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {imagesData.images
+                        .slice(0, 8) // Show 8 images in grid
+                        .map((image: GeneratedImage) => (
+                        <div 
+                          key={image.id} 
+                          className="border rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-all duration-200 group"
+                          onClick={() => {
+                            setSelectedImageForDetail(image);
+                            setActivePreviewFormat('original');
+                            setShowImageDetailDialog(true);
+                          }}
+                        >
+                          <div className="aspect-video bg-muted overflow-hidden">
+                            <img 
+                              src={image.imageUrl} 
+                              alt={image.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = '/placeholder-image.svg';
+                              }}
+                            />
+                          </div>
+                          <div className="p-3">
+                            <h4 className="font-medium text-sm truncate mb-1">{image.title}</h4>
+                            <p className="text-xs text-muted-foreground">
+                              {image.creditsUsed} tín dụng • {new Date(image.createdAt || '').toLocaleDateString('vi-VN')}
+                            </p>
+                          </div>
                         </div>
-                        <h4 className="font-medium text-sm truncate">{image.title}</h4>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {image.creditsUsed} tín dụng • {new Date(image.createdAt || '').toLocaleDateString('vi-VN')}
-                        </p>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                     
                     {/* View More Button */}
-                    {imagesData.images.length > 4 && (
-                      <Button 
-                        variant="outline" 
-                        className="w-full mt-3"
-                        onClick={() => setShowLibraryDialog(true)}
-                      >
-                        <Eye className="mr-2 h-4 w-4" />
-                        Xem thêm ({imagesData.images.length - 4} ảnh)
-                      </Button>
+                    {imagesData.images.length > 8 && (
+                      <div className="text-center">
+                        <Button 
+                          variant="outline"
+                          onClick={() => setShowLibraryDialog(true)}
+                        >
+                          <Eye className="mr-2 h-4 w-4" />
+                          Xem thêm ({imagesData.images.length - 8} ảnh)
+                        </Button>
+                      </div>
                     )}
                   </div>
                 ) : (
@@ -747,8 +753,10 @@ export default function CreateImagePage() {
                 )}
               </CardContent>
             </Card>
+          </div>
 
-            {/* Quick Stats */}
+          {/* Quick Stats */}
+          <div className="max-w-4xl mx-auto">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
