@@ -14,6 +14,7 @@ import { queryClient } from "@/lib/queryClient";
 import { Calendar, Clock, Edit, Trash2, Eye, Plus, Play, Pause, X } from "lucide-react";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
+import { Sidebar } from "@/components/dashboard/Sidebar";
 
 interface ScheduledPost {
   id: number;
@@ -221,7 +222,10 @@ export default function ScheduledPosts() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Sidebar />
+      <div className="ml-64 min-h-screen">
+        <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -592,6 +596,8 @@ export default function ScheduledPosts() {
           )}
         </DialogContent>
       </Dialog>
+        </div>
+      </div>
     </div>
   );
 }
