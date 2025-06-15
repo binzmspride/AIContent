@@ -1010,6 +1010,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========== Social Media Content API ==========
+  // Generate social media content
+  app.post('/api/social/generate-content', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { contentSource, briefDescription, platforms, includeImage } = req.body;
+      
+      if (!contentSource || !briefDescription || !platforms || platforms.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Content source, brief description, and platforms are required' 
+        });
+      }
+
+      // Check user credits
+      const user = await storage.getUser(userId);
+      if (!user || user.credits < 5) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Insufficient credits. Need at least 5 credits.' 
+        });
+      }
+
+      // Generate content for each platform
+      const platformContent: Record<string, any> = {};
+      
+      for (const platform of platforms) {
+        let content = '';
+        let hashtags = '';
+        
+        // Platform-specific content generation logic
+        switch (platform) {
+          case 'facebook':
+            content = `🎯 ${briefDescription}\n\nFacebook phù hợp cho nội dung dài và tương tác. Hãy chia sẻ câu chuyện đầy đủ và khuyến khích người dùng bình luận.`;
+            hashtags = '#Facebook #SocialMedia #Content #Marketing';
+            break;
+          case 'twitter':
+            content = `🐦 ${briefDescription.substring(0, 200)}...\n\nTwitter yêu cầu nội dung ngắn gọn và súc tích.`;
+            hashtags = '#Twitter #SocialMedia #Content';
+            break;
+          case 'instagram':
+            content = `📸 ${briefDescription}\n\nInstagram tập trung vào hình ảnh đẹp và hashtags hiệu quả.`;
+            hashtags = '#Instagram #Visual #Content #Photography #Marketing';
+            break;
+          case 'linkedin':
+            content = `💼 ${briefDescription}\n\nLinkedIn phù hợp cho nội dung chuyên nghiệp và xây dựng mạng lưới.`;
+            hashtags = '#LinkedIn #Professional #Business #Networking';
+            break;
+          case 'tiktok':
+            content = `🎵 ${briefDescription}\n\nTikTok yêu cầu nội dung sáng tạo, năng động và theo trend.`;
+            hashtags = '#TikTok #Trending #Creative #Video #Viral';
+            break;
+          default:
+            content = briefDescription;
+            hashtags = '#SocialMedia #Content';
+        }
+        
+        platformContent[platform] = {
+          text: content,
+          hashtags: hashtags
+        };
+      }
+
+      // Deduct credits
+      await storage.updateUserCredits(userId, user.credits - 5);
+      
+      // Create credit transaction record
+      await storage.createCreditTransaction({
+        userId,
+        amount: -5,
+        description: `Tạo nội dung social media cho ${platforms.length} nền tảng`,
+        type: 'usage'
+      });
+
+      const response = {
+        platforms: platformContent,
+        creditsUsed: 5,
+        includeImage: includeImage
+      };
+
+      res.json({ success: true, data: response });
+    } catch (error) {
+      console.error('Error generating social media content:', error);
+      res.status(500).json({ success: false, error: 'Failed to generate social media content' });
+    }
+  });
+
   // ========== Admin API ==========
   // Get all users
   app.get('/api/admin/users', async (req, res) => {

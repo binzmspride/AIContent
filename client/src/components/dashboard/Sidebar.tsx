@@ -76,6 +76,11 @@ export function Sidebar() {
       icon: <Images className="h-5 w-5 mr-3" />,
     },
     {
+      href: "/dashboard/create-social-content",
+      label: "Tạo Content Social",
+      icon: <Share2 className="h-5 w-5 mr-3" />,
+    },
+    {
       href: "/dashboard/my-articles",
       label: t("dashboard.navigationItems.myArticles"),
       icon: <FileText className="h-5 w-5 mr-3" />,
