@@ -81,6 +81,11 @@ export function Sidebar() {
       icon: <Share2 className="h-5 w-5 mr-3" />,
     },
     {
+      href: "/dashboard/brand-guidelines",
+      label: "Brand Guidelines",
+      icon: <Settings className="h-5 w-5 mr-3" />,
+    },
+    {
       href: "/dashboard/my-articles",
       label: t("dashboard.navigationItems.myArticles"),
       icon: <FileText className="h-5 w-5 mr-3" />,

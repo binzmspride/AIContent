@@ -19,6 +19,7 @@ import CreateContent from "@/pages/dashboard/create-content";
 import CreateImage from "@/pages/dashboard/create-image";
 import ImageLibrary from "@/pages/dashboard/image-library";
 import CreateSocialContent from "@/pages/dashboard/create-social-content";
+import BrandGuidelines from "@/pages/dashboard/brand-guidelines";
 import MyArticles from "@/pages/dashboard/my-articles";
 import Credits from "@/pages/dashboard/credits";
 import Plans from "@/pages/dashboard/plans";
@@ -88,6 +89,7 @@ function Router() {
       <ProtectedRoute path="/dashboard/create-image" component={CreateImage} />
       <ProtectedRoute path="/dashboard/image-library" component={ImageLibrary} />
       <ProtectedRoute path="/dashboard/create-social-content" component={CreateSocialContent} />
+      <ProtectedRoute path="/dashboard/brand-guidelines" component={BrandGuidelines} />
       <ProtectedRoute path="/dashboard/my-articles" component={MyArticles} />
       <ProtectedRoute path="/dashboard/edit-article/:id" component={EditArticle} />
       <ProtectedRoute path="/dashboard/credits" component={Credits} />
