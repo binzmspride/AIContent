@@ -64,9 +64,9 @@ export default function ScheduledPosts() {
     queryKey: ['/api/social-connections'],
   });
 
-  const scheduledPosts: ScheduledPost[] = scheduledPostsData?.success ? scheduledPostsData.data?.posts || [] : [];
-  const articles: Article[] = articlesData?.success ? articlesData.data?.articles || [] : [];
-  const connections: SocialConnection[] = connectionsData?.success ? connectionsData.data || [] : [];
+  const scheduledPosts: ScheduledPost[] = (scheduledPostsData as any)?.data?.posts || [];
+  const articles: Article[] = (articlesData as any)?.data?.articles || [];
+  const connections: SocialConnection[] = (connectionsData as any)?.data || [];
 
   // Create scheduled post mutation
   const createScheduledPostMutation = useMutation({
@@ -257,9 +257,14 @@ export default function ScheduledPosts() {
                   <p className="text-sm text-gray-600 line-clamp-3">
                     {selectedArticle.content.substring(0, 200)}...
                   </p>
-                  {selectedArticle.keywords && selectedArticle.keywords.length > 0 && (
+                  {selectedArticle.keywords && (
                     <div className="mt-2 flex flex-wrap gap-1">
-                      {selectedArticle.keywords.slice(0, 3).map((keyword, index) => (
+                      {(typeof selectedArticle.keywords === 'string' 
+                        ? selectedArticle.keywords.split(',').map(k => k.trim()).filter(k => k)
+                        : Array.isArray(selectedArticle.keywords) 
+                          ? selectedArticle.keywords 
+                          : []
+                      ).slice(0, 3).map((keyword, index) => (
                         <Badge key={index} variant="secondary" className="text-xs">
                           {keyword}
                         </Badge>
