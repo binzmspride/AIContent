@@ -11,6 +11,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+import { Check, ChevronsUpDown } from 'lucide-react';
 import { Loader2, Sparkles, FileText, Eye, Copy, Download, Share2, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -37,7 +40,7 @@ export default function CreateSocialContentPage() {
 
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   const [previewMode, setPreviewMode] = useState('facebook');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [open, setOpen] = useState(false);
 
   // Fetch user's articles when content source is from existing articles
   const { data: articlesData } = useQuery({
@@ -45,11 +48,10 @@ export default function CreateSocialContentPage() {
     enabled: form.contentSource === 'existing-article'
   });
 
-  // Filter articles based on search query
-  const filteredArticles = articlesData?.data?.articles?.filter((article: any) =>
-    article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    article.textContent?.toLowerCase().includes(searchQuery.toLowerCase())
-  ) || [];
+  // Get selected article for display
+  const selectedArticle = articlesData?.data?.articles?.find((article: any) => 
+    article.id === form.selectedArticleId
+  );
 
   const platforms = [
     { id: 'facebook', name: 'Facebook', description: 'Bài đăng Facebook' },
@@ -191,51 +193,60 @@ export default function CreateSocialContentPage() {
 
                 {/* Article Selection (when source is existing-article) */}
                 {form.contentSource === 'existing-article' && (
-                  <div className="space-y-3">
-                    <Label htmlFor="selectedArticle">Chọn bài viết</Label>
-                    
-                    {/* Search Input */}
-                    <Input
-                      placeholder="Tìm kiếm bài viết..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full"
-                    />
-                    
-                    {/* Article Selection */}
-                    <Select 
-                      value={form.selectedArticleId?.toString() || ''} 
-                      onValueChange={(value) => setForm(prev => ({ ...prev, selectedArticleId: parseInt(value) }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn bài viết từ danh sách" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-60">
-                        {filteredArticles.length > 0 ? (
-                          filteredArticles.map((article: any) => (
-                            <SelectItem key={article.id} value={article.id.toString()}>
-                              <div className="flex flex-col">
-                                <span className="font-medium text-sm">{article.title}</span>
-                                <span className="text-xs text-muted-foreground">
-                                  {new Date(article.createdAt).toLocaleDateString('vi-VN')}
-                                </span>
-                              </div>
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <SelectItem value="no-results" disabled>
-                            Không tìm thấy bài viết nào
-                          </SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
-                    
-                    {/* Show total results */}
-                    {searchQuery && (
-                      <p className="text-xs text-muted-foreground">
-                        Tìm thấy {filteredArticles.length} bài viết
-                      </p>
-                    )}
+                  <div className="space-y-2">
+                    <Label>Chọn bài viết</Label>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={open}
+                          className="w-full justify-between"
+                        >
+                          {selectedArticle ? (
+                            <div className="flex flex-col items-start">
+                              <span className="font-medium text-sm">{selectedArticle.title}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(selectedArticle.createdAt).toLocaleDateString('vi-VN')}
+                              </span>
+                            </div>
+                          ) : (
+                            "Chọn bài viết từ danh sách"
+                          )}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[400px] p-0">
+                        <Command>
+                          <CommandInput placeholder="Tìm kiếm bài viết..." />
+                          <CommandEmpty>Không tìm thấy bài viết nào.</CommandEmpty>
+                          <CommandGroup className="max-h-60 overflow-auto">
+                            {articlesData?.data?.articles?.map((article: any) => (
+                              <CommandItem
+                                key={article.id}
+                                value={`${article.title} ${article.textContent || ''}`}
+                                onSelect={() => {
+                                  setForm(prev => ({ ...prev, selectedArticleId: article.id }));
+                                  setOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={`mr-2 h-4 w-4 ${
+                                    form.selectedArticleId === article.id ? "opacity-100" : "opacity-0"
+                                  }`}
+                                />
+                                <div className="flex flex-col">
+                                  <span className="font-medium text-sm">{article.title}</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {new Date(article.createdAt).toLocaleDateString('vi-VN')}
+                                  </span>
+                                </div>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 )}
 
