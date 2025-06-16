@@ -181,12 +181,16 @@ class PostScheduler {
       const wpApiUrl = `${websiteUrl.replace(/\/$/, '')}/wp-json/wp/v2/posts`;
       
       // Sử dụng app password nếu có, nếu không thì dùng password thường
-      const authPassword = appPassword || password || 'demo_app_password_123';
+      // Loại bỏ dấu cách trong app password vì WordPress thường format có dấu cách
+      const cleanAppPassword = appPassword ? appPassword.replace(/\s+/g, '') : '';
+      const authPassword = cleanAppPassword || password || 'demo_app_password_123';
       const auth = Buffer.from(`${username}:${authPassword}`).toString('base64');
       
       console.log(`WordPress API attempt: ${wpApiUrl}`);
       console.log(`Auth method: ${appPassword ? 'App Password' : 'Regular Password'}`);
       console.log(`Username: ${username}`);
+      console.log(`App Password length: ${appPassword ? appPassword.length : 0}`);
+      console.log(`Clean App Password length: ${cleanAppPassword ? cleanAppPassword.length : 0}`);
 
       const postData = {
         title: post.title,

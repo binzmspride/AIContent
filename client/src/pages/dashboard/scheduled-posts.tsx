@@ -534,6 +534,14 @@ export default function ScheduledPosts() {
                     <Button
                       variant="ghost"
                       size="sm"
+                      onClick={() => navigate(`/dashboard/publishing-logs?postId=${post.id}`)}
+                      title="Xem logs đăng bài"
+                    >
+                      <FileText className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => deleteScheduledPostMutation.mutate(post.id)}
                       disabled={deleteScheduledPostMutation.isPending}
                     >
