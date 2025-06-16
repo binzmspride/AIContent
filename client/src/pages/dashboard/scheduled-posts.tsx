@@ -181,9 +181,9 @@ export default function ScheduledPosts() {
 
   if (postsLoading || articlesLoading || connectionsLoading) {
     return (
-      <div className="flex h-screen bg-gray-50">
+      <div className="min-h-screen bg-blue-50">
         <Sidebar />
-        <div className="flex-1 overflow-auto">
+        <div className="ml-64 min-h-screen">
           <div className="p-6">
             <div className="animate-pulse space-y-4">
               <div className="h-8 bg-gray-200 rounded w-1/3"></div>
@@ -197,9 +197,9 @@ export default function ScheduledPosts() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="min-h-screen bg-blue-50">
       <Sidebar />
-      <div className="flex-1 overflow-auto">
+      <div className="ml-64 min-h-screen">
         <div className="p-6 space-y-6">
           <div className="flex items-center justify-between">
         <div>

@@ -168,7 +168,7 @@ export function Sidebar() {
   };
 
   return (
-    <div className="w-64 bg-sidebar dark:bg-card h-screen flex flex-col fixed">
+    <div className="w-64 bg-sidebar dark:bg-card h-screen flex flex-col fixed left-0 top-0 z-10">
       <div className="p-4 flex items-center border-b border-sidebar-border dark:border-border">
         <ScrollIcon className="h-8 w-auto text-white dark:text-secondary-100" />
         <span className="ml-2 text-xl font-bold text-white dark:text-secondary-100 font-heading">
