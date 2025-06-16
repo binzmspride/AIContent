@@ -31,7 +31,7 @@ interface Article {
   title: string;
   content: string;
   metaDescription?: string;
-  keywords?: string[];
+  keywords?: string | string[];
   createdAt: string;
 }
 
@@ -268,16 +268,18 @@ export default function ScheduledPosts() {
                   </p>
                   {selectedArticle.keywords && (
                     <div className="mt-2 flex flex-wrap gap-1">
-                      {(typeof selectedArticle.keywords === 'string' 
-                        ? selectedArticle.keywords.split(',').map((k: string) => k.trim()).filter((k: string) => k)
-                        : Array.isArray(selectedArticle.keywords) 
-                          ? selectedArticle.keywords 
-                          : []
-                      ).slice(0, 3).map((keyword: string, index: number) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          {keyword}
-                        </Badge>
-                      ))}
+                      {(() => {
+                        const keywordsList = typeof selectedArticle.keywords === 'string' 
+                          ? selectedArticle.keywords.split(',').map((k: string) => k.trim()).filter((k: string) => k)
+                          : Array.isArray(selectedArticle.keywords) 
+                            ? selectedArticle.keywords 
+                            : [];
+                        return keywordsList.slice(0, 3).map((keyword: string, index: number) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {keyword}
+                          </Badge>
+                        ));
+                      })()}
                     </div>
                   )}
                 </div>
