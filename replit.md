@@ -129,7 +129,8 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
-- June 15, 2025. Initial setup
+- June 16, 2025: Completed scheduled posts feature with article selection, social media integration, and proper sidebar navigation
+- June 15, 2025: Initial setup
 
 ## User Preferences
 
