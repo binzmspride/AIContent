@@ -1019,12 +1019,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const userId = req.user.id;
-      const { contentSource, briefDescription, platforms, includeImage } = req.body;
+      const { contentSource, briefDescription, selectedArticleId, platforms, includeImage } = req.body;
       
-      if (!contentSource || !briefDescription || !platforms || platforms.length === 0) {
+      if (!contentSource || !platforms || platforms.length === 0) {
         return res.status(400).json({ 
           success: false, 
-          error: 'Content source, brief description, and platforms are required' 
+          error: 'Content source and platforms are required' 
+        });
+      }
+
+      // Validate based on content source
+      if (contentSource === 'existing-article' && !selectedArticleId) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Article selection is required when using existing article' 
+        });
+      }
+
+      if (contentSource !== 'existing-article' && !briefDescription) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Brief description is required' 
         });
       }
 
@@ -1037,6 +1052,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Get content source
+      let sourceContent = briefDescription;
+      let sourceTitle = '';
+      
+      if (contentSource === 'existing-article' && selectedArticleId) {
+        // Get article content
+        const article = await storage.getArticle(selectedArticleId);
+        if (!article) {
+          return res.status(404).json({ 
+            success: false, 
+            error: 'Article not found' 
+          });
+        }
+        sourceContent = article.title + '\n\n' + (article.textContent || article.content);
+        sourceTitle = article.title;
+      }
+
       // Generate content for each platform
       const platformContent: Record<string, any> = {};
       
@@ -1047,23 +1079,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Platform-specific content generation logic
         switch (platform) {
           case 'facebook':
-            content = `🎯 ${briefDescription}\n\nFacebook phù hợp cho nội dung dài và tương tác. Hãy chia sẻ câu chuyện đầy đủ và khuyến khích người dùng bình luận.`;
+            if (contentSource === 'existing-article') {
+              content = `🎯 ${sourceTitle}\n\n${sourceContent.substring(0, 300)}...\n\nFacebook phù hợp cho nội dung dài và tương tác. Hãy chia sẻ câu chuyện đầy đủ và khuyến khích người dùng bình luận.`;
+            } else {
+              content = `🎯 ${briefDescription}\n\nFacebook phù hợp cho nội dung dài và tương tác. Hãy chia sẻ câu chuyện đầy đủ và khuyến khích người dùng bình luận.`;
+            }
             hashtags = '#Facebook #SocialMedia #Content #Marketing';
             break;
           case 'twitter':
-            content = `🐦 ${briefDescription.substring(0, 200)}...\n\nTwitter yêu cầu nội dung ngắn gọn và súc tích.`;
+            if (contentSource === 'existing-article') {
+              content = `🐦 ${sourceTitle}\n\n${sourceContent.substring(0, 180)}...\n\nTwitter yêu cầu nội dung ngắn gọn và súc tích.`;
+            } else {
+              content = `🐦 ${briefDescription.substring(0, 200)}...\n\nTwitter yêu cầu nội dung ngắn gọn và súc tích.`;
+            }
             hashtags = '#Twitter #SocialMedia #Content';
             break;
           case 'instagram':
-            content = `📸 ${briefDescription}\n\nInstagram tập trung vào hình ảnh đẹp và hashtags hiệu quả.`;
+            if (contentSource === 'existing-article') {
+              content = `📸 ${sourceTitle}\n\n${sourceContent.substring(0, 250)}...\n\nInstagram tập trung vào hình ảnh đẹp và hashtags hiệu quả.`;
+            } else {
+              content = `📸 ${briefDescription}\n\nInstagram tập trung vào hình ảnh đẹp và hashtags hiệu quả.`;
+            }
             hashtags = '#Instagram #Visual #Content #Photography #Marketing';
             break;
           case 'linkedin':
-            content = `💼 ${briefDescription}\n\nLinkedIn phù hợp cho nội dung chuyên nghiệp và xây dựng mạng lưới.`;
+            if (contentSource === 'existing-article') {
+              content = `💼 ${sourceTitle}\n\n${sourceContent.substring(0, 400)}...\n\nLinkedIn phù hợp cho nội dung chuyên nghiệp và xây dựng mạng lưới.`;
+            } else {
+              content = `💼 ${briefDescription}\n\nLinkedIn phù hợp cho nội dung chuyên nghiệp và xây dựng mạng lưới.`;
+            }
             hashtags = '#LinkedIn #Professional #Business #Networking';
             break;
           case 'tiktok':
-            content = `🎵 ${briefDescription}\n\nTikTok yêu cầu nội dung sáng tạo, năng động và theo trend.`;
+            if (contentSource === 'existing-article') {
+              content = `🎵 ${sourceTitle}\n\n${sourceContent.substring(0, 200)}...\n\nTikTok yêu cầu nội dung sáng tạo, năng động và theo trend.`;
+            } else {
+              content = `🎵 ${briefDescription}\n\nTikTok yêu cầu nội dung sáng tạo, năng động và theo trend.`;
+            }
             hashtags = '#TikTok #Trending #Creative #Video #Viral';
             break;
           default:

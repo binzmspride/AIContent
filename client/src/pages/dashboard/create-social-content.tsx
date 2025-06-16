@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useAuth } from '@/hooks/use-auth';
 import { DashboardLayout } from '@/components/dashboard/Layout';
@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 interface SocialContentForm {
   contentSource: string;
   briefDescription: string;
+  selectedArticleId?: number;
   platforms: string[];
   includeImage: boolean;
 }
@@ -29,12 +30,19 @@ export default function CreateSocialContentPage() {
   const [form, setForm] = useState<SocialContentForm>({
     contentSource: '',
     briefDescription: '',
+    selectedArticleId: undefined,
     platforms: [],
     includeImage: false
   });
 
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   const [previewMode, setPreviewMode] = useState('facebook');
+
+  // Fetch user's articles when content source is from existing articles
+  const { data: articlesData } = useQuery({
+    queryKey: ['/api/dashboard/articles'],
+    enabled: form.contentSource === 'existing-article'
+  });
 
   const platforms = [
     { id: 'facebook', name: 'Facebook', description: 'Bài đăng Facebook' },
@@ -80,10 +88,28 @@ export default function CreateSocialContentPage() {
   };
 
   const handleSubmit = () => {
-    if (!form.contentSource || !form.briefDescription || form.platforms.length === 0) {
+    if (!form.contentSource || form.platforms.length === 0) {
       toast({
         title: "Lỗi",
-        description: "Vui lòng điền đầy đủ thông tin",
+        description: "Vui lòng chọn nguồn nội dung và nền tảng",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (form.contentSource === 'existing-article' && !form.selectedArticleId) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng chọn bài viết",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (form.contentSource !== 'existing-article' && !form.briefDescription) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng nhập mô tả ngắn gọn",
         variant: "destructive",
       });
       return;
@@ -156,17 +182,46 @@ export default function CreateSocialContentPage() {
                   </Select>
                 </div>
 
-                {/* Brief Description */}
-                <div className="space-y-2">
-                  <Label htmlFor="briefDescription">Mô tả ngắn gọn</Label>
-                  <Textarea
-                    id="briefDescription"
-                    placeholder="Mô tả ngắn gọn về nội dung bạn muốn tạo..."
-                    value={form.briefDescription}
-                    onChange={(e) => setForm(prev => ({ ...prev, briefDescription: e.target.value }))}
-                    rows={4}
-                  />
-                </div>
+                {/* Article Selection (when source is existing-article) */}
+                {form.contentSource === 'existing-article' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="selectedArticle">Chọn bài viết</Label>
+                    <Select 
+                      value={form.selectedArticleId?.toString() || ''} 
+                      onValueChange={(value) => setForm(prev => ({ ...prev, selectedArticleId: parseInt(value) }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn bài viết từ danh sách" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {articlesData?.data?.articles?.map((article: any) => (
+                          <SelectItem key={article.id} value={article.id.toString()}>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{article.title}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(article.createdAt).toLocaleDateString('vi-VN')}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {/* Brief Description (only when not using existing article) */}
+                {form.contentSource !== 'existing-article' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="briefDescription">Mô tả ngắn gọn</Label>
+                    <Textarea
+                      id="briefDescription"
+                      placeholder="Mô tả ngắn gọn về nội dung bạn muốn tạo..."
+                      value={form.briefDescription}
+                      onChange={(e) => setForm(prev => ({ ...prev, briefDescription: e.target.value }))}
+                      rows={4}
+                    />
+                  </div>
+                )}
 
                 {/* Target Platforms */}
                 <div className="space-y-3">
