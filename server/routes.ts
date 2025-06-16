@@ -2721,18 +2721,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.id;
       const { 
         articleId, 
+        connectionId,
         title, 
         content, 
-        excerpt, 
-        featuredImage, 
-        platforms, 
         scheduledTime 
       } = req.body;
 
-      if (!title || !content || !platforms || !scheduledTime) {
+      if (!title || !content || !connectionId || !scheduledTime) {
         return res.status(400).json({ 
           success: false, 
-          error: 'Title, content, platforms, and scheduled time are required' 
+          error: 'Title, content, connection ID, and scheduled time are required' 
         });
       }
 
@@ -2745,22 +2743,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Validate platforms configuration
-      if (!Array.isArray(platforms) || platforms.length === 0) {
+      // Get connection information
+      const connection = await storage.getSocialConnection(connectionId);
+      if (!connection || connection.userId !== userId) {
         return res.status(400).json({ 
           success: false, 
-          error: 'At least one platform must be specified' 
+          error: 'Invalid connection ID' 
         });
       }
 
       const scheduledPost = await storage.createScheduledPost({
         userId,
-        articleId,
+        articleId: articleId || null,
         title,
         content,
-        excerpt,
-        featuredImage,
-        platforms,
+        platforms: [{
+          platform: connection.platform,
+          connectionId: connectionId,
+          accountName: connection.accountName
+        }],
         scheduledTime: scheduledDate
       });
 
