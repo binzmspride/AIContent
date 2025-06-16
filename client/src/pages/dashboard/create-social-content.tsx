@@ -37,12 +37,19 @@ export default function CreateSocialContentPage() {
 
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   const [previewMode, setPreviewMode] = useState('facebook');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch user's articles when content source is from existing articles
   const { data: articlesData } = useQuery({
     queryKey: ['/api/dashboard/articles'],
     enabled: form.contentSource === 'existing-article'
   });
+
+  // Filter articles based on search query
+  const filteredArticles = articlesData?.data?.articles?.filter((article: any) =>
+    article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    article.textContent?.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
 
   const platforms = [
     { id: 'facebook', name: 'Facebook', description: 'Bài đăng Facebook' },
@@ -184,8 +191,18 @@ export default function CreateSocialContentPage() {
 
                 {/* Article Selection (when source is existing-article) */}
                 {form.contentSource === 'existing-article' && (
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Label htmlFor="selectedArticle">Chọn bài viết</Label>
+                    
+                    {/* Search Input */}
+                    <Input
+                      placeholder="Tìm kiếm bài viết..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full"
+                    />
+                    
+                    {/* Article Selection */}
                     <Select 
                       value={form.selectedArticleId?.toString() || ''} 
                       onValueChange={(value) => setForm(prev => ({ ...prev, selectedArticleId: parseInt(value) }))}
@@ -193,19 +210,32 @@ export default function CreateSocialContentPage() {
                       <SelectTrigger>
                         <SelectValue placeholder="Chọn bài viết từ danh sách" />
                       </SelectTrigger>
-                      <SelectContent>
-                        {articlesData?.data?.articles?.map((article: any) => (
-                          <SelectItem key={article.id} value={article.id.toString()}>
-                            <div className="flex flex-col">
-                              <span className="font-medium">{article.title}</span>
-                              <span className="text-xs text-muted-foreground">
-                                {new Date(article.createdAt).toLocaleDateString('vi-VN')}
-                              </span>
-                            </div>
+                      <SelectContent className="max-h-60">
+                        {filteredArticles.length > 0 ? (
+                          filteredArticles.map((article: any) => (
+                            <SelectItem key={article.id} value={article.id.toString()}>
+                              <div className="flex flex-col">
+                                <span className="font-medium text-sm">{article.title}</span>
+                                <span className="text-xs text-muted-foreground">
+                                  {new Date(article.createdAt).toLocaleDateString('vi-VN')}
+                                </span>
+                              </div>
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem value="no-results" disabled>
+                            Không tìm thấy bài viết nào
                           </SelectItem>
-                        ))}
+                        )}
                       </SelectContent>
                     </Select>
+                    
+                    {/* Show total results */}
+                    {searchQuery && (
+                      <p className="text-xs text-muted-foreground">
+                        Tìm thấy {filteredArticles.length} bài viết
+                      </p>
+                    )}
                   </div>
                 )}
 
