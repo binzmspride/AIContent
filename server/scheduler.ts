@@ -13,7 +13,7 @@ interface ScheduledPostJob {
   status: string;
 }
 
-class PostScheduler {
+export class PostScheduler {
   private intervalId: NodeJS.Timeout | null = null;
   private isRunning = false;
 

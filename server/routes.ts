@@ -2912,6 +2912,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Publish post immediately
+  app.post('/api/scheduled-posts/:id/publish-now', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const postId = parseInt(req.params.id);
+      const userId = req.user.id;
+      
+      // Get the scheduled post
+      const post = await storage.getScheduledPost(postId);
+      
+      if (!post || post.userId !== userId) {
+        return res.status(404).json({ success: false, error: 'Bài đăng không tìm thấy' });
+      }
+
+      // Import scheduler and publish immediately
+      const { PostScheduler } = await import('./scheduler');
+      const scheduler = new PostScheduler();
+      
+      // Process the post immediately
+      await scheduler.processPost(post);
+      
+      // Return result
+      res.json({ 
+        success: true, 
+        message: 'Đã thử đăng bài ngay lập tức. Kiểm tra logs để xem kết quả.' 
+      });
+      
+    } catch (error) {
+      console.error('Error publishing post immediately:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Lỗi khi đăng bài ngay lập tức: ' + error.message 
+      });
+    }
+  });
+
   // Get post templates
   app.get('/api/post-templates', async (req, res) => {
     try {

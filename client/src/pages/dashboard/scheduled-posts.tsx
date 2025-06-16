@@ -159,6 +159,36 @@ export default function ScheduledPosts() {
     },
   });
 
+  const publishNowMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/scheduled-posts/${id}/publish-now`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Failed to publish post');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Đăng ngay",
+        description: data.success ? "Đã thử đăng bài thành công" : "Đăng bài thất bại, kiểm tra logs",
+        variant: data.success ? "default" : "destructive",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/scheduled-posts'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Lỗi",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handlePublishNow = (postId: number) => {
+    publishNowMutation.mutate(postId);
+  };
+
   const handleCreateScheduledPost = () => {
     if (!selectedArticle || !selectedConnection || !scheduledTime) {
       toast({
@@ -538,6 +568,15 @@ export default function ScheduledPosts() {
                       title="Xem logs đăng bài"
                     >
                       <FileText className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePublishNow(post.id)}
+                      disabled={publishNowMutation.isPending}
+                      title="Đăng ngay để test"
+                    >
+                      {publishNowMutation.isPending ? '...' : 'Đăng ngay'}
                     </Button>
                     <Button
                       variant="ghost"
