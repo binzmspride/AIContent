@@ -243,7 +243,7 @@ export default function SocialConnections() {
     });
   };
 
-  const connections = connectionsData?.data || [];
+  const connections = Array.isArray(connectionsData) ? connectionsData : [];
 
   if (isLoading) {
     return (
