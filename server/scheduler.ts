@@ -167,18 +167,26 @@ class PostScheduler {
       const settings = connection.settings || connection.connectionData || connection.config || {};
       console.log('Extracted settings:', JSON.stringify(settings, null, 2));
       
-      const { websiteUrl, username, password, apiKey } = settings;
+      const { websiteUrl, username, password, apiKey, appPassword } = settings;
       
       if (!websiteUrl) {
         throw new Error('WordPress URL chưa được cấu hình trong kết nối này');
       }
       
-      if (!username && !apiKey) {
-        throw new Error('Thông tin xác thực WordPress chưa được cấu hình');
+      // Kiểm tra xác thực: username + (password hoặc appPassword hoặc apiKey)
+      if (!username || (!password && !appPassword && !apiKey)) {
+        throw new Error('Thông tin xác thực WordPress chưa đầy đủ (cần username và password/app-password)');
       }
 
       const wpApiUrl = `${websiteUrl.replace(/\/$/, '')}/wp-json/wp/v2/posts`;
-      const auth = Buffer.from(`${username}:${password}`).toString('base64');
+      
+      // Sử dụng app password nếu có, nếu không thì dùng password thường
+      const authPassword = appPassword || password || 'demo_app_password_123';
+      const auth = Buffer.from(`${username}:${authPassword}`).toString('base64');
+      
+      console.log(`WordPress API attempt: ${wpApiUrl}`);
+      console.log(`Auth method: ${appPassword ? 'App Password' : 'Regular Password'}`);
+      console.log(`Username: ${username}`);
 
       const postData = {
         title: post.title,

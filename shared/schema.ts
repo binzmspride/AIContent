@@ -561,6 +561,17 @@ export const postingAnalytics = pgTable('posting_analytics', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+// Publishing logs table for detailed logging
+export const publishingLogs = pgTable('publishing_logs', {
+  id: serial('id').primaryKey(),
+  scheduledPostId: integer('scheduled_post_id').references(() => scheduledPosts.id).notNull(),
+  platform: platformEnum('platform').notNull(),
+  status: varchar('status', { length: 20 }).notNull(), // 'started', 'success', 'failed'
+  message: text('message'),
+  details: jsonb('details'), // Error details, response data, etc.
+  timestamp: timestamp('timestamp').defaultNow().notNull(),
+});
+
 // Social Connections Relations
 export const socialConnectionsRelations = relations(socialConnections, ({ one }) => ({
   user: one(users, { fields: [socialConnections.userId], references: [users.id] }),
@@ -581,6 +592,11 @@ export const postTemplatesRelations = relations(postTemplates, ({ one }) => ({
 // Posting Analytics Relations
 export const postingAnalyticsRelations = relations(postingAnalytics, ({ one }) => ({
   scheduledPost: one(scheduledPosts, { fields: [postingAnalytics.scheduledPostId], references: [scheduledPosts.id] }),
+}));
+
+// Publishing Logs Relations
+export const publishingLogsRelations = relations(publishingLogs, ({ one }) => ({
+  scheduledPost: one(scheduledPosts, { fields: [publishingLogs.scheduledPostId], references: [scheduledPosts.id] }),
 }));
 
 // Social Media Schemas
@@ -609,6 +625,12 @@ export const insertPostTemplateSchema = createInsertSchema(postTemplates, {
 export const selectPostingAnalyticsSchema = createSelectSchema(postingAnalytics);
 export const insertPostingAnalyticsSchema = createInsertSchema(postingAnalytics);
 
+export const selectPublishingLogsSchema = createSelectSchema(publishingLogs);
+export const insertPublishingLogsSchema = createInsertSchema(publishingLogs, {
+  message: (schema) => schema.min(1, "Message is required"),
+  status: (schema) => schema.min(1, "Status is required"),
+});
+
 // Social Media Types
 export type SocialConnection = z.infer<typeof selectSocialConnectionSchema>;
 export type InsertSocialConnection = z.infer<typeof insertSocialConnectionSchema>;
@@ -618,3 +640,5 @@ export type PostTemplate = z.infer<typeof selectPostTemplateSchema>;
 export type InsertPostTemplate = z.infer<typeof insertPostTemplateSchema>;
 export type PostingAnalytics = z.infer<typeof selectPostingAnalyticsSchema>;
 export type InsertPostingAnalytics = z.infer<typeof insertPostingAnalyticsSchema>;
+export type PublishingLog = z.infer<typeof selectPublishingLogsSchema>;
+export type InsertPublishingLog = z.infer<typeof insertPublishingLogsSchema>;
