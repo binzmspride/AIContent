@@ -88,5 +88,9 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    
+    // Khởi động scheduler để tự động đăng bài theo lịch
+    postScheduler.start();
+    console.log('Đã khởi động scheduler tự động đăng bài');
   });
 })();
