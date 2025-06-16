@@ -129,10 +129,6 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
-- June 16, 2025. Enhanced Create Social Content page:
-  - Added search functionality in article selection dropdown using Combobox
-  - Added "Link tham khảo" input field for AI từ từ khóa content source
-  - Implemented conditional form display based on content source selection
 - June 15, 2025. Initial setup
 
 ## User Preferences
