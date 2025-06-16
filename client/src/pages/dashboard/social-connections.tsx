@@ -157,7 +157,18 @@ export default function SocialConnections() {
     const accessToken = formData.get('accessToken') as string;
     const refreshToken = formData.get('refreshToken') as string;
 
-    if (!platform || !accountName || !accountId || !accessToken) {
+    // Validation based on platform
+    if (!platform || !accountName) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng điền đầy đủ thông tin bắt buộc",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Non-WordPress platforms need accountId and accessToken
+    if (platform !== 'wordpress' && (!accountId || !accessToken)) {
       toast({
         title: "Lỗi",
         description: "Vui lòng điền đầy đủ thông tin bắt buộc",
@@ -186,9 +197,9 @@ export default function SocialConnections() {
     createConnectionMutation.mutate({
       platform,
       accountName,
-      accountId,
-      accessToken,
-      refreshToken: refreshToken || undefined,
+      accountId: platform === 'wordpress' ? accountName : accountId, // Use accountName as accountId for WordPress
+      accessToken: platform === 'wordpress' ? '' : accessToken, // Empty for WordPress
+      refreshToken: platform === 'wordpress' ? '' : (refreshToken || undefined),
       settings
     });
   };
@@ -314,46 +325,64 @@ export default function SocialConnections() {
                 </div>
               )}
               
-              <div>
-                <Label htmlFor="accountName">Tên tài khoản</Label>
-                <Input
-                  id="accountName"
-                  name="accountName"
-                  placeholder="Tên hiển thị của tài khoản..."
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="accountId">ID tài khoản</Label>
-                <Input
-                  id="accountId"
-                  name="accountId"
-                  placeholder="ID hoặc username của tài khoản..."
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="accessToken">Access Token</Label>
-                <Textarea
-                  id="accessToken"
-                  name="accessToken"
-                  placeholder="Access token từ API..."
-                  rows={3}
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="refreshToken">Refresh Token (tùy chọn)</Label>
-                <Textarea
-                  id="refreshToken"
-                  name="refreshToken"
-                  placeholder="Refresh token để gia hạn access token..."
-                  rows={2}
-                />
-              </div>
+              {/* Only show these fields for non-WordPress platforms */}
+              {selectedPlatform && selectedPlatform !== 'wordpress' && (
+                <>
+                  <div>
+                    <Label htmlFor="accountName">Tên tài khoản</Label>
+                    <Input
+                      id="accountName"
+                      name="accountName"
+                      placeholder="Tên hiển thị của tài khoản..."
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="accountId">ID tài khoản</Label>
+                    <Input
+                      id="accountId"
+                      name="accountId"
+                      placeholder="ID hoặc username của tài khoản..."
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="accessToken">Access Token</Label>
+                    <Textarea
+                      id="accessToken"
+                      name="accessToken"
+                      placeholder="Access token từ API..."
+                      rows={3}
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="refreshToken">Refresh Token (tùy chọn)</Label>
+                    <Textarea
+                      id="refreshToken"
+                      name="refreshToken"
+                      placeholder="Refresh token để gia hạn access token..."
+                      rows={2}
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* WordPress-specific account name */}
+              {selectedPlatform === 'wordpress' && (
+                <div>
+                  <Label htmlFor="accountName">Tên kết nối</Label>
+                  <Input
+                    id="accountName"
+                    name="accountName"
+                    placeholder="Tên hiển thị cho kết nối WordPress này..."
+                    required
+                  />
+                </div>
+              )}
 
               {/* WordPress specific fields */}
               {selectedPlatform === 'wordpress' && (
