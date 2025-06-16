@@ -189,8 +189,9 @@ export class PostScheduler {
       console.log(`WordPress API attempt: ${wpApiUrl}`);
       console.log(`Auth method: ${appPassword ? 'App Password' : 'Regular Password'}`);
       console.log(`Username: ${username}`);
-      console.log(`App Password length: ${appPassword ? appPassword.length : 0}`);
-      console.log(`Clean App Password length: ${cleanAppPassword ? cleanAppPassword.length : 0}`);
+      console.log(`Original App Password: "${appPassword}"`);
+      console.log(`Clean App Password: "${cleanAppPassword}"`);
+      console.log(`Final auth string: ${username}:${authPassword.substring(0, 4)}...`);
 
       const postData = {
         title: post.title,
