@@ -10,10 +10,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Clock, Calendar, Globe, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Clock, Calendar, Globe, Edit, Trash2, Eye, FileText } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { Sidebar } from '@/components/dashboard/Sidebar';
+import { useLocation } from 'wouter';
 
 interface ScheduledPost {
   id: number;
@@ -44,6 +45,7 @@ interface SocialConnection {
 
 export default function ScheduledPosts() {
   const { toast } = useToast();
+  const [location, navigate] = useLocation();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editingPost, setEditingPost] = useState<ScheduledPost | null>(null);

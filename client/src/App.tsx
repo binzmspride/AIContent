@@ -38,6 +38,7 @@ import Scheduler from "@/pages/dashboard/scheduler";
 import Feedback from "@/pages/dashboard/feedback";
 import EditArticle from "@/pages/dashboard/edit-article";
 import ScheduledPosts from "@/pages/dashboard/scheduled-posts";
+import PublishingLogs from "@/pages/dashboard/publishing-logs";
 import SocialConnections from "@/pages/dashboard/social-connections";
 import Article from "@/pages/article";
 import VerifyEmail from "@/pages/verify-email";
@@ -106,6 +107,7 @@ function Router() {
       <ProtectedRoute path="/dashboard/scheduler" component={Scheduler} />
       <ProtectedRoute path="/dashboard/feedback" component={Feedback} />
       <ProtectedRoute path="/dashboard/scheduled-posts" component={ScheduledPosts} />
+      <ProtectedRoute path="/dashboard/publishing-logs" component={PublishingLogs} />
       <ProtectedRoute path="/dashboard/social-connections" component={SocialConnections} />
       <ProtectedRoute path="/dashboard/settings" component={Settings} />
       <Route path="/article/:id" component={Article} />
