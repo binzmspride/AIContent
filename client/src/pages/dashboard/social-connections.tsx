@@ -139,32 +139,6 @@ export default function SocialConnections() {
     },
   });
 
-  // Test connection mutation
-  const testConnectionMutation = useMutation({
-    mutationFn: async (id: number) => {
-      const response = await fetch(`/api/social-connections/${id}/test`, {
-        method: 'POST',
-        credentials: 'include',
-      });
-      if (!response.ok) throw new Error('Failed to test connection');
-      return response.json();
-    },
-    onSuccess: (data) => {
-      toast({
-        title: data.success ? "Kết nối thành công" : "Kết nối thất bại",
-        description: data.message || data.error,
-        variant: data.success ? "default" : "destructive",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Lỗi",
-        description: error.message || "Không thể test kết nối",
-        variant: "destructive",
-      });
-    },
-  });
-
   // Toggle connection status
   const toggleConnectionStatus = async (connection: SocialConnection) => {
     updateConnectionMutation.mutate({
@@ -725,18 +699,6 @@ export default function SocialConnections() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          {connection.platform === 'wordpress' && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => testConnectionMutation.mutate(connection.id)}
-                              disabled={testConnectionMutation.isPending}
-                              title="Test kết nối WordPress"
-                            >
-                              {testConnectionMutation.isPending ? '...' : 'Test'}
-                            </Button>
-                          )}
-                          
                           <Button
                             variant="ghost"
                             size="sm"
@@ -790,31 +752,26 @@ export default function SocialConnections() {
                 />
               </div>
               
-              {/* Only show access/refresh token for non-WordPress platforms */}
-              {selectedConnection.platform !== 'wordpress' && (
-                <>
-                  <div>
-                    <Label htmlFor="edit-accessToken">Access Token</Label>
-                    <Textarea
-                      id="edit-accessToken"
-                      name="accessToken"
-                      placeholder="Cập nhật access token..."
-                      rows={3}
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="edit-refreshToken">Refresh Token (tùy chọn)</Label>
-                    <Textarea
-                      id="edit-refreshToken"
-                      name="refreshToken"
-                      placeholder="Cập nhật refresh token..."
-                      rows={2}
-                    />
-                  </div>
-                </>
-              )}
+              <div>
+                <Label htmlFor="edit-accessToken">Access Token</Label>
+                <Textarea
+                  id="edit-accessToken"
+                  name="accessToken"
+                  placeholder="Cập nhật access token..."
+                  rows={3}
+                  required
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="edit-refreshToken">Refresh Token (tùy chọn)</Label>
+                <Textarea
+                  id="edit-refreshToken"
+                  name="refreshToken"
+                  placeholder="Cập nhật refresh token..."
+                  rows={2}
+                />
+              </div>
 
               {/* Platform specific fields */}
               {selectedConnection.platform === 'wordpress' && (
@@ -884,10 +841,9 @@ export default function SocialConnections() {
                         <Input
                           id="edit-appPassword"
                           name="appPassword"
-                          type="text"
+                          type="password"
                           defaultValue={selectedConnection.settings?.appPassword || ''}
-                          placeholder="Nhập application password mới từ WordPress..."
-                          className="font-mono"
+                          placeholder="Cập nhật application password..."
                         />
                       </div>
                     </div>
