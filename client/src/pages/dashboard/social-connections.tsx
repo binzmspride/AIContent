@@ -790,26 +790,31 @@ export default function SocialConnections() {
                 />
               </div>
               
-              <div>
-                <Label htmlFor="edit-accessToken">Access Token</Label>
-                <Textarea
-                  id="edit-accessToken"
-                  name="accessToken"
-                  placeholder="Cập nhật access token..."
-                  rows={3}
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="edit-refreshToken">Refresh Token (tùy chọn)</Label>
-                <Textarea
-                  id="edit-refreshToken"
-                  name="refreshToken"
-                  placeholder="Cập nhật refresh token..."
-                  rows={2}
-                />
-              </div>
+              {/* Only show access/refresh token for non-WordPress platforms */}
+              {selectedConnection.platform !== 'wordpress' && (
+                <>
+                  <div>
+                    <Label htmlFor="edit-accessToken">Access Token</Label>
+                    <Textarea
+                      id="edit-accessToken"
+                      name="accessToken"
+                      placeholder="Cập nhật access token..."
+                      rows={3}
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="edit-refreshToken">Refresh Token (tùy chọn)</Label>
+                    <Textarea
+                      id="edit-refreshToken"
+                      name="refreshToken"
+                      placeholder="Cập nhật refresh token..."
+                      rows={2}
+                    />
+                  </div>
+                </>
+              )}
 
               {/* Platform specific fields */}
               {selectedConnection.platform === 'wordpress' && (
@@ -879,9 +884,10 @@ export default function SocialConnections() {
                         <Input
                           id="edit-appPassword"
                           name="appPassword"
-                          type="password"
+                          type="text"
                           defaultValue={selectedConnection.settings?.appPassword || ''}
-                          placeholder="Cập nhật application password..."
+                          placeholder="Nhập application password mới từ WordPress..."
+                          className="font-mono"
                         />
                       </div>
                     </div>
