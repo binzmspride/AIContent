@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { Loader2, Sparkles, FileText, Eye, Copy, Download, Share2, Zap } from 'lucide-react';
+import { Loader2, Sparkles, FileText, Eye, Copy, Download, Share2, Zap, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface SocialContentForm {
@@ -24,6 +24,8 @@ interface SocialContentForm {
   referenceLink?: string;
   platforms: string[];
   includeImage: boolean;
+  imageSource?: string;
+  imagePrompt?: string;
 }
 
 export default function CreateSocialContentPage() {
@@ -37,7 +39,9 @@ export default function CreateSocialContentPage() {
     selectedArticleId: undefined,
     referenceLink: '',
     platforms: [],
-    includeImage: false
+    includeImage: false,
+    imageSource: 'ai-generated',
+    imagePrompt: ''
   });
 
   const [generatedContent, setGeneratedContent] = useState<any>(null);
@@ -67,6 +71,12 @@ export default function CreateSocialContentPage() {
     { value: 'ai-keyword', label: 'AI từ từ khóa' },
     { value: 'existing-article', label: 'Từ bài viết có sẵn' },
     { value: 'custom-input', label: 'Tự nhập nội dung' }
+  ];
+
+  const imageSources = [
+    { value: 'ai-generated', label: 'AI Generated', icon: Sparkles },
+    { value: 'from-library', label: 'From Library', icon: ImageIcon },
+    { value: 'upload', label: 'Upload New', icon: FileText }
   ];
 
   const generateContentMutation = useMutation({
@@ -305,16 +315,70 @@ export default function CreateSocialContentPage() {
                   </div>
                 </div>
 
-                {/* Include Image Option */}
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="includeImage"
-                    checked={form.includeImage}
-                    onCheckedChange={(checked) => setForm(prev => ({ ...prev, includeImage: checked as boolean }))}
-                  />
-                  <Label htmlFor="includeImage" className="text-sm">
-                    Bao gồm hình ảnh
-                  </Label>
+                {/* Image Generation Section */}
+                <div className="space-y-4 border-t pt-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-base font-medium">Image Generation</Label>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="includeImage"
+                        checked={form.includeImage}
+                        onCheckedChange={(checked) => setForm(prev => ({ ...prev, includeImage: checked as boolean }))}
+                      />
+                      <Label htmlFor="includeImage" className="text-sm">Include Image</Label>
+                    </div>
+                  </div>
+
+                  {form.includeImage && (
+                    <div className="space-y-4">
+                      {/* Image Source */}
+                      <div className="space-y-2">
+                        <Label>Image Source</Label>
+                        <Select 
+                          value={form.imageSource} 
+                          onValueChange={(value) => setForm(prev => ({ ...prev, imageSource: value }))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select image source" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {imageSources.map((source) => (
+                              <SelectItem key={source.value} value={source.value}>
+                                <div className="flex items-center gap-2">
+                                  <source.icon className="h-4 w-4" />
+                                  {source.label}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* AI Image Prompt */}
+                      {form.imageSource === 'ai-generated' && (
+                        <div className="space-y-2">
+                          <Label htmlFor="imagePrompt">AI Image Prompt</Label>
+                          <Textarea
+                            id="imagePrompt"
+                            placeholder="Describe the image you want to generate..."
+                            value={form.imagePrompt}
+                            onChange={(e) => setForm(prev => ({ ...prev, imagePrompt: e.target.value }))}
+                            rows={3}
+                          />
+                          <Button 
+                            type="button" 
+                            variant="outline" 
+                            size="sm"
+                            className="w-fit"
+                            disabled={!form.imagePrompt.trim()}
+                          >
+                            <Sparkles className="w-4 h-4 mr-2" />
+                            Generate Image
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
