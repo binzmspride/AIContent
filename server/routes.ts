@@ -2934,7 +2934,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const scheduler = new PostScheduler();
       
       // Process the post immediately
-      await scheduler.processPost(post);
+      const jobData = {
+        ...post,
+        platforms: Array.isArray(post.platforms) ? post.platforms : []
+      };
+      await scheduler.processPost(jobData as any);
       
       // Return result
       res.json({ 
@@ -2942,11 +2946,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: 'Đã thử đăng bài ngay lập tức. Kiểm tra logs để xem kết quả.' 
       });
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error publishing post immediately:', error);
       res.status(500).json({ 
         success: false, 
-        error: 'Lỗi khi đăng bài ngay lập tức: ' + error.message 
+        error: 'Lỗi khi đăng bài ngay lập tức: ' + (error?.message || 'Unknown error') 
       });
     }
   });

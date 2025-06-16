@@ -211,8 +211,10 @@ export default function SocialConnections() {
     const formData = new FormData(event.currentTarget);
     
     const accountName = formData.get('accountName') as string;
-    const accessToken = formData.get('accessToken') as string;
-    const refreshToken = formData.get('refreshToken') as string;
+    
+    // Chỉ lấy access token và refresh token cho non-WordPress platforms
+    const accessToken = selectedConnection.platform === 'wordpress' ? '' : (formData.get('accessToken') as string);
+    const refreshToken = selectedConnection.platform === 'wordpress' ? '' : (formData.get('refreshToken') as string);
 
     const settings: any = { ...selectedConnection.settings };
     
@@ -752,26 +754,31 @@ export default function SocialConnections() {
                 />
               </div>
               
-              <div>
-                <Label htmlFor="edit-accessToken">Access Token</Label>
-                <Textarea
-                  id="edit-accessToken"
-                  name="accessToken"
-                  placeholder="Cập nhật access token..."
-                  rows={3}
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="edit-refreshToken">Refresh Token (tùy chọn)</Label>
-                <Textarea
-                  id="edit-refreshToken"
-                  name="refreshToken"
-                  placeholder="Cập nhật refresh token..."
-                  rows={2}
-                />
-              </div>
+              {/* Access Token chỉ hiển thị cho non-WordPress platforms */}
+              {selectedConnection.platform !== 'wordpress' && (
+                <>
+                  <div>
+                    <Label htmlFor="edit-accessToken">Access Token</Label>
+                    <Textarea
+                      id="edit-accessToken"
+                      name="accessToken"
+                      placeholder="Cập nhật access token..."
+                      rows={3}
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="edit-refreshToken">Refresh Token (tùy chọn)</Label>
+                    <Textarea
+                      id="edit-refreshToken"
+                      name="refreshToken"
+                      placeholder="Cập nhật refresh token..."
+                      rows={2}
+                    />
+                  </div>
+                </>
+              )}
 
               {/* Platform specific fields */}
               {selectedConnection.platform === 'wordpress' && (

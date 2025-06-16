@@ -74,7 +74,7 @@ export class PostScheduler {
     }
   }
 
-  private async processPost(post: ScheduledPostJob) {
+  async processPost(post: ScheduledPostJob) {
     try {
       console.log(`Đang xử lý bài viết: ${post.title} (ID: ${post.id})`);
       
