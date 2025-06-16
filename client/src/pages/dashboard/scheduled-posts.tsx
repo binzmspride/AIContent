@@ -181,7 +181,7 @@ export default function ScheduledPosts() {
 
   if (postsLoading || articlesLoading || connectionsLoading) {
     return (
-      <div className="min-h-screen bg-blue-50">
+      <div className="min-h-screen" style={{ backgroundColor: '#132639' }}>
         <Sidebar />
         <div className="ml-64 min-h-screen">
           <div className="p-6">
@@ -197,14 +197,14 @@ export default function ScheduledPosts() {
   }
 
   return (
-    <div className="min-h-screen bg-blue-50">
+    <div className="min-h-screen" style={{ backgroundColor: '#132639' }}>
       <Sidebar />
       <div className="ml-64 min-h-screen">
         <div className="p-6 space-y-6">
           <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Bài viết đã lên lịch</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-white">Bài viết đã lên lịch</h1>
+          <p className="text-gray-300 mt-2">
             Quản lý và lên lịch đăng bài viết lên các nền tảng mạng xã hội
           </p>
         </div>
