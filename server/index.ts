@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { postScheduler } from "./scheduler";
 import * as dotenv from 'dotenv';
 
 // Tải biến môi trường từ file .env
