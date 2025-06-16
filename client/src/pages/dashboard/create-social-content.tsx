@@ -267,7 +267,7 @@ export default function CreateSocialContentPage() {
                 )}
 
                 {/* Reference Link (only when using AI from keywords) */}
-                {form.contentSource === 'ai-keywords' && (
+                {form.contentSource === 'ai-keyword' && (
                   <div className="space-y-2">
                     <Label htmlFor="referenceLink">Link tham khảo (tùy chọn)</Label>
                     <Input

@@ -1068,7 +1068,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         sourceContent = article.title + '\n\n' + (article.textContent || article.content);
         sourceTitle = article.title;
-      } else if (contentSource === 'ai-keywords' && referenceLink) {
+      } else if (contentSource === 'ai-keyword' && referenceLink) {
         // Add reference link to content context
         contentContext = `Tham khảo từ: ${referenceLink}\n\n`;
       }
