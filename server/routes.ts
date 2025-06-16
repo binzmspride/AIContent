@@ -2561,13 +2561,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (const connection of connections) {
         if (connection.platform === 'wordpress') {
           const settings = connection.settings || {};
-          if (!settings.websiteUrl || !settings.username) {
+          if (!settings.websiteUrl || !settings.username || !settings.appPassword) {
             console.log(`Cập nhật thông tin kết nối WordPress ID ${connection.id}`);
             await storage.updateSocialConnection(connection.id, {
               settings: {
-                websiteUrl: 'https://demo.wordpress.com',
-                username: 'demo_user', 
-                password: 'demo_password_123'
+                websiteUrl: 'https://astra.support247.top',
+                username: 'admin',
+                appPassword: 'eAcb w1Gx Hzxv t5Ps jPiQ xV6v',
+                authType: 'app-password'
               },
               isActive: true
             });
@@ -2891,6 +2892,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error deleting scheduled post:', error);
       res.status(500).json({ success: false, error: 'Failed to delete scheduled post' });
+    }
+  });
+
+  // Get publishing logs for a scheduled post
+  app.get('/api/scheduled-posts/:id/logs', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const postId = parseInt(req.params.id);
+      const logs = await storage.getPublishingLogs(postId);
+      
+      res.json({ success: true, data: logs });
+    } catch (error) {
+      console.error('Error fetching publishing logs:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch logs' });
     }
   });
 
