@@ -2573,20 +2573,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.id;
       const { platform, accountName, accessToken, refreshToken, accountId, settings } = req.body;
 
-      if (!platform || !accountName || !accessToken || !accountId) {
+      // Validation based on platform type
+      if (!platform || !accountName) {
         return res.status(400).json({ 
           success: false, 
-          error: 'Platform, account name, access token, and account ID are required' 
+          error: 'Platform and account name are required' 
         });
+      }
+
+      // Non-WordPress platforms require accessToken and accountId
+      if (platform !== 'wordpress' && (!accessToken || !accountId)) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Access token and account ID are required for social media platforms' 
+        });
+      }
+
+      // WordPress requires specific settings
+      if (platform === 'wordpress') {
+        if (!settings || !settings.websiteUrl || !settings.username) {
+          return res.status(400).json({ 
+            success: false, 
+            error: 'Website URL and username are required for WordPress connections' 
+          });
+        }
+
+        if (!settings.authType || (settings.authType === 'api-token' && !settings.apiToken) || 
+            (settings.authType === 'application-password' && !settings.applicationPassword)) {
+          return res.status(400).json({ 
+            success: false, 
+            error: 'Authentication type and corresponding credentials are required for WordPress' 
+          });
+        }
       }
 
       const connection = await storage.createSocialConnection({
         userId,
         platform,
         accountName,
-        accessToken,
-        refreshToken,
-        accountId,
+        accessToken: accessToken || '', // Empty for WordPress
+        refreshToken: refreshToken || '',
+        accountId: accountId || accountName, // Use accountName as fallback for WordPress
         settings: settings || {}
       });
 
