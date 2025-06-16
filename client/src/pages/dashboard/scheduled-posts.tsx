@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Plus, Clock, Calendar, Globe, Edit, Trash2, Eye } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { Sidebar } from '@/components/dashboard/Sidebar';
 
 interface ScheduledPost {
   id: number;
@@ -180,19 +181,27 @@ export default function ScheduledPosts() {
 
   if (postsLoading || articlesLoading || connectionsLoading) {
     return (
-      <div className="p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
+      <div className="flex h-screen bg-gray-50">
+        <Sidebar />
+        <div className="flex-1 overflow-auto">
+          <div className="p-6">
+            <div className="animate-pulse space-y-4">
+              <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+              <div className="h-32 bg-gray-200 rounded"></div>
+              <div className="h-32 bg-gray-200 rounded"></div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="flex h-screen bg-gray-50">
+      <Sidebar />
+      <div className="flex-1 overflow-auto">
+        <div className="p-6 space-y-6">
+          <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Bài viết đã lên lịch</h1>
           <p className="text-gray-600 mt-2">
@@ -260,11 +269,11 @@ export default function ScheduledPosts() {
                   {selectedArticle.keywords && (
                     <div className="mt-2 flex flex-wrap gap-1">
                       {(typeof selectedArticle.keywords === 'string' 
-                        ? selectedArticle.keywords.split(',').map(k => k.trim()).filter(k => k)
+                        ? selectedArticle.keywords.split(',').map((k: string) => k.trim()).filter((k: string) => k)
                         : Array.isArray(selectedArticle.keywords) 
                           ? selectedArticle.keywords 
                           : []
-                      ).slice(0, 3).map((keyword, index) => (
+                      ).slice(0, 3).map((keyword: string, index: number) => (
                         <Badge key={index} variant="secondary" className="text-xs">
                           {keyword}
                         </Badge>
@@ -416,6 +425,8 @@ export default function ScheduledPosts() {
             </Card>
           ))
         )}
+      </div>
+        </div>
       </div>
     </div>
   );
