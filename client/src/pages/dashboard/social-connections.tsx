@@ -50,6 +50,7 @@ export default function SocialConnections() {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState<SocialConnection | null>(null);
   const [selectedPlatform, setSelectedPlatform] = useState<string>('');
+  const [wordpressAuthType, setWordpressAuthType] = useState<string>('api-token');
 
   // Fetch social connections
   const { data: connectionsData, isLoading } = useQuery({
@@ -171,6 +172,13 @@ export default function SocialConnections() {
     if (platform === 'wordpress') {
       settings.siteUrl = formData.get('siteUrl');
       settings.username = formData.get('wpUsername');
+      settings.authType = wordpressAuthType;
+      
+      if (wordpressAuthType === 'api-token') {
+        settings.apiToken = formData.get('apiToken');
+      } else if (wordpressAuthType === 'app-password') {
+        settings.appPassword = formData.get('appPassword');
+      }
     } else if (platform === 'facebook') {
       settings.pageId = formData.get('pageId');
     }
@@ -200,6 +208,13 @@ export default function SocialConnections() {
     if (selectedConnection.platform === 'wordpress') {
       settings.siteUrl = formData.get('siteUrl');
       settings.username = formData.get('wpUsername');
+      settings.authType = formData.get('authType') || settings.authType || 'api-token';
+      
+      if (settings.authType === 'api-token') {
+        settings.apiToken = formData.get('apiToken');
+      } else if (settings.authType === 'app-password') {
+        settings.appPassword = formData.get('appPassword');
+      }
     } else if (selectedConnection.platform === 'facebook') {
       settings.pageId = formData.get('pageId');
     }
@@ -252,6 +267,7 @@ export default function SocialConnections() {
             setShowCreateDialog(open);
             if (!open) {
               setSelectedPlatform('');
+              setWordpressAuthType('api-token');
             }
           }}
         >
@@ -364,6 +380,66 @@ export default function SocialConnections() {
                       required
                     />
                   </div>
+
+                  {/* Authentication Type Selection */}
+                  <div>
+                    <Label htmlFor="authType">Loại xác thực</Label>
+                    <Select 
+                      name="authType" 
+                      value={wordpressAuthType}
+                      onValueChange={(value) => setWordpressAuthType(value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại xác thực..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="api-token">API Token</SelectItem>
+                        <SelectItem value="app-password">Application Password</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Conditional fields based on auth type */}
+                  {wordpressAuthType === 'api-token' && (
+                    <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <h5 className="font-medium text-blue-900 dark:text-blue-100">Xác thực bằng API Token</h5>
+                      <p className="text-sm text-blue-700 dark:text-blue-300">
+                        Sử dụng token API từ WordPress REST API hoặc plugin JWT Auth
+                      </p>
+                      <div>
+                        <Label htmlFor="apiToken">API Token</Label>
+                        <Textarea
+                          id="apiToken"
+                          name="apiToken"
+                          placeholder="Nhập API token từ WordPress..."
+                          rows={3}
+                          required
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {wordpressAuthType === 'app-password' && (
+                    <div className="space-y-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                      <h5 className="font-medium text-green-900 dark:text-green-100">Xác thực bằng Application Password</h5>
+                      <p className="text-sm text-green-700 dark:text-green-300">
+                        Sử dụng mật khẩu ứng dụng từ WordPress (Yêu cầu WordPress 5.6+)
+                      </p>
+                      <div>
+                        <Label htmlFor="appPassword">Application Password</Label>
+                        <Input
+                          id="appPassword"
+                          name="appPassword"
+                          type="password"
+                          placeholder="Nhập application password..."
+                          required
+                        />
+                        <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                          Tạo Application Password trong WordPress Admin → Users → Your Profile → Application Passwords
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -693,6 +769,56 @@ export default function SocialConnections() {
                       placeholder="WordPress username..."
                     />
                   </div>
+
+                  <div>
+                    <Label htmlFor="edit-authType">Loại xác thực</Label>
+                    <Select 
+                      name="authType" 
+                      defaultValue={selectedConnection.settings?.authType || 'api-token'}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại xác thực..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="api-token">API Token</SelectItem>
+                        <SelectItem value="app-password">Application Password</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* API Token Section */}
+                  {(!selectedConnection.settings?.authType || selectedConnection.settings?.authType === 'api-token') && (
+                    <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <h5 className="font-medium text-blue-900 dark:text-blue-100">Xác thực bằng API Token</h5>
+                      <div>
+                        <Label htmlFor="edit-apiToken">API Token</Label>
+                        <Textarea
+                          id="edit-apiToken"
+                          name="apiToken"
+                          defaultValue={selectedConnection.settings?.apiToken || ''}
+                          placeholder="Cập nhật API token từ WordPress..."
+                          rows={3}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Application Password Section */}
+                  {selectedConnection.settings?.authType === 'app-password' && (
+                    <div className="space-y-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                      <h5 className="font-medium text-green-900 dark:text-green-100">Xác thực bằng Application Password</h5>
+                      <div>
+                        <Label htmlFor="edit-appPassword">Application Password</Label>
+                        <Input
+                          id="edit-appPassword"
+                          name="appPassword"
+                          type="password"
+                          defaultValue={selectedConnection.settings?.appPassword || ''}
+                          placeholder="Cập nhật application password..."
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
