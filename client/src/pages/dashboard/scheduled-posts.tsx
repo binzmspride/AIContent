@@ -45,6 +45,8 @@ interface SocialConnection {
 export default function ScheduledPosts() {
   const { toast } = useToast();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingPost, setEditingPost] = useState<ScheduledPost | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [selectedConnection, setSelectedConnection] = useState('');
   const [scheduledTime, setScheduledTime] = useState('');
@@ -96,6 +98,35 @@ export default function ScheduledPosts() {
       toast({
         title: "Lỗi",
         description: error.message || "Không thể tạo bài đăng đã lên lịch",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Update scheduled post mutation
+  const updateScheduledPostMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: any }) => {
+      const response = await fetch(`/api/scheduled-posts/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error('Failed to update scheduled post');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/scheduled-posts'] });
+      setShowEditDialog(false);
+      setEditingPost(null);
+      toast({
+        title: "Thành công",
+        description: "Đã cập nhật bài đăng thành công!",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Lỗi",
+        description: error.message || "Không thể cập nhật bài đăng",
         variant: "destructive",
       });
     },
