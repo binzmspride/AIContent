@@ -2762,7 +2762,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           connectionId: connectionId,
           accountName: connection.accountName
         }],
-        scheduledTime: scheduledDate
+        scheduledTime: scheduledDate,
+        status: 'pending'
       });
 
       res.json({ success: true, data: scheduledPost });

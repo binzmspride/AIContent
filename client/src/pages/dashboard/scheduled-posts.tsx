@@ -64,9 +64,9 @@ export default function ScheduledPosts() {
     queryKey: ['/api/social-connections'],
   });
 
-  const scheduledPosts: ScheduledPost[] = scheduledPostsData?.data?.posts || [];
-  const articles: Article[] = articlesData?.data?.articles || [];
-  const connections: SocialConnection[] = connectionsData?.data || [];
+  const scheduledPosts: ScheduledPost[] = scheduledPostsData?.success ? scheduledPostsData.data?.posts || [] : [];
+  const articles: Article[] = articlesData?.success ? articlesData.data?.articles || [] : [];
+  const connections: SocialConnection[] = connectionsData?.success ? connectionsData.data || [] : [];
 
   // Create scheduled post mutation
   const createScheduledPostMutation = useMutation({
