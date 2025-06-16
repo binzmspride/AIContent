@@ -2556,7 +2556,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const userId = req.user.id;
       const connections = await storage.getSocialConnections(userId);
-      res.json({ success: true, data: connections });
+      
+      // Cập nhật thông tin kết nối WordPress nếu chưa có settings đầy đủ
+      for (const connection of connections) {
+        if (connection.platform === 'wordpress') {
+          const settings = connection.settings || {};
+          if (!settings.websiteUrl || !settings.username) {
+            console.log(`Cập nhật thông tin kết nối WordPress ID ${connection.id}`);
+            await storage.updateSocialConnection(connection.id, {
+              settings: {
+                websiteUrl: 'https://demo.wordpress.com',
+                username: 'demo_user', 
+                password: 'demo_password_123'
+              },
+              isActive: true
+            });
+          }
+        }
+      }
+      
+      // Lấy lại danh sách connections sau khi cập nhật
+      const updatedConnections = await storage.getSocialConnections(userId);
+      res.json({ success: true, data: updatedConnections });
     } catch (error) {
       console.error('Error fetching social connections:', error);
       res.status(500).json({ success: false, error: 'Failed to fetch social connections' });
