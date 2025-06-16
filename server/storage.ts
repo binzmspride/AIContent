@@ -110,6 +110,10 @@ export interface IStorage {
   updatePostTemplate(id: number, data: Partial<schema.PostTemplate>): Promise<schema.PostTemplate | null>;
   deletePostTemplate(id: number): Promise<boolean>;
   
+  // Publishing logs
+  createPublishingLog(log: schema.InsertPublishingLog): Promise<schema.PublishingLog>;
+  getPublishingLogs(scheduledPostId: number): Promise<schema.PublishingLog[]>;
+  
   // Session store
   sessionStore: session.SessionStore;
 }
@@ -1255,6 +1259,35 @@ class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error('Error deleting post template:', error);
       return false;
+    }
+  }
+
+  // Publishing logs implementation
+  async createPublishingLog(log: schema.InsertPublishingLog): Promise<schema.PublishingLog> {
+    try {
+      const [newLog] = await db.insert(schema.publishingLogs)
+        .values({
+          ...log,
+          timestamp: new Date()
+        })
+        .returning();
+      return newLog;
+    } catch (error) {
+      console.error('Error creating publishing log:', error);
+      throw error;
+    }
+  }
+
+  async getPublishingLogs(scheduledPostId: number): Promise<schema.PublishingLog[]> {
+    try {
+      const logs = await db.query.publishingLogs.findMany({
+        where: eq(schema.publishingLogs.scheduledPostId, scheduledPostId),
+        orderBy: desc(schema.publishingLogs.timestamp)
+      });
+      return logs;
+    } catch (error) {
+      console.error('Error fetching publishing logs:', error);
+      return [];
     }
   }
 }
