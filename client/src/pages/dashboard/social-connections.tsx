@@ -181,14 +181,14 @@ export default function SocialConnections() {
     const settings: any = {};
     
     if (platform === 'wordpress') {
-      settings.siteUrl = formData.get('siteUrl');
+      settings.websiteUrl = formData.get('siteUrl');
       settings.username = formData.get('wpUsername');
       settings.authType = wordpressAuthType;
       
       if (wordpressAuthType === 'api-token') {
         settings.apiToken = formData.get('apiToken');
-      } else if (wordpressAuthType === 'app-password') {
-        settings.appPassword = formData.get('appPassword');
+      } else if (wordpressAuthType === 'application-password') {
+        settings.applicationPassword = formData.get('appPassword');
       }
     } else if (platform === 'facebook') {
       settings.pageId = formData.get('pageId');
@@ -217,7 +217,7 @@ export default function SocialConnections() {
     const settings: any = { ...selectedConnection.settings };
     
     if (selectedConnection.platform === 'wordpress') {
-      settings.siteUrl = formData.get('siteUrl');
+      settings.websiteUrl = formData.get('siteUrl');
       settings.username = formData.get('wpUsername');
       settings.authType = formData.get('authType') || settings.authType || 'api-token';
       
