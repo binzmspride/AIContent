@@ -160,18 +160,21 @@ class PostScheduler {
   private async publishToWordPress(post: ScheduledPostJob, connection: any): Promise<any> {
     // Đối với WordPress, chúng ta cần gọi WordPress REST API
     try {
-      // Kiểm tra connection settings
-      console.log('WordPress connection data:', JSON.stringify(connection, null, 2));
+      // Kiểm tra connection settings chi tiết
+      console.log('WordPress connection full data:', JSON.stringify(connection, null, 2));
       
-      const settings = connection.settings || connection.connectionData || {};
+      // Thử nhiều cách truy cập settings
+      const settings = connection.settings || connection.connectionData || connection.config || {};
+      console.log('Extracted settings:', JSON.stringify(settings, null, 2));
+      
       const { websiteUrl, username, password, apiKey } = settings;
       
       if (!websiteUrl) {
-        throw new Error('Thiếu URL website WordPress');
+        throw new Error('WordPress URL chưa được cấu hình trong kết nối này');
       }
       
       if (!username && !apiKey) {
-        throw new Error('Thiếu thông tin xác thực WordPress (username hoặc API key)');
+        throw new Error('Thông tin xác thực WordPress chưa được cấu hình');
       }
 
       const wpApiUrl = `${websiteUrl.replace(/\/$/, '')}/wp-json/wp/v2/posts`;

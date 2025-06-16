@@ -188,6 +188,42 @@ export default function ScheduledPosts() {
     });
   };
 
+  const handleEditPost = (post: ScheduledPost) => {
+    setEditingPost(post);
+    setCustomContent(post.content);
+    setScheduledTime(format(parseISO(post.scheduledTime), "yyyy-MM-dd'T'HH:mm"));
+    setShowEditDialog(true);
+  };
+
+  const handleUpdateScheduledPost = () => {
+    if (!editingPost || !customContent || !scheduledTime) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng điền đầy đủ thông tin",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const scheduledDateTime = new Date(scheduledTime);
+    if (scheduledDateTime <= new Date()) {
+      toast({
+        title: "Lỗi",
+        description: "Thời gian đăng phải trong tương lai",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    updateScheduledPostMutation.mutate({
+      id: editingPost.id,
+      data: {
+        content: customContent,
+        scheduledTime: scheduledDateTime.toISOString(),
+      }
+    });
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
@@ -385,6 +421,70 @@ export default function ScheduledPosts() {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Edit Scheduled Post Dialog */}
+        <Dialog 
+          open={showEditDialog} 
+          onOpenChange={(open) => {
+            setShowEditDialog(open);
+            if (!open) {
+              setEditingPost(null);
+              setCustomContent('');
+              setScheduledTime('');
+            }
+          }}
+        >
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Chỉnh sửa bài viết đã lên lịch</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {editingPost && (
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <h3 className="font-medium text-sm text-gray-700">Bài viết gốc:</h3>
+                  <p className="text-sm text-gray-600">{editingPost.title}</p>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-content">Nội dung bài viết</Label>
+                <Textarea
+                  id="edit-content"
+                  value={customContent}
+                  onChange={(e) => setCustomContent(e.target.value)}
+                  placeholder="Chỉnh sửa nội dung bài viết..."
+                  className="min-h-[200px]"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-scheduled-time">Thời gian đăng</Label>
+                <Input
+                  id="edit-scheduled-time"
+                  type="datetime-local"
+                  value={scheduledTime}
+                  onChange={(e) => setScheduledTime(e.target.value)}
+                  min={new Date().toISOString().slice(0, 16)}
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowEditDialog(false)}
+                >
+                  Hủy
+                </Button>
+                <Button
+                  onClick={handleUpdateScheduledPost}
+                  disabled={updateScheduledPostMutation.isPending}
+                >
+                  {updateScheduledPostMutation.isPending ? 'Đang cập nhật...' : 'Cập nhật bài đăng'}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Scheduled Posts List */}
@@ -419,6 +519,16 @@ export default function ScheduledPosts() {
                   </div>
                   <div className="flex items-center gap-2">
                     {getStatusBadge(post.status)}
+                    {post.status === 'pending' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditPost(post)}
+                        disabled={updateScheduledPostMutation.isPending}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"
