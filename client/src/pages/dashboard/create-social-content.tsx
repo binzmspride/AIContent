@@ -21,6 +21,7 @@ interface SocialContentForm {
   contentSource: string;
   briefDescription: string;
   selectedArticleId?: number;
+  referenceLink?: string;
   platforms: string[];
   includeImage: boolean;
 }
@@ -34,6 +35,7 @@ export default function CreateSocialContentPage() {
     contentSource: '',
     briefDescription: '',
     selectedArticleId: undefined,
+    referenceLink: '',
     platforms: [],
     includeImage: false
   });
@@ -261,6 +263,23 @@ export default function CreateSocialContentPage() {
                       onChange={(e) => setForm(prev => ({ ...prev, briefDescription: e.target.value }))}
                       rows={4}
                     />
+                  </div>
+                )}
+
+                {/* Reference Link (only when using AI from keywords) */}
+                {form.contentSource === 'ai-keywords' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="referenceLink">Link tham khảo (tùy chọn)</Label>
+                    <Input
+                      id="referenceLink"
+                      type="url"
+                      placeholder="https://example.com/bai-viet-tham-khao"
+                      value={form.referenceLink}
+                      onChange={(e) => setForm(prev => ({ ...prev, referenceLink: e.target.value }))}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Nhập link bài viết để AI tham khảo phong cách và nội dung
+                    </p>
                   </div>
                 )}
 

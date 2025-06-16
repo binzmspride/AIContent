@@ -1019,7 +1019,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const userId = req.user.id;
-      const { contentSource, briefDescription, selectedArticleId, platforms, includeImage } = req.body;
+      const { contentSource, briefDescription, selectedArticleId, referenceLink, platforms, includeImage } = req.body;
       
       if (!contentSource || !platforms || platforms.length === 0) {
         return res.status(400).json({ 
@@ -1055,6 +1055,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get content source
       let sourceContent = briefDescription;
       let sourceTitle = '';
+      let contentContext = '';
       
       if (contentSource === 'existing-article' && selectedArticleId) {
         // Get article content
@@ -1067,6 +1068,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         sourceContent = article.title + '\n\n' + (article.textContent || article.content);
         sourceTitle = article.title;
+      } else if (contentSource === 'ai-keywords' && referenceLink) {
+        // Add reference link to content context
+        contentContext = `Tham khảo từ: ${referenceLink}\n\n`;
       }
 
       // Generate content for each platform
@@ -1082,7 +1086,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             if (contentSource === 'existing-article') {
               content = `🎯 ${sourceTitle}\n\n${sourceContent.substring(0, 300)}...\n\nFacebook phù hợp cho nội dung dài và tương tác. Hãy chia sẻ câu chuyện đầy đủ và khuyến khích người dùng bình luận.`;
             } else {
-              content = `🎯 ${briefDescription}\n\nFacebook phù hợp cho nội dung dài và tương tác. Hãy chia sẻ câu chuyện đầy đủ và khuyến khích người dùng bình luận.`;
+              content = `🎯 ${contentContext}${briefDescription}\n\nFacebook phù hợp cho nội dung dài và tương tác. Hãy chia sẻ câu chuyện đầy đủ và khuyến khích người dùng bình luận.`;
             }
             hashtags = '#Facebook #SocialMedia #Content #Marketing';
             break;
@@ -1090,7 +1094,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             if (contentSource === 'existing-article') {
               content = `🐦 ${sourceTitle}\n\n${sourceContent.substring(0, 180)}...\n\nTwitter yêu cầu nội dung ngắn gọn và súc tích.`;
             } else {
-              content = `🐦 ${briefDescription.substring(0, 200)}...\n\nTwitter yêu cầu nội dung ngắn gọn và súc tích.`;
+              content = `🐦 ${contentContext}${briefDescription.substring(0, 180)}...\n\nTwitter yêu cầu nội dung ngắn gọn và súc tích.`;
             }
             hashtags = '#Twitter #SocialMedia #Content';
             break;
@@ -1098,7 +1102,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             if (contentSource === 'existing-article') {
               content = `📸 ${sourceTitle}\n\n${sourceContent.substring(0, 250)}...\n\nInstagram tập trung vào hình ảnh đẹp và hashtags hiệu quả.`;
             } else {
-              content = `📸 ${briefDescription}\n\nInstagram tập trung vào hình ảnh đẹp và hashtags hiệu quả.`;
+              content = `📸 ${contentContext}${briefDescription}\n\nInstagram tập trung vào hình ảnh đẹp và hashtags hiệu quả.`;
             }
             hashtags = '#Instagram #Visual #Content #Photography #Marketing';
             break;
@@ -1106,7 +1110,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             if (contentSource === 'existing-article') {
               content = `💼 ${sourceTitle}\n\n${sourceContent.substring(0, 400)}...\n\nLinkedIn phù hợp cho nội dung chuyên nghiệp và xây dựng mạng lưới.`;
             } else {
-              content = `💼 ${briefDescription}\n\nLinkedIn phù hợp cho nội dung chuyên nghiệp và xây dựng mạng lưới.`;
+              content = `💼 ${contentContext}${briefDescription}\n\nLinkedIn phù hợp cho nội dung chuyên nghiệp và xây dựng mạng lưới.`;
             }
             hashtags = '#LinkedIn #Professional #Business #Networking';
             break;
@@ -1114,7 +1118,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             if (contentSource === 'existing-article') {
               content = `🎵 ${sourceTitle}\n\n${sourceContent.substring(0, 200)}...\n\nTikTok yêu cầu nội dung sáng tạo, năng động và theo trend.`;
             } else {
-              content = `🎵 ${briefDescription}\n\nTikTok yêu cầu nội dung sáng tạo, năng động và theo trend.`;
+              content = `🎵 ${contentContext}${briefDescription}\n\nTikTok yêu cầu nội dung sáng tạo, năng động và theo trend.`;
             }
             hashtags = '#TikTok #Trending #Creative #Video #Viral';
             break;
