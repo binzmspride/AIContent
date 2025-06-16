@@ -44,6 +44,8 @@ export default function CreateSocialContentPage() {
     imagePrompt: ''
   });
 
+  const [selectedImage, setSelectedImage] = useState<any>(null);
+
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   const [previewMode, setPreviewMode] = useState('facebook');
   const [open, setOpen] = useState(false);
@@ -52,6 +54,12 @@ export default function CreateSocialContentPage() {
   const { data: articlesData } = useQuery({
     queryKey: ['/api/dashboard/articles'],
     enabled: form.contentSource === 'existing-article'
+  });
+
+  // Fetch user's images when image source is from library
+  const { data: imagesData } = useQuery({
+    queryKey: ['/api/dashboard/images'],
+    enabled: form.includeImage && form.imageSource === 'from-library'
   });
 
   // Get selected article for display
@@ -361,7 +369,7 @@ export default function CreateSocialContentPage() {
                           <Textarea
                             id="imagePrompt"
                             placeholder="Describe the image you want to generate..."
-                            value={form.imagePrompt}
+                            value={form.imagePrompt || ''}
                             onChange={(e) => setForm(prev => ({ ...prev, imagePrompt: e.target.value }))}
                             rows={3}
                           />
@@ -370,11 +378,68 @@ export default function CreateSocialContentPage() {
                             variant="outline" 
                             size="sm"
                             className="w-fit"
-                            disabled={!form.imagePrompt.trim()}
+                            disabled={!form.imagePrompt?.trim()}
                           >
                             <Sparkles className="w-4 h-4 mr-2" />
                             Generate Image
                           </Button>
+                        </div>
+                      )}
+
+                      {/* Image Library Selection */}
+                      {form.imageSource === 'from-library' && (
+                        <div className="space-y-3">
+                          <Label>Select Image from Library</Label>
+                          {imagesData?.images && imagesData.images.length > 0 ? (
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-60 overflow-y-auto border rounded-lg p-3">
+                              {imagesData.images.map((image: any) => (
+                                <div
+                                  key={image.id}
+                                  className={`relative aspect-square rounded-lg border-2 cursor-pointer transition-all ${
+                                    selectedImage?.id === image.id 
+                                      ? 'border-primary ring-2 ring-primary/20' 
+                                      : 'border-gray-200 hover:border-gray-300'
+                                  }`}
+                                  onClick={() => setSelectedImage(image)}
+                                >
+                                  <img
+                                    src={image.imageUrl}
+                                    alt={image.title}
+                                    className="w-full h-full object-cover rounded-md"
+                                  />
+                                  {selectedImage?.id === image.id && (
+                                    <div className="absolute inset-0 bg-primary/10 rounded-md flex items-center justify-center">
+                                      <Check className="w-6 h-6 text-primary" />
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-center py-8 text-muted-foreground">
+                              <ImageIcon className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                              <p>Không có ảnh nào trong thư viện</p>
+                              <p className="text-sm">Hãy tạo ảnh mới hoặc upload ảnh trước</p>
+                            </div>
+                          )}
+                          
+                          {selectedImage && (
+                            <div className="bg-muted p-3 rounded-lg">
+                              <div className="flex items-center gap-3">
+                                <img 
+                                  src={selectedImage.imageUrl} 
+                                  alt={selectedImage.title}
+                                  className="w-12 h-12 object-cover rounded"
+                                />
+                                <div className="flex-1">
+                                  <p className="font-medium text-sm">{selectedImage.title}</p>
+                                  <p className="text-xs text-muted-foreground truncate">
+                                    {selectedImage.prompt}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
