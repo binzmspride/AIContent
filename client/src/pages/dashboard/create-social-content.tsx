@@ -54,6 +54,8 @@ export default function CreateSocialContentPage() {
   const [open, setOpen] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
   const [extractedData, setExtractedData] = useState<string>('');
+  const [showFinalResultDialog, setShowFinalResultDialog] = useState(false);
+  const [finalSocialContent, setFinalSocialContent] = useState<any>(null);
 
   // Fetch user's articles when content source is from existing articles
   const { data: articlesData } = useQuery({
@@ -135,10 +137,12 @@ export default function CreateSocialContentPage() {
     onSuccess: (data) => {
       console.log('Content approval successful:', data);
       setShowResultDialog(false);
+      setFinalSocialContent(data.data);
+      setShowFinalResultDialog(true);
       queryClient.invalidateQueries({ queryKey: ['/api/user'] });
       toast({
         title: "Phê duyệt thành công",
-        description: "Nội dung đã được phê duyệt và gửi đến webhook tạo Social Media Content",
+        description: "Nội dung đã được phê duyệt và tạo bài đăng thành công",
       });
     },
     onError: (error: any) => {
@@ -749,6 +753,143 @@ export default function CreateSocialContentPage() {
               <p className="text-sm text-green-700 dark:text-green-300">
                 Nội dung đã được trích xuất. Vui lòng xem xét và phê duyệt.
               </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog hiển thị kết quả cuối cùng - Bài viết đã tạo */}
+      <Dialog open={showFinalResultDialog} onOpenChange={setShowFinalResultDialog}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-500" />
+              Bài viết đã tạo
+            </DialogTitle>
+            <DialogDescription>
+              Nội dung đã được tạo thành công cho các nền tảng mạng xã hội
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {finalSocialContent && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* LinkedIn */}
+                {form.platforms.includes('linkedin') && (
+                  <div className="space-y-3">
+                    <h3 className="font-medium text-sm text-blue-600 flex items-center gap-2">
+                      <div className="w-4 h-4 bg-blue-600 rounded"></div>
+                      LinkedIn
+                    </h3>
+                    <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border">
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">Nội dung bài viết:</p>
+                        <div className="text-sm whitespace-pre-wrap bg-white dark:bg-gray-800 p-3 rounded border">
+                          {finalSocialContent.linkedin_content || finalSocialContent.output || 'Nội dung LinkedIn'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Facebook */}
+                {form.platforms.includes('facebook') && (
+                  <div className="space-y-3">
+                    <h3 className="font-medium text-sm text-blue-500 flex items-center gap-2">
+                      <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                      Facebook
+                    </h3>
+                    <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border">
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">Nội dung bài viết:</p>
+                        <div className="text-sm whitespace-pre-wrap bg-white dark:bg-gray-800 p-3 rounded border">
+                          {finalSocialContent.facebook_content || finalSocialContent.output || 'Nội dung Facebook'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Twitter/X */}
+                {form.platforms.includes('twitter') && (
+                  <div className="space-y-3">
+                    <h3 className="font-medium text-sm text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                      <div className="w-4 h-4 bg-gray-800 dark:bg-gray-200 rounded"></div>
+                      X (Twitter)
+                    </h3>
+                    <div className="p-4 bg-gray-50 dark:bg-gray-800/20 rounded-lg border">
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">Nội dung bài viết:</p>
+                        <div className="text-sm whitespace-pre-wrap bg-white dark:bg-gray-800 p-3 rounded border">
+                          {finalSocialContent.twitter_content || finalSocialContent.x_content || finalSocialContent.output || 'Nội dung X/Twitter'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Instagram */}
+                {form.platforms.includes('instagram') && (
+                  <div className="space-y-3">
+                    <h3 className="font-medium text-sm text-pink-500 flex items-center gap-2">
+                      <div className="w-4 h-4 bg-gradient-to-r from-pink-500 to-purple-500 rounded"></div>
+                      Instagram
+                    </h3>
+                    <div className="p-4 bg-pink-50 dark:bg-pink-950/20 rounded-lg border">
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium">Nội dung bài viết:</p>
+                        <div className="text-sm whitespace-pre-wrap bg-white dark:bg-gray-800 p-3 rounded border">
+                          {finalSocialContent.instagram_content || finalSocialContent.output || 'Nội dung Instagram'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Debug info - hiển thị toàn bộ response để check structure */}
+            {finalSocialContent && (
+              <div className="mt-6">
+                <details className="space-y-2">
+                  <summary className="cursor-pointer text-sm font-medium text-gray-600 dark:text-gray-400">
+                    Xem response đầy đủ (Debug)
+                  </summary>
+                  <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border max-h-40 overflow-y-auto">
+                    <pre className="text-xs">
+                      {JSON.stringify(finalSocialContent, null, 2)}
+                    </pre>
+                  </div>
+                </details>
+              </div>
+            )}
+
+            {/* Action buttons */}
+            <div className="flex gap-3 pt-4 border-t">
+              <Button 
+                onClick={() => setShowFinalResultDialog(false)}
+                className="flex items-center gap-2"
+              >
+                <Check className="h-4 w-4" />
+                Hoàn thành
+              </Button>
+              
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  if (finalSocialContent) {
+                    navigator.clipboard.writeText(JSON.stringify(finalSocialContent, null, 2));
+                    toast({
+                      title: "Đã sao chép",
+                      description: "Toàn bộ nội dung đã được sao chép vào clipboard",
+                    });
+                  }
+                }}
+                className="flex items-center gap-2"
+              >
+                <Copy className="h-4 w-4" />
+                Copy tất cả
+              </Button>
             </div>
           </div>
         </DialogContent>
