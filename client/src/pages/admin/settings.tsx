@@ -363,6 +363,9 @@ export default function AdminSettings() {
         imageWebhookUrl: settings.imageWebhookUrl || "",
         imageCreditsPerGeneration: settings.imageCreditsPerGeneration || 1,
         enableImageGeneration: settings.enableImageGeneration || false,
+        socialContentWebhookUrl: settings.socialContentWebhookUrl || "",
+        socialContentCreditsPerGeneration: settings.socialContentCreditsPerGeneration || 1,
+        enableSocialContentGeneration: settings.enableSocialContentGeneration || false,
       });
       
       firebaseForm.reset({
