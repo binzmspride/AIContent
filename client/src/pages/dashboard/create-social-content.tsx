@@ -309,6 +309,23 @@ export default function CreateSocialContentPage() {
                   </div>
                 )}
 
+                {/* Reference Link for existing article */}
+                {form.contentSource === 'existing-article' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="referenceLink">Link tham khảo (tùy chọn)</Label>
+                    <Input
+                      id="referenceLink"
+                      type="url"
+                      placeholder="https://example.com/link-tham-khao"
+                      value={form.referenceLink}
+                      onChange={(e) => setForm(prev => ({ ...prev, referenceLink: e.target.value }))}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Thêm link tham khảo để cung cấp thêm context cho AI
+                    </p>
+                  </div>
+                )}
+
                 {/* Reference Link (only when using AI from keywords) */}
                 {form.contentSource === 'ai-keyword' && (
                   <div className="space-y-2">
