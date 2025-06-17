@@ -53,6 +53,7 @@ export default function CreateSocialContentPage() {
   const [previewMode, setPreviewMode] = useState('facebook');
   const [open, setOpen] = useState(false);
   const [showResultDialog, setShowResultDialog] = useState(false);
+  const [extractedData, setExtractedData] = useState<string>('');
 
   // Fetch user's articles when content source is from existing articles
   const { data: articlesData } = useQuery({
@@ -98,6 +99,10 @@ export default function CreateSocialContentPage() {
     },
     onSuccess: (data) => {
       setGeneratedContent(data.data);
+      // Lưu extracted data từ response
+      if (data.data && data.data.output) {
+        setExtractedData(data.data.output);
+      }
       setShowResultDialog(true);
       toast({
         title: "Thành công",
@@ -108,6 +113,39 @@ export default function CreateSocialContentPage() {
       toast({
         title: "Lỗi",
         description: error.message || "Có lỗi xảy ra khi tạo nội dung",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Mutation cho việc phê duyệt và gửi đến webhook tạo Social Media Content
+  const approveContentMutation = useMutation({
+    mutationFn: async () => {
+      const payload = {
+        ...form,
+        extracted_data: extractedData,
+        genSEO: form.contentSource === 'ai-keyword',
+        approve_extract: form.approveExtract
+      };
+      
+      console.log('API Request: POST /api/social/create-final-content', payload);
+      const response = await apiRequest('POST', '/api/social/create-final-content', payload);
+      return response.json();
+    },
+    onSuccess: (data) => {
+      console.log('Content approval successful:', data);
+      setShowResultDialog(false);
+      queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+      toast({
+        title: "Phê duyệt thành công",
+        description: "Nội dung đã được phê duyệt và gửi đến webhook tạo Social Media Content",
+      });
+    },
+    onError: (error: any) => {
+      console.error('Error approving content:', error);
+      toast({
+        title: "Lỗi phê duyệt",
+        description: error.message || "Có lỗi xảy ra khi phê duyệt nội dung",
         variant: "destructive",
       });
     }
@@ -668,15 +706,16 @@ export default function CreateSocialContentPage() {
                 <div className="flex gap-3">
                   <Button 
                     className="bg-green-500 hover:bg-green-600 text-white flex items-center gap-2"
+                    disabled={approveContentMutation.isPending}
                     onClick={() => {
-                      setShowResultDialog(false);
-                      toast({
-                        title: "Phê duyệt thành công",
-                        description: "Nội dung đã được phê duyệt",
-                      });
+                      approveContentMutation.mutate();
                     }}
                   >
-                    <Check className="h-4 w-4" />
+                    {approveContentMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Check className="h-4 w-4" />
+                    )}
                     Phê duyệt
                   </Button>
                   

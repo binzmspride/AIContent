@@ -1164,6 +1164,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create final social media content after approval
+  app.post('/api/social/create-final-content', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { 
+        contentSource, 
+        briefDescription, 
+        selectedArticleId, 
+        referenceLink, 
+        platforms, 
+        includeImage, 
+        imageSource, 
+        imagePrompt, 
+        approveExtract,
+        extracted_data,
+        genSEO,
+        approve_extract
+      } = req.body;
+
+      console.log('Final content creation request:', req.body);
+
+      // Get webhook URL from settings
+      const socialContentWebhookUrl = await storage.getSetting('socialContentWebhookUrl');
+      if (!socialContentWebhookUrl) {
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Social content webhook URL not configured' 
+        });
+      }
+
+      // Prepare final webhook payload with extracted_data
+      const finalWebhookPayload = {
+        content: contentSource === 'existing-article' ? extracted_data : briefDescription,
+        url: referenceLink || "",
+        extract_content: contentSource === 'existing-article' ? "true" : "false",
+        extracted_data: extracted_data || "",
+        post_to_linkedin: platforms.includes('linkedin') ? "true" : "false",
+        post_to_facebook: platforms.includes('facebook') ? "true" : "false",
+        post_to_x: platforms.includes('twitter') ? "true" : "false",
+        post_to_instagram: platforms.includes('instagram') ? "true" : "false",
+        genSEO: genSEO,
+        approve_extract: approve_extract
+      };
+
+      // Send final data to webhook
+      const fetch = (await import('node-fetch')).default;
+      
+      console.log('Sending final webhook request to:', socialContentWebhookUrl);
+      console.log('Final webhook payload:', JSON.stringify(finalWebhookPayload, null, 2));
+      
+      const webhookResponse = await fetch(socialContentWebhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(finalWebhookPayload)
+      });
+
+      if (!webhookResponse.ok) {
+        console.error('Final webhook request failed:', webhookResponse.status, webhookResponse.statusText);
+        const errorText = await webhookResponse.text();
+        console.error('Final webhook error response:', errorText);
+        return res.status(500).json({ 
+          success: false, 
+          error: `Final webhook request failed: ${webhookResponse.status} ${webhookResponse.statusText}` 
+        });
+      }
+
+      let webhookResult;
+      try {
+        webhookResult = await webhookResponse.json();
+      } catch (parseError) {
+        console.error('Failed to parse final webhook response as JSON:', parseError);
+        webhookResult = { message: 'Final webhook executed successfully but returned non-JSON response' };
+      }
+
+      console.log('Final webhook result:', webhookResult);
+
+      // Return webhook response to frontend
+      res.json({ 
+        success: true, 
+        data: webhookResult || { message: 'Content approved and sent to Social Media Content webhook' }
+      });
+    } catch (error) {
+      console.error('Error creating final social media content:', error);
+      res.status(500).json({ success: false, error: 'Failed to create final social media content' });
+    }
+  });
+
   // ========== Admin API ==========
   // Get all users
   app.get('/api/admin/users', async (req, res) => {
