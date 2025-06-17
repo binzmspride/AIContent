@@ -643,78 +643,68 @@ export default function CreateSocialContentPage() {
 
       {/* Dialog hiển thị kết quả từ AI */}
       <Dialog open={showResultDialog} onOpenChange={setShowResultDialog}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[80vh]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-blue-500" />
-              Kết quả tạo nội dung Social Media
+              <FileText className="h-5 w-5 text-orange-500" />
+              Chỉnh sửa Nội dung Trích xuất
             </DialogTitle>
-            <DialogDescription>
-              Nội dung được tạo thành công từ AI
-            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
             {generatedContent && (
               <div className="space-y-4">
-                {/* Hiển thị output từ response */}
-                {generatedContent.output && (
-                  <div className="space-y-2">
-                    <h3 className="font-medium text-sm">Nội dung được tạo:</h3>
-                    <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
-                      <pre className="whitespace-pre-wrap text-sm font-mono">
-                        {generatedContent.output}
-                      </pre>
-                    </div>
-                  </div>
-                )}
-
-                {/* Hiển thị toàn bộ response nếu có */}
+                {/* Output section */}
                 <div className="space-y-2">
-                  <h3 className="font-medium text-sm">Response chi tiết:</h3>
-                  <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border max-h-60 overflow-y-auto">
-                    <pre className="text-xs font-mono">
-                      {JSON.stringify(generatedContent, null, 2)}
-                    </pre>
+                  <Label className="text-sm font-medium">Output</Label>
+                  <div className="border rounded-lg max-h-64 overflow-y-auto">
+                    <div className="p-4 text-sm whitespace-pre-wrap">
+                      {generatedContent.output || 'Không có nội dung output'}
+                    </div>
                   </div>
                 </div>
 
-                {/* Copy button */}
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
+                {/* Action buttons */}
+                <div className="flex gap-3">
+                  <Button 
+                    className="bg-green-500 hover:bg-green-600 text-white flex items-center gap-2"
                     onClick={() => {
-                      if (generatedContent.output) {
-                        navigator.clipboard.writeText(generatedContent.output);
-                        toast({
-                          title: "Đã sao chép",
-                          description: "Nội dung đã được sao chép vào clipboard",
-                        });
-                      }
-                    }}
-                    className="flex items-center gap-2"
-                  >
-                    <Copy className="h-4 w-4" />
-                    Copy nội dung
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      navigator.clipboard.writeText(JSON.stringify(generatedContent, null, 2));
+                      setShowResultDialog(false);
                       toast({
-                        title: "Đã sao chép",
-                        description: "Response đầy đủ đã được sao chép vào clipboard",
+                        title: "Phê duyệt thành công",
+                        description: "Nội dung đã được phê duyệt",
                       });
                     }}
-                    className="flex items-center gap-2"
                   >
-                    <Copy className="h-4 w-4" />
-                    Copy JSON
+                    <Check className="h-4 w-4" />
+                    Phê duyệt
+                  </Button>
+                  
+                  <Button 
+                    variant="destructive"
+                    className="flex items-center gap-2"
+                    onClick={() => {
+                      setShowResultDialog(false);
+                      toast({
+                        title: "Từ chối",
+                        description: "Nội dung đã bị từ chối. Có thể tạo lại nội dung mới.",
+                        variant: "destructive",
+                      });
+                    }}
+                  >
+                    <FileText className="h-4 w-4" />
+                    Từ chối & Trích xuất lại
                   </Button>
                 </div>
               </div>
             )}
+
+            {/* Status message */}
+            <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+              <p className="text-sm text-green-700 dark:text-green-300">
+                Nội dung đã được trích xuất. Vui lòng xem xét và phê duyệt.
+              </p>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
