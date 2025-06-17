@@ -88,6 +88,10 @@ interface SystemSettings {
   imageWebhookUrl: string;
   imageCreditsPerGeneration: number;
   enableImageGeneration: boolean;
+  // Social media content generation settings
+  socialContentWebhookUrl: string;
+  socialContentCreditsPerGeneration: number;
+  enableSocialContentGeneration: boolean;
   // Firebase settings
   firebaseApiKey: string;
   firebaseProjectId: string;
@@ -152,6 +156,9 @@ const webhookSettingsSchema = z.object({
   imageWebhookUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   imageCreditsPerGeneration: z.coerce.number().min(1).max(100),
   enableImageGeneration: z.boolean(),
+  socialContentWebhookUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  socialContentCreditsPerGeneration: z.coerce.number().min(1).max(100),
+  enableSocialContentGeneration: z.boolean(),
 });
 
 // Firebase settings form schema
@@ -290,6 +297,9 @@ export default function AdminSettings() {
       imageWebhookUrl: settings?.imageWebhookUrl || "",
       imageCreditsPerGeneration: settings?.imageCreditsPerGeneration || 1,
       enableImageGeneration: settings?.enableImageGeneration || false,
+      socialContentWebhookUrl: settings?.socialContentWebhookUrl || "",
+      socialContentCreditsPerGeneration: settings?.socialContentCreditsPerGeneration || 1,
+      enableSocialContentGeneration: settings?.enableSocialContentGeneration || false,
     },
   });
   
@@ -1458,6 +1468,78 @@ export default function AdminSettings() {
                                 </FormControl>
                                 <FormDescription>
                                   {t("admin.settingsPage.imageCreditsPerGenerationDescription") || "Số credits cần thiết để tạo một ảnh"}
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="border-t pt-6 mt-6">
+                        <h3 className="text-lg font-semibold mb-4 flex items-center">
+                          <Sparkles className="h-5 w-5 mr-2" />
+                          Social Media Content Generation
+                        </h3>
+                        
+                        <div className="space-y-4">
+                          <FormField
+                            control={webhookForm.control}
+                            name="enableSocialContentGeneration"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                <div className="space-y-0.5">
+                                  <FormLabel className="text-base">
+                                    Kích hoạt tạo nội dung mạng xã hội
+                                  </FormLabel>
+                                  <FormDescription>
+                                    Cho phép người dùng tạo nội dung cho mạng xã hội bằng AI
+                                  </FormDescription>
+                                </div>
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={webhookForm.control}
+                            name="socialContentWebhookUrl"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Webhook tạo nội dung Social Media</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="https://api.example.com/generate-social-content" {...field} value={field.value || ""} />
+                                </FormControl>
+                                <FormDescription>
+                                  URL webhook để gửi yêu cầu tạo nội dung mạng xã hội
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={webhookForm.control}
+                            name="socialContentCreditsPerGeneration"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Credits per tạo nội dung Social Media</FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    type="number" 
+                                    min="1" 
+                                    max="100" 
+                                    {...field} 
+                                    onChange={(e) => field.onChange(Number(e.target.value))}
+                                  />
+                                </FormControl>
+                                <FormDescription>
+                                  Số credits cần thiết để tạo nội dung cho mạng xã hội
                                 </FormDescription>
                                 <FormMessage />
                               </FormItem>
