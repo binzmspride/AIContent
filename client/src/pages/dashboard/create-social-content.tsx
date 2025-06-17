@@ -89,7 +89,8 @@ export default function CreateSocialContentPage() {
 
   const generateContentMutation = useMutation({
     mutationFn: async (data: SocialContentForm) => {
-      return await apiRequest('/api/social/generate-content', 'POST', data);
+      const response = await apiRequest('POST', '/api/social/generate-content', data);
+      return response.json();
     },
     onSuccess: (data) => {
       setGeneratedContent(data.data);
