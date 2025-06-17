@@ -1063,9 +1063,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Get webhook configuration from admin settings
-      const socialSettings = await storage.getSettingsByCategory('social');
-      const socialContentWebhookUrl = socialSettings?.socialContentWebhookUrl;
-      const enableSocialContentGeneration = socialSettings?.enableSocialContentGeneration === "true";
+      const webhookSettings = await storage.getSettingsByCategory('webhook');
+      const socialContentWebhookUrl = webhookSettings?.socialContentWebhookUrl;
+      const enableSocialContentGeneration = webhookSettings?.enableSocialContentGeneration === "true";
+      
+      console.log('Webhook settings retrieved:', {
+        socialContentWebhookUrl,
+        enableSocialContentGeneration,
+        allSettings: webhookSettings
+      });
 
       if (!enableSocialContentGeneration || !socialContentWebhookUrl) {
         return res.status(400).json({ 
