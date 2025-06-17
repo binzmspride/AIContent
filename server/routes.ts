@@ -2741,7 +2741,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const cleanAppPassword = settings.appPassword?.replace(/\s+/g, '');
             const credentials = Buffer.from(`${settings.username}:${cleanAppPassword}`).toString('base64');
             authHeader = `Basic ${credentials}`;
-            console.log('Using Basic auth with username:', settings.username);
+            console.log('DEBUG: WordPress Auth Details:');
+            console.log('- Username:', settings.username);
+            console.log('- App Password length:', cleanAppPassword?.length || 0);
+            console.log('- App Password first 4 chars:', cleanAppPassword?.substring(0, 4) + '***');
+            console.log('- Base64 credentials length:', credentials?.length || 0);
           } else if (settings.authType === 'api-token') {
             authHeader = `Bearer ${settings.apiToken}`;
             console.log('Using Bearer token auth');
@@ -2753,6 +2757,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
               message: 'Thiếu thông tin xác thực. Vui lòng kiểm tra username và application password.' 
             };
           } else {
+            console.log('DEBUG: Making request to WordPress:');
+            console.log('- URL:', testUrl);
+            console.log('- Auth header type:', authHeader.split(' ')[0]);
+            console.log('- Request headers:', {
+              'Authorization': authHeader.substring(0, 20) + '***',
+              'Content-Type': 'application/json',
+              'User-Agent': 'SEO-Content-Generator/1.0'
+            });
+
             const response = await fetch(testUrl, {
               method: 'GET',
               headers: {
@@ -2763,6 +2776,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             });
 
             console.log('WordPress API response:', response.status, response.statusText);
+            console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
             if (response.ok) {
               const data = await response.json();
