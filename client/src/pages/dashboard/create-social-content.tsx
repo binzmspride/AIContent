@@ -56,6 +56,7 @@ export default function CreateSocialContentPage() {
   const [extractedData, setExtractedData] = useState<string>('');
   const [showFinalResultDialog, setShowFinalResultDialog] = useState(false);
   const [finalSocialContent, setFinalSocialContent] = useState<any>(null);
+  const [savingToCreatedContent, setSavingToCreatedContent] = useState(false);
 
   // Fetch user's articles when content source is from existing articles
   const { data: articlesData } = useQuery({
@@ -202,6 +203,47 @@ export default function CreateSocialContentPage() {
       description: "Nội dung đã được sao chép vào clipboard",
     });
   };
+
+  const handleSaveToCreatedContent = useMutation({
+    mutationFn: async () => {
+      return await apiRequest('/api/social/save-created-content', {
+        content: finalSocialContent,
+        title: `Social Media Content - ${new Date().toLocaleDateString('vi-VN')}`,
+        platforms: form.platforms,
+        contentSource: form.contentSource,
+        selectedArticleId: form.selectedArticleId || null
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Thành công",
+        description: "Nội dung đã được lưu vào 'Nội dung đã tạo'",
+      });
+      setShowFinalResultDialog(false);
+      // Reset form sau khi lưu thành công
+      setForm({
+        contentSource: 'manual',
+        briefDescription: '',
+        selectedArticleId: '',
+        referenceLink: '',
+        platforms: [],
+        includeImage: false,
+        imageSource: 'generate',
+        selectedImageId: '',
+        imagePrompt: ''
+      });
+      setExtractedData('');
+      setFinalSocialContent(null);
+    },
+    onError: (error: any) => {
+      console.error('Error saving content:', error);
+      toast({
+        title: "Lỗi",
+        description: error.message || "Không thể lưu nội dung",
+        variant: "destructive",
+      });
+    }
+  });
 
   const getPreviewContent = () => {
     if (!generatedContent || !generatedContent.platforms) return null;
@@ -858,11 +900,21 @@ export default function CreateSocialContentPage() {
             {/* Action buttons */}
             <div className="flex gap-3 pt-4 border-t">
               <Button 
-                onClick={() => setShowFinalResultDialog(false)}
-                className="flex items-center gap-2"
+                onClick={() => handleSaveToCreatedContent.mutate()}
+                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white"
+                disabled={handleSaveToCreatedContent.isPending}
               >
-                <Check className="h-4 w-4" />
-                Hoàn thành
+                {handleSaveToCreatedContent.isPending ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Đang lưu...
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Hoàn thành
+                  </>
+                )}
               </Button>
               
               <Button 
