@@ -1063,9 +1063,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Get webhook configuration from admin settings
-      const webhookSettings = await storage.getSettings();
-      const socialContentWebhookUrl = webhookSettings?.socialContentWebhookUrl;
-      const enableSocialContentGeneration = webhookSettings?.enableSocialContentGeneration;
+      const socialSettings = await storage.getSettingsByCategory('social');
+      const socialContentWebhookUrl = socialSettings?.socialContentWebhookUrl;
+      const enableSocialContentGeneration = socialSettings?.enableSocialContentGeneration === "true";
 
       if (!enableSocialContentGeneration || !socialContentWebhookUrl) {
         return res.status(400).json({ 
@@ -1088,7 +1088,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           id: article.id,
           title: article.title,
           content: article.textContent || article.content,
-          imageUrl: article.imageUrl
+          imageUrls: article.imageUrls
         };
       }
 
@@ -1113,24 +1113,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Send data to webhook
       const fetch = (await import('node-fetch')).default;
+      
+      console.log('Sending webhook request to:', socialContentWebhookUrl);
+      console.log('Webhook payload:', JSON.stringify(webhookPayload, null, 2));
+      
       const webhookResponse = await fetch(socialContentWebhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(webhookPayload),
-        timeout: 30000 // 30 second timeout
+        body: JSON.stringify(webhookPayload)
       });
 
       if (!webhookResponse.ok) {
         console.error('Webhook request failed:', webhookResponse.status, webhookResponse.statusText);
+        const errorText = await webhookResponse.text();
+        console.error('Webhook error response:', errorText);
         return res.status(500).json({ 
           success: false, 
           error: `Webhook request failed: ${webhookResponse.status} ${webhookResponse.statusText}` 
         });
       }
 
-      const webhookResult = await webhookResponse.json();
+      let webhookResult;
+      try {
+        webhookResult = await webhookResponse.json();
+      } catch (parseError) {
+        console.error('Failed to parse webhook response as JSON:', parseError);
+        webhookResult = { message: 'Webhook executed successfully but returned non-JSON response' };
+      }
 
       // Deduct credits after successful webhook call
       await storage.subtractUserCredits(userId, 5, `Tạo nội dung social media cho ${platforms.length} nền tảng`);
@@ -1138,10 +1149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Return webhook response to frontend
       res.json({ 
         success: true, 
-        data: {
-          ...webhookResult,
-          creditsUsed: 5
-        }
+        data: Object.assign(webhookResult || {}, { creditsUsed: 5 })
       });
     } catch (error) {
       console.error('Error generating social media content:', error);
