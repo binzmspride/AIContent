@@ -1164,6 +1164,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Save social media content to "Nội dung đã tạo"
+  app.post('/api/social/save-created-content', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { content, title, platforms, contentSource, selectedArticleId } = req.body;
+
+      if (!content || !title) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Content and title are required' 
+        });
+      }
+
+      // Format content for storage
+      let formattedContent = '';
+      if (Array.isArray(content)) {
+        formattedContent = content.map(item => {
+          const platform = item.output?.['Nền tảng đăng'] || 'Unknown';
+          const text = item.output?.['Nội dung bài viết'] || '';
+          return `**${platform}:**\n${text}`;
+        }).join('\n\n');
+      } else {
+        formattedContent = JSON.stringify(content, null, 2);
+      }
+
+      // Create article entry for social content
+      const [savedContent] = await db.insert(articles).values({
+        userId: userId,
+        title: title,
+        content: formattedContent,
+        keywords: platforms || [],
+        metaDescription: `Social media content cho ${platforms?.join(', ') || 'multiple platforms'}`,
+        language: 'vi',
+        articleType: 'social',
+        status: 'published',
+        wordCount: formattedContent.length,
+        readingTime: Math.ceil(formattedContent.length / 200), // Estimate reading time
+        seoScore: 85, // Default score for social content
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }).returning();
+
+      res.json({
+        success: true,
+        data: savedContent
+      });
+
+    } catch (error) {
+      console.error('Error saving social content:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to save content'
+      });
+    }
+  });
+
   // Create final social media content after approval
   app.post('/api/social/create-final-content', async (req, res) => {
     try {
