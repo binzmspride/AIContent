@@ -772,79 +772,70 @@ export default function CreateSocialContentPage() {
           </DialogHeader>
           
           <div className="space-y-6">
-            {finalSocialContent && (
+            {finalSocialContent && Array.isArray(finalSocialContent) && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* LinkedIn */}
-                {form.platforms.includes('linkedin') && (
-                  <div className="space-y-3">
-                    <h3 className="font-medium text-sm text-blue-600 flex items-center gap-2">
-                      <div className="w-4 h-4 bg-blue-600 rounded"></div>
-                      LinkedIn
-                    </h3>
-                    <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border">
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium">Nội dung bài viết:</p>
-                        <div className="text-sm whitespace-pre-wrap bg-white dark:bg-gray-800 p-3 rounded border">
-                          {finalSocialContent.linkedin_content || finalSocialContent.output || 'Nội dung LinkedIn'}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                {finalSocialContent.map((item, index) => {
+                  const platform = item.output?.['Nền tảng đăng']?.toLowerCase();
+                  const content = item.output?.['Nội dung bài viết'];
+                  
+                  const platformConfig = {
+                    linkedin: {
+                      name: 'LinkedIn',
+                      color: 'blue-600',
+                      bgColor: 'blue-50 dark:bg-blue-950/20'
+                    },
+                    facebook: {
+                      name: 'Facebook', 
+                      color: 'blue-500',
+                      bgColor: 'blue-50 dark:bg-blue-950/20'
+                    },
+                    x: {
+                      name: 'X (Twitter)',
+                      color: 'gray-800 dark:text-gray-200',
+                      bgColor: 'gray-50 dark:bg-gray-800/20'
+                    },
+                    instagram: {
+                      name: 'Instagram',
+                      color: 'pink-500', 
+                      bgColor: 'pink-50 dark:bg-pink-950/20'
+                    }
+                  };
 
-                {/* Facebook */}
-                {form.platforms.includes('facebook') && (
-                  <div className="space-y-3">
-                    <h3 className="font-medium text-sm text-blue-500 flex items-center gap-2">
-                      <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                      Facebook
-                    </h3>
-                    <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border">
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium">Nội dung bài viết:</p>
-                        <div className="text-sm whitespace-pre-wrap bg-white dark:bg-gray-800 p-3 rounded border">
-                          {finalSocialContent.facebook_content || finalSocialContent.output || 'Nội dung Facebook'}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                  const config = platformConfig[platform] || {
+                    name: platform || 'Unknown',
+                    color: 'gray-500',
+                    bgColor: 'gray-50 dark:bg-gray-800/20'
+                  };
 
-                {/* Twitter/X */}
-                {form.platforms.includes('twitter') && (
-                  <div className="space-y-3">
-                    <h3 className="font-medium text-sm text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                      <div className="w-4 h-4 bg-gray-800 dark:bg-gray-200 rounded"></div>
-                      X (Twitter)
-                    </h3>
-                    <div className="p-4 bg-gray-50 dark:bg-gray-800/20 rounded-lg border">
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium">Nội dung bài viết:</p>
-                        <div className="text-sm whitespace-pre-wrap bg-white dark:bg-gray-800 p-3 rounded border">
-                          {finalSocialContent.twitter_content || finalSocialContent.x_content || finalSocialContent.output || 'Nội dung X/Twitter'}
+                  return (
+                    <div key={index} className="space-y-3">
+                      <h3 className={`font-medium text-sm text-${config.color} flex items-center gap-2`}>
+                        <div className={`w-4 h-4 bg-${config.color} rounded ${platform === 'instagram' ? 'bg-gradient-to-r from-pink-500 to-purple-500' : ''}`}></div>
+                        {config.name}
+                      </h3>
+                      <div className={`p-4 ${config.bgColor} rounded-lg border`}>
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium">Nội dung bài viết:</p>
+                          <div className="text-sm whitespace-pre-wrap bg-white dark:bg-gray-800 p-3 rounded border">
+                            {content || 'Không có nội dung'}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })}
+              </div>
+            )}
 
-                {/* Instagram */}
-                {form.platforms.includes('instagram') && (
-                  <div className="space-y-3">
-                    <h3 className="font-medium text-sm text-pink-500 flex items-center gap-2">
-                      <div className="w-4 h-4 bg-gradient-to-r from-pink-500 to-purple-500 rounded"></div>
-                      Instagram
-                    </h3>
-                    <div className="p-4 bg-pink-50 dark:bg-pink-950/20 rounded-lg border">
-                      <div className="space-y-2">
-                        <p className="text-sm font-medium">Nội dung bài viết:</p>
-                        <div className="text-sm whitespace-pre-wrap bg-white dark:bg-gray-800 p-3 rounded border">
-                          {finalSocialContent.instagram_content || finalSocialContent.output || 'Nội dung Instagram'}
-                        </div>
-                      </div>
-                    </div>
+            {/* Fallback for non-array response */}
+            {finalSocialContent && !Array.isArray(finalSocialContent) && (
+              <div className="space-y-3">
+                <h3 className="font-medium text-sm">Nội dung được tạo:</h3>
+                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
+                  <div className="text-sm whitespace-pre-wrap">
+                    {finalSocialContent.output || JSON.stringify(finalSocialContent, null, 2)}
                   </div>
-                )}
+                </div>
               </div>
             )}
 
