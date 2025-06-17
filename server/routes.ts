@@ -1099,6 +1099,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
       }
 
+      // Debug content source
+      console.log('Content source:', contentSource);
+      console.log('genSEO will be:', contentSource === 'ai-keyword');
+      
       // Prepare webhook payload with the correct keys
       const webhookPayload = {
         content: contentSource === 'existing-article' ? 
