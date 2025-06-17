@@ -2724,37 +2724,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
         try {
           const settings = connection.settings as any;
           const baseUrl = settings.websiteUrl?.replace(/\/$/, '');
-          const testUrl = `${baseUrl}/wp-json/wp/v2/posts`;
+          const testUrl = `${baseUrl}/wp-json/wp/v2/posts?per_page=1`;
           
-          let authHeader = '';
-          if (settings.authType === 'app-password') {
-            const credentials = Buffer.from(`${settings.username}:${settings.appPassword}`).toString('base64');
-            authHeader = `Basic ${credentials}`;
-          } else if (settings.authType === 'api-token') {
-            authHeader = `Bearer ${settings.apiToken}`;
-          }
-
-          const response = await fetch(testUrl, {
-            method: 'GET',
-            headers: {
-              'Authorization': authHeader,
-              'Content-Type': 'application/json'
-            }
+          // Debug logging
+          console.log('Testing WordPress connection:', {
+            baseUrl,
+            username: settings.username,
+            authType: settings.authType,
+            hasAppPassword: !!settings.appPassword,
+            hasApiToken: !!settings.apiToken
           });
 
-          if (response.ok) {
-            testResult = { 
-              success: true, 
-              message: `Kết nối WordPress thành công! Website: ${baseUrl}` 
-            };
-          } else {
-            const errorText = await response.text();
+          let authHeader = '';
+          if (settings.authType === 'app-password') {
+            // Clean app password - remove spaces and normalize
+            const cleanAppPassword = settings.appPassword?.replace(/\s+/g, '');
+            const credentials = Buffer.from(`${settings.username}:${cleanAppPassword}`).toString('base64');
+            authHeader = `Basic ${credentials}`;
+            console.log('Using Basic auth with username:', settings.username);
+          } else if (settings.authType === 'api-token') {
+            authHeader = `Bearer ${settings.apiToken}`;
+            console.log('Using Bearer token auth');
+          }
+
+          if (!authHeader) {
             testResult = { 
               success: false, 
-              message: `Lỗi kết nối WordPress: ${response.status} ${response.statusText}. ${errorText}` 
+              message: 'Thiếu thông tin xác thực. Vui lòng kiểm tra username và application password.' 
             };
+          } else {
+            const response = await fetch(testUrl, {
+              method: 'GET',
+              headers: {
+                'Authorization': authHeader,
+                'Content-Type': 'application/json',
+                'User-Agent': 'SEO-Content-Generator/1.0'
+              }
+            });
+
+            console.log('WordPress API response:', response.status, response.statusText);
+
+            if (response.ok) {
+              const data = await response.json();
+              testResult = { 
+                success: true, 
+                message: `Kết nối WordPress thành công! Website: ${baseUrl}. Tìm thấy ${data.length || 0} bài viết.` 
+              };
+            } else {
+              let errorText = '';
+              try {
+                const errorData = await response.json();
+                errorText = errorData.message || errorData.code || 'Unknown error';
+              } catch {
+                errorText = await response.text();
+              }
+              
+              testResult = { 
+                success: false, 
+                message: `Lỗi kết nối WordPress: ${response.status} ${response.statusText}. ${errorText}` 
+              };
+            }
           }
         } catch (error: any) {
+          console.error('WordPress connection test error:', error);
           testResult = { 
             success: false, 
             message: `Lỗi kết nối WordPress: ${error.message}` 
