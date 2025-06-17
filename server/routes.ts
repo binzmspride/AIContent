@@ -1483,7 +1483,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('- enableImageGeneration update result:', enableImageResult);
       }
       
-      if (!webhookUrlResult || !webhookSecretResult || !imageWebhookResult || !imageCreditsResult || !enableImageResult) {
+      // Update social content webhook URL if provided
+      if (socialContentWebhookUrl !== undefined) {
+        socialWebhookResult = await storage.setSetting('socialContentWebhookUrl', socialContentWebhookUrl, 'social_content');
+        console.log('- socialContentWebhookUrl update result:', socialWebhookResult);
+      }
+      
+      // Update social content credits per generation if provided
+      if (socialContentCreditsPerGeneration !== undefined) {
+        socialCreditsResult = await storage.setSetting('socialContentCreditsPerGeneration', String(socialContentCreditsPerGeneration), 'social_content');
+        console.log('- socialContentCreditsPerGeneration update result:', socialCreditsResult);
+      }
+      
+      // Update enable social content generation if provided
+      if (enableSocialContentGeneration !== undefined) {
+        enableSocialResult = await storage.setSetting('enableSocialContentGeneration', String(enableSocialContentGeneration), 'social_content');
+        console.log('- enableSocialContentGeneration update result:', enableSocialResult);
+      }
+      
+      if (!webhookUrlResult || !webhookSecretResult || !imageWebhookResult || !imageCreditsResult || !enableImageResult || !socialWebhookResult || !socialCreditsResult || !enableSocialResult) {
         return res.status(500).json({ 
           success: false, 
           error: 'Failed to save one or more webhook settings' 
@@ -1494,9 +1512,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const savedWebhookUrl = await storage.getSetting('notificationWebhookUrl');
       const savedWebhookSecret = await storage.getSetting('webhookSecret');
       const imageSettings = await storage.getSettingsByCategory('image_generation');
+      const socialSettings = await storage.getSettingsByCategory('social_content');
       const savedImageWebhookUrl = imageSettings.imageWebhookUrl;
       const savedImageCredits = imageSettings.imageCreditsPerGeneration;
       const savedEnableImage = imageSettings.enableImageGeneration;
+      const savedSocialWebhookUrl = socialSettings.socialContentWebhookUrl;
+      const savedSocialCredits = socialSettings.socialContentCreditsPerGeneration;
+      const savedEnableSocial = socialSettings.enableSocialContentGeneration;
       
       console.log('Verification after save:');
       console.log('- Saved notificationWebhookUrl:', savedWebhookUrl);
@@ -1504,6 +1526,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('- Saved imageWebhookUrl:', savedImageWebhookUrl);
       console.log('- Saved imageCreditsPerGeneration:', savedImageCredits);
       console.log('- Saved enableImageGeneration:', savedEnableImage);
+      console.log('- Saved socialContentWebhookUrl:', savedSocialWebhookUrl);
+      console.log('- Saved socialContentCreditsPerGeneration:', savedSocialCredits);
+      console.log('- Saved enableSocialContentGeneration:', savedEnableSocial);
       
       res.json({ 
         success: true, 
@@ -1513,7 +1538,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           webhookSecretExists: savedWebhookSecret !== null,
           imageWebhookUrl: savedImageWebhookUrl,
           imageCreditsPerGeneration: savedImageCredits,
-          enableImageGeneration: savedEnableImage
+          enableImageGeneration: savedEnableImage,
+          socialContentWebhookUrl: savedSocialWebhookUrl,
+          socialContentCreditsPerGeneration: savedSocialCredits,
+          enableSocialContentGeneration: savedEnableSocial
         } 
       });
     } catch (error) {
