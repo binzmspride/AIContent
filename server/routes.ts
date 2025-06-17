@@ -1019,12 +1019,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const userId = req.user.id;
-      const { contentSource, briefDescription, selectedArticleId, referenceLink, platforms, includeImage } = req.body;
-      
-      if (!contentSource || !platforms || platforms.length === 0) {
+      const { 
+        contentSource, 
+        briefDescription, 
+        selectedArticleId, 
+        referenceLink, 
+        platforms, 
+        includeImage, 
+        imageSource, 
+        imagePrompt 
+      } = req.body;
+
+      // Validate required fields
+      if (!platforms || platforms.length === 0) {
         return res.status(400).json({ 
           success: false, 
-          error: 'Content source and platforms are required' 
+          error: 'At least one platform must be selected' 
         });
       }
 
@@ -1052,13 +1062,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Get content source
-      let sourceContent = briefDescription;
-      let sourceTitle = '';
-      let contentContext = '';
-      
+      // Get webhook configuration from admin settings
+      const webhookSettings = await storage.getSettings();
+      const socialContentWebhookUrl = webhookSettings?.socialContentWebhookUrl;
+      const enableSocialContentGeneration = webhookSettings?.enableSocialContentGeneration;
+
+      if (!enableSocialContentGeneration || !socialContentWebhookUrl) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Social content generation is not configured. Please contact administrator.' 
+        });
+      }
+
+      // Prepare article data if using existing article
+      let articleData = null;
       if (contentSource === 'existing-article' && selectedArticleId) {
-        // Get article content
         const article = await storage.getArticle(selectedArticleId);
         if (!article) {
           return res.status(404).json({ 
@@ -1066,83 +1084,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
             error: 'Article not found' 
           });
         }
-        sourceContent = article.title + '\n\n' + (article.textContent || article.content);
-        sourceTitle = article.title;
-      } else if (contentSource === 'ai-keyword' && referenceLink) {
-        // Add reference link to content context
-        contentContext = `Tham khảo từ: ${referenceLink}\n\n`;
-      }
-
-      // Generate content for each platform
-      const platformContent: Record<string, any> = {};
-      
-      for (const platform of platforms) {
-        let content = '';
-        let hashtags = '';
-        
-        // Platform-specific content generation logic
-        switch (platform) {
-          case 'facebook':
-            if (contentSource === 'existing-article') {
-              content = `🎯 ${sourceTitle}\n\n${sourceContent.substring(0, 300)}...\n\nFacebook phù hợp cho nội dung dài và tương tác. Hãy chia sẻ câu chuyện đầy đủ và khuyến khích người dùng bình luận.`;
-            } else {
-              content = `🎯 ${contentContext}${briefDescription}\n\nFacebook phù hợp cho nội dung dài và tương tác. Hãy chia sẻ câu chuyện đầy đủ và khuyến khích người dùng bình luận.`;
-            }
-            hashtags = '#Facebook #SocialMedia #Content #Marketing';
-            break;
-          case 'twitter':
-            if (contentSource === 'existing-article') {
-              content = `🐦 ${sourceTitle}\n\n${sourceContent.substring(0, 180)}...\n\nTwitter yêu cầu nội dung ngắn gọn và súc tích.`;
-            } else {
-              content = `🐦 ${contentContext}${briefDescription.substring(0, 180)}...\n\nTwitter yêu cầu nội dung ngắn gọn và súc tích.`;
-            }
-            hashtags = '#Twitter #SocialMedia #Content';
-            break;
-          case 'instagram':
-            if (contentSource === 'existing-article') {
-              content = `📸 ${sourceTitle}\n\n${sourceContent.substring(0, 250)}...\n\nInstagram tập trung vào hình ảnh đẹp và hashtags hiệu quả.`;
-            } else {
-              content = `📸 ${contentContext}${briefDescription}\n\nInstagram tập trung vào hình ảnh đẹp và hashtags hiệu quả.`;
-            }
-            hashtags = '#Instagram #Visual #Content #Photography #Marketing';
-            break;
-          case 'linkedin':
-            if (contentSource === 'existing-article') {
-              content = `💼 ${sourceTitle}\n\n${sourceContent.substring(0, 400)}...\n\nLinkedIn phù hợp cho nội dung chuyên nghiệp và xây dựng mạng lưới.`;
-            } else {
-              content = `💼 ${contentContext}${briefDescription}\n\nLinkedIn phù hợp cho nội dung chuyên nghiệp và xây dựng mạng lưới.`;
-            }
-            hashtags = '#LinkedIn #Professional #Business #Networking';
-            break;
-          case 'tiktok':
-            if (contentSource === 'existing-article') {
-              content = `🎵 ${sourceTitle}\n\n${sourceContent.substring(0, 200)}...\n\nTikTok yêu cầu nội dung sáng tạo, năng động và theo trend.`;
-            } else {
-              content = `🎵 ${contentContext}${briefDescription}\n\nTikTok yêu cầu nội dung sáng tạo, năng động và theo trend.`;
-            }
-            hashtags = '#TikTok #Trending #Creative #Video #Viral';
-            break;
-          default:
-            content = briefDescription;
-            hashtags = '#SocialMedia #Content';
-        }
-        
-        platformContent[platform] = {
-          text: content,
-          hashtags: hashtags
+        articleData = {
+          id: article.id,
+          title: article.title,
+          content: article.textContent || article.content,
+          imageUrl: article.imageUrl
         };
       }
 
-      // Deduct credits
-      await storage.subtractUserCredits(userId, 5, `Tạo nội dung social media cho ${platforms.length} nền tảng`);
-
-      const response = {
-        platforms: platformContent,
-        creditsUsed: 5,
-        includeImage: includeImage
+      // Prepare webhook payload as JavaScript object
+      const webhookPayload = {
+        userId: userId,
+        contentSource: contentSource,
+        briefDescription: briefDescription,
+        selectedArticle: articleData,
+        referenceLink: referenceLink,
+        platforms: platforms,
+        includeImage: includeImage,
+        imageSource: imageSource,
+        imagePrompt: imagePrompt,
+        userInfo: {
+          id: user.id,
+          username: user.username,
+          language: user.language
+        },
+        timestamp: new Date().toISOString()
       };
 
-      res.json({ success: true, data: response });
+      // Send data to webhook
+      const fetch = (await import('node-fetch')).default;
+      const webhookResponse = await fetch(socialContentWebhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(webhookPayload),
+        timeout: 30000 // 30 second timeout
+      });
+
+      if (!webhookResponse.ok) {
+        console.error('Webhook request failed:', webhookResponse.status, webhookResponse.statusText);
+        return res.status(500).json({ 
+          success: false, 
+          error: `Webhook request failed: ${webhookResponse.status} ${webhookResponse.statusText}` 
+        });
+      }
+
+      const webhookResult = await webhookResponse.json();
+
+      // Deduct credits after successful webhook call
+      await storage.subtractUserCredits(userId, 5, `Tạo nội dung social media cho ${platforms.length} nền tảng`);
+
+      // Return webhook response to frontend
+      res.json({ 
+        success: true, 
+        data: {
+          ...webhookResult,
+          creditsUsed: 5
+        }
+      });
     } catch (error) {
       console.error('Error generating social media content:', error);
       res.status(500).json({ success: false, error: 'Failed to generate social media content' });
