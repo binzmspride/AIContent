@@ -1134,15 +1134,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Deduct credits
-      await storage.updateUserCredits(userId, user.credits - 5);
-      
-      // Create credit transaction record
-      await storage.createCreditTransaction({
-        userId,
-        amount: -5,
-        description: `Tạo nội dung social media cho ${platforms.length} nền tảng`,
-        type: 'usage'
-      });
+      await storage.subtractUserCredits(userId, 5, `Tạo nội dung social media cho ${platforms.length} nền tảng`);
 
       const response = {
         platforms: platformContent,
