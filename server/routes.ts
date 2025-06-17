@@ -1027,7 +1027,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         platforms, 
         includeImage, 
         imageSource, 
-        imagePrompt 
+        imagePrompt,
+        approveExtract
       } = req.body;
 
       // Validate required fields

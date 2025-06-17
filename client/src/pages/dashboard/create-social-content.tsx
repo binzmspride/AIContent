@@ -26,6 +26,7 @@ interface SocialContentForm {
   includeImage: boolean;
   imageSource?: string;
   imagePrompt?: string;
+  approveExtract: boolean;
 }
 
 export default function CreateSocialContentPage() {
@@ -41,7 +42,8 @@ export default function CreateSocialContentPage() {
     platforms: [],
     includeImage: false,
     imageSource: 'ai-generated',
-    imagePrompt: ''
+    imagePrompt: '',
+    approveExtract: false
   });
 
   const [selectedImage, setSelectedImage] = useState<any>(null);
@@ -268,6 +270,25 @@ export default function CreateSocialContentPage() {
                         </Command>
                       </PopoverContent>
                     </Popover>
+                  </div>
+                )}
+
+                {/* Approve Extract checkbox (only when using existing article) */}
+                {form.contentSource === 'existing-article' && (
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="approveExtract"
+                        checked={form.approveExtract}
+                        onCheckedChange={(checked) => setForm(prev => ({ ...prev, approveExtract: checked as boolean }))}
+                      />
+                      <Label htmlFor="approveExtract" className="text-sm font-normal cursor-pointer">
+                        Trích xuất nội dung từ bài viết có sẵn
+                      </Label>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Cho phép hệ thống trích xuất và tối ưu hóa nội dung từ bài viết đã chọn
+                    </p>
                   </div>
                 )}
 
