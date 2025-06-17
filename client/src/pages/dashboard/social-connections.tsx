@@ -149,6 +149,31 @@ export default function SocialConnections() {
     });
   };
 
+  // Test connection mutation
+  const testConnectionMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/social-connections/${id}/test`, {
+        method: 'POST',
+      });
+      if (!response.ok) throw new Error('Failed to test connection');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Kết quả test",
+        description: data.message || "Kết nối thành công!",
+        variant: data.success ? "default" : "destructive",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Lỗi test kết nối",
+        description: error.message || "Không thể test kết nối",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleCreateConnection = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -703,6 +728,17 @@ export default function SocialConnections() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => testConnectionMutation.mutate(connection.id)}
+                            disabled={testConnectionMutation.isPending}
+                            className="text-blue-600 hover:text-blue-700"
+                          >
+                            <Settings className="h-4 w-4" />
+                            Test
+                          </Button>
+                          
                           <Button
                             variant="ghost"
                             size="sm"

@@ -2702,6 +2702,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test social connection
+  app.post('/api/social-connections/:id/test', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const connectionId = parseInt(req.params.id);
+
+      const connection = await storage.getSocialConnection(connectionId);
+      if (!connection || connection.userId !== userId) {
+        return res.status(404).json({ success: false, error: 'Connection not found' });
+      }
+
+      let testResult = { success: false, message: '' };
+
+      if (connection.platform === 'wordpress') {
+        // Test WordPress connection
+        try {
+          const settings = connection.settings as any;
+          const baseUrl = settings.websiteUrl?.replace(/\/$/, '');
+          const testUrl = `${baseUrl}/wp-json/wp/v2/posts`;
+          
+          let authHeader = '';
+          if (settings.authType === 'app-password') {
+            const credentials = Buffer.from(`${settings.username}:${settings.appPassword}`).toString('base64');
+            authHeader = `Basic ${credentials}`;
+          } else if (settings.authType === 'api-token') {
+            authHeader = `Bearer ${settings.apiToken}`;
+          }
+
+          const response = await fetch(testUrl, {
+            method: 'GET',
+            headers: {
+              'Authorization': authHeader,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (response.ok) {
+            testResult = { 
+              success: true, 
+              message: `Kết nối WordPress thành công! Website: ${baseUrl}` 
+            };
+          } else {
+            const errorText = await response.text();
+            testResult = { 
+              success: false, 
+              message: `Lỗi kết nối WordPress: ${response.status} ${response.statusText}. ${errorText}` 
+            };
+          }
+        } catch (error: any) {
+          testResult = { 
+            success: false, 
+            message: `Lỗi kết nối WordPress: ${error.message}` 
+          };
+        }
+      } else {
+        // Test other social media platforms
+        testResult = { 
+          success: false, 
+          message: `Test kết nối cho ${connection.platform} chưa được hỗ trợ` 
+        };
+      }
+
+      res.json({
+        success: testResult.success,
+        message: testResult.message
+      });
+
+    } catch (error: any) {
+      console.error('Error testing social connection:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Lỗi khi test kết nối: ' + (error?.message || 'Unknown error')
+      });
+    }
+  });
+
   // Get user's scheduled posts
   app.get('/api/scheduled-posts', async (req, res) => {
     try {

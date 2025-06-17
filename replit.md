@@ -129,6 +129,7 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
+- June 17, 2025: Added "Test Connection" button for social connections - allows testing WordPress connections via REST API with detailed error reporting
 - June 17, 2025: Fixed social connections list not updating after creating new connections - corrected data structure handling and TypeScript typing
 - June 16, 2025: Completed scheduled posts feature with article selection, social media integration, and proper sidebar navigation  
 - June 16, 2025: Removed Access Token and Refresh Token fields from WordPress connection forms - simplified authentication to use only Username and Application Password
