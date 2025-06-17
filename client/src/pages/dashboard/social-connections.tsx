@@ -828,7 +828,7 @@ export default function SocialConnections() {
                     <Input
                       id="edit-siteUrl"
                       name="siteUrl"
-                      defaultValue={selectedConnection.settings?.siteUrl || ''}
+                      defaultValue={selectedConnection.settings?.websiteUrl || ''}
                       placeholder="https://yoursite.com"
                       type="url"
                     />

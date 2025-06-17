@@ -129,6 +129,7 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
+- June 17, 2025: Fixed URL Website field not saving in WordPress connection edit form - corrected field name mapping between form input and data storage
 - June 17, 2025: Enhanced "Test Connection" feature with debug logging and improved Application Password handling - better error diagnostics for WordPress connections
 - June 17, 2025: Fixed social connections list not updating after creating new connections - corrected data structure handling and TypeScript typing
 - June 16, 2025: Completed scheduled posts feature with article selection, social media integration, and proper sidebar navigation  
