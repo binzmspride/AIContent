@@ -215,6 +215,9 @@ export default function CreateSocialContentPage() {
       });
     },
     onSuccess: () => {
+      // Invalidate articles cache to refresh "Nội dung đã tạo" list
+      queryClient.invalidateQueries({ queryKey: ['/api/dashboard/articles'] });
+      
       toast({
         title: "Thành công",
         description: "Nội dung đã được lưu vào 'Nội dung đã tạo'",
