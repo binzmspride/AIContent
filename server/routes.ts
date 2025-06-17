@@ -1202,7 +1202,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const finalWebhookPayload = {
         content: contentSource === 'existing-article' ? extracted_data : briefDescription,
         url: referenceLink || "",
-        extract_content: contentSource === 'existing-article' ? "true" : "false",
+        extract_content: "false", // Always false when approving (content already extracted)
         extracted_data: extracted_data || "",
         post_to_linkedin: platforms.includes('linkedin') ? "true" : "false",
         post_to_facebook: platforms.includes('facebook') ? "true" : "false",
