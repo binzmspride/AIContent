@@ -1194,18 +1194,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Create article entry for social content
-      const [savedContent] = await db.insert(articles).values({
+      const [savedContent] = await db.insert(schema.articles).values({
         userId: userId,
         title: title,
         content: formattedContent,
-        keywords: platforms || [],
-        metaDescription: `Social media content cho ${platforms?.join(', ') || 'multiple platforms'}`,
-        language: 'vi',
-        articleType: 'social',
+        textContent: formattedContent, // Same as content for social media posts
+        keywords: platforms?.join(', ') || '',
         status: 'published',
-        wordCount: formattedContent.length,
-        readingTime: Math.ceil(formattedContent.length / 200), // Estimate reading time
-        seoScore: 85, // Default score for social content
+        creditsUsed: 0, // No credits for saving already generated content
         createdAt: new Date(),
         updatedAt: new Date()
       }).returning();

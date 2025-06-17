@@ -206,7 +206,7 @@ export default function CreateSocialContentPage() {
 
   const handleSaveToCreatedContent = useMutation({
     mutationFn: async () => {
-      return await apiRequest('/api/social/save-created-content', {
+      return await apiRequest('POST', '/api/social/save-created-content', {
         content: finalSocialContent,
         title: `Social Media Content - ${new Date().toLocaleDateString('vi-VN')}`,
         platforms: form.platforms,
