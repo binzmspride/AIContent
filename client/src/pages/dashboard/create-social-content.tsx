@@ -15,7 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { Loader2, Sparkles, FileText, Eye, Copy, Download, Share2, Zap, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Sparkles, FileText, Eye, Copy, Download, Share2, Zap, Image as ImageIcon, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface SocialContentForm {
@@ -763,7 +763,7 @@ export default function CreateSocialContentPage() {
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-500" />
+              <Check className="h-5 w-5 text-green-500" />
               Bài viết đã tạo
             </DialogTitle>
             <DialogDescription>
