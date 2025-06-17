@@ -53,7 +53,7 @@ export default function SocialConnections() {
   const [wordpressAuthType, setWordpressAuthType] = useState<string>('api-token');
 
   // Fetch social connections
-  const { data: connectionsData, isLoading } = useQuery({
+  const { data: connectionsData, isLoading } = useQuery<{success: boolean, data: SocialConnection[]}>({
     queryKey: ['/api/social-connections'],
   });
 
@@ -68,12 +68,14 @@ export default function SocialConnections() {
       if (!response.ok) throw new Error('Failed to create connection');
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/social-connections'] });
       setShowCreateDialog(false);
+      setSelectedPlatform('');
+      setWordpressAuthType('api-token');
       toast({
         title: "Thành công",
-        description: "Kết nối đã được tạo thành công!",
+        description: `Kết nối ${data.data?.accountName || 'mới'} đã được tạo thành công!`,
       });
     },
     onError: (error: any) => {
@@ -243,7 +245,7 @@ export default function SocialConnections() {
     });
   };
 
-  const connections = Array.isArray(connectionsData) ? connectionsData : [];
+  const connections = (connectionsData?.data && Array.isArray(connectionsData.data)) ? connectionsData.data : [];
 
   if (isLoading) {
     return (
