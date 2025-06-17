@@ -1098,23 +1098,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
       }
 
-      // Prepare webhook payload as JavaScript object
+      // Prepare webhook payload with the correct keys
       const webhookPayload = {
-        userId: userId,
-        contentSource: contentSource,
-        briefDescription: briefDescription,
-        selectedArticle: articleData,
-        referenceLink: referenceLink,
-        platforms: platforms,
-        includeImage: includeImage,
-        imageSource: imageSource,
-        imagePrompt: imagePrompt,
-        userInfo: {
-          id: user.id,
-          username: user.username,
-          language: user.language
-        },
-        timestamp: new Date().toISOString()
+        content: contentSource === 'existing-article' ? 
+          (articleData ? `${articleData.title}\n\n${articleData.content}` : briefDescription) : 
+          briefDescription,
+        url: referenceLink || "",
+        extract_content: contentSource === 'existing-article' ? "true" : "false",
+        post_to_linkedin: platforms.includes('linkedin') ? "true" : "false",
+        post_to_facebook: platforms.includes('facebook') ? "true" : "false",
+        post_to_x: platforms.includes('twitter') ? "true" : "false",
+        post_to_instagram: platforms.includes('instagram') ? "true" : "false",
+        genSEO: false,
+        approve_extract: "false"
       };
 
       // Send data to webhook
