@@ -683,16 +683,22 @@ export default function CreateSocialContentPage() {
                   <Button 
                     variant="destructive"
                     className="flex items-center gap-2"
+                    disabled={generateContentMutation.isPending}
                     onClick={() => {
                       setShowResultDialog(false);
+                      // Tự động tạo lại nội dung
+                      generateContentMutation.mutate(form);
                       toast({
-                        title: "Từ chối",
-                        description: "Nội dung đã bị từ chối. Có thể tạo lại nội dung mới.",
-                        variant: "destructive",
+                        title: "Đang tạo lại",
+                        description: "Đang tạo lại nội dung với cùng thông tin...",
                       });
                     }}
                   >
-                    <FileText className="h-4 w-4" />
+                    {generateContentMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <FileText className="h-4 w-4" />
+                    )}
                     Từ chối & Trích xuất lại
                   </Button>
                 </div>
