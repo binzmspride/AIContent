@@ -1287,6 +1287,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const apiSettings = await storage.getSettingsByCategory('api');
       const firebaseSettings = await storage.getSettingsByCategory('firebase');
       const imageSettings = await storage.getSettingsByCategory('image_generation');
+      const socialSettings = await storage.getSettingsByCategory('social_content');
       
       // Chuẩn bị đối tượng cài đặt
       const settings = {
@@ -1337,6 +1338,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         imageWebhookUrl: imageSettings.imageWebhookUrl || "",
         imageCreditsPerGeneration: parseInt(imageSettings.imageCreditsPerGeneration || "1"),
         enableImageGeneration: imageSettings.enableImageGeneration === "true",
+        
+        // Social media content generation settings
+        socialContentWebhookUrl: socialSettings.socialContentWebhookUrl || "",
+        socialContentCreditsPerGeneration: parseInt(socialSettings.socialContentCreditsPerGeneration || "1"),
+        enableSocialContentGeneration: socialSettings.enableSocialContentGeneration === "true",
         
         // Firebase settings
         firebaseApiKey: firebaseSettings.firebaseApiKey || "",
