@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { Loader2, Sparkles, FileText, Eye, Copy, Download, Share2, Zap, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -51,6 +52,7 @@ export default function CreateSocialContentPage() {
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   const [previewMode, setPreviewMode] = useState('facebook');
   const [open, setOpen] = useState(false);
+  const [showResultDialog, setShowResultDialog] = useState(false);
 
   // Fetch user's articles when content source is from existing articles
   const { data: articlesData } = useQuery({
@@ -96,6 +98,7 @@ export default function CreateSocialContentPage() {
     },
     onSuccess: (data) => {
       setGeneratedContent(data.data);
+      setShowResultDialog(true);
       toast({
         title: "Thành công",
         description: "Đã tạo nội dung social media thành công!",
@@ -620,6 +623,84 @@ export default function CreateSocialContentPage() {
           </div>
         </div>
       </div>
+
+      {/* Dialog hiển thị kết quả từ AI */}
+      <Dialog open={showResultDialog} onOpenChange={setShowResultDialog}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-blue-500" />
+              Kết quả tạo nội dung Social Media
+            </DialogTitle>
+            <DialogDescription>
+              Nội dung được tạo thành công từ AI
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {generatedContent && (
+              <div className="space-y-4">
+                {/* Hiển thị output từ response */}
+                {generatedContent.output && (
+                  <div className="space-y-2">
+                    <h3 className="font-medium text-sm">Nội dung được tạo:</h3>
+                    <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
+                      <pre className="whitespace-pre-wrap text-sm font-mono">
+                        {generatedContent.output}
+                      </pre>
+                    </div>
+                  </div>
+                )}
+
+                {/* Hiển thị toàn bộ response nếu có */}
+                <div className="space-y-2">
+                  <h3 className="font-medium text-sm">Response chi tiết:</h3>
+                  <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border max-h-60 overflow-y-auto">
+                    <pre className="text-xs font-mono">
+                      {JSON.stringify(generatedContent, null, 2)}
+                    </pre>
+                  </div>
+                </div>
+
+                {/* Copy button */}
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      if (generatedContent.output) {
+                        navigator.clipboard.writeText(generatedContent.output);
+                        toast({
+                          title: "Đã sao chép",
+                          description: "Nội dung đã được sao chép vào clipboard",
+                        });
+                      }
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Copy className="h-4 w-4" />
+                    Copy nội dung
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      navigator.clipboard.writeText(JSON.stringify(generatedContent, null, 2));
+                      toast({
+                        title: "Đã sao chép",
+                        description: "Response đầy đủ đã được sao chép vào clipboard",
+                      });
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Copy className="h-4 w-4" />
+                    Copy JSON
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }
