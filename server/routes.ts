@@ -1428,7 +1428,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         notificationWebhookUrl, 
         imageWebhookUrl, 
         imageCreditsPerGeneration, 
-        enableImageGeneration 
+        enableImageGeneration,
+        socialContentWebhookUrl,
+        socialContentCreditsPerGeneration,
+        enableSocialContentGeneration
       } = req.body;
       
       console.log('Webhook settings update request received:');
@@ -1437,12 +1440,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('- imageWebhookUrl:', imageWebhookUrl);
       console.log('- imageCreditsPerGeneration:', imageCreditsPerGeneration);
       console.log('- enableImageGeneration:', enableImageGeneration);
+      console.log('- socialContentWebhookUrl:', socialContentWebhookUrl);
+      console.log('- socialContentCreditsPerGeneration:', socialContentCreditsPerGeneration);
+      console.log('- enableSocialContentGeneration:', enableSocialContentGeneration);
       
       let webhookUrlResult = true;
       let webhookSecretResult = true;
       let imageWebhookResult = true;
       let imageCreditsResult = true;
       let enableImageResult = true;
+      let socialWebhookResult = true;
+      let socialCreditsResult = true;
+      let enableSocialResult = true;
       
       // Update notification webhook URL if provided
       if (notificationWebhookUrl !== undefined) {
