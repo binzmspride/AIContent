@@ -40,6 +40,7 @@ import EditArticle from "@/pages/dashboard/edit-article";
 import ScheduledPosts from "@/pages/dashboard/scheduled-posts";
 import PublishingLogs from "@/pages/dashboard/publishing-logs";
 import SocialConnections from "@/pages/dashboard/social-connections";
+import ThemeDemo from "@/pages/dashboard/theme-demo";
 import Article from "@/pages/article";
 import VerifyEmail from "@/pages/verify-email";
 import ForgotPassword from "@/pages/forgot-password";
@@ -109,6 +110,7 @@ function Router() {
       <ProtectedRoute path="/dashboard/scheduled-posts" component={ScheduledPosts} />
       <ProtectedRoute path="/dashboard/publishing-logs" component={PublishingLogs} />
       <ProtectedRoute path="/dashboard/social-connections" component={SocialConnections} />
+      <ProtectedRoute path="/dashboard/theme-demo" component={ThemeDemo} />
       <ProtectedRoute path="/dashboard/settings" component={Settings} />
       <Route path="/article/:id" component={Article} />
       
