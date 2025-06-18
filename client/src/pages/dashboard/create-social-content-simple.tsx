@@ -77,19 +77,31 @@ export default function CreateSocialContent() {
       return await apiRequest('POST', '/api/social/extract-content', formData);
     },
     onSuccess: (response: any) => {
+      console.log('=== EXTRACT SUCCESS ===');
       console.log('Extract response:', response);
       console.log('Response data:', response.data);
       console.log('Extracted content:', response.data?.extractedContent);
       
       const content = response.data?.extractedContent || response.extractedContent || '';
       console.log('Final content to set:', content);
+      console.log('Content length:', content.length);
       
-      setExtractedContent(content);
-      setCurrentStep(2);
-      toast({
-        title: "Thành công",
-        description: `Đã trích xuất nội dung (${content.length} ký tự)`
-      });
+      if (content && content.length > 0) {
+        setExtractedContent(content);
+        setCurrentStep(2);
+        console.log('=== MOVING TO STEP 2 ===');
+        toast({
+          title: "Thành công",
+          description: `Đã trích xuất nội dung (${content.length} ký tự)`
+        });
+      } else {
+        console.log('=== NO CONTENT RECEIVED ===');
+        toast({
+          title: "Lỗi",
+          description: "Không nhận được nội dung từ webhook",
+          variant: "destructive"
+        });
+      }
     },
     onError: (error: any) => {
       toast({
