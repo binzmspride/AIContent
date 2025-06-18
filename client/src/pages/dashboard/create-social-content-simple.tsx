@@ -17,14 +17,11 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 interface FormData {
-  contentSource: 'manual' | 'existing-article' | 'create-new-seo';
+  contentSource: 'manual' | 'existing-article';
   briefDescription: string;
   selectedArticleId?: number;
   referenceLink?: string;
   platforms: string[];
-  // For creating new SEO article
-  seoKeywords?: string;
-  seoTopic?: string;
 }
 
 const platformOptions = [
