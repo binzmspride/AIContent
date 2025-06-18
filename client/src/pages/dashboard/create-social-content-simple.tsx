@@ -498,7 +498,7 @@ export default function CreateSocialContent() {
     setPublishingStatus(prev => ({ ...prev, [platform]: 'publishing' }));
     
     const content = generatedContent[platform];
-    const imageUrls = selectedImage ? [selectedImage.url] : [];
+    const imageUrls = selectedImage ? [selectedImage.imageUrl || selectedImage.url] : [];
     
     publishNowMutation.mutate({ platform, content, imageUrls });
   };
@@ -538,7 +538,7 @@ export default function CreateSocialContent() {
     }
 
     const content = generatedContent[schedulingPlatform];
-    const imageUrls = selectedImage ? [selectedImage.url] : [];
+    const imageUrls = selectedImage ? [selectedImage.imageUrl || selectedImage.url] : [];
     
     setPublishingStatus(prev => ({ ...prev, [schedulingPlatform]: 'publishing' }));
     schedulePostMutation.mutate({ 
@@ -653,9 +653,13 @@ export default function CreateSocialContent() {
                           <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
                             <h4 className="font-medium mb-2">Hình ảnh:</h4>
                             <img 
-                              src={selectedImage.url} 
-                              alt="Selected" 
+                              src={selectedImage.imageUrl || selectedImage.url} 
+                              alt={selectedImage.title || "Selected image"} 
                               className="w-24 h-24 object-cover rounded-lg"
+                              onError={(e) => {
+                                console.error('Image load error:', e);
+                                console.log('selectedImage object:', selectedImage);
+                              }}
                             />
                           </div>
                         )}
