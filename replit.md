@@ -129,6 +129,8 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
+- June 18, 2025: UI refinement for Social Media Content wizard - removed "Nội dung đã trích xuất" section from step 2 and cleaned up step titles by removing "(tùy chọn)" text for cleaner interface
+- June 18, 2025: Enhanced Social Media Content platform previews with improved dark mode support - fixed text and border colors for Instagram, Facebook, LinkedIn, and Twitter/X previews to ensure proper contrast and readability
 - June 18, 2025: Completed bidirectional navigation for Social Media Content wizard - added both "Quay lại" (Back) and "Tiếp theo" (Next) buttons for seamless navigation between steps, plus 5 sample images added to image library
 - June 18, 2025: Enhanced Social Media Content creation with advanced image management - added React Quill rich text editor, "Re-extract" button, and comprehensive image options (library selection, AI generation, file upload) with preview functionality
 - June 17, 2025: Fixed URL Website field not saving in WordPress connection edit form - corrected field name mapping between form input and data storage

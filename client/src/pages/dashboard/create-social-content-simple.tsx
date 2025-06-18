@@ -562,34 +562,7 @@ export default function CreateSocialContent() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label>Nội dung đã trích xuất</Label>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => extractMutation.mutate()}
-                    disabled={extractMutation.isPending}
-                  >
-                    {extractMutation.isPending ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Đang trích xuất...
-                      </>
-                    ) : (
-                      <>
-                        <RefreshCw className="w-4 h-4 mr-2" />
-                        Trích xuất lại
-                      </>
-                    )}
-                  </Button>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg max-h-40 overflow-y-auto">
-                  <pre className="whitespace-pre-wrap text-sm">{extractedContent}</pre>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <Label>Chỉnh sửa nội dung (tùy chọn)</Label>
+                <Label>Chỉnh sửa nội dung</Label>
                 <div className="bg-white dark:bg-gray-800 rounded-lg border">
                   <ReactQuill
                     value={extractedContent}
