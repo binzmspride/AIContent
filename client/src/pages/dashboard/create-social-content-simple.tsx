@@ -228,6 +228,8 @@ export default function CreateSocialContent() {
       return await response.json();
     },
     onSuccess: async (data: any) => {
+      console.log('SEO article creation success:', data);
+      
       if (data?.success && data?.data?.id) {
         // Update form with new article ID
         setFormData({ 
@@ -240,6 +242,8 @@ export default function CreateSocialContent() {
           title: "Thành công",
           description: `Đã tạo bài viết SEO: ${formData.seoTopic}`
         });
+
+        console.log('About to send webhook for social content extraction...');
 
         // Send to configured webhook for social content creation (same as "từ bài viết có sẵn")
         try {
@@ -258,6 +262,7 @@ export default function CreateSocialContent() {
           const webhookResponse = await apiRequest('POST', '/api/social/extract-content', socialWebhookData);
           
           console.log('Social webhook response status:', webhookResponse.status);
+          console.log('Social webhook response object:', webhookResponse);
           
           if (webhookResponse.ok) {
             const responseData = await webhookResponse.json();
@@ -272,17 +277,23 @@ export default function CreateSocialContent() {
           } else {
             const errorText = await webhookResponse.text();
             console.error('Social webhook response error:', webhookResponse.status, errorText);
+            toast({
+              title: "Lỗi webhook",
+              description: `Webhook error: ${webhookResponse.status}`,
+              variant: "destructive"
+            });
           }
         } catch (error) {
           console.error('Social webhook error:', error);
           toast({
-            title: "Thông báo",
-            description: "Bài viết SEO đã tạo thành công. Social content sẽ được xử lý riêng.",
-            variant: "default"
+            title: "Lỗi webhook",
+            description: `Webhook error: ${error.message}`,
+            variant: "destructive"
           });
         }
 
         // Automatically extract content from the new article
+        console.log('Calling extractMutation.mutate...');
         extractMutation.mutate();
       } else {
         toast({
