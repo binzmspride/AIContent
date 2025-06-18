@@ -293,9 +293,9 @@ export default function CreateSocialContent() {
             });
           }
 
-          // Automatically extract content from the new article
-          console.log('Calling extractMutation.mutate...');
-          extractMutation.mutate();
+          // Automatically generate social content for the new article
+          console.log('Calling generateSocialMutation.mutate...');
+          generateSocialMutation.mutate();
         } else {
           toast({
             title: "Lỗi",
@@ -322,7 +322,57 @@ export default function CreateSocialContent() {
     }
   });
 
-  // Step 1: Extract content
+  // Generate social content for "Tạo bài viết SEO mới" flow
+  const generateSocialMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('POST', '/api/social/generate-content', formData);
+      return await response.json();
+    },
+    onSuccess: (data: any) => {
+      console.log('Generate social success data:', data);
+      
+      // Extract content from response structure
+      let content = '';
+      if (data?.data?.content) {
+        content = data.data.content;
+      } else if (data?.content) {
+        content = data.content;
+      } else if (data?.success && data?.data) {
+        // Handle different response structures
+        const responseData = data.data;
+        if (typeof responseData === 'string') {
+          content = responseData;
+        } else if (responseData.output) {
+          content = responseData.output;
+        }
+      }
+      
+      if (content) {
+        setExtractedContent(content);
+        setCurrentStep(2);
+        toast({
+          title: "Thành công",
+          description: "Đã tạo nội dung social media thành công",
+        });
+      } else {
+        toast({
+          title: "Lỗi",
+          description: "Không thể tạo nội dung social media",
+          variant: "destructive"
+        });
+      }
+    },
+    onError: (error: any) => {
+      console.error('Generate social error:', error);
+      toast({
+        title: "Lỗi",
+        description: error.message || "Có lỗi xảy ra khi tạo nội dung",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Step 1: Extract content (for existing article flow)
   const extractMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest('POST', '/api/social/extract-content', formData);
