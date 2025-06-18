@@ -241,58 +241,44 @@ export default function CreateSocialContent() {
           description: `Đã tạo bài viết SEO: ${formData.seoTopic}`
         });
 
-        // Send JSON to webhook for social content creation
+        // Send to configured webhook for social content creation (same as "từ bài viết có sẵn")
         try {
-          const webhookData = {
-            articleId: data.data.id,
+          const socialWebhookData = {
+            contentSource: 'ai-keyword', // Indicate this is from AI keyword generation
+            briefDescription: `${formData.seoTopic}\n\nKeywords: ${formData.seoKeywords}`,
             platforms: formData.platforms,
-            briefDescription: formData.briefDescription,
-            referenceLink: formData.referenceLink,
+            referenceLink: formData.referenceLink || "",
+            selectedArticleId: data.data.id, // Use the newly created article
             seoKeywords: formData.seoKeywords,
             seoTopic: formData.seoTopic
           };
           
-          console.log('Sending webhook data:', webhookData);
-          console.log('Webhook URL: /api/social-content/webhook');
+          console.log('Sending social content webhook data:', socialWebhookData);
           
-          const webhookResponse = await apiRequest('POST', '/api/social-content/webhook', webhookData);
+          const webhookResponse = await apiRequest('POST', '/api/social/generate-content', socialWebhookData);
           
-          console.log('Webhook response status:', webhookResponse.status);
-          console.log('Webhook response headers:', Array.from(webhookResponse.headers.entries()));
+          console.log('Social webhook response status:', webhookResponse.status);
           
-          // Check if response is OK
           if (webhookResponse.ok) {
-            const contentType = webhookResponse.headers.get('content-type');
-            console.log('Response content-type:', contentType);
+            const responseData = await webhookResponse.json();
+            console.log('Social webhook response data:', responseData);
             
-            if (contentType && contentType.includes('application/json')) {
-              const responseData = await webhookResponse.json();
-              console.log('Webhook response data:', responseData);
-              
-              if (responseData?.success) {
-                toast({
-                  title: "Webhook thành công",
-                  description: "Đã gửi thông tin tạo social content qua webhook",
-                });
-              }
-            } else {
-              const responseText = await webhookResponse.text();
-              console.log('Webhook response text:', responseText);
+            if (responseData?.success) {
               toast({
-                title: "Webhook thành công",
-                description: "Đã gửi thông tin qua webhook",
+                title: "Social content đã được tạo",
+                description: "Đã gửi yêu cầu tạo nội dung mạng xã hội thành công",
               });
             }
           } else {
             const errorText = await webhookResponse.text();
-            console.error('Webhook response not OK:', webhookResponse.status, errorText);
+            console.error('Social webhook response error:', webhookResponse.status, errorText);
           }
         } catch (error) {
-          console.error('Webhook error:', error);
+          console.error('Social webhook error:', error);
           toast({
-            title: "Cảnh báo",
-            description: "Tạo bài viết thành công nhưng webhook có lỗi",
-            variant: "destructive"
+            title: "Thông báo",
+            description: "Bài viết SEO đã tạo thành công. Social content sẽ được xử lý riêng.",
+            variant: "default"
           });
         }
 
