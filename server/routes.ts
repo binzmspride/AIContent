@@ -457,13 +457,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Gửi request đến webhook
       console.log('Sending content request to webhook:', webhookUrl);
       
-      // Thêm userId và username vào yêu cầu
-      contentRequest.userId = userId;
-      contentRequest.username = req.user.username;
-      contentRequest.timestamp = new Date().toISOString();
+      // Create unified payload format for both endpoints
+      const webhookPayload = {
+        content: `Từ khóa: ${contentRequest.keywords}\nChủ đề: ${contentRequest.topic || contentRequest.title}`,
+        url: "",
+        extract_content: "false",
+        post_to_linkedin: "false",
+        post_to_facebook: "false", 
+        post_to_x: "false",
+        post_to_instagram: "false",
+        genSEO: "true",
+        approve_extract: "false"
+      };
       
       // Ghi log yêu cầu gửi đến webhook
-      console.log('Webhook payload:', JSON.stringify(contentRequest, null, 2));
+      console.log('Webhook payload:', JSON.stringify(webhookPayload, null, 2));
       
       // Tạo header cho request
       const headers: HeadersInit = {
@@ -485,7 +493,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const webhookResponse = await fetch(webhookUrl, {
           method: 'POST',
           headers,
-          body: JSON.stringify(contentRequest),
+          body: JSON.stringify(webhookPayload),
           signal: controller.signal
         });
         
