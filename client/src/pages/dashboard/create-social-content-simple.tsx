@@ -57,7 +57,9 @@ export default function CreateSocialContent() {
         const hasContent = article.content && article.content.trim().length > 0;
         const isNotSocialMedia = !article.type || article.type !== 'social_media';
         const hasTitle = article.title && article.title.trim().length > 0;
-        const isNotDefaultTitle = article.title !== 'Bài viết mới'; // Exclude default titles
+        const isNotDefaultTitle = article.title !== 'Bài viết mới' && 
+                                  article.title !== 'Default Title' &&
+                                  !article.title.startsWith('Social Media Content'); // Exclude default/social media titles
         
         console.log(`Article ${article.id}: title="${article.title}", type="${article.type}", hasContent=${hasContent}, isValidTitle=${isNotDefaultTitle}`);
         
@@ -167,14 +169,16 @@ export default function CreateSocialContent() {
   };
 
   const handleExtract = () => {
-    if (!formData.briefDescription.trim()) {
+    // Validate based on content source
+    if (formData.contentSource === 'existing-article' && !formData.selectedArticleId) {
       toast({
         title: "Thiếu thông tin",
-        description: "Vui lòng nhập mô tả ngắn gọn",
+        description: "Vui lòng chọn bài viết SEO",
         variant: "destructive"
       });
       return;
     }
+    
     if (formData.platforms.length === 0) {
       toast({
         title: "Thiếu thông tin",
@@ -355,16 +359,7 @@ export default function CreateSocialContent() {
                 />
               </div>
 
-              {/* Brief Description */}
-              <div className="space-y-3">
-                <Label>Mô tả ngắn gọn *</Label>
-                <Textarea
-                  placeholder="Mô tả ngắn gọn về nội dung bạn muốn tạo..."
-                  value={formData.briefDescription}
-                  onChange={(e) => setFormData({ ...formData, briefDescription: e.target.value })}
-                  rows={4}
-                />
-              </div>
+
 
               {/* Platform Selection */}
               <div className="space-y-3">
