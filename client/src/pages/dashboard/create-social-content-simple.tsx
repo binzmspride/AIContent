@@ -97,9 +97,10 @@ export default function CreateSocialContent() {
     queryKey: ['/api/dashboard/images'],
     enabled: includeImage && imageSource === 'library',
     queryFn: async () => {
-      const response = await apiRequest('GET', '/api/dashboard/images');
+      const response = await apiRequest('GET', '/api/dashboard/images?limit=50');
       const data = await response.json();
       console.log('Images API response:', data);
+      console.log('Images array:', data?.data?.images);
       return data?.success ? data.data?.images || [] : [];
     }
   });
