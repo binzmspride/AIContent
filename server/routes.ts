@@ -1292,10 +1292,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       let webhookResult;
       try {
-        webhookResult = await webhookResponse.json();
+        const responseText = await webhookResponse.text();
+        console.log('Raw webhook response:', responseText.substring(0, 500)); // Log first 500 chars
+        
+        // Try to parse as JSON
+        webhookResult = JSON.parse(responseText);
       } catch (parseError) {
         console.error('Failed to parse webhook response as JSON:', parseError);
-        webhookResult = { message: 'Webhook executed successfully but returned non-JSON response' };
+        const responseText = await webhookResponse.text();
+        console.error('Response content type:', webhookResponse.headers.get('content-type'));
+        console.error('Response was:', responseText.substring(0, 200));
+        
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Webhook returned invalid JSON response. Please check webhook configuration.' 
+        });
       }
 
       // Deduct credits after successful webhook call
