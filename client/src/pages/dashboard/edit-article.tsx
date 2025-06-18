@@ -52,9 +52,10 @@ const EditArticle = () => {
   }
 
   // Fetch article data
-  const { data: articleData, isLoading } = useQuery<{ success: boolean; data: any }>({
-    queryKey: ["/api/dashboard/articles", params.id],
-    retry: false,
+  const { data: articleData, isLoading, error } = useQuery<{ success: boolean; data: any }>({
+    queryKey: [`/api/dashboard/articles/${params.id}`],
+    retry: 3,
+    retryDelay: 1000,
   });
 
   // Fetch images for social content
@@ -162,6 +163,27 @@ const EditArticle = () => {
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Đang tải bài viết...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (error || !articleData?.success) {
+    return (
+      <DashboardLayout>
+        <div className="container mx-auto p-6">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-red-600">Lỗi tải dữ liệu</h1>
+            <p className="text-gray-600 mt-2">Không thể tải thông tin bài viết. Vui lòng thử lại.</p>
+            <div className="mt-4 space-x-4">
+              <Button onClick={() => window.location.reload()} variant="outline">
+                Tải lại
+              </Button>
+              <Button onClick={() => setLocation("/dashboard/my-articles")}>
+                Quay lại danh sách
+              </Button>
+            </div>
           </div>
         </div>
       </DashboardLayout>
