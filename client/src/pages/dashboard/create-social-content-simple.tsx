@@ -1082,18 +1082,13 @@ export default function CreateSocialContent() {
               <div className="flex gap-3">
                 <Button
                   onClick={handleExtract}
-                  disabled={extractMutation.isPending || createSeoMutation.isPending || generateSocialContentMutation.isPending}
+                  disabled={extractMutation.isPending || generateSocialContentMutation.isPending}
                   className="flex-1"
                 >
                   {extractMutation.isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       Đang trích xuất...
-                    </>
-                  ) : createSeoMutation.isPending ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Đang tạo bài viết SEO...
                     </>
                   ) : generateSocialContentMutation.isPending ? (
                     <>
@@ -1103,7 +1098,7 @@ export default function CreateSocialContent() {
                   ) : (
                     <>
                       <FileText className="w-4 h-4 mr-2" />
-                      {formData.contentSource === 'create-new-seo' ? 'Tạo bài viết & Trích xuất' : 'Trích xuất ý chính'}
+                      Trích xuất ý chính
                     </>
                   )}
                 </Button>
