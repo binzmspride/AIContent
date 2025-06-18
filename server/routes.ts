@@ -603,6 +603,152 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Generate SEO articles - unified endpoint
+  app.post('/api/dashboard/articles/generate', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { title, keywords, topic, type, complexity } = req.body;
+      
+      // Check if user has enough credits
+      const userCredits = await storage.getUserCredits(userId);
+      if (userCredits < 1) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Insufficient credits' 
+        });
+      }
+
+      // Get webhook URL for social content generation
+      const socialSettings = await storage.getSystemSettings('social_content');
+      const webhookUrl = socialSettings?.socialContentWebhookUrl;
+
+      if (!webhookUrl) {
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Webhook URL not configured' 
+        });
+      }
+
+      // Create unified payload format
+      const webhookPayload = {
+        content: `Từ khóa: ${Array.isArray(keywords) ? keywords.join(', ') : keywords}\nChủ đề: ${topic || title}`,
+        url: "",
+        extract_content: "false",
+        post_to_linkedin: "false",
+        post_to_facebook: "false", 
+        post_to_x: "false",
+        post_to_instagram: "false",
+        genSEO: "true",
+        approve_extract: "false"
+      };
+
+      console.log('SEO Article Generation - Webhook payload:', JSON.stringify(webhookPayload, null, 2));
+
+      try {
+        const controller = new AbortController();
+        const webhookTimeout = parseInt(process.env.WEBHOOK_TIMEOUT || '30000', 10);
+        const timeoutId = setTimeout(() => controller.abort(), webhookTimeout);
+        
+        const webhookResponse = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(webhookPayload),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!webhookResponse.ok) {
+          return res.status(webhookResponse.status).json({
+            success: false,
+            error: `Webhook error: ${webhookResponse.status}`
+          });
+        }
+        
+        const responseText = await webhookResponse.text();
+        console.log('Webhook response:', responseText);
+        
+        let webhookResult;
+        try {
+          webhookResult = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error('Failed to parse webhook response:', parseError);
+          return res.status(500).json({
+            success: false,
+            error: 'Invalid webhook response format'
+          });
+        }
+
+        // Process webhook result and create article
+        if (webhookResult && webhookResult.success && Array.isArray(webhookResult.data) && webhookResult.data.length > 0) {
+          const firstResult = webhookResult.data[0];
+          
+          if (firstResult.articleContent && firstResult.aiTitle) {
+            // Extract images from content
+            const imageRegex = /<img[^>]+src="([^"]+)"[^>]*>/g;
+            const imageUrls = [];
+            let match;
+            
+            while ((match = imageRegex.exec(firstResult.articleContent)) !== null) {
+              imageUrls.push(match[1]);
+            }
+            
+            // Remove img tags to get text content
+            const textContent = firstResult.articleContent.replace(/<img[^>]*>/g, '').trim();
+            
+            // Create article in database
+            const article = await storage.createArticle({
+              userId,
+              title: firstResult.aiTitle.replace(/[\r\n\t]+/g, ' ').trim(),
+              content: firstResult.articleContent,
+              textContent,
+              imageUrls,
+              keywords: Array.isArray(keywords) ? keywords.join(',') : keywords,
+              creditsUsed: 1,
+              status: 'draft'
+            });
+            
+            // Subtract credits
+            await storage.subtractUserCredits(userId, 1, `SEO article generation: ${article.title}`);
+            
+            return res.json({ 
+              success: true, 
+              data: {
+                id: article.id,
+                title: article.title,
+                content: article.content,
+                keywords: keywords,
+                creditsUsed: 1
+              }
+            });
+          }
+        }
+        
+        return res.status(500).json({
+          success: false,
+          error: 'Invalid webhook response structure'
+        });
+        
+      } catch (webhookError: any) {
+        console.error('Webhook error:', webhookError);
+        return res.status(500).json({
+          success: false,
+          error: 'Failed to generate content via webhook'
+        });
+      }
+      
+    } catch (error) {
+      console.error('Error generating SEO article:', error);
+      res.status(500).json({ success: false, error: 'Failed to generate article' });
+    }
+  });
+
   // Get user's connections
   app.get('/api/dashboard/connections', async (req, res) => {
     try {
