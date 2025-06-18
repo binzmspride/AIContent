@@ -3322,6 +3322,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Social content webhook endpoint
+  app.post('/api/social-content/webhook', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const { articleId, platforms, briefDescription, referenceLink, seoKeywords, seoTopic } = req.body;
+      
+      // Log the webhook data
+      console.log('Social content webhook received:', {
+        articleId,
+        platforms,
+        briefDescription,
+        referenceLink,
+        seoKeywords,
+        seoTopic,
+        timestamp: new Date().toISOString()
+      });
+
+      // Here you can add logic to process the webhook data
+      // For example: save to database, trigger external API calls, etc.
+      
+      res.json({
+        success: true,
+        message: 'Social content webhook processed successfully',
+        data: {
+          articleId,
+          platforms,
+          processedAt: new Date().toISOString()
+        }
+      });
+
+    } catch (error: any) {
+      console.error('Social content webhook error:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to process webhook'
+      });
+    }
+  });
+
   // Get user's scheduled posts
   app.get('/api/scheduled-posts', async (req, res) => {
     try {

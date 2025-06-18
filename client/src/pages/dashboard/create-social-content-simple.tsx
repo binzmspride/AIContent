@@ -227,7 +227,7 @@ export default function CreateSocialContent() {
       });
       return await response.json();
     },
-    onSuccess: (data: any) => {
+    onSuccess: async (data: any) => {
       if (data?.success && data?.data?.id) {
         // Update form with new article ID
         setFormData({ 
@@ -235,10 +235,40 @@ export default function CreateSocialContent() {
           selectedArticleId: data.data.id,
           contentSource: 'existing-article' // Switch to existing article mode
         });
+        
         toast({
           title: "Thành công",
-          description: `Đã tạo bài viết SEO: ${formData.seoTitle}`
+          description: `Đã tạo bài viết SEO: ${formData.seoTopic}`
         });
+
+        // Send JSON to webhook for social content creation
+        try {
+          const webhookResponse = await apiRequest('POST', '/api/social-content/webhook', {
+            articleId: data.data.id,
+            platforms: formData.platforms,
+            briefDescription: formData.briefDescription,
+            referenceLink: formData.referenceLink,
+            seoKeywords: formData.seoKeywords,
+            seoTopic: formData.seoTopic
+          });
+          
+          const webhookData = await webhookResponse.json();
+          
+          if (webhookData?.success) {
+            toast({
+              title: "Webhook thành công",
+              description: "Đã gửi thông tin tạo social content qua webhook",
+            });
+          }
+        } catch (error) {
+          console.error('Webhook error:', error);
+          toast({
+            title: "Cảnh báo",
+            description: "Tạo bài viết thành công nhưng webhook có lỗi",
+            variant: "destructive"
+          });
+        }
+
         // Automatically extract content from the new article
         extractMutation.mutate();
       } else {
