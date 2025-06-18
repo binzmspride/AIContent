@@ -23,6 +23,17 @@ const isAuthenticated = (req: any, res: any, next: any) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Debug middleware to log all requests
+  app.use((req, res, next) => {
+    if (req.url.includes('/api/social')) {
+      console.log(`=== ALL REQUESTS DEBUG ===`);
+      console.log(`${req.method} ${req.url}`);
+      console.log('Headers:', req.headers);
+      console.log('Body:', req.body);
+    }
+    next();
+  });
+
   // Set up authentication routes
   setupAuth(app);
   
@@ -1059,7 +1070,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ========== Social Media Content API ==========
   
   // Extract content for social media
-  app.post('/api/social/extract-content', isAuthenticated, async (req: any, res) => {
+  app.post('/api/social/extract-content', (req, res, next) => {
+    console.log('=== REQUEST RECEIVED TO /api/social/extract-content ===');
+    console.log('Method:', req.method);
+    console.log('URL:', req.url);
+    console.log('Headers:', req.headers);
+    console.log('Body:', req.body);
+    next();
+  }, isAuthenticated, async (req: any, res) => {
     try {
       console.log('=== SOCIAL EXTRACT CONTENT REQUEST ===');
       console.log('Request body:', JSON.stringify(req.body, null, 2));
