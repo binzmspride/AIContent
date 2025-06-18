@@ -1456,7 +1456,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         post_to_x: platforms.includes('twitter') ? "true" : "false",
         post_to_instagram: platforms.includes('instagram') ? "true" : "false",
         genSEO: contentSource === 'create-new-seo' ? "true" : "false", // true when creating from keywords/topic
-        approve_extract: false
+        approve_extract: "false"
       };
 
       const fetch = (await import('node-fetch')).default;
