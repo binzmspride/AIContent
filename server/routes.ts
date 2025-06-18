@@ -1160,15 +1160,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Generate social media content
-  app.post('/api/social/generate-content', async (req, res) => {
+  app.post('/api/social/generate-content', isAuthenticated, async (req: any, res) => {
     try {
       console.log('=== SOCIAL CONTENT GENERATION REQUEST START ===');
       console.log('Request body:', JSON.stringify(req.body, null, 2));
       console.log('User authenticated:', req.isAuthenticated());
-      
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ success: false, error: 'Not authenticated' });
-      }
+      console.log('User:', req.user);
 
       const userId = req.user.id;
       console.log('User ID:', userId);
