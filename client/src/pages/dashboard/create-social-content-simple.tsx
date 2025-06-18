@@ -74,20 +74,21 @@ export default function CreateSocialContent() {
   // Step 1: Extract content
   const extractMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('POST', '/api/social/extract-content', formData);
+      const response = await apiRequest('POST', '/api/social/extract-content', formData);
+      return await response.json();
     },
-    onSuccess: (response: any) => {
-      console.log('Extract success response:', response);
+    onSuccess: (data: any) => {
+      console.log('Extract success data:', data);
       
       // Extract content từ response structure: {success: true, data: {extractedContent: "..."}}
       let content = '';
-      if (response?.data?.extractedContent) {
-        content = response.data.extractedContent;
-      } else if (response?.extractedContent) {
-        content = response.extractedContent;
-      } else if (response?.success && response?.data) {
+      if (data?.data?.extractedContent) {
+        content = data.data.extractedContent;
+      } else if (data?.extractedContent) {
+        content = data.extractedContent;
+      } else if (data?.success && data?.data) {
         // Try to get any content from data object
-        content = response.data.content || response.data.text || '';
+        content = data.data.content || data.data.text || '';
       }
       
       console.log('Extracted content:', content);
