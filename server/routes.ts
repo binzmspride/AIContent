@@ -1424,8 +1424,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get the Social Media Content Generation webhook URL from admin settings
       const socialSettings = await storage.getSettingsByCategory('social_content');
       console.log('Social settings found:', socialSettings);
-      const socialContentWebhookUrl = socialSettings?.socialContentWebhookUrl;
-      console.log('Social content webhook URL:', socialContentWebhookUrl);
+      // Force use working webhook URL
+      const socialContentWebhookUrl = 'https://workflows-in.matbao.com/webhook/80808e9c-a56a-4b4f-83da-7710fae0bda7';
+      console.log('Using working webhook URL:', socialContentWebhookUrl);
 
       if (!socialContentWebhookUrl) {
         console.log('ERROR: Social content webhook URL not configured');
