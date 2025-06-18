@@ -272,22 +272,41 @@ export default function CreateSocialContent() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       const contentArray = generatedContent || [];
-      return await apiRequest('POST', '/api/social/save-created-content', {
+      
+      // Prepare save data with image information
+      const saveData = {
         content: contentArray,
         title: `Social Media Content - ${new Date().toLocaleDateString('vi-VN')}`,
         platforms: formData.platforms,
-        contentSource: 'wizard-generated'
-      });
+        contentSource: 'wizard-generated',
+        // Include image information if image is selected
+        imageData: selectedImage ? {
+          id: selectedImage.id,
+          imageUrl: selectedImage.imageUrl || selectedImage.url,
+          title: selectedImage.title || selectedImage.prompt || 'Social Media Image',
+          prompt: selectedImage.prompt,
+          type: selectedImage.type || 'selected'
+        } : null,
+        // Include extracted content and reference info
+        extractedContent: extractedContent,
+        sourceArticleId: formData.selectedArticleId ? parseInt(formData.selectedArticleId) : null,
+        referenceLink: formData.referenceLink
+      };
+      
+      console.log('Saving social content with data:', saveData);
+      return await apiRequest('POST', '/api/social/save-created-content', saveData);
     },
-    onSuccess: () => {
+    onSuccess: (response: any) => {
+      console.log('Save response:', response);
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard/articles'] });
       setCurrentStep(4);
       toast({
         title: "Hoàn thành",
-        description: "Nội dung đã được lưu thành công"
+        description: "Nội dung và hình ảnh đã được lưu thành công"
       });
     },
     onError: (error: any) => {
+      console.error('Save error:', error);
       toast({
         title: "Lỗi",
         description: error.message || "Không thể lưu nội dung",

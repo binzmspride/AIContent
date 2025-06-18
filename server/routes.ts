@@ -1274,7 +1274,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const userId = req.user.id;
-      const { content, title, platforms, contentSource, selectedArticleId } = req.body;
+      const { 
+        content, 
+        title, 
+        platforms, 
+        contentSource, 
+        selectedArticleId,
+        imageData,
+        extractedContent,
+        sourceArticleId,
+        referenceLink
+      } = req.body;
 
       if (!content || !title) {
         return res.status(400).json({ 
@@ -1282,6 +1292,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           error: 'Content and title are required' 
         });
       }
+
+      console.log('Saving social content with data:', {
+        title,
+        platforms,
+        contentSource,
+        hasImageData: !!imageData,
+        imageUrl: imageData?.imageUrl
+      });
 
       // Format content for storage
       let formattedContent = '';
@@ -1293,6 +1311,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }).join('\n\n');
       } else {
         formattedContent = JSON.stringify(content, null, 2);
+      }
+
+      // Add image information to content if provided
+      if (imageData?.imageUrl) {
+        formattedContent += `\n\n**Hình ảnh đính kèm:**\n![${imageData.title || 'Social Media Image'}](${imageData.imageUrl})`;
       }
 
       // Create article entry for social content
@@ -1308,9 +1331,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         updatedAt: new Date()
       }).returning();
 
+      // If image is provided, associate it with the article
+      if (imageData?.id && savedContent.id) {
+        try {
+          await db.update(schema.images)
+            .set({ 
+              articleId: savedContent.id,
+              updatedAt: new Date()
+            })
+            .where(eq(schema.images.id, imageData.id));
+          
+          console.log(`Associated image ${imageData.id} with article ${savedContent.id}`);
+        } catch (error) {
+          console.error('Error associating image with article:', error);
+          // Continue without failing the whole operation
+        }
+      }
+
       res.json({
         success: true,
-        data: savedContent
+        data: {
+          ...savedContent,
+          imageUrl: imageData?.imageUrl || null,
+          hasImage: !!imageData?.imageUrl
+        }
       });
 
     } catch (error) {
