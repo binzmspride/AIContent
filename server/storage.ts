@@ -1290,6 +1290,33 @@ class DatabaseStorage implements IStorage {
       return [];
     }
   }
+
+  // Publishing logs
+  async createPublishingLog(log: {
+    userId: number;
+    connectionId: number;
+    platform: string;
+    content: string;
+    imageUrls: string[];
+    status: string;
+    publishedAt: Date;
+    result: any;
+  }): Promise<any> {
+    try {
+      // For now, just log to console since publishing logs table doesn't exist yet
+      console.log('Publishing log:', {
+        userId: log.userId,
+        platform: log.platform,
+        status: log.status,
+        publishedAt: log.publishedAt,
+        result: log.result
+      });
+      return { success: true };
+    } catch (error) {
+      console.error('Error creating publishing log:', error);
+      throw error;
+    }
+  }
 }
 
 export const storage: IStorage = new DatabaseStorage();
