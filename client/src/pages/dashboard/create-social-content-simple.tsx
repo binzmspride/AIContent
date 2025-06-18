@@ -44,10 +44,18 @@ export default function CreateSocialContent() {
   const [extractedContent, setExtractedContent] = useState('');
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   
-  // Fetch existing articles
+  // Fetch existing articles (SEO articles from "Bài viết của tôi")
   const { data: articlesData } = useQuery({
     queryKey: ['/api/dashboard/articles'],
-    select: (response: any) => response?.articles || []
+    select: (response: any) => {
+      const articles = response?.articles || [];
+      // Filter only SEO content articles (exclude social media content)
+      return articles.filter((article: any) => 
+        article.type !== 'social_media' && 
+        article.content && 
+        article.content.trim().length > 0
+      );
+    }
   });
 
   // Step 1: Extract content
@@ -282,24 +290,46 @@ export default function CreateSocialContent() {
               {/* Article Selection */}
               {formData.contentSource === 'existing-article' && (
                 <div className="space-y-3">
-                  <Label>Chọn bài viết</Label>
-                  <Select
-                    value={formData.selectedArticleId?.toString() || ''}
-                    onValueChange={(value) => 
-                      setFormData({ ...formData, selectedArticleId: parseInt(value) })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Chọn bài viết..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {articlesData?.map((article: any) => (
-                        <SelectItem key={article.id} value={article.id.toString()}>
-                          {article.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label>Chọn bài viết SEO</Label>
+                  {articlesData && articlesData.length > 0 ? (
+                    <>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                        Tìm thấy {articlesData.length} bài viết SEO trong "Bài viết của tôi"
+                      </div>
+                      <Select
+                        value={formData.selectedArticleId?.toString() || ''}
+                        onValueChange={(value) => 
+                          setFormData({ ...formData, selectedArticleId: parseInt(value) })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn bài viết SEO..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {articlesData.map((article: any) => (
+                            <SelectItem key={article.id} value={article.id.toString()}>
+                              <div className="flex flex-col">
+                                <span className="font-medium">{article.title}</span>
+                                <span className="text-xs text-gray-500">
+                                  {new Date(article.createdAt).toLocaleDateString('vi-VN')}
+                                </span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </>
+                  ) : (
+                    <div className="text-center py-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <FileText className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                      <p className="text-gray-600 dark:text-gray-400 mb-2">
+                        Chưa có bài viết SEO nào
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Hãy tạo bài viết SEO trước trong mục "Tạo nội dung"
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 
