@@ -74,7 +74,7 @@ export default function CreateSocialContent() {
   // Step 1: Extract content
   const extractMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('/api/social/extract-content', formData);
+      return await apiRequest('POST', '/api/social/extract-content', formData);
     },
     onSuccess: (response: any) => {
       setExtractedContent(response.extractedContent || response.data?.extractedContent || '');
@@ -96,7 +96,7 @@ export default function CreateSocialContent() {
   // Step 2: Generate content
   const generateMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('/api/social/create-final-content', {
+      return await apiRequest('POST', '/api/social/create-final-content', {
         extractedContent,
         platforms: formData.platforms,
         contentSource: formData.contentSource,
@@ -125,7 +125,7 @@ export default function CreateSocialContent() {
   const saveMutation = useMutation({
     mutationFn: async () => {
       const contentArray = generatedContent || [];
-      return await apiRequest('/api/social/save-created-content', {
+      return await apiRequest('POST', '/api/social/save-created-content', {
         content: contentArray,
         title: `Social Media Content - ${new Date().toLocaleDateString('vi-VN')}`,
         platforms: formData.platforms,
