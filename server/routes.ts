@@ -1357,10 +1357,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
         includeImage, 
         imageSource, 
         imagePrompt,
-        approveExtract
+        approveExtract,
+        seoTopic,
+        seoKeywords,
+        // Handle direct webhook format
+        content,
+        url,
+        extract_content,
+        post_to_linkedin,
+        post_to_facebook,
+        post_to_x,
+        post_to_instagram,
+        genSEO,
+        approve_extract
       } = req.body;
 
-      // Validate required fields
+      // Handle direct webhook format (from frontend generateSocialContentMutation)
+      if (content && (post_to_linkedin || post_to_facebook || post_to_x || post_to_instagram)) {
+        // Direct webhook format - validate and forward to webhook
+        const webhookPayload = {
+          content,
+          url: url || "",
+          extract_content,
+          post_to_linkedin,
+          post_to_facebook,
+          post_to_x,
+          post_to_instagram,
+          genSEO,
+          approve_extract
+        };
+        
+        // Get webhook configuration
+        const socialSettings = await storage.getSettingsByCategory('social_content');
+        const socialContentWebhookUrl = socialSettings?.socialContentWebhookUrl;
+        
+        if (!socialContentWebhookUrl) {
+          return res.status(400).json({ 
+            success: false, 
+            error: 'Social content webhook URL not configured' 
+          });
+        }
+
+        // Send to webhook and return response
+        const fetch = (await import('node-fetch')).default;
+        const webhookResponse = await fetch(socialContentWebhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(webhookPayload)
+        });
+
+        const webhookResult = await webhookResponse.text();
+        let parsedResult;
+        
+        try {
+          parsedResult = JSON.parse(webhookResult);
+        } catch {
+          parsedResult = { output: webhookResult };
+        }
+
+        // Deduct credits for webhook usage
+        await storage.subtractUserCredits(userId, 5, `Tạo nội dung social media`);
+
+        return res.json({ 
+          success: true, 
+          data: Object.assign(parsedResult || {}, { creditsUsed: 5 })
+        });
+      }
+
+      // Validate required fields for structured form data
       if (!platforms || platforms.length === 0) {
         return res.status(400).json({ 
           success: false, 
@@ -1376,10 +1440,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      if (contentSource !== 'existing-article' && !briefDescription) {
+      if (contentSource === 'create-new-seo' && (!seoTopic || !seoKeywords)) {
         return res.status(400).json({ 
           success: false, 
-          error: 'Brief description is required' 
+          error: 'Topic and keywords are required for SEO article creation' 
+        });
+      }
+
+      if (contentSource === 'manual' && !briefDescription) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Brief description is required for manual content' 
         });
       }
 
@@ -1433,19 +1504,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('genSEO will be:', contentSource === 'ai-keyword');
       
       // Prepare webhook payload with the correct keys
-      const webhookPayload = {
-        content: contentSource === 'existing-article' ? 
-          (articleData ? `${articleData.title}\n\n${articleData.content}` : briefDescription) : 
-          briefDescription,
-        url: referenceLink || "",
-        extract_content: contentSource === 'existing-article' ? "true" : "false",
-        post_to_linkedin: platforms.includes('linkedin') ? "true" : "false",
-        post_to_facebook: platforms.includes('facebook') ? "true" : "false",
-        post_to_x: platforms.includes('twitter') ? "true" : "false",
-        post_to_instagram: platforms.includes('instagram') ? "true" : "false",
-        genSEO: contentSource === 'ai-keyword', // true when creating from keywords
-        approve_extract: contentSource === 'existing-article' ? (approveExtract ? "true" : "false") : "false"
-      };
+      let webhookPayload;
+      
+      if (contentSource === 'create-new-seo') {
+        // Special handling for SEO article creation
+        webhookPayload = {
+          content: `Từ khóa: ${seoKeywords}\nChủ đề: ${seoTopic}`,
+          url: referenceLink || "",
+          extract_content: "false",
+          post_to_linkedin: platforms.includes('linkedin') ? "true" : "false",
+          post_to_facebook: platforms.includes('facebook') ? "true" : "false",
+          post_to_x: platforms.includes('twitter') ? "true" : "false",
+          post_to_instagram: platforms.includes('instagram') ? "true" : "false",
+          genSEO: "true",
+          approve_extract: "false"
+        };
+      } else {
+        // Standard handling for other content sources
+        webhookPayload = {
+          content: contentSource === 'existing-article' ? 
+            (articleData ? `${articleData.title}\n\n${articleData.content}` : briefDescription) : 
+            briefDescription,
+          url: referenceLink || "",
+          extract_content: contentSource === 'existing-article' ? "true" : "false",
+          post_to_linkedin: platforms.includes('linkedin') ? "true" : "false",
+          post_to_facebook: platforms.includes('facebook') ? "true" : "false",
+          post_to_x: platforms.includes('twitter') ? "true" : "false",
+          post_to_instagram: platforms.includes('instagram') ? "true" : "false",
+          genSEO: "false",
+          approve_extract: contentSource === 'existing-article' ? (approveExtract ? "true" : "false") : "false"
+        };
+      }
 
       // Send data to webhook
       const fetch = (await import('node-fetch')).default;
