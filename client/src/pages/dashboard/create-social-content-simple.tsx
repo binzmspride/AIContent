@@ -62,6 +62,7 @@ export default function CreateSocialContent() {
   const [imageSource, setImageSource] = useState<'library' | 'create' | 'upload'>('library');
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [imagePrompt, setImagePrompt] = useState('');
+  const [savedArticleId, setSavedArticleId] = useState<number | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   
   // Fetch existing articles (SEO articles from "Bài viết của tôi")
@@ -299,6 +300,12 @@ export default function CreateSocialContent() {
     onSuccess: (response: any) => {
       console.log('Save response:', response);
       queryClient.invalidateQueries({ queryKey: ['/api/dashboard/articles'] });
+      
+      // Save the article ID for viewing later
+      if (response?.data?.id) {
+        setSavedArticleId(response.data.id);
+      }
+      
       setCurrentStep(4);
       toast({
         title: "Hoàn thành",
@@ -398,8 +405,19 @@ export default function CreateSocialContent() {
                   <Sparkles className="w-4 h-4" />
                   <span>Tạo nội dung mới</span>
                 </Button>
-                <Button variant="outline" onClick={() => window.location.href = '/dashboard'}>
-                  Về Dashboard
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    if (savedArticleId) {
+                      window.location.href = `/dashboard/articles/${savedArticleId}`;
+                    } else {
+                      window.location.href = '/dashboard/articles';
+                    }
+                  }}
+                  className="flex items-center space-x-2"
+                >
+                  <Eye className="w-4 h-4" />
+                  <span>Xem bài viết</span>
                 </Button>
               </div>
             </CardContent>

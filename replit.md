@@ -129,6 +129,8 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
+- June 18, 2025: Enhanced Social Media Content completion flow - changed "Về Dashboard" button to "Xem bài viết" that navigates directly to the created article in "Bài viết của tôi", providing seamless content viewing experience after wizard completion
+- June 18, 2025: Integrated image generation webhook and enhanced save functionality - connected Step 3 image generation to official `/api/dashboard/images/generate` endpoint, updated save process to include selected images with proper database associations, ensuring complete content and image preservation
 - June 18, 2025: Removed TikTok option and redesigned platform selection layout - removed TikTok from platform options, improved 2x2 grid layout with enhanced visual effects, hover animations, and selection indicators for Facebook, Instagram, LinkedIn, and Twitter/X
 - June 18, 2025: Fixed social media preview button color issue - applied inline styles to override shadcn/ui CSS selector conflicts, ensuring all preview buttons display with transparent backgrounds instead of blue (#3182ce) in both light and dark modes
 - June 18, 2025: Fixed dark mode UI issues - changed preview button backgrounds from blue to transparent with proper hover states for better dark mode compatibility  
