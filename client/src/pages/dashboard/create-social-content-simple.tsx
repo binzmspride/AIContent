@@ -95,12 +95,11 @@ export default function CreateSocialContent() {
   const { data: imagesData, isLoading: imagesLoading } = useQuery({
     queryKey: ['/api/dashboard/images'],
     enabled: includeImage && imageSource === 'library',
-    queryFn: async () => {
-      const response = await apiRequest('GET', '/api/dashboard/images?limit=50');
-      const data = await response.json();
-      console.log('Images API response:', data);
-      console.log('Images array:', data?.data?.images);
-      return data?.success ? data.data?.images || [] : [];
+    select: (response: any) => {
+      console.log('Images API response:', response);
+      const images = response?.data?.images || response?.images || [];
+      console.log('Images array:', images);
+      return images;
     }
   });
 
@@ -732,38 +731,50 @@ export default function CreateSocialContent() {
                             <p className="text-sm text-muted-foreground mt-2">Đang tải...</p>
                           </div>
                         ) : (
-                          <div className="grid grid-cols-3 gap-4 max-h-40 overflow-y-auto">
+                          <div className="grid grid-cols-3 gap-4 max-h-60 overflow-y-auto">
                             {imagesData && imagesData.length > 0 ? (
                               imagesData.map((image: any) => (
                                 <div
                                   key={image.id}
-                                  className={`cursor-pointer border-2 rounded-lg p-2 ${
-                                    selectedImage?.id === image.id ? 'border-blue-500' : 'border-gray-200'
+                                  className={`cursor-pointer border-2 rounded-lg p-2 transition-all hover:shadow-md ${
+                                    selectedImage?.id === image.id 
+                                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                                   }`}
                                   onClick={() => setSelectedImage(image)}
                                 >
-                                  <img
-                                    src={image.imageUrl || image.url}
-                                    alt={image.prompt || image.alt || 'Library image'}
-                                    className="w-full h-20 object-cover rounded"
-                                    onError={(e) => {
-                                      console.log('Image load error:', image);
-                                      const target = e.target as HTMLImageElement;
-                                      target.style.display = 'none';
-                                      target.nextElementSibling?.setAttribute('style', 'display: flex');
-                                    }}
-                                  />
-                                  <div 
-                                    className="w-full h-20 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-sm text-gray-500" 
-                                    style={{ display: 'none' }}
-                                  >
-                                    Không thể tải ảnh
+                                  <div className="relative">
+                                    <img
+                                      src={image.imageUrl || image.url}
+                                      alt={image.title || image.prompt || 'Library image'}
+                                      className="w-full h-20 object-cover rounded"
+                                      loading="lazy"
+                                      onError={(e) => {
+                                        console.log('Image load error:', image);
+                                        const target = e.target as HTMLImageElement;
+                                        target.style.display = 'none';
+                                        const fallback = target.nextElementSibling as HTMLElement;
+                                        if (fallback) fallback.style.display = 'flex';
+                                      }}
+                                    />
+                                    <div 
+                                      className="w-full h-20 bg-gray-100 dark:bg-gray-700 rounded flex flex-col items-center justify-center text-xs text-gray-500 absolute top-0 left-0" 
+                                      style={{ display: 'none' }}
+                                    >
+                                      <ImageIcon className="w-6 h-6 mb-1" />
+                                      <span>Không thể tải</span>
+                                    </div>
                                   </div>
+                                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 truncate">
+                                    {image.title || image.prompt || 'Không có mô tả'}
+                                  </p>
                                 </div>
                               ))
                             ) : (
-                              <div className="col-span-3 text-center py-4 text-muted-foreground">
-                                Không có ảnh trong thư viện
+                              <div className="col-span-3 text-center py-8 text-muted-foreground">
+                                <ImageIcon className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                                <p>Không có ảnh trong thư viện</p>
+                                <p className="text-sm mt-1">Hãy tạo ảnh mới hoặc upload ảnh</p>
                               </div>
                             )}
                           </div>
