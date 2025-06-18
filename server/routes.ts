@@ -1322,6 +1322,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const responseText = await webhookResponse.text();
         console.log('Raw webhook response:', responseText.substring(0, 500)); // Log first 500 chars
         
+        // Check if response is HTML (error page)
+        if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
+          console.error('Webhook returned HTML instead of JSON - likely an error page');
+          console.error('Response was:', responseText.substring(0, 500));
+          
+          return res.status(500).json({ 
+            success: false, 
+            error: 'Webhook service is not responding correctly. Please check webhook URL configuration.' 
+          });
+        }
+        
         // Try to parse as JSON
         const parsedResponse = JSON.parse(responseText);
         
