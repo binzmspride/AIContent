@@ -11,6 +11,17 @@ import { systemSettings } from "@shared/schema";
 import { randomBytes, scrypt, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 
+// Authentication middleware
+const isAuthenticated = (req: any, res: any, next: any) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ 
+      success: false, 
+      error: 'Not authenticated' 
+    });
+  }
+  next();
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
@@ -3322,17 +3333,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Social content webhook endpoint
-  app.post('/api/social-content/webhook', async (req, res) => {
+  // Social content webhook endpoint (for internal use from authenticated frontend)
+  app.post('/api/social-content/webhook', isAuthenticated, async (req: any, res) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ success: false, error: 'Not authenticated' });
-      }
-
+      const userId = req.user?.id;
       const { articleId, platforms, briefDescription, referenceLink, seoKeywords, seoTopic } = req.body;
       
       // Log the webhook data
       console.log('Social content webhook received:', {
+        userId,
         articleId,
         platforms,
         briefDescription,
@@ -3349,6 +3358,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: true,
         message: 'Social content webhook processed successfully',
         data: {
+          userId,
           articleId,
           platforms,
           processedAt: new Date().toISOString()
