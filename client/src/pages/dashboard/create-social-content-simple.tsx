@@ -804,23 +804,35 @@ export default function CreateSocialContent() {
                 </div>
               )}
 
-              <Button
-                onClick={handleSave}
-                disabled={saveMutation.isPending}
-                className="w-full"
-              >
-                {saveMutation.isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Đang lưu...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Lưu vào thư viện
-                  </>
+              <div className="flex gap-3">
+                {canGoBack && (
+                  <Button
+                    variant="outline"
+                    onClick={goBack}
+                    className="flex-none"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Quay lại
+                  </Button>
                 )}
-              </Button>
+                <Button
+                  onClick={handleSave}
+                  disabled={saveMutation.isPending}
+                  className="flex-1"
+                >
+                  {saveMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Đang lưu...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Lưu vào thư viện
+                    </>
+                  )}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
