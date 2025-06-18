@@ -1299,13 +1299,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Sending webhook request to:', socialContentWebhookUrl);
       console.log('Webhook payload:', JSON.stringify(webhookPayload, null, 2));
       
-      const webhookResponse = await fetch(socialContentWebhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(webhookPayload)
-      });
+      // Add timeout and better error handling
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      
+      let webhookResponse;
+      try {
+        webhookResponse = await fetch(socialContentWebhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookPayload),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        if (fetchError.name === 'AbortError') {
+          console.error('Webhook request timed out after 15 seconds');
+          return res.status(500).json({ 
+            success: false, 
+            error: 'Webhook service is not responding (timeout after 15 seconds). Please check webhook URL configuration.' 
+          });
+        }
+        console.error('Webhook request failed:', fetchError);
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Failed to connect to webhook service. Please check webhook URL configuration.' 
+        });
+      }
 
       if (!webhookResponse.ok) {
         console.error('Webhook request failed:', webhookResponse.status, webhookResponse.statusText);
