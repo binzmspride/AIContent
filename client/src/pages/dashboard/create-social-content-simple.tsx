@@ -153,30 +153,40 @@ export default function CreateSocialContent() {
   // Image management mutations
   const createImageMutation = useMutation({
     mutationFn: async (prompt: string) => {
-      const response = await apiRequest('POST', '/api/images/generate', {
+      const response = await apiRequest('POST', '/api/dashboard/images/generate', {
+        title: `Social Media Image - ${new Date().toLocaleDateString('vi-VN')}`,
         prompt,
-        format: 'social_media'
+        sourceText: extractedContent || '',
+        articleId: formData.selectedArticleId ? parseInt(formData.selectedArticleId) : null
       });
       return await response.json();
     },
     onSuccess: (data: any) => {
-      if (data?.success && data?.data?.url) {
+      console.log('Image generation response:', data);
+      if (data?.success && data?.data?.imageUrl) {
         setSelectedImage({
-          id: Date.now(),
-          url: data.data.url,
-          alt: imagePrompt,
+          id: data.data.id || Date.now(),
+          imageUrl: data.data.imageUrl,
+          url: data.data.imageUrl, // Fallback for compatibility
+          title: data.data.title || 'Generated Image',
+          prompt: imagePrompt,
           type: 'generated'
         });
         toast({
           title: "Thành công",
           description: "Đã tạo ảnh mới thành công"
         });
+        // Refresh image library to show new image
+        queryClient.invalidateQueries({ queryKey: ['/api/dashboard/images'] });
+      } else {
+        throw new Error(data?.error || 'Không thể tạo ảnh');
       }
     },
     onError: (error: any) => {
+      console.error('Image generation error:', error);
       toast({
         title: "Lỗi",
-        description: "Không thể tạo ảnh. Vui lòng thử lại.",
+        description: error.message || "Không thể tạo ảnh. Vui lòng thử lại.",
         variant: "destructive"
       });
     }
