@@ -281,7 +281,52 @@ const EditArticle = () => {
                   </div>
                 </div>
 
-
+                {isSocialContent && selectedImages.length > 0 && (
+                  <div className="border-t pt-4">
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium">Hình ảnh đã chọn</Label>
+                      <div className="space-y-2">
+                        {selectedImages.map((url, index) => (
+                          <div key={index} className="relative group">
+                            <div 
+                              className="w-full h-20 rounded border overflow-hidden bg-gray-100 cursor-pointer hover:opacity-80 transition-opacity"
+                              onClick={() => setImagePreviewDialog(true)}
+                            >
+                              <img 
+                                src={url} 
+                                alt={`Selected ${index + 1}`}
+                                className="w-full h-full object-cover"
+                                crossOrigin="anonymous"
+                                loading="lazy"
+                                onError={(e) => {
+                                  console.error('Image failed to load:', url);
+                                  const target = e.currentTarget;
+                                  target.style.display = 'none';
+                                  const parent = target.parentElement;
+                                  if (parent) {
+                                    parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-xs">Không thể tải ảnh</div>`;
+                                  }
+                                }}
+                              />
+                            </div>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedImages(prev => prev.filter(img => img !== url));
+                              }}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="keywords">Từ khóa</Label>
