@@ -421,8 +421,19 @@ const EditArticle = () => {
                   
                   {selectedImages.length > 0 && (
                     <div className="border-t pt-4">
-                      <Label className="text-sm font-medium">Hình ảnh được chọn</Label>
-                      <div className="grid grid-cols-2 gap-2 mt-2">
+                      <div className="flex items-center justify-between mb-3">
+                        <Label className="text-sm font-medium">Hình ảnh được chọn ({selectedImages.length})</Label>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setImagePreviewDialog(true)}
+                          className="text-xs"
+                        >
+                          Xem trước
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
                         {selectedImages.slice(0, 4).map((url, index) => (
                           <div key={index} className="relative group">
                             <img 
@@ -484,7 +495,7 @@ const EditArticle = () => {
         <Dialog open={imagePreviewDialog} onOpenChange={setImagePreviewDialog}>
           <DialogContent className="max-w-4xl">
             <DialogHeader>
-              <DialogTitle>Hình ảnh đã chọn ({selectedImages.length})</DialogTitle>
+              <DialogTitle>Hình ảnh được chọn ({selectedImages.length})</DialogTitle>
             </DialogHeader>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
               {selectedImages.map((url, index) => (
