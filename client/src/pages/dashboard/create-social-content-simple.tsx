@@ -12,7 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, FileText, CheckCircle, Loader2, ArrowRight, Eye } from 'lucide-react';
+import { Sparkles, FileText, CheckCircle, Loader2, ArrowRight, Eye, RefreshCw } from 'lucide-react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 interface FormData {
   contentSource: 'manual' | 'existing-article';
@@ -431,7 +433,27 @@ export default function CreateSocialContent() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-3">
-                <Label>Nội dung đã trích xuất</Label>
+                <div className="flex items-center justify-between">
+                  <Label>Nội dung đã trích xuất</Label>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => extractMutation.mutate()}
+                    disabled={extractMutation.isPending}
+                  >
+                    {extractMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Đang trích xuất...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                        Trích xuất lại
+                      </>
+                    )}
+                  </Button>
+                </div>
                 <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg max-h-40 overflow-y-auto">
                   <pre className="whitespace-pre-wrap text-sm">{extractedContent}</pre>
                 </div>
@@ -439,11 +461,27 @@ export default function CreateSocialContent() {
 
               <div className="space-y-3">
                 <Label>Chỉnh sửa nội dung (tùy chọn)</Label>
-                <Textarea
-                  value={extractedContent}
-                  onChange={(e) => setExtractedContent(e.target.value)}
-                  rows={6}
-                />
+                <div className="bg-white dark:bg-gray-800 rounded-lg border">
+                  <ReactQuill
+                    value={extractedContent}
+                    onChange={setExtractedContent}
+                    modules={{
+                      toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link'],
+                        ['clean']
+                      ],
+                    }}
+                    formats={[
+                      'header', 'bold', 'italic', 'underline',
+                      'list', 'bullet', 'link'
+                    ]}
+                    placeholder="Chỉnh sửa nội dung đã trích xuất..."
+                    className="min-h-[200px]"
+                  />
+                </div>
               </div>
 
               <Button
