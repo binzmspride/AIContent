@@ -421,14 +421,14 @@ const EditArticle = ({ params }: EditArticleProps) => {
                 {selectedPlatformPreview === "instagram" && <Instagram className="h-5 w-5 text-pink-500" />}
                 {selectedPlatformPreview === "twitter" && <Twitter className="h-5 w-5 text-blue-400" />}
                 {selectedPlatformPreview === "linkedin" && <Linkedin className="h-5 w-5 text-blue-700" />}
-                Preview trên {selectedPlatformPreview?.charAt(0).toUpperCase() + selectedPlatformPreview?.slice(1)}
+                Preview trên {selectedPlatformPreview ? selectedPlatformPreview.charAt(0).toUpperCase() + selectedPlatformPreview.slice(1) : ""}
               </DialogTitle>
             </DialogHeader>
             <div className="flex justify-center p-4">
               {selectedPlatformPreview && (
                 <PlatformPreview 
                   platform={selectedPlatformPreview} 
-                  content={content} 
+                  content={content || ""} 
                   selectedImages={selectedImages}
                 />
               )}
