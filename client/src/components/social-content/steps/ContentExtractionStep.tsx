@@ -59,11 +59,12 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
 
       return await apiRequest('/api/social/extract-content', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
     },
-    onSuccess: (response) => {
-      onDataChange({ extractedContent: response.data.extractedContent });
+    onSuccess: (response: any) => {
+      onDataChange({ extractedContent: response.extractedContent });
       toast({
         title: "Thành công",
         description: "Đã trích xuất các ý chính từ nội dung"

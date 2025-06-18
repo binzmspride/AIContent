@@ -1011,6 +1011,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ========== Social Media Content API ==========
+  
+  // Extract content for social media
+  app.post('/api/social/extract-content', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const { contentSource, briefDescription, selectedArticleId, referenceLink, platforms } = req.body;
+      const userId = req.user.id;
+
+      if (!briefDescription || platforms.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Brief description and platforms are required' 
+        });
+      }
+
+      let sourceContent = briefDescription;
+      
+      // If using existing article, get its content
+      if (contentSource === 'existing-article' && selectedArticleId) {
+        const article = await storage.getArticle(selectedArticleId);
+        if (!article || article.userId !== userId) {
+          return res.status(404).json({ success: false, error: 'Article not found' });
+        }
+        sourceContent = `${article.title}\n\n${article.content}`;
+      }
+
+      // Get webhook configuration from admin settings
+      const socialSettings = await storage.getSettingsByCategory('social_content');
+      const socialContentWebhookUrl = socialSettings?.socialContentWebhookUrl;
+
+      if (!socialContentWebhookUrl) {
+        return res.status(500).json({ success: false, error: 'Social content webhook URL not configured' });
+      }
+
+      // Extract key points using webhook
+      const webhookPayload = {
+        content: sourceContent,
+        url: referenceLink || '',
+        extract_content: 'true',
+        extracted_data: '',
+        post_to_linkedin: 'false',
+        post_to_facebook: 'false',
+        post_to_x: 'false',
+        post_to_instagram: 'false',
+        genSEO: false,
+        approve_extract: false
+      };
+
+      const fetch = (await import('node-fetch')).default;
+      
+      const webhookResponse = await fetch(socialContentWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(webhookPayload)
+      });
+
+      if (!webhookResponse.ok) {
+        throw new Error('Failed to extract content');
+      }
+
+      const extractedContent = await webhookResponse.text();
+
+      res.json({ 
+        success: true, 
+        data: { extractedContent } 
+      });
+
+    } catch (error) {
+      console.error('Error extracting content:', error);
+      res.status(500).json({ success: false, error: 'Failed to extract content' });
+    }
+  });
+
   // Generate social media content
   app.post('/api/social/generate-content', async (req, res) => {
     try {
