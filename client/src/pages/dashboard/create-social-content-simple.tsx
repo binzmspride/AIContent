@@ -220,7 +220,26 @@ export default function CreateSocialContent() {
   // Generate social content for "Tạo bài viết SEO mới" flow
   const generateSocialContentMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest('POST', '/api/social/generate-content', formData);
+      // Prepare payload based on content source
+      let payload = {};
+      
+      if (formData.contentSource === 'create-new-seo') {
+        payload = {
+          content: `Từ khóa: ${formData.seoKeywords}\nChủ đề: ${formData.seoTopic}`,
+          url: formData.referenceLink || "",
+          extract_content: "false", 
+          post_to_linkedin: formData.platforms.includes('linkedin') ? "true" : "false",
+          post_to_facebook: formData.platforms.includes('facebook') ? "true" : "false", 
+          post_to_x: formData.platforms.includes('twitter') ? "true" : "false",
+          post_to_instagram: formData.platforms.includes('instagram') ? "true" : "false",
+          genSEO: "true",
+          approve_extract: "false"
+        };
+      } else {
+        payload = formData;
+      }
+      
+      const response = await apiRequest('POST', '/api/social/generate-content', payload);
       return await response.json();
     },
     onSuccess: (data: any) => {
@@ -1136,7 +1155,7 @@ export default function CreateSocialContent() {
                   ) : (
                     <>
                       <FileText className="w-4 h-4 mr-2" />
-                      Trích xuất ý chính
+                      {formData.contentSource === 'create-new-seo' ? 'Tạo bài viết & Trích xuất' : 'Trích xuất ý chính'}
                     </>
                   )}
                 </Button>
