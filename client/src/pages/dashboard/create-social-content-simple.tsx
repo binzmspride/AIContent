@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, FileText, CheckCircle, Loader2, ArrowRight, Eye, RefreshCw } from 'lucide-react';
+import { Sparkles, FileText, CheckCircle, Loader2, ArrowRight, Eye, RefreshCw, ImageIcon, Upload, Plus, Library } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -46,6 +46,13 @@ export default function CreateSocialContent() {
   const [extractedContent, setExtractedContent] = useState('');
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   
+  // Image management states
+  const [includeImage, setIncludeImage] = useState(false);
+  const [imageSource, setImageSource] = useState<'library' | 'create' | 'upload'>('library');
+  const [selectedImage, setSelectedImage] = useState<any>(null);
+  const [imagePrompt, setImagePrompt] = useState('');
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  
   // Fetch existing articles (SEO articles from "Bài viết của tôi")
   const { data: articlesData, isLoading: articlesLoading } = useQuery({
     queryKey: ['/api/dashboard/articles?limit=100'], // Get more articles
@@ -71,6 +78,13 @@ export default function CreateSocialContent() {
       console.log('Filtered SEO articles:', filteredArticles);
       return filteredArticles;
     }
+  });
+
+  // Fetch image library
+  const { data: imagesData, isLoading: imagesLoading } = useQuery({
+    queryKey: ['/api/images'],
+    enabled: includeImage && imageSource === 'library',
+    select: (response: any) => response?.data || response || []
   });
 
   // Step 1: Extract content
@@ -115,6 +129,72 @@ export default function CreateSocialContent() {
       toast({
         title: "Lỗi",
         description: error.message || "Không thể trích xuất nội dung",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Image management mutations
+  const createImageMutation = useMutation({
+    mutationFn: async (prompt: string) => {
+      const response = await apiRequest('POST', '/api/images/generate', {
+        prompt,
+        format: 'social_media'
+      });
+      return await response.json();
+    },
+    onSuccess: (data: any) => {
+      if (data?.success && data?.data?.url) {
+        setSelectedImage({
+          id: Date.now(),
+          url: data.data.url,
+          alt: imagePrompt,
+          type: 'generated'
+        });
+        toast({
+          title: "Thành công",
+          description: "Đã tạo ảnh mới thành công"
+        });
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Lỗi",
+        description: "Không thể tạo ảnh. Vui lòng thử lại.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const uploadImageMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      const response = await fetch('/api/images/upload', {
+        method: 'POST',
+        body: formData
+      });
+      return await response.json();
+    },
+    onSuccess: (data: any) => {
+      if (data?.success && data?.data?.url) {
+        setSelectedImage({
+          id: Date.now(),
+          url: data.data.url,
+          alt: uploadedFile?.name || 'Uploaded image',
+          type: 'uploaded'
+        });
+        toast({
+          title: "Thành công",
+          description: "Đã upload ảnh thành công"
+        });
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Lỗi",
+        description: "Không thể upload ảnh. Vui lòng thử lại.",
         variant: "destructive"
       });
     }
