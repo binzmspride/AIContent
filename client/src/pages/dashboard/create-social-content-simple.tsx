@@ -46,9 +46,9 @@ export default function CreateSocialContent() {
   
   // Fetch existing articles (SEO articles from "Bài viết của tôi")
   const { data: articlesData, isLoading: articlesLoading } = useQuery({
-    queryKey: ['/api/dashboard/articles'],
+    queryKey: ['/api/dashboard/articles?limit=100'], // Get more articles
     select: (response: any) => {
-      const articles = response?.articles || [];
+      const articles = response?.data?.articles || response?.articles || [];
       console.log('All articles loaded:', articles);
       
       // Filter only SEO content articles (exclude social media content)
@@ -57,10 +57,11 @@ export default function CreateSocialContent() {
         const hasContent = article.content && article.content.trim().length > 0;
         const isNotSocialMedia = !article.type || article.type !== 'social_media';
         const hasTitle = article.title && article.title.trim().length > 0;
+        const isNotDefaultTitle = article.title !== 'Bài viết mới'; // Exclude default titles
         
-        console.log(`Article ${article.id}: title="${article.title}", type="${article.type}", hasContent=${hasContent}`);
+        console.log(`Article ${article.id}: title="${article.title}", type="${article.type}", hasContent=${hasContent}, isValidTitle=${isNotDefaultTitle}`);
         
-        return hasContent && isNotSocialMedia && hasTitle;
+        return hasContent && isNotSocialMedia && hasTitle && isNotDefaultTitle;
       });
       
       console.log('Filtered SEO articles:', filteredArticles);
