@@ -548,7 +548,21 @@ export default function CreateSocialContent() {
       });
       return;
     }
-    extractMutation.mutate();
+    // Add validation for create-new-seo
+    if (formData.contentSource === 'create-new-seo') {
+      if (!formData.seoTopic || !formData.seoKeywords) {
+        toast({
+          title: "Thiếu thông tin",
+          description: "Vui lòng nhập đầy đủ chủ đề chính và từ khóa",
+          variant: "destructive"
+        });
+        return;
+      }
+      // Use generateSocialContentMutation for SEO creation
+      generateSocialContentMutation.mutate();
+    } else {
+      extractMutation.mutate();
+    }
   };
 
   const handleGenerate = () => {
