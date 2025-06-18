@@ -585,26 +585,194 @@ export default function CreateSocialContent() {
           </Card>
         )}
 
-        {/* Step 3: Review & Save */}
+        {/* Step 3: Image & Preview */}
         {currentStep === 3 && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <Eye className="w-5 h-5" />
-                <span>Bước 3: Xem trước & Lưu</span>
+                <ImageIcon className="w-5 h-5" />
+                <span>Bước 3: Hình ảnh & Xem trước</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Image Option Toggle */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="include-image"
+                    checked={includeImage}
+                    onCheckedChange={(checked) => setIncludeImage(checked === true)}
+                  />
+                  <Label htmlFor="include-image">Đăng kèm hình ảnh</Label>
+                </div>
+
+                {/* Image Source Selection */}
+                {includeImage && (
+                  <div className="space-y-4 border rounded-lg p-4">
+                    <Label>Chọn nguồn hình ảnh</Label>
+                    <div className="grid grid-cols-3 gap-4">
+                      <Button
+                        variant={imageSource === 'library' ? 'default' : 'outline'}
+                        onClick={() => setImageSource('library')}
+                        className="flex flex-col items-center space-y-2 h-20"
+                      >
+                        <Library className="w-6 h-6" />
+                        <span className="text-sm">Thư viện</span>
+                      </Button>
+                      <Button
+                        variant={imageSource === 'create' ? 'default' : 'outline'}
+                        onClick={() => setImageSource('create')}
+                        className="flex flex-col items-center space-y-2 h-20"
+                      >
+                        <Plus className="w-6 h-6" />
+                        <span className="text-sm">Tạo mới</span>
+                      </Button>
+                      <Button
+                        variant={imageSource === 'upload' ? 'default' : 'outline'}
+                        onClick={() => setImageSource('upload')}
+                        className="flex flex-col items-center space-y-2 h-20"
+                      >
+                        <Upload className="w-6 h-6" />
+                        <span className="text-sm">Upload</span>
+                      </Button>
+                    </div>
+
+                    {/* Library Selection */}
+                    {imageSource === 'library' && (
+                      <div className="space-y-3">
+                        <Label>Chọn ảnh từ thư viện</Label>
+                        {imagesLoading ? (
+                          <div className="text-center py-4">
+                            <Loader2 className="w-6 h-6 animate-spin mx-auto" />
+                            <p className="text-sm text-muted-foreground mt-2">Đang tải...</p>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-3 gap-4 max-h-40 overflow-y-auto">
+                            {imagesData && imagesData.length > 0 ? (
+                              imagesData.map((image: any) => (
+                                <div
+                                  key={image.id}
+                                  className={`cursor-pointer border-2 rounded-lg p-2 ${
+                                    selectedImage?.id === image.id ? 'border-blue-500' : 'border-gray-200'
+                                  }`}
+                                  onClick={() => setSelectedImage(image)}
+                                >
+                                  <img
+                                    src={image.url}
+                                    alt={image.alt || 'Library image'}
+                                    className="w-full h-20 object-cover rounded"
+                                  />
+                                </div>
+                              ))
+                            ) : (
+                              <div className="col-span-3 text-center py-4 text-muted-foreground">
+                                Không có ảnh trong thư viện
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Create New Image */}
+                    {imageSource === 'create' && (
+                      <div className="space-y-3">
+                        <Label>Mô tả hình ảnh cần tạo</Label>
+                        <Textarea
+                          value={imagePrompt}
+                          onChange={(e) => setImagePrompt(e.target.value)}
+                          placeholder="Ví dụ: Một hình ảnh đẹp về công nghệ, phong cách hiện đại..."
+                          rows={3}
+                        />
+                        <Button
+                          onClick={() => createImageMutation.mutate(imagePrompt)}
+                          disabled={createImageMutation.isPending || !imagePrompt.trim()}
+                          className="w-full"
+                        >
+                          {createImageMutation.isPending ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Đang tạo ảnh...
+                            </>
+                          ) : (
+                            <>
+                              <Plus className="w-4 h-4 mr-2" />
+                              Tạo hình ảnh
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* Upload Image */}
+                    {imageSource === 'upload' && (
+                      <div className="space-y-3">
+                        <Label>Chọn file ảnh từ máy tính</Label>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              setUploadedFile(file);
+                              uploadImageMutation.mutate(file);
+                            }
+                          }}
+                          disabled={uploadImageMutation.isPending}
+                        />
+                        {uploadImageMutation.isPending && (
+                          <div className="text-center py-2">
+                            <Loader2 className="w-4 h-4 animate-spin mx-auto" />
+                            <p className="text-sm text-muted-foreground mt-1">Đang upload...</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Selected Image Preview */}
+                    {selectedImage && (
+                      <div className="space-y-2">
+                        <Label>Ảnh đã chọn</Label>
+                        <div className="border rounded-lg p-3">
+                          <img
+                            src={selectedImage.url}
+                            alt={selectedImage.alt || 'Selected image'}
+                            className="w-full max-w-xs h-32 object-cover rounded mx-auto"
+                          />
+                          <p className="text-sm text-center text-muted-foreground mt-2">
+                            {selectedImage.alt || 'Hình ảnh đã chọn'}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Content Preview */}
               {generatedContent && Array.isArray(generatedContent) && (
                 <div className="space-y-4">
+                  <Label>Xem trước nội dung</Label>
                   {generatedContent.map((item: any, index: number) => (
                     <div key={index} className="border rounded-lg p-4">
-                      <div className="font-medium mb-2">
-                        {item.output?.['Nền tảng đăng'] || 'Unknown Platform'}
+                      <div className="font-medium mb-2 flex items-center justify-between">
+                        <span>{item.output?.['Nền tảng đăng'] || 'Unknown Platform'}</span>
+                        {includeImage && selectedImage && (
+                          <ImageIcon className="w-4 h-4 text-green-600" />
+                        )}
                       </div>
                       <div className="text-sm bg-gray-50 dark:bg-gray-800 p-3 rounded">
                         {item.output?.['Nội dung bài viết'] || 'No content'}
                       </div>
+                      {includeImage && selectedImage && (
+                        <div className="mt-3">
+                          <img
+                            src={selectedImage.url}
+                            alt={selectedImage.alt || 'Attached image'}
+                            className="w-full max-w-xs h-24 object-cover rounded"
+                          />
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
