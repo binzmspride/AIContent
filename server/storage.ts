@@ -622,6 +622,14 @@ class DatabaseStorage implements IStorage {
         };
       }
       
+      if (category === 'social_content') {
+        return {
+          socialContentWebhookUrl: 'https://workflows-in.matbao.com/webhook/76f10ef4-807d-4e34-9aad-eda9d7b5cfb2',
+          socialContentCreditsPerGeneration: '1',
+          enableSocialContentGeneration: 'true'
+        };
+      }
+      
       return {};
     }
   }
