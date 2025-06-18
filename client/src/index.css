@@ -7,6 +7,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom styles to override shadcn/ui button styles in social media previews */
+.social-preview-button {
+  background-color: transparent !important;
+  border: 0 !important;
+  color: inherit !important;
+}
+
+.social-preview-button:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.dark .social-preview-button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
 /* Thêm các class màu sắc cho chế độ sáng và tối */
 .light {
   --text-color: #000000;
