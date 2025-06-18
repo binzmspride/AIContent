@@ -25,11 +25,10 @@ interface FormData {
 }
 
 const platformOptions = [
-  { value: 'facebook', label: 'Facebook', color: 'bg-blue-600' },
-  { value: 'instagram', label: 'Instagram', color: 'bg-gradient-to-r from-purple-500 to-pink-500' },
-  { value: 'tiktok', label: 'TikTok', color: 'bg-black' },
-  { value: 'linkedin', label: 'LinkedIn', color: 'bg-blue-700' },
-  { value: 'twitter', label: 'Twitter/X', color: 'bg-gray-900' }
+  { value: 'facebook', label: 'Facebook', color: 'bg-blue-600', icon: '📘' },
+  { value: 'instagram', label: 'Instagram', color: 'bg-gradient-to-r from-purple-500 to-pink-500', icon: '📷' },
+  { value: 'linkedin', label: 'LinkedIn', color: 'bg-blue-700', icon: '💼' },
+  { value: 'twitter', label: 'Twitter/X', color: 'bg-gray-900', icon: '🐦' }
 ];
 
 export default function CreateSocialContent() {
@@ -495,28 +494,74 @@ export default function CreateSocialContent() {
 
 
               {/* Platform Selection */}
-              <div className="space-y-3">
-                <Label>Nền tảng mục tiêu *</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {platformOptions.map((platform) => (
-                    <div
-                      key={platform.value}
-                      className="flex items-center space-x-2 p-3 border rounded-lg"
-                    >
-                      <Checkbox
-                        id={platform.value}
-                        checked={formData.platforms.includes(platform.value)}
-                        onCheckedChange={(checked) => 
-                          handlePlatformToggle(platform.value, checked as boolean)
-                        }
-                      />
-                      <Label htmlFor={platform.value} className="flex items-center space-x-2">
-                        <div className={`w-3 h-3 rounded-full ${platform.color}`} />
-                        <span>{platform.label}</span>
-                      </Label>
-                    </div>
-                  ))}
+              <div className="space-y-4">
+                <Label className="text-base font-semibold">Nền tảng mục tiêu *</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  {platformOptions.map((platform) => {
+                    const isSelected = formData.platforms.includes(platform.value);
+                    return (
+                      <div
+                        key={platform.value}
+                        className={`relative group cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105 ${
+                          isSelected 
+                            ? 'ring-2 ring-blue-500 shadow-lg scale-105' 
+                            : 'hover:shadow-md'
+                        }`}
+                        onClick={() => handlePlatformToggle(platform.value, !isSelected)}
+                      >
+                        <div className={`p-4 border-2 rounded-xl transition-all duration-300 ${
+                          isSelected 
+                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30' 
+                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800'
+                        }`}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              <span className="text-2xl">{platform.icon}</span>
+                              <div>
+                                <div className="font-medium text-gray-900 dark:text-white">
+                                  {platform.label}
+                                </div>
+                                <div className={`w-6 h-1 rounded-full mt-1 ${platform.color}`} />
+                              </div>
+                            </div>
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+                              isSelected 
+                                ? 'border-blue-500 bg-blue-500' 
+                                : 'border-gray-300 dark:border-gray-600'
+                            }`}>
+                              {isSelected && (
+                                <div className="w-2 h-2 bg-white rounded-full" />
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Selection overlay effect */}
+                        {isSelected && (
+                          <div className="absolute inset-0 bg-blue-500/10 rounded-xl pointer-events-none" />
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
+                
+                {/* Selected platforms preview */}
+                {formData.platforms.length > 0 && (
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {formData.platforms.map((platform) => {
+                      const platformInfo = platformOptions.find(p => p.value === platform);
+                      return (
+                        <div
+                          key={platform}
+                          className="flex items-center space-x-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full text-sm"
+                        >
+                          <span>{platformInfo?.icon}</span>
+                          <span>{platformInfo?.label}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3">

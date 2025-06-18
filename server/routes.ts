@@ -1216,7 +1216,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         post_to_facebook: platforms.includes('facebook') ? "true" : "false",
         post_to_x: platforms.includes('twitter') ? "true" : "false",
         post_to_instagram: platforms.includes('instagram') ? "true" : "false",
-        post_to_tiktok: platforms.includes('tiktok') ? "true" : "false",
         genSEO: contentSource === 'ai-keyword', // true when creating from keywords
         approve_extract: contentSource === 'existing-article' ? (approveExtract ? "true" : "false") : "false"
       };
