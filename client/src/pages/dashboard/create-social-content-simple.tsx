@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, FileText, CheckCircle, Loader2, ArrowRight, Eye, RefreshCw, ImageIcon, Upload, Plus, Library, ArrowLeft, Heart, MessageCircle, Send, ThumbsUp, Share, Repeat } from 'lucide-react';
+import { Sparkles, FileText, CheckCircle, Loader2, ArrowRight, Eye, RefreshCw, ImageIcon, Upload, Plus, Library, ArrowLeft, Heart, MessageCircle, Send, ThumbsUp, Share, Repeat, Clock, AlertCircle, Settings, Calendar } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 

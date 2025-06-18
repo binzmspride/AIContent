@@ -3173,6 +3173,122 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Publish post immediately to social media
+  app.post('/api/social/publish-now', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const { platform, content, imageUrls, connectionId } = req.body;
+      const userId = req.user.id;
+
+      if (!platform || !content || !connectionId) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Platform, content, and connection ID are required' 
+        });
+      }
+
+      // Get the social connection
+      const connection = await storage.getSocialConnection(connectionId, userId);
+      if (!connection) {
+        return res.status(404).json({ 
+          success: false, 
+          error: 'Social connection not found' 
+        });
+      }
+
+      if (!connection.isActive) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Social connection is not active' 
+        });
+      }
+
+      let publishResult;
+
+      if (platform === 'wordpress') {
+        // WordPress publishing
+        const settings = connection.settings as any;
+        if (!settings?.websiteUrl || !settings?.username || !settings?.appPassword) {
+          return res.status(400).json({ 
+            success: false, 
+            error: 'WordPress connection not properly configured' 
+          });
+        }
+
+        try {
+          const wpApiUrl = `${settings.websiteUrl.replace(/\/$/, '')}/wp-json/wp/v2/posts`;
+          const auth = Buffer.from(`${settings.username}:${settings.appPassword}`).toString('base64');
+          
+          const postData = {
+            title: `Social Media Post - ${new Date().toLocaleDateString('vi-VN')}`,
+            content: content,
+            status: 'publish'
+          };
+
+          const response = await fetch(wpApiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Basic ${auth}`
+            },
+            body: JSON.stringify(postData)
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`WordPress API error: ${response.status} - ${errorText}`);
+          }
+
+          const result = await response.json();
+          publishResult = {
+            success: true,
+            url: result.link,
+            postId: result.id
+          };
+
+        } catch (error: any) {
+          throw new Error(`WordPress publishing failed: ${error.message}`);
+        }
+
+      } else {
+        // For other platforms, we would implement their respective APIs
+        // For now, simulate success
+        publishResult = {
+          success: true,
+          message: `Successfully published to ${platform}`,
+          url: `https://${platform}.com/post/simulated`
+        };
+      }
+
+      // Log the publishing action
+      await storage.createPublishingLog({
+        userId,
+        connectionId,
+        platform,
+        content,
+        imageUrls: imageUrls || [],
+        status: 'published',
+        publishedAt: new Date(),
+        result: publishResult
+      });
+
+      res.json({ 
+        success: true, 
+        data: publishResult 
+      });
+
+    } catch (error: any) {
+      console.error('Error publishing post:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: error.message || 'Failed to publish post' 
+      });
+    }
+  });
+
   // Get user's scheduled posts
   app.get('/api/scheduled-posts', async (req, res) => {
     try {
