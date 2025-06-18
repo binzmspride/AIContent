@@ -1087,13 +1087,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const extractedContent = await webhookResponse.text();
       
       console.log('Webhook response status:', webhookResponse.status);
-      console.log('Webhook response headers:', webhookResponse.headers);
       console.log('Extracted content length:', extractedContent?.length || 0);
       console.log('Extracted content preview:', extractedContent?.substring(0, 200) + '...');
 
+      // Parse JSON response and extract the "output" field
+      let finalContent = extractedContent;
+      try {
+        const parsed = JSON.parse(extractedContent);
+        if (parsed.output) {
+          finalContent = parsed.output;
+          console.log('Parsed output content:', finalContent.substring(0, 200) + '...');
+        }
+      } catch (parseError) {
+        console.log('Response is not JSON, using as plain text');
+      }
+
       res.json({ 
         success: true, 
-        data: { extractedContent } 
+        data: { extractedContent: finalContent } 
       });
 
     } catch (error) {
