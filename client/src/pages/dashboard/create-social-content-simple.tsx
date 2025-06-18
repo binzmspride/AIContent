@@ -96,7 +96,12 @@ export default function CreateSocialContent() {
   const { data: imagesData, isLoading: imagesLoading } = useQuery({
     queryKey: ['/api/dashboard/images'],
     enabled: includeImage && imageSource === 'library',
-    select: (response: any) => response?.data?.images || []
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/dashboard/images');
+      const data = await response.json();
+      console.log('Images API response:', data);
+      return data?.success ? data.data?.images || [] : [];
+    }
   });
 
   // Step 1: Extract content
@@ -724,10 +729,22 @@ export default function CreateSocialContent() {
                                   onClick={() => setSelectedImage(image)}
                                 >
                                   <img
-                                    src={image.url}
-                                    alt={image.alt || 'Library image'}
+                                    src={image.imageUrl || image.url}
+                                    alt={image.prompt || image.alt || 'Library image'}
                                     className="w-full h-20 object-cover rounded"
+                                    onError={(e) => {
+                                      console.log('Image load error:', image);
+                                      const target = e.target as HTMLImageElement;
+                                      target.style.display = 'none';
+                                      target.nextElementSibling?.setAttribute('style', 'display: flex');
+                                    }}
                                   />
+                                  <div 
+                                    className="w-full h-20 bg-gray-100 dark:bg-gray-700 rounded flex items-center justify-center text-sm text-gray-500" 
+                                    style={{ display: 'none' }}
+                                  >
+                                    Không thể tải ảnh
+                                  </div>
                                 </div>
                               ))
                             ) : (
@@ -816,7 +833,7 @@ export default function CreateSocialContent() {
               </div>
 
               {/* Content Preview */}
-              {generatedContent && Array.isArray(generatedContent) && (
+              {generatedContent && Array.isArray(generatedContent) && generatedContent.length > 0 ? (
                 <div className="space-y-4">
                   <Label>Xem trước nội dung</Label>
                   {generatedContent.map((item: any, index: number) => (
@@ -833,8 +850,8 @@ export default function CreateSocialContent() {
                       {includeImage && selectedImage && (
                         <div className="mt-3">
                           <img
-                            src={selectedImage.url}
-                            alt={selectedImage.alt || 'Attached image'}
+                            src={selectedImage.url || selectedImage.imageUrl}
+                            alt={selectedImage.alt || selectedImage.prompt || 'Attached image'}
                             className="w-full max-w-xs h-24 object-cover rounded"
                           />
                         </div>
@@ -842,6 +859,13 @@ export default function CreateSocialContent() {
                     </div>
                   ))}
                 </div>
+              ) : (
+                currentStep === 3 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <p>Chưa có nội dung để xem trước.</p>
+                    <p className="text-sm mt-1">Hãy quay lại bước 2 để tạo nội dung.</p>
+                  </div>
+                )
               )}
 
               <div className="flex gap-3">
