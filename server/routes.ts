@@ -1085,6 +1085,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const extractedContent = await webhookResponse.text();
+      
+      console.log('Webhook response status:', webhookResponse.status);
+      console.log('Webhook response headers:', webhookResponse.headers);
+      console.log('Extracted content length:', extractedContent?.length || 0);
+      console.log('Extracted content preview:', extractedContent?.substring(0, 200) + '...');
 
       res.json({ 
         success: true, 
