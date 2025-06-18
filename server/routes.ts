@@ -1059,11 +1059,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ========== Social Media Content API ==========
   
   // Extract content for social media
-  app.post('/api/social/extract-content', async (req, res) => {
+  app.post('/api/social/extract-content', isAuthenticated, async (req: any, res) => {
     try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ success: false, error: 'Not authenticated' });
-      }
+      console.log('=== SOCIAL EXTRACT CONTENT REQUEST ===');
+      console.log('Request body:', JSON.stringify(req.body, null, 2));
 
       const { contentSource, briefDescription, selectedArticleId, referenceLink, platforms } = req.body;
       const userId = req.user.id;
