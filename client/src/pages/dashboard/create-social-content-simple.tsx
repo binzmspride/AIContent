@@ -215,16 +215,30 @@ export default function CreateSocialContent() {
   // Step 2: Generate content
   const generateMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('POST', '/api/social/create-final-content', {
+      const response = await apiRequest('POST', '/api/social/create-final-content', {
         extractedContent,
         platforms: formData.platforms,
         contentSource: formData.contentSource,
         selectedArticleId: formData.selectedArticleId,
         referenceLink: formData.referenceLink
       });
+      return await response.json();
     },
     onSuccess: (response: any) => {
-      setGeneratedContent(response);
+      console.log('Generate mutation success response:', response);
+      
+      // Extract content from response structure
+      let content = [];
+      if (response?.data) {
+        content = response.data;
+      } else if (Array.isArray(response)) {
+        content = response;
+      } else if (response?.success && response?.data) {
+        content = response.data;
+      }
+      
+      console.log('Extracted generated content:', content);
+      setGeneratedContent(content);
       setCurrentStep(3);
       toast({
         title: "Thành công",
