@@ -129,6 +129,7 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
+- June 18, 2025: Fixed content extraction display formatting in Social Media Content creation - added proper markdown rendering with line breaks, bold/italic formatting, and bullet points preservation instead of plain text display
 - June 18, 2025: Added back "Hình ảnh được chọn" section with improved single-column layout - displays selected images in vertical stack with click-to-preview functionality and hover-to-delete button for better user experience
 - June 18, 2025: Optimized image section in social media content editing - merged two separate "Hình ảnh được chọn" sections into one unified interface with preview button, improved layout consistency and reduced interface complexity
 - June 18, 2025: Completed specialized social media content editing functionality - fixed route parameter handling with useParams hook, added robust error handling for data loading, implemented retry logic for database timeouts, created specialized editing interface with ReactQuill rich text editor, integrated platform-specific preview dialogs for Facebook/Instagram/Twitter/LinkedIn, and ensured proper content and image loading from creation workflow

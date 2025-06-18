@@ -272,7 +272,17 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
           </CardHeader>
           <CardContent>
             <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-              <pre className="whitespace-pre-wrap text-sm">{data.extractedContent}</pre>
+              <div 
+                className="prose prose-sm max-w-none dark:prose-invert"
+                dangerouslySetInnerHTML={{
+                  __html: data.extractedContent
+                    .replace(/\n/g, '<br>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/- (.*?)(?=\n|$)/g, '• $1')
+                    .replace(/\+ (.*?)(?=\n|$)/g, '&nbsp;&nbsp;• $1')
+                }}
+              />
             </div>
             <div className="mt-4">
               <Label className="text-base font-medium">Chỉnh sửa nội dung (tùy chọn)</Label>
