@@ -18,7 +18,7 @@ import Dashboard from "@/pages/dashboard";
 import CreateContent from "@/pages/dashboard/create-content";
 import CreateImage from "@/pages/dashboard/create-image";
 import ImageLibrary from "@/pages/dashboard/image-library";
-import CreateSocialContent from "@/pages/dashboard/create-social-content-clean";
+import CreateSocialContent from "@/pages/dashboard/create-social-content-simple";
 import BrandGuidelines from "@/pages/dashboard/brand-guidelines";
 import MyArticles from "@/pages/dashboard/my-articles";
 import Credits from "@/pages/dashboard/credits";
