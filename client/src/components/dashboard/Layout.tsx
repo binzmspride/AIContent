@@ -2,6 +2,7 @@ import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { useLanguage } from "@/hooks/use-language";
 import { useMobile } from "@/hooks/use-mobile";
+import { FloatingThemeOrb } from "@/components/common/FloatingThemeOrb";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -30,6 +31,9 @@ export function DashboardLayout({ children, title }: DashboardLayoutProps) {
           {children}
         </main>
       </div>
+
+      {/* Floating Theme Orb */}
+      <FloatingThemeOrb showSwitcher={true} position="bottom-right" />
     </div>
   );
 }

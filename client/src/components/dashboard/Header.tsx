@@ -20,7 +20,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Sidebar } from "./Sidebar";
-import { ThemeSwitcher } from "@/components/common/ThemeSwitcher";
+import { AdaptiveThemeSwitcher } from "@/components/common/AdaptiveThemeSwitcher";
 
 export function Header() {
   const { t, language, setLanguage } = useLanguage();
@@ -85,7 +85,13 @@ export function Header() {
             <Bell className="h-5 w-5" />
           </Button>
           
-          <ThemeSwitcher variant="icon" className="text-secondary-500 dark:text-secondary-300 hover:text-secondary-600 dark:hover:text-secondary-200" />
+          <AdaptiveThemeSwitcher 
+            variant="icon" 
+            showDropdown={true}
+            playful={true}
+            size="md"
+            className="text-secondary-500 dark:text-secondary-300 hover:text-secondary-600 dark:hover:text-secondary-200" 
+          />
           
           <button 
             onClick={toggleLanguage}

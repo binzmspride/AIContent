@@ -37,15 +37,86 @@
   background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Thêm các class màu sắc cho chế độ sáng và tối */
+/* Enhanced theme transition styles */
+.theme-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-transition * {
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Theme-specific color variables */
+:root {
+  --theme-switcher-light: 43 96% 56%;
+  --theme-switcher-dark: 217 91% 60%;
+}
+
 .light {
   --text-color: #000000;
   --background-color: #ffffff;
+  --theme-primary: #f59e0b;
+  --theme-secondary: #fbbf24;
+  --theme-accent: #f97316;
 }
 
 .dark {
   --text-color: #ffffff;
   --background-color: #1a1a1a;
+  --theme-primary: #3b82f6;
+  --theme-secondary: #6366f1;
+  --theme-accent: #8b5cf6;
+}
+
+/* Playful animations for theme elements */
+@keyframes sparkle {
+  0%, 100% { 
+    opacity: 0; 
+    transform: scale(0) rotate(0deg); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1) rotate(180deg); 
+  }
+}
+
+@keyframes orb-pulse {
+  0%, 100% { 
+    transform: scale(1); 
+    box-shadow: 0 0 20px rgba(var(--theme-primary), 0.3);
+  }
+  50% { 
+    transform: scale(1.05); 
+    box-shadow: 0 0 30px rgba(var(--theme-primary), 0.5);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.sparkle-animation {
+  animation: sparkle 1s ease-out;
+}
+
+.orb-pulse {
+  animation: orb-pulse 2s ease-in-out infinite;
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Gradient text effect for theme labels */
+.gradient-text {
+  background: linear-gradient(45deg, var(--theme-primary), var(--theme-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Đảm bảo văn bản có màu phù hợp ở cả hai chế độ */
