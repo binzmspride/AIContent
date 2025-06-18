@@ -90,7 +90,6 @@ async function addSampleImages() {
         image.title,
         image.prompt,
         image.imageUrl,
-        image.alt,
         image.sourceText,
         image.creditsUsed,
         image.status,
