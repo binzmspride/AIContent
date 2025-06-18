@@ -848,13 +848,13 @@ export default function CreateSocialContent() {
                     // Instagram Preview
                     if (platform === 'instagram') {
                       return (
-                        <div key={index} className="max-w-sm mx-auto bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <div key={index} className="max-w-sm mx-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
                           {/* Instagram Header */}
-                          <div className="flex items-center p-3 border-b">
+                          <div className="flex items-center p-3 border-b border-gray-200 dark:border-gray-700">
                             <div className="w-8 h-8 bg-gradient-to-tr from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
                               <span className="text-white text-xs font-bold">IG</span>
                             </div>
-                            <span className="ml-3 font-semibold text-sm">your_account</span>
+                            <span className="ml-3 font-semibold text-sm text-gray-900 dark:text-gray-100">your_account</span>
                           </div>
                           
                           {/* Instagram Image */}
@@ -871,11 +871,11 @@ export default function CreateSocialContent() {
                           {/* Instagram Actions */}
                           <div className="p-3">
                             <div className="flex items-center space-x-4 mb-2">
-                              <Heart className="w-6 h-6" />
-                              <MessageCircle className="w-6 h-6" />
-                              <Send className="w-6 h-6" />
+                              <Heart className="w-6 h-6 text-gray-900 dark:text-gray-100" />
+                              <MessageCircle className="w-6 h-6 text-gray-900 dark:text-gray-100" />
+                              <Send className="w-6 h-6 text-gray-900 dark:text-gray-100" />
                             </div>
-                            <div className="text-sm">
+                            <div className="text-sm text-gray-900 dark:text-gray-100">
                               <span className="font-semibold">your_account</span> {content}
                             </div>
                           </div>
@@ -886,21 +886,21 @@ export default function CreateSocialContent() {
                     // Facebook Preview
                     if (platform === 'facebook') {
                       return (
-                        <div key={index} className="max-w-lg mx-auto bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <div key={index} className="max-w-lg mx-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
                           {/* Facebook Header */}
-                          <div className="flex items-center p-4 border-b">
+                          <div className="flex items-center p-4 border-b border-gray-200 dark:border-gray-700">
                             <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
                               <span className="text-white text-sm font-bold">FB</span>
                             </div>
                             <div className="ml-3">
-                              <div className="font-semibold text-sm">Your Page</div>
-                              <div className="text-xs text-gray-500">Vừa xong</div>
+                              <div className="font-semibold text-sm text-gray-900 dark:text-gray-100">Your Page</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">Vừa xong</div>
                             </div>
                           </div>
                           
                           {/* Facebook Content */}
                           <div className="p-4">
-                            <p className="text-sm mb-3">{content}</p>
+                            <p className="text-sm mb-3 text-gray-900 dark:text-gray-100">{content}</p>
                             {includeImage && selectedImage && (
                               <img
                                 src={selectedImage.imageUrl || selectedImage.url}
@@ -911,17 +911,17 @@ export default function CreateSocialContent() {
                           </div>
                           
                           {/* Facebook Actions */}
-                          <div className="border-t p-2">
+                          <div className="border-t border-gray-200 dark:border-gray-700 p-2">
                             <div className="flex justify-around">
-                              <button className="flex items-center space-x-1 text-gray-600 text-sm py-2">
+                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2">
                                 <ThumbsUp className="w-4 h-4" />
                                 <span>Thích</span>
                               </button>
-                              <button className="flex items-center space-x-1 text-gray-600 text-sm py-2">
+                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2">
                                 <MessageCircle className="w-4 h-4" />
                                 <span>Bình luận</span>
                               </button>
-                              <button className="flex items-center space-x-1 text-gray-600 text-sm py-2">
+                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2">
                                 <Share className="w-4 h-4" />
                                 <span>Chia sẻ</span>
                               </button>
@@ -934,21 +934,21 @@ export default function CreateSocialContent() {
                     // LinkedIn Preview
                     if (platform === 'linkedin') {
                       return (
-                        <div key={index} className="max-w-lg mx-auto bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <div key={index} className="max-w-lg mx-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
                           {/* LinkedIn Header */}
-                          <div className="flex items-center p-4 border-b">
+                          <div className="flex items-center p-4 border-b border-gray-200 dark:border-gray-700">
                             <div className="w-12 h-12 bg-blue-700 rounded-full flex items-center justify-center">
                               <span className="text-white text-sm font-bold">LI</span>
                             </div>
                             <div className="ml-3">
-                              <div className="font-semibold text-sm">Your Professional Profile</div>
-                              <div className="text-xs text-gray-500">Your Job Title • 1 giờ</div>
+                              <div className="font-semibold text-sm text-gray-900 dark:text-gray-100">Your Professional Profile</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">Your Job Title • 1 giờ</div>
                             </div>
                           </div>
                           
                           {/* LinkedIn Content */}
                           <div className="p-4">
-                            <p className="text-sm leading-relaxed mb-3">{content}</p>
+                            <p className="text-sm leading-relaxed mb-3 text-gray-900 dark:text-gray-100">{content}</p>
                             {includeImage && selectedImage && (
                               <img
                                 src={selectedImage.imageUrl || selectedImage.url}
@@ -959,17 +959,17 @@ export default function CreateSocialContent() {
                           </div>
                           
                           {/* LinkedIn Actions */}
-                          <div className="border-t p-3">
+                          <div className="border-t border-gray-200 dark:border-gray-700 p-3">
                             <div className="flex justify-around">
-                              <button className="flex items-center space-x-1 text-gray-600 text-sm py-1">
+                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1">
                                 <ThumbsUp className="w-4 h-4" />
                                 <span>Thích</span>
                               </button>
-                              <button className="flex items-center space-x-1 text-gray-600 text-sm py-1">
+                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1">
                                 <MessageCircle className="w-4 h-4" />
                                 <span>Bình luận</span>
                               </button>
-                              <button className="flex items-center space-x-1 text-gray-600 text-sm py-1">
+                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1">
                                 <Share className="w-4 h-4" />
                                 <span>Chia sẻ</span>
                               </button>
@@ -982,7 +982,7 @@ export default function CreateSocialContent() {
                     // Twitter/X Preview
                     if (platform === 'x' || platform === 'twitter') {
                       return (
-                        <div key={index} className="max-w-lg mx-auto bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <div key={index} className="max-w-lg mx-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
                           {/* Twitter Header */}
                           <div className="flex items-start p-4">
                             <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center">
@@ -990,10 +990,10 @@ export default function CreateSocialContent() {
                             </div>
                             <div className="ml-3 flex-1">
                               <div className="flex items-center space-x-1">
-                                <span className="font-bold text-sm">Your Account</span>
-                                <span className="text-gray-500 text-sm">@youraccount • 1h</span>
+                                <span className="font-bold text-sm text-gray-900 dark:text-gray-100">Your Account</span>
+                                <span className="text-gray-500 dark:text-gray-400 text-sm">@youraccount • 1h</span>
                               </div>
-                              <p className="text-sm mt-2">{content}</p>
+                              <p className="text-sm mt-2 text-gray-900 dark:text-gray-100">{content}</p>
                               {includeImage && selectedImage && (
                                 <img
                                   src={selectedImage.imageUrl || selectedImage.url}
@@ -1004,19 +1004,19 @@ export default function CreateSocialContent() {
                               
                               {/* Twitter Actions */}
                               <div className="flex justify-between mt-3 max-w-md">
-                                <button className="flex items-center space-x-1 text-gray-500 text-sm">
+                                <button className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm">
                                   <MessageCircle className="w-4 h-4" />
                                   <span>24</span>
                                 </button>
-                                <button className="flex items-center space-x-1 text-gray-500 text-sm">
+                                <button className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm">
                                   <Repeat className="w-4 h-4" />
                                   <span>12</span>
                                 </button>
-                                <button className="flex items-center space-x-1 text-gray-500 text-sm">
+                                <button className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm">
                                   <Heart className="w-4 h-4" />
                                   <span>48</span>
                                 </button>
-                                <button className="flex items-center space-x-1 text-gray-500 text-sm">
+                                <button className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm">
                                   <Share className="w-4 h-4" />
                                 </button>
                               </div>
