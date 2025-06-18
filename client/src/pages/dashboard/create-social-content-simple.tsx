@@ -260,7 +260,7 @@ export default function CreateSocialContent() {
             
             console.log('Sending social content webhook data:', socialWebhookData);
             
-            const webhookResponse = await apiRequest('POST', '/api/social/extract-content', socialWebhookData);
+            const webhookResponse = await apiRequest('POST', '/api/social/generate-content', socialWebhookData);
             
             console.log('Social webhook response status:', webhookResponse.status);
             console.log('Social webhook response object:', webhookResponse);

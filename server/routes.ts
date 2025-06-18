@@ -1394,6 +1394,171 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Generate social media content using the configured webhook (for "Tạo bài viết SEO mới" flow)
+  app.post('/api/social/generate-content', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+
+      const userId = req.user.id;
+      const { 
+        contentSource, 
+        briefDescription, 
+        selectedArticleId, 
+        referenceLink, 
+        platforms,
+        seoKeywords,
+        seoTopic
+      } = req.body;
+
+      console.log('Social generate content request:', req.body);
+
+      if (!platforms || platforms.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Platforms are required' 
+        });
+      }
+
+      // Get the Social Media Content Generation webhook URL from admin settings
+      const socialSettings = await storage.getSettingsByCategory('social_content');
+      console.log('Social settings found:', socialSettings);
+      const socialContentWebhookUrl = socialSettings?.socialContentWebhookUrl;
+      console.log('Social content webhook URL:', socialContentWebhookUrl);
+
+      if (!socialContentWebhookUrl) {
+        console.log('ERROR: Social content webhook URL not configured');
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Social content webhook URL not configured. Please configure it in admin settings.' 
+        });
+      }
+
+      let sourceContent = briefDescription;
+      
+      // If using existing article, get its content
+      if (contentSource === 'existing-article' && selectedArticleId) {
+        const article = await storage.getArticle(selectedArticleId);
+        if (!article || article.userId !== userId) {
+          return res.status(404).json({ success: false, error: 'Article not found' });
+        }
+        sourceContent = `${article.title}\n\n${article.content}`;
+      }
+
+      // Prepare webhook payload for Social Media Content Generation
+      const webhookPayload = {
+        content: sourceContent,
+        url: referenceLink || "",
+        extract_content: contentSource === 'existing-article' ? "true" : "false",
+        post_to_linkedin: platforms.includes('linkedin') ? "true" : "false",
+        post_to_facebook: platforms.includes('facebook') ? "true" : "false",
+        post_to_x: platforms.includes('twitter') ? "true" : "false",
+        post_to_instagram: platforms.includes('instagram') ? "true" : "false",
+        genSEO: contentSource === 'ai-keyword', // true when creating from keywords
+        approve_extract: false
+      };
+
+      const fetch = (await import('node-fetch')).default;
+      
+      console.log('Sending webhook request to:', socialContentWebhookUrl);
+      console.log('Webhook payload:', JSON.stringify(webhookPayload, null, 2));
+      
+      // Add timeout and better error handling
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      
+      let webhookResponse;
+      try {
+        webhookResponse = await fetch(socialContentWebhookUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(webhookPayload),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+      } catch (fetchError: any) {
+        clearTimeout(timeoutId);
+        if (fetchError.name === 'AbortError') {
+          console.error('Webhook request timed out after 15 seconds');
+          return res.status(500).json({ 
+            success: false, 
+            error: 'Webhook service is not responding (timeout after 15 seconds). Please check webhook URL configuration.' 
+          });
+        }
+        console.error('Webhook request failed:', fetchError);
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Failed to connect to webhook service. Please check webhook URL configuration.' 
+        });
+      }
+
+      if (!webhookResponse.ok) {
+        console.error('Webhook request failed:', webhookResponse.status, webhookResponse.statusText);
+        const errorText = await webhookResponse.text();
+        console.error('Webhook error response:', errorText);
+        return res.status(500).json({ 
+          success: false, 
+          error: `Webhook request failed: ${webhookResponse.status} ${webhookResponse.statusText}` 
+        });
+      }
+
+      let webhookResult;
+      try {
+        const responseText = await webhookResponse.text();
+        console.log('Raw webhook response:', responseText.substring(0, 500)); // Log first 500 chars
+        
+        // Check if response is HTML (error page)
+        if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
+          console.error('Webhook returned HTML instead of JSON - likely an error page');
+          console.error('Response was:', responseText.substring(0, 500));
+          
+          return res.status(500).json({ 
+            success: false, 
+            error: 'Webhook service is not responding correctly. Please check webhook URL configuration.' 
+          });
+        }
+        
+        // Try to parse as JSON
+        const parsedResponse = JSON.parse(responseText);
+        
+        // Handle the webhook response format {"output": "content"}
+        if (parsedResponse && parsedResponse.output) {
+          webhookResult = {
+            success: true,
+            content: parsedResponse.output,
+            message: 'Social media content generated successfully'
+          };
+        } else {
+          webhookResult = parsedResponse;
+        }
+      } catch (parseError) {
+        console.error('Failed to parse webhook response as JSON:', parseError);
+        console.error('Response content type:', webhookResponse.headers.get('content-type'));
+        console.error('Response was:', responseText.substring(0, 200));
+        
+        return res.status(500).json({ 
+          success: false, 
+          error: 'Webhook returned invalid JSON response. Please check webhook configuration.' 
+        });
+      }
+
+      // Deduct credits after successful webhook call
+      await storage.subtractUserCredits(userId, 5, `Tạo nội dung social media cho ${platforms.length} nền tảng`);
+
+      // Return webhook response to frontend
+      res.json({ 
+        success: true, 
+        data: Object.assign(webhookResult || {}, { creditsUsed: 5 })
+      });
+    } catch (error) {
+      console.error('Error generating social media content:', error);
+      res.status(500).json({ success: false, error: 'Failed to generate social media content' });
+    }
+  });
+
   // Save social media content to "Nội dung đã tạo"
   app.post('/api/social/save-created-content', async (req, res) => {
     try {
