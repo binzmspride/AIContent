@@ -252,13 +252,26 @@ export default function CreateSocialContent() {
             seoTopic: formData.seoTopic
           });
           
-          const webhookData = await webhookResponse.json();
-          
-          if (webhookData?.success) {
-            toast({
-              title: "Webhook thành công",
-              description: "Đã gửi thông tin tạo social content qua webhook",
-            });
+          // Check if response is OK
+          if (webhookResponse.ok) {
+            const contentType = webhookResponse.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              const webhookData = await webhookResponse.json();
+              if (webhookData?.success) {
+                toast({
+                  title: "Webhook thành công",
+                  description: "Đã gửi thông tin tạo social content qua webhook",
+                });
+              }
+            } else {
+              console.log('Webhook response is not JSON');
+              toast({
+                title: "Webhook thành công",
+                description: "Đã gửi thông tin qua webhook",
+              });
+            }
+          } else {
+            console.error('Webhook response not OK:', webhookResponse.status);
           }
         } catch (error) {
           console.error('Webhook error:', error);
