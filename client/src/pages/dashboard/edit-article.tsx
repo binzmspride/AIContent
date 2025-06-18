@@ -114,13 +114,7 @@ const EditArticle = () => {
 
       // Load selected images from article-associated images
       if (articleImagesData?.data?.images && Array.isArray(articleImagesData.data.images)) {
-        console.log("Article images data:", articleImagesData.data.images);
-        const imageUrls = articleImagesData.data.images.map((img: any) => {
-          const url = img.imageUrl || img.url || img.src;
-          console.log("Processing image:", img, "URL:", url);
-          return url;
-        }).filter(url => url && url.trim() !== ''); // Filter out empty URLs
-        console.log("Final image URLs:", imageUrls);
+        const imageUrls = articleImagesData.data.images.map((img: any) => img.imageUrl || img.url).filter(url => url);
         setSelectedImages(imageUrls);
       }
     }
