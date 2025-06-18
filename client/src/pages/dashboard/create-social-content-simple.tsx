@@ -232,7 +232,7 @@ export default function CreateSocialContent() {
           post_to_facebook: formData.platforms.includes('facebook') ? "true" : "false", 
           post_to_x: formData.platforms.includes('twitter') ? "true" : "false",
           post_to_instagram: formData.platforms.includes('instagram') ? "true" : "false",
-          genSEO: "true",
+          genSEO: true,
           approve_extract: "false"
         };
       } else {
