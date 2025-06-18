@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, FileText, CheckCircle, Loader2, ArrowRight, Eye, RefreshCw, ImageIcon, Upload, Plus, Library } from 'lucide-react';
+import { Sparkles, FileText, CheckCircle, Loader2, ArrowRight, Eye, RefreshCw, ImageIcon, Upload, Plus, Library, ArrowLeft } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -45,6 +45,18 @@ export default function CreateSocialContent() {
   });
   const [extractedContent, setExtractedContent] = useState('');
   const [generatedContent, setGeneratedContent] = useState<any>(null);
+
+  // Navigation functions
+  const canGoBack = currentStep > 1;
+  const goBack = () => {
+    if (canGoBack) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const goNext = () => {
+    setCurrentStep(currentStep + 1);
+  };
   
   // Image management states
   const [includeImage, setIncludeImage] = useState(false);
@@ -481,23 +493,25 @@ export default function CreateSocialContent() {
                 </div>
               </div>
 
-              <Button
-                onClick={handleExtract}
-                disabled={extractMutation.isPending}
-                className="w-full"
-              >
-                {extractMutation.isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Đang trích xuất...
-                  </>
-                ) : (
-                  <>
-                    <FileText className="w-4 h-4 mr-2" />
-                    Trích xuất ý chính
-                  </>
-                )}
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  onClick={handleExtract}
+                  disabled={extractMutation.isPending}
+                  className="flex-1"
+                >
+                  {extractMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Đang trích xuất...
+                    </>
+                  ) : (
+                    <>
+                      <FileText className="w-4 h-4 mr-2" />
+                      Trích xuất ý chính
+                    </>
+                  )}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -564,23 +578,35 @@ export default function CreateSocialContent() {
                 </div>
               </div>
 
-              <Button
-                onClick={handleGenerate}
-                disabled={generateMutation.isPending}
-                className="w-full"
-              >
-                {generateMutation.isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Đang tạo nội dung...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Tạo nội dung cho tất cả nền tảng
-                  </>
+              <div className="flex gap-3">
+                {canGoBack && (
+                  <Button
+                    variant="outline"
+                    onClick={goBack}
+                    className="flex-none"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Quay lại
+                  </Button>
                 )}
-              </Button>
+                <Button
+                  onClick={handleGenerate}
+                  disabled={generateMutation.isPending}
+                  className="flex-1"
+                >
+                  {generateMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Đang tạo nội dung...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Tạo nội dung cho tất cả nền tảng
+                    </>
+                  )}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
