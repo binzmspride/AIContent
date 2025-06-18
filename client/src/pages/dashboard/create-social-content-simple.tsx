@@ -77,34 +77,34 @@ export default function CreateSocialContent() {
       return await apiRequest('POST', '/api/social/extract-content', formData);
     },
     onSuccess: (response: any) => {
-      try {
-        // Force extract content from response
-        let content = '';
-        
-        if (response?.data?.extractedContent) {
-          content = response.data.extractedContent;
-        } else if (response?.extractedContent) {
-          content = response.extractedContent;
-        } else if (typeof response === 'string') {
-          content = response;
-        }
-        
-        // Force set content even if empty to trigger step change
-        setExtractedContent(content || 'Nội dung trích xuất từ webhook');
+      console.log('Extract success response:', response);
+      
+      // Extract content từ response structure: {success: true, data: {extractedContent: "..."}}
+      let content = '';
+      if (response?.data?.extractedContent) {
+        content = response.data.extractedContent;
+      } else if (response?.extractedContent) {
+        content = response.extractedContent;
+      } else if (response?.success && response?.data) {
+        // Try to get any content from data object
+        content = response.data.content || response.data.text || '';
+      }
+      
+      console.log('Extracted content:', content);
+      console.log('Content length:', content.length);
+      
+      if (content && content.trim().length > 0) {
+        setExtractedContent(content);
         setCurrentStep(2);
-        
         toast({
           title: "Thành công",
-          description: `Đã trích xuất nội dung (${content.length || 0} ký tự)`
+          description: `Đã trích xuất nội dung (${content.length} ký tự)`
         });
-      } catch (error) {
-        console.error('Error processing extract response:', error);
-        // Force move to step 2 anyway with placeholder content
-        setExtractedContent('Đã trích xuất nội dung thành công từ webhook');
-        setCurrentStep(2);
+      } else {
         toast({
-          title: "Thành công",
-          description: "Đã trích xuất nội dung"
+          title: "Lỗi",
+          description: "Không nhận được nội dung từ webhook",
+          variant: "destructive"
         });
       }
     },
