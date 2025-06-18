@@ -1313,10 +1313,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         formattedContent = JSON.stringify(content, null, 2);
       }
 
-      // Add image information to content if provided
-      if (imageData?.imageUrl) {
-        formattedContent += `\n\n**Hình ảnh đính kèm:**\n![${imageData.title || 'Social Media Image'}](${imageData.imageUrl})`;
-      }
+      // Note: Images are handled separately through article-image associations
+      // Do not add image links to content to avoid duplication
 
       // Create article entry for social content
       const [savedContent] = await db.insert(schema.articles).values({

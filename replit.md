@@ -129,6 +129,7 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
+- June 18, 2025: Completed specialized social media content editing functionality - fixed route parameter handling with useParams hook, added robust error handling for data loading, implemented retry logic for database timeouts, created specialized editing interface with ReactQuill rich text editor, integrated platform-specific preview dialogs for Facebook/Instagram/Twitter/LinkedIn, and ensured proper content and image loading from creation workflow
 - June 18, 2025: Completed adaptive UI theme switcher with playful animations - implemented AdaptiveThemeSwitcher and FloatingThemeOrb components with smooth transitions, multiple variants (default, icon, outline), size options (sm, md, lg), and interactive animations (sparkle, pulse, float). Added comprehensive theme demo page at /dashboard/theme-demo showcasing all features
 - June 18, 2025: Enhanced Social Media Content completion flow - changed "Về Dashboard" button to "Xem bài viết" that navigates directly to the created article in "Bài viết của tôi", providing seamless content viewing experience after wizard completion
 - June 18, 2025: Integrated image generation webhook and enhanced save functionality - connected Step 3 image generation to official `/api/dashboard/images/generate` endpoint, updated save process to include selected images with proper database associations, ensuring complete content and image preservation
