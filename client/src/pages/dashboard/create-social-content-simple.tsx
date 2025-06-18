@@ -244,7 +244,7 @@ export default function CreateSocialContent() {
         // Send to configured webhook for social content creation (same as "từ bài viết có sẵn")
         try {
           const socialWebhookData = {
-            contentSource: 'ai-keyword', // Indicate this is from AI keyword generation
+            contentSource: 'existing-article', // Use existing article mode for newly created article
             briefDescription: `${formData.seoTopic}\n\nKeywords: ${formData.seoKeywords}`,
             platforms: formData.platforms,
             referenceLink: formData.referenceLink || "",
