@@ -129,7 +129,7 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
-- June 18, 2025: Added Back button navigation to Social Media Content wizard - users can now navigate between steps (Extract → Generate → Image & Preview) with "Quay lại" buttons, plus 5 sample images added to image library
+- June 18, 2025: Completed bidirectional navigation for Social Media Content wizard - added both "Quay lại" (Back) and "Tiếp theo" (Next) buttons for seamless navigation between steps, plus 5 sample images added to image library
 - June 18, 2025: Enhanced Social Media Content creation with advanced image management - added React Quill rich text editor, "Re-extract" button, and comprehensive image options (library selection, AI generation, file upload) with preview functionality
 - June 17, 2025: Fixed URL Website field not saving in WordPress connection edit form - corrected field name mapping between form input and data storage
 - June 17, 2025: Enhanced "Test Connection" feature with debug logging and improved Application Password handling - better error diagnostics for WordPress connections

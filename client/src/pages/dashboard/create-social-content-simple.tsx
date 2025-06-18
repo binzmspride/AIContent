@@ -275,6 +275,12 @@ export default function CreateSocialContent() {
     setFormData({ ...formData, platforms: newPlatforms });
   };
 
+  const goToNextStep = () => {
+    if (currentStep < 4) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
   const handleExtract = () => {
     // Validate based on content source
     if (formData.contentSource === 'existing-article' && !formData.selectedArticleId) {
@@ -511,6 +517,16 @@ export default function CreateSocialContent() {
                     </>
                   )}
                 </Button>
+                {extractedContent && (
+                  <Button
+                    onClick={goToNextStep}
+                    variant="outline"
+                    className="flex-none"
+                  >
+                    Tiếp theo
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -606,6 +622,16 @@ export default function CreateSocialContent() {
                     </>
                   )}
                 </Button>
+                {generatedContent && generatedContent.length > 0 && (
+                  <Button
+                    onClick={goToNextStep}
+                    variant="outline"
+                    className="flex-none"
+                  >
+                    Tiếp theo
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
