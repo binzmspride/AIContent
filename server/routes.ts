@@ -1115,9 +1115,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Get webhook configuration from admin settings
       const socialSettings = await storage.getSettingsByCategory('social_content');
+      console.log('Social settings found:', socialSettings);
       const socialContentWebhookUrl = socialSettings?.socialContentWebhookUrl;
+      console.log('Social content webhook URL:', socialContentWebhookUrl);
 
       if (!socialContentWebhookUrl) {
+        console.log('ERROR: Social content webhook URL not configured');
         return res.status(500).json({ success: false, error: 'Social content webhook URL not configured' });
       }
 
