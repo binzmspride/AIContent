@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, FileText, CheckCircle, Loader2, ArrowRight, Eye, RefreshCw, ImageIcon, Upload, Plus, Library, ArrowLeft } from 'lucide-react';
+import { Sparkles, FileText, CheckCircle, Loader2, ArrowRight, Eye, RefreshCw, ImageIcon, Upload, Plus, Library, ArrowLeft, Heart, MessageCircle, Send, ThumbsUp, Share, Repeat } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -818,12 +818,17 @@ export default function CreateSocialContent() {
                         <Label>Ảnh đã chọn</Label>
                         <div className="border rounded-lg p-3">
                           <img
-                            src={selectedImage.url}
-                            alt={selectedImage.alt || 'Selected image'}
+                            src={selectedImage.imageUrl || selectedImage.url}
+                            alt={selectedImage.prompt || selectedImage.alt || 'Selected image'}
                             className="w-full max-w-xs h-32 object-cover rounded mx-auto"
+                            onError={(e) => {
+                              console.log('Selected image error:', selectedImage);
+                              const target = e.target as HTMLImageElement;
+                              target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDIwMCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04NS41IDY0SDExNC41IiBzdHJva2U9IiM5Q0E0QTYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CjxwYXRoIGQ9Ik0xMDAgNDkuNVYxMDguNSIgc3Ryb2tlPSIjOUNBNEE2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
+                            }}
                           />
                           <p className="text-sm text-center text-muted-foreground mt-2">
-                            {selectedImage.alt || 'Hình ảnh đã chọn'}
+                            {selectedImage.prompt || selectedImage.alt || 'Hình ảnh đã chọn'}
                           </p>
                         </div>
                       </div>
@@ -832,32 +837,222 @@ export default function CreateSocialContent() {
                 )}
               </div>
 
-              {/* Content Preview */}
+              {/* Content Preview with Platform-specific UI */}
               {generatedContent && Array.isArray(generatedContent) && generatedContent.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <Label>Xem trước nội dung</Label>
-                  {generatedContent.map((item: any, index: number) => (
-                    <div key={index} className="border rounded-lg p-4">
-                      <div className="font-medium mb-2 flex items-center justify-between">
-                        <span>{item.output?.['Nền tảng đăng'] || 'Unknown Platform'}</span>
-                        {includeImage && selectedImage && (
-                          <ImageIcon className="w-4 h-4 text-green-600" />
-                        )}
-                      </div>
-                      <div className="text-sm bg-gray-50 dark:bg-gray-800 p-3 rounded">
-                        {item.output?.['Nội dung bài viết'] || 'No content'}
-                      </div>
-                      {includeImage && selectedImage && (
-                        <div className="mt-3">
-                          <img
-                            src={selectedImage.url || selectedImage.imageUrl}
-                            alt={selectedImage.alt || selectedImage.prompt || 'Attached image'}
-                            className="w-full max-w-xs h-24 object-cover rounded"
-                          />
+                  {generatedContent.map((item: any, index: number) => {
+                    const platform = item.output?.['Nền tảng đăng']?.toLowerCase() || 'unknown';
+                    const content = item.output?.['Nội dung bài viết'] || 'No content';
+                    
+                    // Instagram Preview
+                    if (platform === 'instagram') {
+                      return (
+                        <div key={index} className="max-w-sm mx-auto bg-white border border-gray-200 rounded-lg shadow-sm">
+                          {/* Instagram Header */}
+                          <div className="flex items-center p-3 border-b">
+                            <div className="w-8 h-8 bg-gradient-to-tr from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">IG</span>
+                            </div>
+                            <span className="ml-3 font-semibold text-sm">your_account</span>
+                          </div>
+                          
+                          {/* Instagram Image */}
+                          {includeImage && selectedImage && (
+                            <div className="aspect-square">
+                              <img
+                                src={selectedImage.imageUrl || selectedImage.url}
+                                alt="Instagram post"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+                          
+                          {/* Instagram Actions */}
+                          <div className="p-3">
+                            <div className="flex items-center space-x-4 mb-2">
+                              <Heart className="w-6 h-6" />
+                              <MessageCircle className="w-6 h-6" />
+                              <Send className="w-6 h-6" />
+                            </div>
+                            <div className="text-sm">
+                              <span className="font-semibold">your_account</span> {content}
+                            </div>
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  ))}
+                      );
+                    }
+                    
+                    // Facebook Preview
+                    if (platform === 'facebook') {
+                      return (
+                        <div key={index} className="max-w-lg mx-auto bg-white border border-gray-200 rounded-lg shadow-sm">
+                          {/* Facebook Header */}
+                          <div className="flex items-center p-4 border-b">
+                            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                              <span className="text-white text-sm font-bold">FB</span>
+                            </div>
+                            <div className="ml-3">
+                              <div className="font-semibold text-sm">Your Page</div>
+                              <div className="text-xs text-gray-500">Vừa xong</div>
+                            </div>
+                          </div>
+                          
+                          {/* Facebook Content */}
+                          <div className="p-4">
+                            <p className="text-sm mb-3">{content}</p>
+                            {includeImage && selectedImage && (
+                              <img
+                                src={selectedImage.imageUrl || selectedImage.url}
+                                alt="Facebook post"
+                                className="w-full rounded-lg"
+                              />
+                            )}
+                          </div>
+                          
+                          {/* Facebook Actions */}
+                          <div className="border-t p-2">
+                            <div className="flex justify-around">
+                              <button className="flex items-center space-x-1 text-gray-600 text-sm py-2">
+                                <ThumbsUp className="w-4 h-4" />
+                                <span>Thích</span>
+                              </button>
+                              <button className="flex items-center space-x-1 text-gray-600 text-sm py-2">
+                                <MessageCircle className="w-4 h-4" />
+                                <span>Bình luận</span>
+                              </button>
+                              <button className="flex items-center space-x-1 text-gray-600 text-sm py-2">
+                                <Share className="w-4 h-4" />
+                                <span>Chia sẻ</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    
+                    // LinkedIn Preview
+                    if (platform === 'linkedin') {
+                      return (
+                        <div key={index} className="max-w-lg mx-auto bg-white border border-gray-200 rounded-lg shadow-sm">
+                          {/* LinkedIn Header */}
+                          <div className="flex items-center p-4 border-b">
+                            <div className="w-12 h-12 bg-blue-700 rounded-full flex items-center justify-center">
+                              <span className="text-white text-sm font-bold">LI</span>
+                            </div>
+                            <div className="ml-3">
+                              <div className="font-semibold text-sm">Your Professional Profile</div>
+                              <div className="text-xs text-gray-500">Your Job Title • 1 giờ</div>
+                            </div>
+                          </div>
+                          
+                          {/* LinkedIn Content */}
+                          <div className="p-4">
+                            <p className="text-sm leading-relaxed mb-3">{content}</p>
+                            {includeImage && selectedImage && (
+                              <img
+                                src={selectedImage.imageUrl || selectedImage.url}
+                                alt="LinkedIn post"
+                                className="w-full rounded"
+                              />
+                            )}
+                          </div>
+                          
+                          {/* LinkedIn Actions */}
+                          <div className="border-t p-3">
+                            <div className="flex justify-around">
+                              <button className="flex items-center space-x-1 text-gray-600 text-sm py-1">
+                                <ThumbsUp className="w-4 h-4" />
+                                <span>Thích</span>
+                              </button>
+                              <button className="flex items-center space-x-1 text-gray-600 text-sm py-1">
+                                <MessageCircle className="w-4 h-4" />
+                                <span>Bình luận</span>
+                              </button>
+                              <button className="flex items-center space-x-1 text-gray-600 text-sm py-1">
+                                <Share className="w-4 h-4" />
+                                <span>Chia sẻ</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    
+                    // Twitter/X Preview
+                    if (platform === 'x' || platform === 'twitter') {
+                      return (
+                        <div key={index} className="max-w-lg mx-auto bg-white border border-gray-200 rounded-lg shadow-sm">
+                          {/* Twitter Header */}
+                          <div className="flex items-start p-4">
+                            <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center">
+                              <span className="text-white text-sm font-bold">X</span>
+                            </div>
+                            <div className="ml-3 flex-1">
+                              <div className="flex items-center space-x-1">
+                                <span className="font-bold text-sm">Your Account</span>
+                                <span className="text-gray-500 text-sm">@youraccount • 1h</span>
+                              </div>
+                              <p className="text-sm mt-2">{content}</p>
+                              {includeImage && selectedImage && (
+                                <img
+                                  src={selectedImage.imageUrl || selectedImage.url}
+                                  alt="Twitter post"
+                                  className="w-full rounded-2xl mt-3"
+                                />
+                              )}
+                              
+                              {/* Twitter Actions */}
+                              <div className="flex justify-between mt-3 max-w-md">
+                                <button className="flex items-center space-x-1 text-gray-500 text-sm">
+                                  <MessageCircle className="w-4 h-4" />
+                                  <span>24</span>
+                                </button>
+                                <button className="flex items-center space-x-1 text-gray-500 text-sm">
+                                  <Repeat className="w-4 h-4" />
+                                  <span>12</span>
+                                </button>
+                                <button className="flex items-center space-x-1 text-gray-500 text-sm">
+                                  <Heart className="w-4 h-4" />
+                                  <span>48</span>
+                                </button>
+                                <button className="flex items-center space-x-1 text-gray-500 text-sm">
+                                  <Share className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    
+                    // Default/TikTok Preview
+                    return (
+                      <div key={index} className="max-w-sm mx-auto bg-black text-white rounded-lg shadow-sm overflow-hidden">
+                        {/* TikTok-style Header */}
+                        <div className="p-4">
+                          <div className="flex items-center space-x-2 mb-3">
+                            <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-yellow-500 rounded-full flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">TT</span>
+                            </div>
+                            <span className="font-semibold text-sm">@youraccount</span>
+                          </div>
+                          
+                          {includeImage && selectedImage && (
+                            <div className="aspect-[9/16] max-h-96 rounded-lg overflow-hidden mb-3">
+                              <img
+                                src={selectedImage.imageUrl || selectedImage.url}
+                                alt="TikTok post"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+                          
+                          <p className="text-sm">{content}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 currentStep === 3 && (
