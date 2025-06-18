@@ -294,8 +294,8 @@ export default function CreateSocialContent() {
           }
 
           // Automatically generate social content for the new article
-          console.log('Calling generateSocialMutation.mutate...');
-          generateSocialMutation.mutate();
+          console.log('Calling generateSocialContentMutation.mutate...');
+          generateSocialContentMutation.mutate();
         } else {
           toast({
             title: "Lỗi",
@@ -323,7 +323,7 @@ export default function CreateSocialContent() {
   });
 
   // Generate social content for "Tạo bài viết SEO mới" flow
-  const generateSocialMutation = useMutation({
+  const generateSocialContentMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest('POST', '/api/social/generate-content', formData);
       return await response.json();
@@ -1235,7 +1235,7 @@ export default function CreateSocialContent() {
               <div className="flex gap-3">
                 <Button
                   onClick={handleExtract}
-                  disabled={extractMutation.isPending || createSeoMutation.isPending}
+                  disabled={extractMutation.isPending || createSeoMutation.isPending || generateSocialContentMutation.isPending}
                   className="flex-1"
                 >
                   {extractMutation.isPending ? (
@@ -1247,6 +1247,11 @@ export default function CreateSocialContent() {
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       Đang tạo bài viết SEO...
+                    </>
+                  ) : generateSocialContentMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Đang tạo nội dung social...
                     </>
                   ) : (
                     <>
