@@ -1296,10 +1296,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('Raw webhook response:', responseText.substring(0, 500)); // Log first 500 chars
         
         // Try to parse as JSON
-        webhookResult = JSON.parse(responseText);
+        const parsedResponse = JSON.parse(responseText);
+        
+        // Handle the webhook response format {"output": "content"}
+        if (parsedResponse && parsedResponse.output) {
+          webhookResult = {
+            success: true,
+            content: parsedResponse.output,
+            message: 'Social media content generated successfully'
+          };
+        } else {
+          webhookResult = parsedResponse;
+        }
       } catch (parseError) {
         console.error('Failed to parse webhook response as JSON:', parseError);
-        const responseText = await webhookResponse.text();
         console.error('Response content type:', webhookResponse.headers.get('content-type'));
         console.error('Response was:', responseText.substring(0, 200));
         
