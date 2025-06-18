@@ -17,11 +17,13 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 interface FormData {
-  contentSource: 'manual' | 'existing-article';
+  contentSource: 'manual' | 'existing-article' | 'create-new-seo';
   briefDescription: string;
   selectedArticleId?: number;
   referenceLink?: string;
   platforms: string[];
+  seoTopic?: string;
+  seoKeywords?: string;
 }
 
 const platformOptions = [
@@ -40,7 +42,9 @@ export default function CreateSocialContent() {
   const [formData, setFormData] = useState<FormData>({
     contentSource: 'manual',
     briefDescription: '',
-    platforms: []
+    platforms: [],
+    seoTopic: '',
+    seoKeywords: ''
   });
   const [extractedContent, setExtractedContent] = useState('');
   const [generatedContent, setGeneratedContent] = useState<any>(null);
@@ -946,8 +950,8 @@ export default function CreateSocialContent() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="existing-article">Từ bài viết có sẵn</SelectItem>
-
                     <SelectItem value="manual">Tự nhập mô tả</SelectItem>
+                    <SelectItem value="create-new-seo">Tạo bài SEO mới</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -993,7 +997,41 @@ export default function CreateSocialContent() {
                 </div>
               )}
 
+              {/* SEO Article Creation */}
+              {formData.contentSource === 'create-new-seo' && (
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    <Label>Chủ đề chính *</Label>
+                    <Input
+                      placeholder="Ví dụ: Cây cảnh xanh trong nhà"
+                      value={formData.seoTopic || ''}
+                      onChange={(e) => setFormData({ ...formData, seoTopic: e.target.value })}
+                    />
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <Label>Từ khóa *</Label>
+                    <Input
+                      placeholder="Ví dụ: cây cảnh xanh, chăm sóc cây, không gian xanh"
+                      value={formData.seoKeywords || ''}
+                      onChange={(e) => setFormData({ ...formData, seoKeywords: e.target.value })}
+                    />
+                  </div>
+                </div>
+              )}
 
+              {/* Manual Content */}
+              {formData.contentSource === 'manual' && (
+                <div className="space-y-3">
+                  <Label>Mô tả nội dung *</Label>
+                  <Textarea
+                    placeholder="Nhập mô tả ngắn gọn về nội dung bạn muốn tạo..."
+                    value={formData.briefDescription}
+                    onChange={(e) => setFormData({ ...formData, briefDescription: e.target.value })}
+                    rows={4}
+                  />
+                </div>
+              )}
 
               {/* Reference Link */}
               <div className="space-y-3">
