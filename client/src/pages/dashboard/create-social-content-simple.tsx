@@ -887,15 +887,24 @@ export default function CreateSocialContent() {
                           {/* Facebook Actions */}
                           <div className="border-t border-gray-200 dark:border-gray-700 p-2">
                             <div className="flex justify-around">
-                              <button className="social-preview-button flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2 rounded transition-colors">
+                              <button 
+                                className="social-preview-button flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2 rounded transition-colors"
+                                style={{ background: 'transparent', backgroundColor: 'transparent', border: '0', borderColor: 'transparent' }}
+                              >
                                 <ThumbsUp className="w-4 h-4" />
                                 <span>Thích</span>
                               </button>
-                              <button className="social-preview-button flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2 rounded transition-colors">
+                              <button 
+                                className="social-preview-button flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2 rounded transition-colors"
+                                style={{ background: 'transparent', backgroundColor: 'transparent', border: '0', borderColor: 'transparent' }}
+                              >
                                 <MessageCircle className="w-4 h-4" />
                                 <span>Bình luận</span>
                               </button>
-                              <button className="social-preview-button flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2 rounded transition-colors">
+                              <button 
+                                className="social-preview-button flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2 rounded transition-colors"
+                                style={{ background: 'transparent', backgroundColor: 'transparent', border: '0', borderColor: 'transparent' }}
+                              >
                                 <Share className="w-4 h-4" />
                                 <span>Chia sẻ</span>
                               </button>
@@ -935,15 +944,24 @@ export default function CreateSocialContent() {
                           {/* LinkedIn Actions */}
                           <div className="border-t border-gray-200 dark:border-gray-700 p-3">
                             <div className="flex justify-around">
-                              <button className="social-preview-button flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1 rounded transition-colors">
+                              <button 
+                                className="social-preview-button flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1 rounded transition-colors"
+                                style={{ background: 'transparent', backgroundColor: 'transparent', border: '0', borderColor: 'transparent' }}
+                              >
                                 <ThumbsUp className="w-4 h-4" />
                                 <span>Thích</span>
                               </button>
-                              <button className="social-preview-button flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1 rounded transition-colors">
+                              <button 
+                                className="social-preview-button flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1 rounded transition-colors"
+                                style={{ background: 'transparent', backgroundColor: 'transparent', border: '0', borderColor: 'transparent' }}
+                              >
                                 <MessageCircle className="w-4 h-4" />
                                 <span>Bình luận</span>
                               </button>
-                              <button className="social-preview-button flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1 rounded transition-colors">
+                              <button 
+                                className="social-preview-button flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1 rounded transition-colors"
+                                style={{ background: 'transparent', backgroundColor: 'transparent', border: '0', borderColor: 'transparent' }}
+                              >
                                 <Share className="w-4 h-4" />
                                 <span>Chia sẻ</span>
                               </button>
@@ -978,19 +996,31 @@ export default function CreateSocialContent() {
                               
                               {/* Twitter Actions */}
                               <div className="flex justify-between mt-3 max-w-md">
-                                <button className="social-preview-button flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm rounded transition-colors p-1">
+                                <button 
+                                  className="social-preview-button flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm rounded transition-colors p-1"
+                                  style={{ background: 'transparent', backgroundColor: 'transparent', border: '0', borderColor: 'transparent' }}
+                                >
                                   <MessageCircle className="w-4 h-4" />
                                   <span>24</span>
                                 </button>
-                                <button className="social-preview-button flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm rounded transition-colors p-1">
+                                <button 
+                                  className="social-preview-button flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm rounded transition-colors p-1"
+                                  style={{ background: 'transparent', backgroundColor: 'transparent', border: '0', borderColor: 'transparent' }}
+                                >
                                   <Repeat className="w-4 h-4" />
                                   <span>12</span>
                                 </button>
-                                <button className="social-preview-button flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm rounded transition-colors p-1">
+                                <button 
+                                  className="social-preview-button flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm rounded transition-colors p-1"
+                                  style={{ background: 'transparent', backgroundColor: 'transparent', border: '0', borderColor: 'transparent' }}
+                                >
                                   <Heart className="w-4 h-4" />
                                   <span>48</span>
                                 </button>
-                                <button className="social-preview-button flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm rounded transition-colors p-1">
+                                <button 
+                                  className="social-preview-button flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm rounded transition-colors p-1"
+                                  style={{ background: 'transparent', backgroundColor: 'transparent', border: '0', borderColor: 'transparent' }}
+                                >
                                   <Share className="w-4 h-4" />
                                 </button>
                               </div>

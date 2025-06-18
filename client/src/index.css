@@ -8,17 +8,32 @@
 @tailwind utilities;
 
 /* Custom styles to override shadcn/ui button styles in social media previews */
-.social-preview-button {
+:root button.social-preview-button.social-preview-button,
+:root button.social-preview-button[data-variant="default"],
+:root button.social-preview-button[data-variant],
+:root .social-preview-button.social-preview-button,
+:root .social-preview-button[data-variant="default"],
+:root .social-preview-button[data-variant] {
   background-color: transparent !important;
-  border: 0 !important;
+  border: 1px solid transparent !important;
   color: inherit !important;
 }
 
-.social-preview-button:hover {
+:root button.social-preview-button.social-preview-button:hover,
+:root button.social-preview-button[data-variant="default"]:hover,
+:root button.social-preview-button[data-variant]:hover,
+:root .social-preview-button.social-preview-button:hover,
+:root .social-preview-button[data-variant="default"]:hover,
+:root .social-preview-button[data-variant]:hover {
   background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
-.dark .social-preview-button:hover {
+.dark :root button.social-preview-button.social-preview-button:hover,
+.dark :root button.social-preview-button[data-variant="default"]:hover,
+.dark :root button.social-preview-button[data-variant]:hover,
+.dark :root .social-preview-button.social-preview-button:hover,
+.dark :root .social-preview-button[data-variant="default"]:hover,
+.dark :root .social-preview-button[data-variant]:hover {
   background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
