@@ -91,6 +91,7 @@ function Router() {
       <ProtectedRoute path="/dashboard/create-image" component={CreateImage} />
       <ProtectedRoute path="/dashboard/image-library" component={ImageLibrary} />
       <ProtectedRoute path="/dashboard/create-social-content-simple" component={CreateSocialContent} />
+      <ProtectedRoute path="/dashboard/create-social-content" component={CreateSocialContent} />
       <ProtectedRoute path="/dashboard/brand-guidelines" component={BrandGuidelines} />
       <ProtectedRoute path="/dashboard/my-articles" component={MyArticles} />
       <ProtectedRoute path="/dashboard/edit-article/:id" component={EditArticle} />
