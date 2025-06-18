@@ -65,6 +65,13 @@ export default function CreateSocialContent() {
   const [savedArticleId, setSavedArticleId] = useState<number | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   
+  // Publishing states
+  const [publishingStatus, setPublishingStatus] = useState<Record<string, 'idle' | 'publishing' | 'scheduled' | 'published' | 'error'>>({});
+  const [publishResults, setPublishResults] = useState<Record<string, { success: boolean; url?: string; error?: string }>>({});
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [schedulingPlatform, setSchedulingPlatform] = useState<string>('');
+  const [scheduledTime, setScheduledTime] = useState('');
+  
   // Fetch existing articles (SEO articles from "Bài viết của tôi")
   const { data: articlesData, isLoading: articlesLoading } = useQuery({
     queryKey: ['/api/dashboard/articles?limit=100'], // Get more articles
@@ -101,6 +108,106 @@ export default function CreateSocialContent() {
       const images = response?.data?.images || response?.images || [];
       console.log('Images array:', images);
       return images;
+    }
+  });
+
+  // Fetch social connections
+  const { data: connectionsData } = useQuery({
+    queryKey: ['/api/social-connections'],
+  });
+
+  const connections = (connectionsData as any)?.data || [];
+
+  // Publishing mutations
+  const publishNowMutation = useMutation({
+    mutationFn: async ({ platform, content, imageUrls }: { platform: string; content: string; imageUrls?: string[] }) => {
+      const connectionForPlatform = connections.find((conn: any) => 
+        conn.platform === platform && conn.isActive
+      );
+      
+      if (!connectionForPlatform) {
+        throw new Error(`Chưa kết nối tài khoản ${platform}`);
+      }
+
+      const response = await apiRequest('POST', '/api/social/publish-now', {
+        platform,
+        content,
+        imageUrls,
+        connectionId: connectionForPlatform.id
+      });
+      return await response.json();
+    },
+    onSuccess: (data: any, variables) => {
+      setPublishingStatus(prev => ({ ...prev, [variables.platform]: 'published' }));
+      setPublishResults(prev => ({ 
+        ...prev, 
+        [variables.platform]: { success: true, url: data.data?.url } 
+      }));
+      toast({
+        title: "Đăng thành công",
+        description: `Bài viết đã được đăng lên ${variables.platform}`
+      });
+    },
+    onError: (error: any, variables) => {
+      setPublishingStatus(prev => ({ ...prev, [variables.platform]: 'error' }));
+      setPublishResults(prev => ({ 
+        ...prev, 
+        [variables.platform]: { success: false, error: error.message } 
+      }));
+      toast({
+        title: "Lỗi đăng bài",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  const schedulePostMutation = useMutation({
+    mutationFn: async ({ platform, content, imageUrls, scheduledTime }: { 
+      platform: string; 
+      content: string; 
+      imageUrls?: string[]; 
+      scheduledTime: string;
+    }) => {
+      const connectionForPlatform = connections.find((conn: any) => 
+        conn.platform === platform && conn.isActive
+      );
+      
+      if (!connectionForPlatform) {
+        throw new Error(`Chưa kết nối tài khoản ${platform}`);
+      }
+
+      const response = await apiRequest('POST', '/api/scheduled-posts', {
+        title: `Social Media Content - ${new Date().toLocaleDateString('vi-VN')}`,
+        content,
+        connectionId: connectionForPlatform.id,
+        scheduledTime,
+        imageUrls: imageUrls || []
+      });
+      return await response.json();
+    },
+    onSuccess: (data: any, variables) => {
+      setPublishingStatus(prev => ({ ...prev, [variables.platform]: 'scheduled' }));
+      setPublishResults(prev => ({ 
+        ...prev, 
+        [variables.platform]: { success: true } 
+      }));
+      toast({
+        title: "Đã lên lịch",
+        description: `Bài viết sẽ được đăng lên ${variables.platform} vào ${new Date(variables.scheduledTime).toLocaleString('vi-VN')}`
+      });
+    },
+    onError: (error: any, variables) => {
+      setPublishingStatus(prev => ({ ...prev, [variables.platform]: 'error' }));
+      setPublishResults(prev => ({ 
+        ...prev, 
+        [variables.platform]: { success: false, error: error.message } 
+      }));
+      toast({
+        title: "Lỗi lên lịch",
+        description: error.message,
+        variant: "destructive"
+      });
     }
   });
 
@@ -374,48 +481,350 @@ export default function CreateSocialContent() {
     });
     setExtractedContent('');
     setGeneratedContent(null);
+    setPublishingStatus({});
+    setPublishResults({});
+  };
+
+  const handlePublishNow = (platform: string) => {
+    if (!generatedContent || !generatedContent[platform]) {
+      toast({
+        title: "Lỗi",
+        description: "Không có nội dung để đăng",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setPublishingStatus(prev => ({ ...prev, [platform]: 'publishing' }));
+    
+    const content = generatedContent[platform];
+    const imageUrls = selectedImage ? [selectedImage.url] : [];
+    
+    publishNowMutation.mutate({ platform, content, imageUrls });
+  };
+
+  const handleSchedulePost = (platform: string) => {
+    if (!generatedContent || !generatedContent[platform]) {
+      toast({
+        title: "Lỗi",
+        description: "Không có nội dung để lên lịch",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setSchedulingPlatform(platform);
+    setShowScheduleModal(true);
+  };
+
+  const handleConfirmSchedule = () => {
+    if (!scheduledTime) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng chọn thời gian đăng",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const scheduledDate = new Date(scheduledTime);
+    if (scheduledDate <= new Date()) {
+      toast({
+        title: "Lỗi",
+        description: "Thời gian đăng phải sau thời điểm hiện tại",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const content = generatedContent[schedulingPlatform];
+    const imageUrls = selectedImage ? [selectedImage.url] : [];
+    
+    setPublishingStatus(prev => ({ ...prev, [schedulingPlatform]: 'publishing' }));
+    schedulePostMutation.mutate({ 
+      platform: schedulingPlatform, 
+      content, 
+      imageUrls, 
+      scheduledTime 
+    });
+    
+    setShowScheduleModal(false);
+    setScheduledTime('');
+    setSchedulingPlatform('');
+  };
+
+  const getPlatformIcon = (platform: string) => {
+    switch (platform) {
+      case 'facebook': return <span className="text-blue-600">📘</span>;
+      case 'instagram': return <span className="text-pink-600">📷</span>;
+      case 'linkedin': return <span className="text-blue-700">💼</span>;
+      case 'twitter': return <span className="text-blue-400">🐦</span>;
+      default: return <span>📱</span>;
+    }
+  };
+
+  const getPlatformName = (platform: string) => {
+    return platformOptions.find(p => p.value === platform)?.label || platform;
+  };
+
+  const getConnectionStatus = (platform: string) => {
+    const connection = connections.find((conn: any) => 
+      conn.platform === platform && conn.isActive
+    );
+    return connection ? 'connected' : 'disconnected';
   };
 
   if (currentStep === 4) {
     return (
       <DashboardLayout>
-        <div className="max-w-4xl mx-auto p-6">
-          <Card className="border-green-200 bg-green-50 dark:bg-green-900/20">
+        <div className="max-w-6xl mx-auto p-6 space-y-6">
+          <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2 text-green-800 dark:text-green-400">
-                <CheckCircle className="w-6 h-6" />
-                <span>Hoàn thành thành công!</span>
+              <CardTitle className="flex items-center space-x-2">
+                <Send className="w-6 h-6" />
+                <span>Đăng bài và Lên lịch</span>
               </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-green-700 dark:text-green-300">
-                Nội dung social media đã được tạo và lưu thành công vào "Nội dung đã tạo".
+              <p className="text-gray-600 dark:text-gray-400">
+                Chọn đăng ngay hoặc lên lịch cho từng nền tảng
               </p>
-              
-              <div className="flex flex-wrap gap-2">
-                {formData.platforms.map(platform => (
-                  <Badge key={platform} variant="secondary">
-                    {platformOptions.find(p => p.value === platform)?.label}
-                  </Badge>
-                ))}
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Platform Cards */}
+              <div className="grid gap-6">
+                {formData.platforms.map(platform => {
+                  const connectionStatus = getConnectionStatus(platform);
+                  const publishStatus = publishingStatus[platform] || 'idle';
+                  const result = publishResults[platform];
+                  
+                  return (
+                    <Card key={platform} className="border-2">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            {getPlatformIcon(platform)}
+                            <div>
+                              <h3 className="font-semibold">{getPlatformName(platform)}</h3>
+                              <div className="flex items-center space-x-2">
+                                {connectionStatus === 'connected' ? (
+                                  <Badge variant="secondary" className="bg-green-100 text-green-800">
+                                    <CheckCircle className="w-3 h-3 mr-1" />
+                                    Đã kết nối
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="destructive">
+                                    <AlertCircle className="w-3 h-3 mr-1" />
+                                    Chưa kết nối
+                                  </Badge>
+                                )}
+                                {publishStatus === 'published' && (
+                                  <Badge className="bg-green-100 text-green-800">
+                                    <CheckCircle className="w-3 h-3 mr-1" />
+                                    Đã đăng
+                                  </Badge>
+                                )}
+                                {publishStatus === 'scheduled' && (
+                                  <Badge className="bg-blue-100 text-blue-800">
+                                    <Clock className="w-3 h-3 mr-1" />
+                                    Đã lên lịch
+                                  </Badge>
+                                )}
+                                {publishStatus === 'error' && (
+                                  <Badge variant="destructive">
+                                    <AlertCircle className="w-3 h-3 mr-1" />
+                                    Lỗi
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {/* Content Preview */}
+                        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                          <h4 className="font-medium mb-2">Nội dung:</h4>
+                          <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                            {generatedContent?.[platform] || 'Không có nội dung'}
+                          </p>
+                        </div>
+
+                        {/* Image Preview */}
+                        {selectedImage && (
+                          <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                            <h4 className="font-medium mb-2">Hình ảnh:</h4>
+                            <img 
+                              src={selectedImage.url} 
+                              alt="Selected" 
+                              className="w-24 h-24 object-cover rounded-lg"
+                            />
+                          </div>
+                        )}
+
+                        {/* Action Buttons */}
+                        <div className="flex space-x-3">
+                          {connectionStatus === 'connected' ? (
+                            <>
+                              <Button
+                                onClick={() => handlePublishNow(platform)}
+                                disabled={publishStatus === 'publishing' || publishStatus === 'published'}
+                                className="flex items-center space-x-2"
+                              >
+                                {publishStatus === 'publishing' ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  <Send className="w-4 h-4" />
+                                )}
+                                <span>
+                                  {publishStatus === 'publishing' ? 'Đang đăng...' : 
+                                   publishStatus === 'published' ? 'Đã đăng' : 'Đăng ngay'}
+                                </span>
+                              </Button>
+                              
+                              <Button
+                                variant="outline"
+                                onClick={() => handleSchedulePost(platform)}
+                                disabled={publishStatus === 'publishing' || publishStatus === 'scheduled'}
+                                className="flex items-center space-x-2"
+                              >
+                                <Clock className="w-4 h-4" />
+                                <span>
+                                  {publishStatus === 'scheduled' ? 'Đã lên lịch' : 'Đặt lịch'}
+                                </span>
+                              </Button>
+                            </>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              onClick={() => window.location.href = '/dashboard/social-connections'}
+                              className="flex items-center space-x-2"
+                            >
+                              <Settings className="w-4 h-4" />
+                              <span>Kết nối tài khoản</span>
+                            </Button>
+                          )}
+                        </div>
+
+                        {/* Result Messages */}
+                        {result && (
+                          <div className={`p-3 rounded-lg ${
+                            result.success 
+                              ? 'bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                              : 'bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                          }`}>
+                            {result.success ? (
+                              <div className="flex items-center space-x-2">
+                                <CheckCircle className="w-4 h-4" />
+                                <span>
+                                  {publishStatus === 'published' ? 'Đăng bài thành công!' : 'Lên lịch thành công!'}
+                                </span>
+                                {result.url && (
+                                  <a 
+                                    href={result.url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:underline"
+                                  >
+                                    Xem bài đăng
+                                  </a>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="flex items-center space-x-2">
+                                <AlertCircle className="w-4 h-4" />
+                                <span>{result.error}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
 
-              <div className="flex space-x-4 pt-4">
-                <Button onClick={handleStartNew} className="flex items-center space-x-2">
-                  <Sparkles className="w-4 h-4" />
-                  <span>Tạo nội dung mới</span>
+              {/* Navigation Buttons */}
+              <div className="flex justify-between pt-6">
+                <Button variant="outline" onClick={() => setCurrentStep(3)}>
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Quay lại
                 </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => window.location.href = '/dashboard/my-articles'}
-                  className="flex items-center space-x-2"
-                >
-                  <Eye className="w-4 h-4" />
-                  <span>Xem bài viết</span>
-                </Button>
+                
+                <div className="flex space-x-3">
+                  <Button onClick={handleStartNew} variant="outline">
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Tạo nội dung mới
+                  </Button>
+                  
+                  <Button onClick={() => window.location.href = '/dashboard/scheduled-posts'}>
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Bài viết đã lên lịch
+                  </Button>
+                  
+                  <Button 
+                    onClick={() => window.location.href = '/dashboard/my-articles'}
+                    className="flex items-center space-x-2"
+                  >
+                    <Eye className="w-4 h-4" />
+                    <span>Xem bài viết</span>
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
+
+          {/* Schedule Modal */}
+          {showScheduleModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <Card className="w-full max-w-md mx-4">
+                <CardHeader>
+                  <CardTitle>Đặt lịch đăng bài</CardTitle>
+                  <p className="text-sm text-gray-600">
+                    Lên lịch cho {getPlatformName(schedulingPlatform)}
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Thời gian đăng
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={scheduledTime}
+                      onChange={(e) => setScheduledTime(e.target.value)}
+                      min={new Date().toISOString().slice(0, 16)}
+                      className="w-full p-2 border rounded-lg dark:bg-gray-800 dark:border-gray-600"
+                    />
+                  </div>
+                  
+                  <div className="flex space-x-3 pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowScheduleModal(false);
+                        setScheduledTime('');
+                        setSchedulingPlatform('');
+                      }}
+                      className="flex-1"
+                    >
+                      Hủy
+                    </Button>
+                    <Button
+                      onClick={handleConfirmSchedule}
+                      disabled={!scheduledTime || schedulePostMutation.isPending}
+                      className="flex-1"
+                    >
+                      {schedulePostMutation.isPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      ) : (
+                        <Clock className="w-4 h-4 mr-2" />
+                      )}
+                      Xác nhận
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
       </DashboardLayout>
     );
