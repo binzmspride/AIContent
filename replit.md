@@ -129,6 +129,7 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
+- June 18, 2025: Fixed TikTok content missing from review section - added post_to_tiktok parameter to webhook payloads in both generate-content and create-final-content endpoints, improved TikTok preview logic with specific platform detection
 - June 18, 2025: Fixed social media preview button color issue - applied inline styles to override shadcn/ui CSS selector conflicts, ensuring all preview buttons display with transparent backgrounds instead of blue (#3182ce) in both light and dark modes
 - June 18, 2025: Fixed dark mode UI issues - changed preview button backgrounds from blue to transparent with proper hover states for better dark mode compatibility  
 - June 18, 2025: UI refinement for Social Media Content wizard - removed "Nội dung đã trích xuất" section from step 2 and cleaned up step titles by removing "(tùy chọn)" text for cleaner interface
