@@ -228,82 +228,92 @@ export default function CreateSocialContent() {
       return await response.json();
     },
     onSuccess: async (data: any) => {
-      console.log('SEO article creation success:', data);
-      
-      if (data?.success && data?.data?.id) {
-        // Update form with new article ID
-        setFormData({ 
-          ...formData, 
-          selectedArticleId: data.data.id,
-          contentSource: 'existing-article' // Switch to existing article mode
-        });
+      try {
+        console.log('SEO article creation success:', data);
         
-        toast({
-          title: "Thành công",
-          description: `Đã tạo bài viết SEO: ${formData.seoTopic}`
-        });
+        if (data?.success && data?.data?.id) {
+          // Update form with new article ID
+          setFormData({ 
+            ...formData, 
+            selectedArticleId: data.data.id,
+            contentSource: 'existing-article' // Switch to existing article mode
+          });
+          
+          toast({
+            title: "Thành công",
+            description: `Đã tạo bài viết SEO: ${formData.seoTopic}`
+          });
 
-        console.log('About to send webhook for social content extraction...');
+          console.log('About to send webhook for social content extraction...');
 
-        // Send to configured webhook for social content creation (same as "từ bài viết có sẵn")
-        try {
-          const socialWebhookData = {
-            contentSource: 'existing-article', // Use existing article mode for newly created article
-            briefDescription: `${formData.seoTopic}\n\nKeywords: ${formData.seoKeywords}`,
-            platforms: formData.platforms,
-            referenceLink: formData.referenceLink || "",
-            selectedArticleId: data.data.id, // Use the newly created article
-            seoKeywords: formData.seoKeywords,
-            seoTopic: formData.seoTopic
-          };
-          
-          console.log('Sending social content webhook data:', socialWebhookData);
-          
-          const webhookResponse = await apiRequest('POST', '/api/social/extract-content', socialWebhookData);
-          
-          console.log('Social webhook response status:', webhookResponse.status);
-          console.log('Social webhook response object:', webhookResponse);
-          
-          if (webhookResponse.ok) {
-            const responseData = await webhookResponse.json();
-            console.log('Social webhook response data:', responseData);
+          // Send to configured webhook for social content creation (same as "từ bài viết có sẵn")
+          try {
+            const socialWebhookData = {
+              contentSource: 'existing-article', // Use existing article mode for newly created article
+              briefDescription: `${formData.seoTopic}\n\nKeywords: ${formData.seoKeywords}`,
+              platforms: formData.platforms,
+              referenceLink: formData.referenceLink || "",
+              selectedArticleId: data.data.id, // Use the newly created article
+              seoKeywords: formData.seoKeywords,
+              seoTopic: formData.seoTopic
+            };
             
-            if (responseData?.success) {
+            console.log('Sending social content webhook data:', socialWebhookData);
+            
+            const webhookResponse = await apiRequest('POST', '/api/social/extract-content', socialWebhookData);
+            
+            console.log('Social webhook response status:', webhookResponse.status);
+            console.log('Social webhook response object:', webhookResponse);
+            
+            if (webhookResponse.ok) {
+              const responseData = await webhookResponse.json();
+              console.log('Social webhook response data:', responseData);
+              
+              if (responseData?.success) {
+                toast({
+                  title: "Social content đã được tạo",
+                  description: "Đã gửi yêu cầu tạo nội dung mạng xã hội thành công",
+                });
+              }
+            } else {
+              const errorText = await webhookResponse.text();
+              console.error('Social webhook response error:', webhookResponse.status, errorText);
               toast({
-                title: "Social content đã được tạo",
-                description: "Đã gửi yêu cầu tạo nội dung mạng xã hội thành công",
+                title: "Lỗi webhook",
+                description: `Webhook error: ${webhookResponse.status}`,
+                variant: "destructive"
               });
             }
-          } else {
-            const errorText = await webhookResponse.text();
-            console.error('Social webhook response error:', webhookResponse.status, errorText);
+          } catch (webhookError) {
+            console.error('Social webhook error:', webhookError);
             toast({
               title: "Lỗi webhook",
-              description: `Webhook error: ${webhookResponse.status}`,
+              description: `Webhook error: ${(webhookError as Error).message}`,
               variant: "destructive"
             });
           }
-        } catch (error) {
-          console.error('Social webhook error:', error);
+
+          // Automatically extract content from the new article
+          console.log('Calling extractMutation.mutate...');
+          extractMutation.mutate();
+        } else {
           toast({
-            title: "Lỗi webhook",
-            description: `Webhook error: ${error.message}`,
+            title: "Lỗi",
+            description: "Không thể tạo bài viết SEO",
             variant: "destructive"
           });
         }
-
-        // Automatically extract content from the new article
-        console.log('Calling extractMutation.mutate...');
-        extractMutation.mutate();
-      } else {
+      } catch (mainError) {
+        console.error('Main error in onSuccess:', mainError);
         toast({
           title: "Lỗi",
-          description: "Không thể tạo bài viết SEO",
+          description: `Lỗi xử lý: ${(mainError as Error).message}`,
           variant: "destructive"
         });
       }
     },
     onError: (error: any) => {
+      console.error('SEO article creation error:', error);
       toast({
         title: "Lỗi",
         description: error.message || "Không thể tạo bài viết SEO",
