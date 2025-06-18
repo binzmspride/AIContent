@@ -184,6 +184,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get images associated with a specific article
+  app.get('/api/dashboard/articles/:id/images', async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+      }
+      
+      const userId = req.user.id;
+      const articleId = parseInt(req.params.id, 10);
+      
+      if (isNaN(articleId)) {
+        return res.status(400).json({ success: false, error: 'Invalid article ID' });
+      }
+      
+      // Get images associated with this article
+      const images = await db.query.images.findMany({
+        where: eq(schema.images.articleId, articleId),
+        orderBy: [sql`created_at DESC`]
+      });
+      
+      // Verify user has access to this article
+      if (images.length > 0) {
+        const article = await storage.getArticleById(articleId);
+        if (!article || (article.userId !== userId && req.user.role !== 'admin')) {
+          return res.status(403).json({ success: false, error: 'You do not have permission to access this article' });
+        }
+      }
+      
+      res.json({ success: true, data: { images } });
+    } catch (error) {
+      console.error('Error fetching article images:', error);
+      res.status(500).json({ success: false, error: 'Failed to fetch article images' });
+    }
+  });
+
   // Get content separation data for articles
   app.get('/api/dashboard/articles/:id/content-separation', async (req, res) => {
     try {

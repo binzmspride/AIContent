@@ -64,6 +64,12 @@ const EditArticle = () => {
     enabled: isSocialContent,
   });
 
+  // Fetch images associated with this article
+  const { data: articleImagesData } = useQuery<{ success: boolean; data: { images: any[] } }>({
+    queryKey: [`/api/dashboard/articles/${params.id}/images`],
+    enabled: !!params.id,
+  });
+
   // ReactQuill modules and formats
   const modules = {
     toolbar: [
@@ -106,12 +112,13 @@ const EditArticle = () => {
         setSelectedPlatforms(platforms);
       }
 
-      // Load selected images if available
-      if (articleData.data.imageUrls && Array.isArray(articleData.data.imageUrls)) {
-        setSelectedImages(articleData.data.imageUrls);
+      // Load selected images from article-associated images
+      if (articleImagesData?.data?.images && Array.isArray(articleImagesData.data.images)) {
+        const imageUrls = articleImagesData.data.images.map((img: any) => img.imageUrl || img.url);
+        setSelectedImages(imageUrls);
       }
     }
-  }, [articleData]);
+  }, [articleData, articleImagesData]);
 
   // Update article mutation
   const updateMutation = useMutation({
