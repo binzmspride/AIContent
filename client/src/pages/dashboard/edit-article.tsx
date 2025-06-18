@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, useParams } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -16,11 +16,8 @@ import "react-quill/dist/quill.snow.css";
 import { Share2, Eye, ImageIcon, X, Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
 import PlatformPreview from "@/components/social-content/PlatformPreview";
 
-interface EditArticleProps {
-  params: { id: string };
-}
-
-const EditArticle = ({ params }: EditArticleProps) => {
+const EditArticle = () => {
+  const params = useParams();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [title, setTitle] = useState("");
@@ -36,6 +33,23 @@ const EditArticle = ({ params }: EditArticleProps) => {
   const [platformPreviewDialog, setPlatformPreviewDialog] = useState(false);
   const [selectedPlatformPreview, setSelectedPlatformPreview] = useState<string | null>(null);
   const [imagePreviewDialog, setImagePreviewDialog] = useState(false);
+
+  // Handle missing ID
+  if (!params.id) {
+    return (
+      <DashboardLayout>
+        <div className="container mx-auto p-6">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-red-600">Lỗi</h1>
+            <p className="text-gray-600">ID bài viết không hợp lệ</p>
+            <Button onClick={() => setLocation("/dashboard/my-articles")} className="mt-4">
+              Quay lại danh sách bài viết
+            </Button>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   // Fetch article data
   const { data: articleData, isLoading } = useQuery<{ success: boolean; data: any }>({
