@@ -1,58 +1,47 @@
 import { useState, useEffect } from "react";
-import { DashboardLayout } from "@/components/dashboard/Layout";
-import { useLanguage } from "@/hooks/use-language";
+import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { DashboardLayout } from "@/components/dashboard/Layout";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useLocation, useParams } from "wouter";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { 
-  Eye,
-  Image as ImageIcon,
-  Facebook,
-  Instagram,
-  Linkedin,
-  Twitter,
-  Share2,
-  Upload,
-  X
-} from "lucide-react";
-import { Article } from "@shared/schema";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { Share2, Eye, ImageIcon, X, Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
+import PlatformPreview from "@/components/social-content/PlatformPreview";
 
-const EditArticle = () => {
-  const { t } = useLanguage();
+interface EditArticleProps {
+  params: { id: string };
+}
+
+const EditArticle = ({ params }: EditArticleProps) => {
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [_, setLocation] = useLocation();
-  const params = useParams<{ id: string }>();
-  const articleId = params && params.id ? parseInt(params.id) : null;
-
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [keywords, setKeywords] = useState("");
   const [status, setStatus] = useState<"draft" | "published">("draft");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  
+  // Social Media Content specific states
   const [isSocialContent, setIsSocialContent] = useState(false);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
-  const [imagePreviewDialog, setImagePreviewDialog] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [platformPreviewDialog, setPlatformPreviewDialog] = useState(false);
-  const [selectedPlatformPreview, setSelectedPlatformPreview] = useState<string>("");
+  const [selectedPlatformPreview, setSelectedPlatformPreview] = useState<string | null>(null);
+  const [imagePreviewDialog, setImagePreviewDialog] = useState(false);
+
+  // Fetch article data
+  const { data: articleData, isLoading } = useQuery<{ success: boolean; data: any }>({
+    queryKey: ["/api/dashboard/articles", params.id],
+    retry: false,
+  });
 
   // Fetch images for social content
   const { data: imagesData } = useQuery<{ success: boolean; data: { images: any[] } }>({
@@ -60,25 +49,32 @@ const EditArticle = () => {
     enabled: isSocialContent,
   });
 
-  // Fetch article data
-  const { data: articleData, isLoading } = useQuery<{ success: boolean; data: Article }>({
-    queryKey: [`/api/dashboard/articles/${articleId}`],
-    enabled: !!articleId,
-  });
+  // ReactQuill modules and formats
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      ["clean"],
+    ],
+  };
 
-  // Update form when article data is loaded
+  const formats = [
+    "header", "bold", "italic", "underline", "strike", "blockquote",
+    "list", "bullet", "indent", "link", "image"
+  ];
+
+  // Initialize form data when article is loaded
   useEffect(() => {
-    if (articleData?.success && articleData.data) {
-      setTitle(articleData.data.title);
-      setContent(articleData.data.content);
+    if (articleData?.data) {
+      setTitle(articleData.data.title || "");
+      setContent(articleData.data.content || "");
       setKeywords(articleData.data.keywords || "");
-      setStatus(articleData.data.status as "draft" | "published");
+      setStatus(articleData.data.status || "draft");
       
-      // Check if it's social media content
-      const isSocial = articleData.data.title?.includes("Social Media Content") || 
-                      articleData.data.contentType === "social_media" ||
-                      articleData.data.keywords?.includes("social") ||
-                      articleData.data.keywords?.includes("facebook") ||
+      // Check if this is social media content
+      const isSocial = articleData.data.keywords?.includes("facebook") ||
                       articleData.data.keywords?.includes("instagram") ||
                       articleData.data.keywords?.includes("twitter") ||
                       articleData.data.keywords?.includes("linkedin");
@@ -94,42 +90,33 @@ const EditArticle = () => {
         if (articleData.data.keywords.includes("linkedin")) platforms.push("linkedin");
         setSelectedPlatforms(platforms);
       }
+
+      // Load selected images if available
+      if (articleData.data.imageUrls && Array.isArray(articleData.data.imageUrls)) {
+        setSelectedImages(articleData.data.imageUrls);
+      }
     }
   }, [articleData]);
 
   // Update article mutation
-  const updateArticleMutation = useMutation({
-    mutationFn: async (articleData: {
-      title: string;
-      content: string;
-      keywords?: string;
-      status: "draft" | "published";
-    }) => {
-      if (!articleId) {
-        throw new Error("Article ID is missing");
-      }
-      const response = await apiRequest(
-        "PATCH",
-        `/api/dashboard/articles/${articleId}`,
-        articleData
-      );
-      return response.json();
+  const updateMutation = useMutation({
+    mutationFn: async (data: any) => {
+      return apiRequest(`/api/dashboard/articles/${params.id}`, "PUT", data);
     },
     onSuccess: () => {
       toast({
-        title: "Cập nhật thành công",
-        description: "Bài viết đã được cập nhật"
+        title: "Thành công",
+        description: "Bài viết đã được cập nhật",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/articles"] });
       setLocation("/dashboard/my-articles");
     },
-    onError: (error: Error) => {
+    onError: (error: any) => {
       toast({
-        title: "Lỗi cập nhật",
+        title: "Lỗi",
         description: error.message || "Có lỗi xảy ra khi cập nhật bài viết",
         variant: "destructive",
       });
-      setIsSubmitting(false);
     },
   });
 
@@ -137,225 +124,53 @@ const EditArticle = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!title.trim() || !content.trim()) {
-      toast({
-        title: "Thiếu thông tin",
-        description: "Vui lòng nhập tiêu đề và nội dung bài viết",
-        variant: "destructive",
-      });
+    try {
+      const updateData = {
+        title: title.trim(),
+        content,
+        keywords,
+        status,
+        ...(isSocialContent && { imageUrls: selectedImages }),
+      };
+
+      await updateMutation.mutateAsync(updateData);
+    } catch (error) {
+      console.error("Error updating article:", error);
+    } finally {
       setIsSubmitting(false);
-      return;
-    }
-
-    updateArticleMutation.mutate({
-      title,
-      content,
-      keywords,
-      status,
-    });
-  };
-
-  // Quill editor modules and formats
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, 4, 5, 6, false] }],
-      ["bold", "italic", "underline", "strike"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ indent: "-1" }, { indent: "+1" }],
-      [{ align: [] }],
-      ["link", "image"],
-      ["clean"],
-    ],
-  };
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "indent",
-    "align",
-    "link",
-    "image",
-  ];
-
-  // Social media platform preview components
-  const PlatformPreview = ({ platform, content, selectedImages }: { platform: string; content: string; selectedImages: string[] }) => {
-    const getFirstImage = () => selectedImages?.[0] || "";
-    
-    switch (platform) {
-      case "facebook":
-        return (
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 max-w-md">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                <Facebook className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <div className="font-semibold text-sm text-gray-900 dark:text-gray-100">Trang của bạn</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">2 phút trước</div>
-              </div>
-            </div>
-            <div className="text-sm text-gray-800 dark:text-gray-200 mb-3" dangerouslySetInnerHTML={{ __html: content.replace(/<[^>]*>/g, '') }} />
-            {getFirstImage() && (
-              <img src={getFirstImage()} alt="Post" className="w-full rounded-lg object-cover h-48" />
-            )}
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-6">
-                <span className="text-gray-500 text-sm">👍 Thích</span>
-                <span className="text-gray-500 text-sm">💬 Bình luận</span>
-                <span className="text-gray-500 text-sm">📤 Chia sẻ</span>
-              </div>
-            </div>
-          </div>
-        );
-        
-      case "instagram":
-        return (
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 max-w-md">
-            <div className="flex items-center gap-3 p-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                <Instagram className="w-4 h-4 text-white" />
-              </div>
-              <div className="flex-1">
-                <div className="font-semibold text-sm text-gray-900 dark:text-gray-100">your_page</div>
-              </div>
-            </div>
-            {getFirstImage() && (
-              <img src={getFirstImage()} alt="Post" className="w-full aspect-square object-cover" />
-            )}
-            <div className="p-3">
-              <div className="flex items-center gap-4 mb-2">
-                <span className="text-gray-700 dark:text-gray-300">❤️</span>
-                <span className="text-gray-700 dark:text-gray-300">💬</span>
-                <span className="text-gray-700 dark:text-gray-300">📤</span>
-              </div>
-              <div className="text-sm text-gray-800 dark:text-gray-200" dangerouslySetInnerHTML={{ __html: content.replace(/<[^>]*>/g, '') }} />
-            </div>
-          </div>
-        );
-        
-      case "twitter":
-        return (
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800 max-w-md">
-            <div className="flex gap-3">
-              <div className="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center">
-                <Twitter className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-sm text-gray-900 dark:text-gray-100">Trang của bạn</span>
-                  <span className="text-blue-500">✓</span>
-                  <span className="text-gray-500 text-sm">@yourpage</span>
-                  <span className="text-gray-500 text-sm">· 2m</span>
-                </div>
-                <div className="text-sm text-gray-800 dark:text-gray-200 mt-1" dangerouslySetInnerHTML={{ __html: content.replace(/<[^>]*>/g, '') }} />
-                {getFirstImage() && (
-                  <img src={getFirstImage()} alt="Post" className="w-full rounded-lg object-cover h-48 mt-3" />
-                )}
-                <div className="flex items-center justify-between mt-3 max-w-md">
-                  <span className="text-gray-500 text-sm">💬 12</span>
-                  <span className="text-gray-500 text-sm">🔄 5</span>
-                  <span className="text-gray-500 text-sm">❤️ 23</span>
-                  <span className="text-gray-500 text-sm">📤</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-        
-      case "linkedin":
-        return (
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 max-w-md">
-            <div className="flex items-center gap-3 p-4">
-              <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-                <Linkedin className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <div className="font-semibold text-sm text-gray-900 dark:text-gray-100">Trang công ty của bạn</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">2 phút trước</div>
-              </div>
-            </div>
-            <div className="px-4 pb-2">
-              <div className="text-sm text-gray-800 dark:text-gray-200" dangerouslySetInnerHTML={{ __html: content.replace(/<[^>]*>/g, '') }} />
-            </div>
-            {getFirstImage() && (
-              <img src={getFirstImage()} alt="Post" className="w-full object-cover h-48" />
-            )}
-            <div className="flex items-center justify-between p-4 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-4">
-                <span className="text-gray-500 text-sm flex items-center gap-1">
-                  👍 Thích
-                </span>
-                <span className="text-gray-500 text-sm flex items-center gap-1">
-                  💬 Bình luận
-                </span>
-                <span className="text-gray-500 text-sm flex items-center gap-1">
-                  📤 Chia sẻ
-                </span>
-              </div>
-            </div>
-          </div>
-        );
-        
-      default:
-        return null;
     }
   };
 
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-8 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-10 w-full" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-40 w-full" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-10 w-full" />
-              </div>
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-10 w-40" />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Skeleton className="h-10 w-28" />
-            </CardFooter>
-          </Card>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Đang tải bài viết...</p>
+          </div>
         </div>
       </DashboardLayout>
     );
   }
 
-  if (!isLoading && !articleData?.success) {
+  if (!articleData?.data) {
     return (
       <DashboardLayout>
-        <Card className="border-destructive">
-          <CardHeader>
-            <CardTitle className="text-destructive">Bài viết không tồn tại</CardTitle>
-            <CardDescription>Không tìm thấy bài viết hoặc bạn không có quyền truy cập</CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Button onClick={() => setLocation("/dashboard/my-articles")}>
-              Quay lại danh sách
-            </Button>
-          </CardFooter>
-        </Card>
+        <div className="text-center py-12">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+            Không tìm thấy bài viết
+          </h3>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Bài viết có thể đã bị xóa hoặc bạn không có quyền truy cập.
+          </p>
+          <Button
+            className="mt-4"
+            onClick={() => setLocation("/dashboard/my-articles")}
+          >
+            Quay lại danh sách bài viết
+          </Button>
+        </div>
       </DashboardLayout>
     );
   }
@@ -649,19 +464,6 @@ const EditArticle = () => {
             </div>
           </DialogContent>
         </Dialog>
-      </form>
-    </DashboardLayout>
-  );
-              onClick={() => setLocation("/dashboard/my-articles")}
-              type="button"
-            >
-              Hủy
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Đang lưu..." : "Lưu thay đổi"}
-            </Button>
-          </CardFooter>
-        </Card>
       </form>
     </DashboardLayout>
   );
