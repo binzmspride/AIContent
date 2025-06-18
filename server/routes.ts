@@ -1022,10 +1022,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { contentSource, briefDescription, selectedArticleId, referenceLink, platforms } = req.body;
       const userId = req.user.id;
 
-      if (!briefDescription || platforms.length === 0) {
+      console.log('Extract content request:', req.body);
+
+      if (!platforms || platforms.length === 0) {
         return res.status(400).json({ 
           success: false, 
-          error: 'Brief description and platforms are required' 
+          error: 'Platforms are required' 
+        });
+      }
+
+      // For existing article source, briefDescription is optional
+      if (contentSource === 'manual' && !briefDescription) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Brief description is required for manual content' 
         });
       }
 

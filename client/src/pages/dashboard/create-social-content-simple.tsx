@@ -74,11 +74,7 @@ export default function CreateSocialContent() {
   // Step 1: Extract content
   const extractMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('/api/social/extract-content', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+      return await apiRequest('/api/social/extract-content', formData);
     },
     onSuccess: (response: any) => {
       setExtractedContent(response.extractedContent || response.data?.extractedContent || '');
@@ -101,15 +97,11 @@ export default function CreateSocialContent() {
   const generateMutation = useMutation({
     mutationFn: async () => {
       return await apiRequest('/api/social/create-final-content', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          extractedContent,
-          platforms: formData.platforms,
-          contentSource: formData.contentSource,
-          selectedArticleId: formData.selectedArticleId,
-          referenceLink: formData.referenceLink
-        })
+        extractedContent,
+        platforms: formData.platforms,
+        contentSource: formData.contentSource,
+        selectedArticleId: formData.selectedArticleId,
+        referenceLink: formData.referenceLink
       });
     },
     onSuccess: (response: any) => {
@@ -134,14 +126,10 @@ export default function CreateSocialContent() {
     mutationFn: async () => {
       const contentArray = generatedContent || [];
       return await apiRequest('/api/social/save-created-content', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          content: contentArray,
-          title: `Social Media Content - ${new Date().toLocaleDateString('vi-VN')}`,
-          platforms: formData.platforms,
-          contentSource: 'wizard-generated'
-        })
+        content: contentArray,
+        title: `Social Media Content - ${new Date().toLocaleDateString('vi-VN')}`,
+        platforms: formData.platforms,
+        contentSource: 'wizard-generated'
       });
     },
     onSuccess: () => {
