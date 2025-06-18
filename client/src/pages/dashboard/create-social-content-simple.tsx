@@ -211,113 +211,7 @@ export default function CreateSocialContent() {
     }
   });
 
-  // Create new SEO article mutation
-  const createSeoMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiRequest('POST', '/api/dashboard/articles/generate', {
-        title: formData.seoTopic, // Use topic as title
-        keywords: formData.seoKeywords?.split(',').map(k => k.trim()) || [],
-        topic: formData.seoTopic,
-        type: 'blog',
-        complexity: 'medium',
-        tone: 'professional'
-      });
-      return await response.json();
-    },
-    onSuccess: async (data: any) => {
-      try {
-        console.log('SEO article creation success:', data);
-        
-        if (data?.success && data?.data?.id) {
-          // Update form with new article ID
-          setFormData({ 
-            ...formData, 
-            selectedArticleId: data.data.id,
-            contentSource: 'existing-article' // Switch to existing article mode
-          });
-          
-          toast({
-            title: "Thành công",
-            description: `Đã tạo bài viết SEO: ${formData.seoTopic}`
-          });
 
-          console.log('About to send webhook for social content extraction...');
-
-          // Send to configured webhook for social content creation (same as "từ bài viết có sẵn")
-          try {
-            const socialWebhookData = {
-              contentSource: 'existing-article', // Use existing article mode for newly created article
-              briefDescription: `${formData.seoTopic}\n\nKeywords: ${formData.seoKeywords}`,
-              platforms: formData.platforms,
-              referenceLink: formData.referenceLink || "",
-              selectedArticleId: data.data.id, // Use the newly created article
-              seoKeywords: formData.seoKeywords,
-              seoTopic: formData.seoTopic
-            };
-            
-            console.log('Sending social content webhook data:', socialWebhookData);
-            
-            const webhookResponse = await apiRequest('POST', '/api/social/generate-content', socialWebhookData);
-            
-            console.log('Social webhook response status:', webhookResponse.status);
-            console.log('Social webhook response object:', webhookResponse);
-            
-            if (webhookResponse.ok) {
-              const responseData = await webhookResponse.json();
-              console.log('Social webhook response data:', responseData);
-              
-              if (responseData?.success) {
-                toast({
-                  title: "Social content đã được tạo",
-                  description: "Đã gửi yêu cầu tạo nội dung mạng xã hội thành công",
-                });
-              }
-            } else {
-              const errorText = await webhookResponse.text();
-              console.error('Social webhook response error:', webhookResponse.status, errorText);
-              toast({
-                title: "Lỗi webhook",
-                description: `Webhook error: ${webhookResponse.status}`,
-                variant: "destructive"
-              });
-            }
-          } catch (webhookError) {
-            console.error('Social webhook error:', webhookError);
-            toast({
-              title: "Lỗi webhook",
-              description: `Webhook error: ${(webhookError as Error).message}`,
-              variant: "destructive"
-            });
-          }
-
-          // Automatically generate social content for the new article
-          console.log('Calling generateSocialContentMutation.mutate...');
-          generateSocialContentMutation.mutate();
-        } else {
-          toast({
-            title: "Lỗi",
-            description: "Không thể tạo bài viết SEO",
-            variant: "destructive"
-          });
-        }
-      } catch (mainError) {
-        console.error('Main error in onSuccess:', mainError);
-        toast({
-          title: "Lỗi",
-          description: `Lỗi xử lý: ${(mainError as Error).message}`,
-          variant: "destructive"
-        });
-      }
-    },
-    onError: (error: any) => {
-      console.error('SEO article creation error:', error);
-      toast({
-        title: "Lỗi",
-        description: error.message || "Không thể tạo bài viết SEO",
-        variant: "destructive"
-      });
-    }
-  });
 
   // Generate social content for "Tạo bài viết SEO mới" flow
   const generateSocialContentMutation = useMutation({
@@ -621,20 +515,7 @@ export default function CreateSocialContent() {
       return;
     }
     
-    if (formData.contentSource === 'create-new-seo') {
-      // Validate SEO article creation fields
-      if (!formData.seoKeywords || !formData.seoTopic) {
-        toast({
-          title: "Thiếu thông tin",
-          description: "Vui lòng điền từ khóa và chủ đề để tạo bài viết SEO",
-          variant: "destructive"
-        });
-        return;
-      }
-      // Create new SEO article first
-      createSeoMutation.mutate();
-      return;
-    }
+
     
     if (formData.platforms.length === 0) {
       toast({
@@ -1065,7 +946,7 @@ export default function CreateSocialContent() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="existing-article">Từ bài viết có sẵn</SelectItem>
-                    <SelectItem value="create-new-seo">Tạo bài viết SEO mới</SelectItem>
+
                     <SelectItem value="manual">Tự nhập mô tả</SelectItem>
                   </SelectContent>
                 </Select>
@@ -1112,38 +993,7 @@ export default function CreateSocialContent() {
                 </div>
               )}
 
-              {/* Create New SEO Article Form */}
-              {formData.contentSource === 'create-new-seo' && (
-                <div className="space-y-4 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <div className="flex items-center space-x-2 mb-4">
-                    <FileText className="w-5 h-5 text-blue-600" />
-                    <h3 className="font-medium text-blue-900 dark:text-blue-100">Tạo bài viết SEO mới</h3>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="seoKeywords">Từ khóa chính *</Label>
-                      <Input
-                        id="seoKeywords"
-                        placeholder="Nhập từ khóa chính (phân tách bằng dấu phẩy)"
-                        value={formData.seoKeywords || ''}
-                        onChange={(e) => setFormData({ ...formData, seoKeywords: e.target.value })}
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="seoTopic">Chủ đề/Mô tả ngắn *</Label>
-                      <Textarea
-                        id="seoTopic"
-                        placeholder="Mô tả ngắn gọn về chủ đề bài viết..."
-                        value={formData.seoTopic || ''}
-                        onChange={(e) => setFormData({ ...formData, seoTopic: e.target.value })}
-                        rows={3}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
+
 
               {/* Reference Link */}
               <div className="space-y-3">
