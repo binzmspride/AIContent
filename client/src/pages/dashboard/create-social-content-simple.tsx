@@ -407,13 +407,7 @@ export default function CreateSocialContent() {
                 </Button>
                 <Button 
                   variant="outline" 
-                  onClick={() => {
-                    if (savedArticleId) {
-                      window.location.href = `/dashboard/articles/${savedArticleId}`;
-                    } else {
-                      window.location.href = '/dashboard/articles';
-                    }
-                  }}
+                  onClick={() => window.location.href = '/dashboard/my-articles'}
                   className="flex items-center space-x-2"
                 >
                   <Eye className="w-4 h-4" />
