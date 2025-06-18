@@ -425,63 +425,7 @@ const EditArticle = () => {
                     </div>
                   )}
                   
-                  {selectedImages.length > 0 && (
-                    <div className="border-t pt-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <Label className="text-sm font-medium">Hình ảnh được chọn ({selectedImages.length})</Label>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setImagePreviewDialog(true)}
-                          className="text-xs"
-                        >
-                          Xem trước
-                        </Button>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        {selectedImages.slice(0, 4).map((url, index) => (
-                          <div key={index} className="relative group">
-                            <div className="w-full h-16 rounded border overflow-hidden bg-gray-100">
-                              <img 
-                                src={url} 
-                                alt={`Selected ${index + 1}`}
-                                className="w-full h-full object-cover"
-                                crossOrigin="anonymous"
-                                loading="lazy"
-                                onError={(e) => {
-                                  console.error('Image failed to load:', url);
-                                  const target = e.currentTarget;
-                                  target.style.display = 'none';
-                                  const parent = target.parentElement;
-                                  if (parent) {
-                                    parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-xs">Không thể tải ảnh</div>`;
-                                  }
-                                }}
-                                onLoad={() => {
-                                  console.log('Image loaded successfully:', url);
-                                }}
-                              />
-                            </div>
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="sm"
-                              className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={() => setSelectedImages(prev => prev.filter(img => img !== url))}
-                            >
-                              <X className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                      {selectedImages.length > 4 && (
-                        <div className="text-xs text-muted-foreground mt-1">
-                          +{selectedImages.length - 4} hình ảnh khác
-                        </div>
-                      )}
-                    </div>
-                  )}
+
 
                 </CardContent>
               </Card>
