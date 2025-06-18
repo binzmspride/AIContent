@@ -281,63 +281,7 @@ const EditArticle = () => {
                   </div>
                 </div>
 
-                {isSocialContent && (
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>Hình ảnh đã chọn</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {imagesData?.data?.images?.slice(0, 8).map((image: any) => (
-                          <div 
-                            key={image.id}
-                            className={`relative cursor-pointer border-2 rounded-lg overflow-hidden transition-all hover:scale-105 ${
-                              selectedImages.includes(image.url) 
-                                ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' 
-                                : 'border-gray-200 dark:border-gray-700'
-                            }`}
-                            onClick={() => {
-                              if (selectedImages.includes(image.url)) {
-                                setSelectedImages(prev => prev.filter(url => url !== image.url));
-                              } else {
-                                setSelectedImages(prev => [...prev, image.url]);
-                              }
-                            }}
-                          >
-                            <img 
-                              src={image.url} 
-                              alt={image.description || 'Image'} 
-                              className="w-full h-20 object-cover"
-                            />
-                            {selectedImages.includes(image.url) && (
-                              <div className="absolute inset-0 bg-blue-500 bg-opacity-20 flex items-center justify-center">
-                                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                                  <span className="text-white text-xs">✓</span>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                      
-                      {selectedImages.length > 0 && (
-                        <div className="flex items-center gap-2 mt-2">
-                          <ImageIcon className="h-4 w-4 text-blue-500" />
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {selectedImages.length} hình ảnh đã chọn
-                          </span>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setImagePreviewDialog(true)}
-                          >
-                            <Eye className="h-4 w-4 mr-1" />
-                            Xem trước
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
+
 
                 <div className="space-y-2">
                   <Label htmlFor="keywords">Từ khóa</Label>
