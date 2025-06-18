@@ -289,13 +289,13 @@ const EditArticle = () => {
                         {selectedImages.map((url, index) => (
                           <div key={index} className="relative group">
                             <div 
-                              className="w-full h-20 rounded border overflow-hidden bg-gray-100 cursor-pointer hover:opacity-80 transition-opacity"
+                              className="w-full h-32 rounded border overflow-hidden bg-gray-100 cursor-pointer hover:opacity-80 transition-opacity flex items-center justify-center"
                               onClick={() => setImagePreviewDialog(true)}
                             >
                               <img 
                                 src={url} 
                                 alt={`Selected ${index + 1}`}
-                                className="w-full h-full object-cover"
+                                className="max-w-full max-h-full object-contain"
                                 crossOrigin="anonymous"
                                 loading="lazy"
                                 onError={(e) => {
