@@ -23,10 +23,8 @@ interface FormData {
   referenceLink?: string;
   platforms: string[];
   // For creating new SEO article
-  seoTitle?: string;
   seoKeywords?: string;
   seoTopic?: string;
-  seoContentType?: string;
 }
 
 const platformOptions = [
@@ -220,10 +218,10 @@ export default function CreateSocialContent() {
   const createSeoMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest('POST', '/api/dashboard/articles/generate', {
-        title: formData.seoTitle,
+        title: formData.seoTopic, // Use topic as title
         keywords: formData.seoKeywords?.split(',').map(k => k.trim()) || [],
         topic: formData.seoTopic,
-        type: formData.seoContentType || 'blog',
+        type: 'blog',
         complexity: 'medium',
         tone: 'professional'
       });
@@ -514,10 +512,10 @@ export default function CreateSocialContent() {
     
     if (formData.contentSource === 'create-new-seo') {
       // Validate SEO article creation fields
-      if (!formData.seoTitle || !formData.seoKeywords || !formData.seoTopic) {
+      if (!formData.seoKeywords || !formData.seoTopic) {
         toast({
           title: "Thiếu thông tin",
-          description: "Vui lòng điền đầy đủ thông tin để tạo bài viết SEO",
+          description: "Vui lòng điền từ khóa và chủ đề để tạo bài viết SEO",
           variant: "destructive"
         });
         return;
@@ -1011,55 +1009,27 @@ export default function CreateSocialContent() {
                     <h3 className="font-medium text-blue-900 dark:text-blue-100">Tạo bài viết SEO mới</h3>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="seoTitle">Tiêu đề bài viết *</Label>
+                      <Label htmlFor="seoKeywords">Từ khóa chính *</Label>
                       <Input
-                        id="seoTitle"
-                        placeholder="Nhập tiêu đề bài viết SEO"
-                        value={formData.seoTitle || ''}
-                        onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
+                        id="seoKeywords"
+                        placeholder="Nhập từ khóa chính (phân tách bằng dấu phẩy)"
+                        value={formData.seoKeywords || ''}
+                        onChange={(e) => setFormData({ ...formData, seoKeywords: e.target.value })}
                       />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="seoContentType">Loại nội dung</Label>
-                      <Select
-                        value={formData.seoContentType || 'blog'}
-                        onValueChange={(value) => setFormData({ ...formData, seoContentType: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="blog">Blog</SelectItem>
-                          <SelectItem value="product">Sản phẩm</SelectItem>
-                          <SelectItem value="news">Tin tức</SelectItem>
-                          <SelectItem value="guide">Hướng dẫn</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="seoTopic">Chủ đề/Mô tả ngắn *</Label>
+                      <Textarea
+                        id="seoTopic"
+                        placeholder="Mô tả ngắn gọn về chủ đề bài viết..."
+                        value={formData.seoTopic || ''}
+                        onChange={(e) => setFormData({ ...formData, seoTopic: e.target.value })}
+                        rows={3}
+                      />
                     </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="seoKeywords">Từ khóa chính *</Label>
-                    <Input
-                      id="seoKeywords"
-                      placeholder="Nhập từ khóa chính (phân tách bằng dấu phẩy)"
-                      value={formData.seoKeywords || ''}
-                      onChange={(e) => setFormData({ ...formData, seoKeywords: e.target.value })}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="seoTopic">Chủ đề/Mô tả ngắn *</Label>
-                    <Textarea
-                      id="seoTopic"
-                      placeholder="Mô tả ngắn gọn về chủ đề bài viết..."
-                      value={formData.seoTopic || ''}
-                      onChange={(e) => setFormData({ ...formData, seoTopic: e.target.value })}
-                      rows={3}
-                    />
                   </div>
                 </div>
               )}
