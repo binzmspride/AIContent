@@ -77,11 +77,18 @@ export default function CreateSocialContent() {
       return await apiRequest('POST', '/api/social/extract-content', formData);
     },
     onSuccess: (response: any) => {
-      setExtractedContent(response.extractedContent || response.data?.extractedContent || '');
+      console.log('Extract response:', response);
+      console.log('Response data:', response.data);
+      console.log('Extracted content:', response.data?.extractedContent);
+      
+      const content = response.data?.extractedContent || response.extractedContent || '';
+      console.log('Final content to set:', content);
+      
+      setExtractedContent(content);
       setCurrentStep(2);
       toast({
         title: "Thành công",
-        description: "Đã trích xuất nội dung"
+        description: `Đã trích xuất nội dung (${content.length} ký tự)`
       });
     },
     onError: (error: any) => {
