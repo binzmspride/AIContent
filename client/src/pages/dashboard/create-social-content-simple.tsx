@@ -243,35 +243,49 @@ export default function CreateSocialContent() {
 
         // Send JSON to webhook for social content creation
         try {
-          const webhookResponse = await apiRequest('POST', '/api/social-content/webhook', {
+          const webhookData = {
             articleId: data.data.id,
             platforms: formData.platforms,
             briefDescription: formData.briefDescription,
             referenceLink: formData.referenceLink,
             seoKeywords: formData.seoKeywords,
             seoTopic: formData.seoTopic
-          });
+          };
+          
+          console.log('Sending webhook data:', webhookData);
+          console.log('Webhook URL: /api/social-content/webhook');
+          
+          const webhookResponse = await apiRequest('POST', '/api/social-content/webhook', webhookData);
+          
+          console.log('Webhook response status:', webhookResponse.status);
+          console.log('Webhook response headers:', Array.from(webhookResponse.headers.entries()));
           
           // Check if response is OK
           if (webhookResponse.ok) {
             const contentType = webhookResponse.headers.get('content-type');
+            console.log('Response content-type:', contentType);
+            
             if (contentType && contentType.includes('application/json')) {
-              const webhookData = await webhookResponse.json();
-              if (webhookData?.success) {
+              const responseData = await webhookResponse.json();
+              console.log('Webhook response data:', responseData);
+              
+              if (responseData?.success) {
                 toast({
                   title: "Webhook thành công",
                   description: "Đã gửi thông tin tạo social content qua webhook",
                 });
               }
             } else {
-              console.log('Webhook response is not JSON');
+              const responseText = await webhookResponse.text();
+              console.log('Webhook response text:', responseText);
               toast({
                 title: "Webhook thành công",
                 description: "Đã gửi thông tin qua webhook",
               });
             }
           } else {
-            console.error('Webhook response not OK:', webhookResponse.status);
+            const errorText = await webhookResponse.text();
+            console.error('Webhook response not OK:', webhookResponse.status, errorText);
           }
         } catch (error) {
           console.error('Webhook error:', error);
