@@ -1078,34 +1078,7 @@ export default function CreateSocialContent() {
                       );
                     }
                     
-                    // TikTok Preview
-                    if (platform === 'tiktok' || platform.includes('tiktok')) {
-                      return (
-                        <div key={index} className="max-w-sm mx-auto bg-black text-white rounded-lg shadow-sm overflow-hidden">
-                          {/* TikTok-style Header */}
-                          <div className="p-4">
-                            <div className="flex items-center space-x-2 mb-3">
-                              <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-yellow-500 rounded-full flex items-center justify-center">
-                                <span className="text-white text-xs font-bold">TT</span>
-                              </div>
-                              <span className="font-semibold text-sm">@youraccount</span>
-                            </div>
-                            
-                            {includeImage && selectedImage && (
-                              <div className="aspect-[9/16] max-h-96 rounded-lg overflow-hidden mb-3">
-                                <img
-                                  src={selectedImage.imageUrl || selectedImage.url}
-                                  alt="TikTok post"
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            )}
-                            
-                            <p className="text-sm">{content}</p>
-                          </div>
-                        </div>
-                      );
-                    }
+
                     
                     // Default preview for unknown platforms
                     return (
