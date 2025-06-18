@@ -45,16 +45,26 @@ export default function CreateSocialContent() {
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   
   // Fetch existing articles (SEO articles from "Bài viết của tôi")
-  const { data: articlesData } = useQuery({
+  const { data: articlesData, isLoading: articlesLoading } = useQuery({
     queryKey: ['/api/dashboard/articles'],
     select: (response: any) => {
       const articles = response?.articles || [];
+      console.log('All articles loaded:', articles);
+      
       // Filter only SEO content articles (exclude social media content)
-      return articles.filter((article: any) => 
-        article.type !== 'social_media' && 
-        article.content && 
-        article.content.trim().length > 0
-      );
+      const filteredArticles = articles.filter((article: any) => {
+        // Check various conditions that indicate this is a real SEO article
+        const hasContent = article.content && article.content.trim().length > 0;
+        const isNotSocialMedia = !article.type || article.type !== 'social_media';
+        const hasTitle = article.title && article.title.trim().length > 0;
+        
+        console.log(`Article ${article.id}: title="${article.title}", type="${article.type}", hasContent=${hasContent}`);
+        
+        return hasContent && isNotSocialMedia && hasTitle;
+      });
+      
+      console.log('Filtered SEO articles:', filteredArticles);
+      return filteredArticles;
     }
   });
 
