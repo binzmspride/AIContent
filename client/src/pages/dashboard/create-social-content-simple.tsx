@@ -293,9 +293,23 @@ export default function CreateSocialContent() {
             });
           }
 
-          // Automatically extract content from the new article
-          console.log('Calling extractMutation.mutate...');
-          extractMutation.mutate();
+          // Update formData to use the newly created article
+          const updatedFormData = {
+            ...formData,
+            contentSource: 'existing-article',
+            selectedArticleId: data.data.id,
+            briefDescription: `${formData.seoTopic}\n\nKeywords: ${formData.seoKeywords}`
+          };
+          
+          // Update the actual formData state
+          setFormData(updatedFormData);
+          
+          // Call extract with updated form data
+          console.log('Calling extractMutation.mutate with updated data...');
+          console.log('Updated form data:', updatedFormData);
+          
+          // Directly call the extract API with the updated data
+          await extractWithUpdatedData(updatedFormData);
         } else {
           toast({
             title: "Lỗi",
@@ -321,6 +335,62 @@ export default function CreateSocialContent() {
       });
     }
   });
+
+  // Helper function to extract content with custom data
+  const extractWithUpdatedData = async (customFormData: any) => {
+    try {
+      const response = await apiRequest('POST', '/api/social/extract-content', customFormData);
+      const data = await response.json();
+      
+      console.log('Extract success data:', data);
+      
+      // Extract content từ response structure: {success: true, data: {extractedContent: "..."}}
+      let content = '';
+      if (data?.data?.extractedContent) {
+        content = data.data.extractedContent;
+      } else if (data?.extractedContent) {
+        content = data.extractedContent;
+      } else if (data?.success && data?.data) {
+        // Try to get any content from data object
+        content = data.data.content || data.data.text || '';
+      }
+      
+      console.log('Extracted content:', content);
+      console.log('Content length:', content.length);
+      
+      if (content && content.trim().length > 0) {
+        // Convert markdown format to HTML for ReactQuill
+        const htmlContent = content
+          .replace(/\n/g, '<br>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/^[\*\-\+] (.*?)(?=<br>|$)/gm, '<li>$1</li>')
+          .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+          .replace(/<br>(<ul>)/g, '$1')
+          .replace(/(<\/ul>)<br>/g, '$1');
+        
+        setExtractedContent(htmlContent);
+        setCurrentStep(2);
+        toast({
+          title: "Thành công",
+          description: `Đã trích xuất nội dung (${content.length} ký tự)`
+        });
+      } else {
+        toast({
+          title: "Lỗi",
+          description: "Không thể trích xuất nội dung từ bài viết",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Extract error:', error);
+      toast({
+        title: "Lỗi",
+        description: (error as Error).message || "Không thể trích xuất nội dung",
+        variant: "destructive"
+      });
+    }
+  };
 
   // Step 1: Extract content
   const extractMutation = useMutation({
