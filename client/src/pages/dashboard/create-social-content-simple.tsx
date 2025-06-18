@@ -82,9 +82,9 @@ export default function CreateSocialContent() {
 
   // Fetch image library
   const { data: imagesData, isLoading: imagesLoading } = useQuery({
-    queryKey: ['/api/images'],
+    queryKey: ['/api/dashboard/images'],
     enabled: includeImage && imageSource === 'library',
-    select: (response: any) => response?.data || response || []
+    select: (response: any) => response?.data?.images || []
   });
 
   // Step 1: Extract content
