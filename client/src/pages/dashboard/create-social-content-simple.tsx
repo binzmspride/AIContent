@@ -235,7 +235,17 @@ export default function CreateSocialContent() {
       console.log('Content length:', content.length);
       
       if (content && content.trim().length > 0) {
-        setExtractedContent(content);
+        // Convert markdown format to HTML for ReactQuill
+        const htmlContent = content
+          .replace(/\n/g, '<br>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/^[\*\-\+] (.*?)(?=<br>|$)/gm, '<li>$1</li>')
+          .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+          .replace(/<br>(<ul>)/g, '$1')
+          .replace(/(<\/ul>)<br>/g, '$1');
+        
+        setExtractedContent(htmlContent);
         setCurrentStep(2);
         toast({
           title: "Thành công",
