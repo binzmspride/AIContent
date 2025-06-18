@@ -17,11 +17,16 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 interface FormData {
-  contentSource: 'manual' | 'existing-article';
+  contentSource: 'manual' | 'existing-article' | 'create-new-seo';
   briefDescription: string;
   selectedArticleId?: number;
   referenceLink?: string;
   platforms: string[];
+  // For creating new SEO article
+  seoTitle?: string;
+  seoKeywords?: string;
+  seoTopic?: string;
+  seoContentType?: string;
 }
 
 const platformOptions = [
@@ -206,6 +211,50 @@ export default function CreateSocialContent() {
       toast({
         title: "Lỗi lên lịch",
         description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Create new SEO article mutation
+  const createSeoMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('POST', '/api/dashboard/articles/generate', {
+        title: formData.seoTitle,
+        keywords: formData.seoKeywords?.split(',').map(k => k.trim()) || [],
+        topic: formData.seoTopic,
+        type: formData.seoContentType || 'blog',
+        complexity: 'medium',
+        tone: 'professional'
+      });
+      return await response.json();
+    },
+    onSuccess: (data: any) => {
+      if (data?.success && data?.data?.id) {
+        // Update form with new article ID
+        setFormData({ 
+          ...formData, 
+          selectedArticleId: data.data.id,
+          contentSource: 'existing-article' // Switch to existing article mode
+        });
+        toast({
+          title: "Thành công",
+          description: `Đã tạo bài viết SEO: ${formData.seoTitle}`
+        });
+        // Automatically extract content from the new article
+        extractMutation.mutate();
+      } else {
+        toast({
+          title: "Lỗi",
+          description: "Không thể tạo bài viết SEO",
+          variant: "destructive"
+        });
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Lỗi",
+        description: error.message || "Không thể tạo bài viết SEO",
         variant: "destructive"
       });
     }
@@ -460,6 +509,21 @@ export default function CreateSocialContent() {
         description: "Vui lòng chọn bài viết SEO",
         variant: "destructive"
       });
+      return;
+    }
+    
+    if (formData.contentSource === 'create-new-seo') {
+      // Validate SEO article creation fields
+      if (!formData.seoTitle || !formData.seoKeywords || !formData.seoTopic) {
+        toast({
+          title: "Thiếu thông tin",
+          description: "Vui lòng điền đầy đủ thông tin để tạo bài viết SEO",
+          variant: "destructive"
+        });
+        return;
+      }
+      // Create new SEO article first
+      createSeoMutation.mutate();
       return;
     }
     
@@ -883,7 +947,7 @@ export default function CreateSocialContent() {
                 <Label>Nguồn nội dung</Label>
                 <Select
                   value={formData.contentSource}
-                  onValueChange={(value: 'manual' | 'existing-article') => 
+                  onValueChange={(value: 'manual' | 'existing-article' | 'create-new-seo') => 
                     setFormData({ ...formData, contentSource: value })
                   }
                 >
@@ -892,6 +956,7 @@ export default function CreateSocialContent() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="existing-article">Từ bài viết có sẵn</SelectItem>
+                    <SelectItem value="create-new-seo">Tạo bài viết SEO mới</SelectItem>
                     <SelectItem value="manual">Tự nhập mô tả</SelectItem>
                   </SelectContent>
                 </Select>
@@ -935,6 +1000,67 @@ export default function CreateSocialContent() {
                       </p>
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* Create New SEO Article Form */}
+              {formData.contentSource === 'create-new-seo' && (
+                <div className="space-y-4 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <FileText className="w-5 h-5 text-blue-600" />
+                    <h3 className="font-medium text-blue-900 dark:text-blue-100">Tạo bài viết SEO mới</h3>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="seoTitle">Tiêu đề bài viết *</Label>
+                      <Input
+                        id="seoTitle"
+                        placeholder="Nhập tiêu đề bài viết SEO"
+                        value={formData.seoTitle || ''}
+                        onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="seoContentType">Loại nội dung</Label>
+                      <Select
+                        value={formData.seoContentType || 'blog'}
+                        onValueChange={(value) => setFormData({ ...formData, seoContentType: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="blog">Blog</SelectItem>
+                          <SelectItem value="product">Sản phẩm</SelectItem>
+                          <SelectItem value="news">Tin tức</SelectItem>
+                          <SelectItem value="guide">Hướng dẫn</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="seoKeywords">Từ khóa chính *</Label>
+                    <Input
+                      id="seoKeywords"
+                      placeholder="Nhập từ khóa chính (phân tách bằng dấu phẩy)"
+                      value={formData.seoKeywords || ''}
+                      onChange={(e) => setFormData({ ...formData, seoKeywords: e.target.value })}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="seoTopic">Chủ đề/Mô tả ngắn *</Label>
+                    <Textarea
+                      id="seoTopic"
+                      placeholder="Mô tả ngắn gọn về chủ đề bài viết..."
+                      value={formData.seoTopic || ''}
+                      onChange={(e) => setFormData({ ...formData, seoTopic: e.target.value })}
+                      rows={3}
+                    />
+                  </div>
                 </div>
               )}
 
