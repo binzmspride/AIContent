@@ -114,7 +114,13 @@ const EditArticle = () => {
 
       // Load selected images from article-associated images
       if (articleImagesData?.data?.images && Array.isArray(articleImagesData.data.images)) {
-        const imageUrls = articleImagesData.data.images.map((img: any) => img.imageUrl || img.url).filter(url => url);
+        console.log("Raw article images data:", articleImagesData.data.images);
+        const imageUrls = articleImagesData.data.images.map((img: any) => {
+          const url = img.imageUrl || img.url || img.src;
+          console.log("Processing image URL:", url, "from object:", img);
+          return url;
+        }).filter(url => url && typeof url === 'string' && url.trim() !== '');
+        console.log("Final processed image URLs for selectedImages:", imageUrls);
         setSelectedImages(imageUrls);
       }
     }
@@ -436,11 +442,27 @@ const EditArticle = () => {
                       <div className="grid grid-cols-2 gap-2">
                         {selectedImages.slice(0, 4).map((url, index) => (
                           <div key={index} className="relative group">
-                            <img 
-                              src={url} 
-                              alt={`Selected ${index + 1}`}
-                              className="w-full h-16 object-cover rounded border"
-                            />
+                            <div className="w-full h-16 rounded border overflow-hidden bg-gray-100">
+                              <img 
+                                src={url} 
+                                alt={`Selected ${index + 1}`}
+                                className="w-full h-full object-cover"
+                                crossOrigin="anonymous"
+                                loading="lazy"
+                                onError={(e) => {
+                                  console.error('Image failed to load:', url);
+                                  const target = e.currentTarget;
+                                  target.style.display = 'none';
+                                  const parent = target.parentElement;
+                                  if (parent) {
+                                    parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 text-xs">Không thể tải ảnh</div>`;
+                                  }
+                                }}
+                                onLoad={() => {
+                                  console.log('Image loaded successfully:', url);
+                                }}
+                              />
+                            </div>
                             <Button
                               type="button"
                               variant="destructive"
