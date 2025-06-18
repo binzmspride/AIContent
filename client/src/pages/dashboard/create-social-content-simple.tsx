@@ -887,15 +887,15 @@ export default function CreateSocialContent() {
                           {/* Facebook Actions */}
                           <div className="border-t border-gray-200 dark:border-gray-700 p-2">
                             <div className="flex justify-around">
-                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2">
+                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                                 <ThumbsUp className="w-4 h-4" />
                                 <span>Thích</span>
                               </button>
-                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2">
+                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                                 <MessageCircle className="w-4 h-4" />
                                 <span>Bình luận</span>
                               </button>
-                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2">
+                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-2 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                                 <Share className="w-4 h-4" />
                                 <span>Chia sẻ</span>
                               </button>
@@ -935,15 +935,15 @@ export default function CreateSocialContent() {
                           {/* LinkedIn Actions */}
                           <div className="border-t border-gray-200 dark:border-gray-700 p-3">
                             <div className="flex justify-around">
-                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1">
+                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                                 <ThumbsUp className="w-4 h-4" />
                                 <span>Thích</span>
                               </button>
-                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1">
+                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                                 <MessageCircle className="w-4 h-4" />
                                 <span>Bình luận</span>
                               </button>
-                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1">
+                              <button className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 text-sm py-1 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors">
                                 <Share className="w-4 h-4" />
                                 <span>Chia sẻ</span>
                               </button>
@@ -978,19 +978,19 @@ export default function CreateSocialContent() {
                               
                               {/* Twitter Actions */}
                               <div className="flex justify-between mt-3 max-w-md">
-                                <button className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm">
+                                <button className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors p-1">
                                   <MessageCircle className="w-4 h-4" />
                                   <span>24</span>
                                 </button>
-                                <button className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm">
+                                <button className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors p-1">
                                   <Repeat className="w-4 h-4" />
                                   <span>12</span>
                                 </button>
-                                <button className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm">
+                                <button className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors p-1">
                                   <Heart className="w-4 h-4" />
                                   <span>48</span>
                                 </button>
-                                <button className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm">
+                                <button className="flex items-center space-x-1 text-gray-500 dark:text-gray-400 text-sm bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors p-1">
                                   <Share className="w-4 h-4" />
                                 </button>
                               </div>

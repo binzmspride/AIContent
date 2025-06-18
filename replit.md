@@ -129,6 +129,7 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
+- June 18, 2025: Fixed dark mode UI issues - changed preview button backgrounds from blue to transparent with proper hover states for better dark mode compatibility  
 - June 18, 2025: UI refinement for Social Media Content wizard - removed "Nội dung đã trích xuất" section from step 2 and cleaned up step titles by removing "(tùy chọn)" text for cleaner interface
 - June 18, 2025: Enhanced Social Media Content platform previews with improved dark mode support - fixed text and border colors for Instagram, Facebook, LinkedIn, and Twitter/X previews to ensure proper contrast and readability
 - June 18, 2025: Completed bidirectional navigation for Social Media Content wizard - added both "Quay lại" (Back) and "Tiếp theo" (Next) buttons for seamless navigation between steps, plus 5 sample images added to image library
