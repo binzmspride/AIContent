@@ -455,10 +455,14 @@ export default function CreateSocialContent() {
                         <SelectContent>
                           {articlesData.map((article: any) => (
                             <SelectItem key={article.id} value={article.id.toString()}>
-                              <div className="flex flex-col">
-                                <span className="font-medium">{article.title}</span>
-                                <span className="text-xs text-gray-500">
-                                  {new Date(article.createdAt).toLocaleDateString('vi-VN')}
+                              <div className="flex flex-col gap-1 py-1">
+                                <span className="font-medium text-sm leading-tight">{article.title}</span>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  Ngày tạo: {new Date(article.createdAt).toLocaleDateString('vi-VN', {
+                                    year: 'numeric',
+                                    month: '2-digit', 
+                                    day: '2-digit'
+                                  })}
                                 </span>
                               </div>
                             </SelectItem>
