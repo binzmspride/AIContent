@@ -1932,6 +1932,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Final content creation request:', req.body);
       console.log('extractedContent value:', extractedContent);
       console.log('extractedContent type:', typeof extractedContent);
+      console.log('contentSource:', contentSource);
+      console.log('genSEO from frontend:', genSEO);
 
       // Get webhook URL from settings
       const socialContentWebhookUrl = await storage.getSetting('socialContentWebhookUrl');
@@ -1947,6 +1949,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Force genSEO to false when using existing article
       const shouldGenSEO = contentSource === 'existing-article' ? false : (genSEO || false);
+      console.log('shouldGenSEO calculated:', shouldGenSEO);
       
       const finalWebhookPayload = {
         topic: "phim anime",
