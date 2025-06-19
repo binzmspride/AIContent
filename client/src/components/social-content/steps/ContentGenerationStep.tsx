@@ -50,13 +50,11 @@ export function ContentGenerationStep({ data, onDataChange, onNext }: ContentGen
         platforms: data.platforms,
         contentSource: data.contentSource,
         selectedArticleId: data.selectedArticleId,
-        referenceLink: data.referenceLink
+        referenceLink: data.referenceLink,
+        genSEO: data.contentSource === 'existing-article' ? false : true
       };
 
-      return await apiRequest('/api/social/create-final-content', {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      });
+      return await apiRequest('/api/social/create-final-content', 'POST', payload);
     },
     onSuccess: (response) => {
       // Transform response data to match our expected format
