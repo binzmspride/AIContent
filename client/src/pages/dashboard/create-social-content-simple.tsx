@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { DashboardLayout } from '@/components/dashboard/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -69,6 +69,9 @@ export default function CreateSocialContent() {
   const [savedArticleId, setSavedArticleId] = useState<number | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   
+  // Search state for existing articles
+  const [searchQuery, setSearchQuery] = useState('');
+  
   // Publishing states
   const [publishingStatus, setPublishingStatus] = useState<Record<string, 'idle' | 'publishing' | 'scheduled' | 'published' | 'error'>>({});
   const [publishResults, setPublishResults] = useState<Record<string, { success: boolean; url?: string; error?: string }>>({});
@@ -102,6 +105,17 @@ export default function CreateSocialContent() {
       return filteredArticles;
     }
   });
+
+  // Filter articles based on search query
+  const filteredArticles = useMemo(() => {
+    if (!articlesData) return [];
+    if (!searchQuery.trim()) return articlesData;
+    
+    return articlesData.filter((article: any) => 
+      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (article.keywords && article.keywords.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+  }, [articlesData, searchQuery]);
 
   // Fetch image library
   const { data: imagesData, isLoading: imagesLoading } = useQuery({
@@ -998,6 +1012,18 @@ export default function CreateSocialContent() {
                       <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                         Tìm thấy {articlesData.length} bài viết SEO trong "Bài viết của tôi"
                       </div>
+                      
+                      {/* Search Input */}
+                      <div className="space-y-2">
+                        <Input
+                          placeholder="Tìm kiếm bài viết theo tiêu đề hoặc từ khóa..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full"
+                        />
+                      </div>
+                      
+                      {/* Article Selection Dropdown */}
                       <Select
                         value={formData.selectedArticleId?.toString() || ''}
                         onValueChange={(value) => 
@@ -1008,11 +1034,16 @@ export default function CreateSocialContent() {
                           <SelectValue placeholder="Chọn bài viết SEO..." />
                         </SelectTrigger>
                         <SelectContent>
-                          {articlesData.map((article: any) => (
+                          {filteredArticles.map((article: any) => (
                             <SelectItem key={article.id} value={article.id.toString()}>
                               <span className="font-medium">{article.title}</span>
                             </SelectItem>
                           ))}
+                          {filteredArticles.length === 0 && searchQuery && (
+                            <div className="px-2 py-1 text-sm text-gray-500">
+                              Không tìm thấy bài viết nào
+                            </div>
+                          )}
                         </SelectContent>
                       </Select>
                     </>
