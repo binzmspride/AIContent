@@ -125,17 +125,23 @@ export function ContentGenerationStep({ data, onDataChange, onNext }: ContentGen
               <span>Bước 2: Tạo nội dung cho từng nền tảng</span>
             </CardTitle>
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={handleGenerateContent}
               disabled={isGenerating || generateContentMutation.isPending}
-              className="h-8 w-8 p-0"
+              className="flex items-center gap-2"
               title="Tạo lại nội dung"
             >
               {(isGenerating || generateContentMutation.isPending) ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="text-xs">Đang tạo...</span>
+                </>
               ) : (
-                <RefreshCw className="w-4 h-4" />
+                <>
+                  <RefreshCw className="w-4 h-4" />
+                  <span className="text-xs">Tạo lại</span>
+                </>
               )}
             </Button>
           </div>
