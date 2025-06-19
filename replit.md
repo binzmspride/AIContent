@@ -129,6 +129,7 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
+- June 19, 2025: Fixed genSEO logic for existing articles - when contentSource is 'existing-article', genSEO is always forced to false regardless of frontend value
 - June 19, 2025: Consolidated dual-payload system into single payload for social media content generation - combined frontend data (extractedContent, platforms, contentSource, selectedArticleId) with webhook flags (post_to_*) into one unified request to external webhook
 - June 18, 2025: Simplified "Create new SEO article" form to only require keywords and topic fields - removed title and content type fields based on user feedback for streamlined workflow
 - June 18, 2025: Enhanced content formatting in Social Media Content workflow - implemented markdown to HTML conversion for ReactQuill editor, ensuring proper line breaks, bold/italic text, and bullet point lists display correctly instead of plain text

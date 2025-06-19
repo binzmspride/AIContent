@@ -1945,6 +1945,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Prepare webhook payload - try simple format first to test size limits
       const simpleContent = extractedContent ? extractedContent.substring(0, 500) + "..." : "";
       
+      // Force genSEO to false when using existing article
+      const shouldGenSEO = contentSource === 'existing-article' ? false : (genSEO || false);
+      
       const finalWebhookPayload = {
         topic: "phim anime",
         keywords: "anime, hoạt hình, Naruto, Attack on Titan", 
@@ -1955,7 +1958,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         post_to_facebook: platforms.includes('facebook') ? "true" : "false",
         post_to_x: platforms.includes('twitter') ? "true" : "false",
         post_to_instagram: platforms.includes('instagram') ? "true" : "false",
-        genSEO: genSEO || false,
+        genSEO: shouldGenSEO,
         approve_extract: approve_extract || "false"
       };
 
