@@ -1363,7 +1363,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Handle direct webhook format
         content,
         topic,
-        keyword,
+        keywords,
         url,
         extract_content,
         post_to_linkedin,
@@ -1375,11 +1375,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } = req.body;
 
       // Handle direct webhook format (from frontend generateSocialContentMutation)
-      if ((content || (topic && keyword)) && (post_to_linkedin || post_to_facebook || post_to_x || post_to_instagram)) {
+      if ((content || (topic && keywords)) && (post_to_linkedin || post_to_facebook || post_to_x || post_to_instagram)) {
         // Direct webhook format - validate and forward to webhook
         const webhookPayload = {
           topic: topic,
-          keyword: keyword,
+          keywords: keywords,
           url: url || "",
           extract_content,
           post_to_linkedin,
@@ -1513,7 +1513,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Special handling for SEO article creation
         webhookPayload = {
           topic: seoTopic,
-          keyword: seoKeywords,
+          keywords: seoKeywords,
           url: referenceLink || "",
           extract_content: "false",
           post_to_linkedin: platforms.includes('linkedin') ? "true" : "false",

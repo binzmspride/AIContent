@@ -240,7 +240,7 @@ export default function CreateSocialContent() {
       if (formData.contentSource === 'create-new-seo') {
         payload = {
           topic: formData.seoTopic,
-          keyword: formData.seoKeywords,
+          keywords: formData.seoKeywords,
           url: formData.referenceLink || "",
           extract_content: "false", 
           post_to_linkedin: formData.platforms.includes('linkedin') ? "true" : "false",
