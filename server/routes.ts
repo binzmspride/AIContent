@@ -1914,6 +1914,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const userId = req.user.id;
       const { 
+        extractedContent,
         contentSource, 
         briefDescription, 
         selectedArticleId, 
@@ -1939,18 +1940,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Prepare final webhook payload with extracted_data
+      // Prepare combined webhook payload with all information
       const finalWebhookPayload = {
-        content: contentSource === 'existing-article' ? extracted_data : briefDescription,
+        extractedContent: extractedContent,
+        platforms: platforms,
+        contentSource: contentSource,
+        selectedArticleId: selectedArticleId,
         url: referenceLink || "",
-        extract_content: "false", // Always false when approving (content already extracted)
-        extracted_data: extracted_data || "",
+        extract_content: "false",
+        extracted_data: extractedContent || "",
         post_to_linkedin: platforms.includes('linkedin') ? "true" : "false",
         post_to_facebook: platforms.includes('facebook') ? "true" : "false",
         post_to_x: platforms.includes('twitter') ? "true" : "false",
-        post_to_instagram: platforms.includes('instagram') ? "true" : "false",
-        genSEO: genSEO,
-        approve_extract: approve_extract
+        post_to_instagram: platforms.includes('instagram') ? "true" : "false"
       };
 
       // Send final data to webhook
