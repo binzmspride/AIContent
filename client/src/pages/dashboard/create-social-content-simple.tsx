@@ -1227,10 +1227,32 @@ export default function CreateSocialContent() {
         {currentStep === 2 && (
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Sparkles className="w-5 h-5" />
-                <span>Bước 2: Tạo nội dung</span>
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center space-x-2">
+                  <Sparkles className="w-5 h-5" />
+                  <span>Bước 2: Tạo nội dung</span>
+                </CardTitle>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleGenerate}
+                  disabled={generateMutation.isPending}
+                  className="flex items-center gap-2"
+                  title="Tạo lại nội dung"
+                >
+                  {generateMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span className="text-xs">Đang tạo...</span>
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="w-4 h-4" />
+                      <span className="text-xs">Tạo lại</span>
+                    </>
+                  )}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-3">
