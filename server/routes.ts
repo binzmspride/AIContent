@@ -1942,19 +1942,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Prepare combined webhook payload with all information
+      // Prepare webhook payload - try simple format first to test size limits
+      const simpleContent = extractedContent ? extractedContent.substring(0, 500) + "..." : "";
+      
       const finalWebhookPayload = {
-        extractedContent: extractedContent,
-        platforms: platforms,
-        contentSource: contentSource,
-        selectedArticleId: selectedArticleId,
+        topic: "phim anime",
+        keywords: "anime, hoạt hình, Naruto, Attack on Titan", 
         url: referenceLink || "",
         extract_content: "false",
-        extracted_data: extractedContent || "",
+        extracted_data: simpleContent,
         post_to_linkedin: platforms.includes('linkedin') ? "true" : "false",
         post_to_facebook: platforms.includes('facebook') ? "true" : "false",
         post_to_x: platforms.includes('twitter') ? "true" : "false",
-        post_to_instagram: platforms.includes('instagram') ? "true" : "false"
+        post_to_instagram: platforms.includes('instagram') ? "true" : "false",
+        genSEO: true,
+        approve_extract: "false"
       };
 
       // Send final data to webhook
@@ -1963,12 +1965,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Sending final webhook request to:', socialContentWebhookUrl);
       console.log('Final webhook payload:', JSON.stringify(finalWebhookPayload, null, 2));
       
+      const payloadString = JSON.stringify(finalWebhookPayload);
+      console.log('Payload string length:', payloadString.length);
+      
       const webhookResponse = await fetch(socialContentWebhookUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json; charset=utf-8',
+          'Content-Length': Buffer.byteLength(payloadString, 'utf8').toString(),
+          'Accept': 'application/json',
+          'User-Agent': 'SEO-Content-Generator/1.0'
         },
-        body: JSON.stringify(finalWebhookPayload)
+        body: payloadString
       });
 
       if (!webhookResponse.ok) {
