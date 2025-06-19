@@ -129,6 +129,7 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
+- June 19, 2025: Added refresh icon button in Social Media Content step 2 editing area - small refresh button appears next to each platform tab for easy content regeneration
 - June 19, 2025: Added "Tạo lại nội dung" (Regenerate content) button to Social Media Content step 2 - allows users to regenerate content if not satisfied with current results
 - June 19, 2025: Fixed genSEO logic for existing articles - when contentSource is 'existing-article', genSEO is always forced to false in both frontend (step 2 generation) and backend webhook payload
 - June 19, 2025: Consolidated dual-payload system into single payload for social media content generation - combined frontend data (extractedContent, platforms, contentSource, selectedArticleId) with webhook flags (post_to_*) into one unified request to external webhook

@@ -216,10 +216,26 @@ export function ContentGenerationStep({ data, onDataChange, onNext }: ContentGen
                       <Label className="text-base font-medium">
                         Nội dung cho {platformNames[platform as keyof typeof platformNames]}
                       </Label>
-                      <Badge variant="outline">
-                        <Edit className="w-3 h-3 mr-1" />
-                        Có thể chỉnh sửa
-                      </Badge>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleGenerateContent}
+                          disabled={isGenerating || generateContentMutation.isPending}
+                          className="h-8 w-8 p-0"
+                          title="Tạo lại nội dung"
+                        >
+                          {(isGenerating || generateContentMutation.isPending) ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <RefreshCw className="w-4 h-4" />
+                          )}
+                        </Button>
+                        <Badge variant="outline">
+                          <Edit className="w-3 h-3 mr-1" />
+                          Có thể chỉnh sửa
+                        </Badge>
+                      </div>
                     </div>
                     
                     <Textarea
