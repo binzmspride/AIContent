@@ -1013,17 +1013,7 @@ export default function CreateSocialContent() {
                         Tìm thấy {articlesData.length} bài viết SEO trong "Bài viết của tôi"
                       </div>
                       
-                      {/* Search Input */}
-                      <div className="space-y-2">
-                        <Input
-                          placeholder="Tìm kiếm bài viết theo tiêu đề hoặc từ khóa..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full"
-                        />
-                      </div>
-                      
-                      {/* Article Selection Dropdown */}
+                      {/* Article Selection Dropdown with Search */}
                       <Select
                         value={formData.selectedArticleId?.toString() || ''}
                         onValueChange={(value) => 
@@ -1034,16 +1024,29 @@ export default function CreateSocialContent() {
                           <SelectValue placeholder="Chọn bài viết SEO..." />
                         </SelectTrigger>
                         <SelectContent>
-                          {filteredArticles.map((article: any) => (
-                            <SelectItem key={article.id} value={article.id.toString()}>
-                              <span className="font-medium">{article.title}</span>
-                            </SelectItem>
-                          ))}
-                          {filteredArticles.length === 0 && searchQuery && (
-                            <div className="px-2 py-1 text-sm text-gray-500">
-                              Không tìm thấy bài viết nào
-                            </div>
-                          )}
+                          {/* Search Input inside dropdown */}
+                          <div className="p-2 border-b">
+                            <Input
+                              placeholder="Tìm kiếm bài viết theo tiêu đề hoặc từ khóa..."
+                              value={searchQuery}
+                              onChange={(e) => setSearchQuery(e.target.value)}
+                              className="h-8"
+                            />
+                          </div>
+                          
+                          {/* Article List */}
+                          <div className="max-h-60 overflow-y-auto">
+                            {filteredArticles.map((article: any) => (
+                              <SelectItem key={article.id} value={article.id.toString()}>
+                                <span className="font-medium">{article.title}</span>
+                              </SelectItem>
+                            ))}
+                            {filteredArticles.length === 0 && searchQuery && (
+                              <div className="px-2 py-1 text-sm text-gray-500">
+                                Không tìm thấy bài viết nào
+                              </div>
+                            )}
+                          </div>
                         </SelectContent>
                       </Select>
                     </>
