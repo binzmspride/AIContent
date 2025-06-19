@@ -17,7 +17,7 @@ const Article = () => {
 
   // Fetch article data
   const { data: articleData, isLoading, error } = useQuery<{ success: boolean; data: ArticleType }>({
-    queryKey: [`/api/articles/${articleId}`],
+    queryKey: [`/api/dashboard/articles/${articleId}`],
     enabled: !!articleId,
   });
 
@@ -60,7 +60,31 @@ const Article = () => {
     );
   }
 
-  if (error || !article) {
+  if (error) {
+    return (
+      <div className="container max-w-4xl mx-auto px-4 py-8">
+        <Head>
+          <title>Lỗi tải bài viết - SEO AI Writer</title>
+        </Head>
+        <div className="text-center py-12">
+          <h1 className="text-3xl font-bold text-red-500 mb-4">Lỗi tải bài viết</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            {error.message || "Không thể tải bài viết. Vui lòng thử lại sau."}
+          </p>
+          <div className="space-x-4">
+            <Button onClick={() => window.location.reload()}>
+              Thử lại
+            </Button>
+            <Button variant="outline" onClick={() => navigate("/dashboard/my-articles")}>
+              Về danh sách bài viết
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!article) {
     return (
       <div className="container max-w-4xl mx-auto px-4 py-8">
         <Head>
@@ -69,8 +93,8 @@ const Article = () => {
         <div className="text-center py-12">
           <h1 className="text-3xl font-bold text-red-500 mb-4">Không tìm thấy bài viết</h1>
           <p className="text-gray-600 dark:text-gray-400 mb-6">Bài viết không tồn tại hoặc đã bị xóa</p>
-          <Button onClick={() => navigate("/")}>
-            Quay về trang chủ
+          <Button onClick={() => navigate("/dashboard/my-articles")}>
+            Về danh sách bài viết
           </Button>
         </div>
       </div>
@@ -88,11 +112,11 @@ const Article = () => {
       <div className="mb-8">
         <Button
           variant="ghost"
-          onClick={() => navigate("/", { replace: true })}
+          onClick={() => navigate("/dashboard/my-articles", { replace: true })}
           className="mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Quay lại
+          Về danh sách bài viết
         </Button>
         
         <h1 className="text-3xl md:text-4xl font-bold mb-4">{article.title}</h1>

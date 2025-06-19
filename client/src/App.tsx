@@ -115,7 +115,7 @@ function Router() {
       <ProtectedRoute path="/dashboard/social-connections" component={SocialConnections} />
       <ProtectedRoute path="/dashboard/theme-demo" component={ThemeDemo} />
       <ProtectedRoute path="/dashboard/settings" component={Settings} />
-      <Route path="/article/:id" component={Article} />
+      <ProtectedRoute path="/article/:id" component={Article} />
       
       {/* Admin routes */}
       <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} />
