@@ -147,28 +147,26 @@ export function ContentGenerationStep({ data, onDataChange, onNext }: ContentGen
             </div>
           </div>
 
-          {/* Generate Button */}
-          {!hasGeneratedContent && (
-            <div className="flex justify-center">
-              <Button
-                onClick={handleGenerateContent}
-                disabled={isGenerating || generateContentMutation.isPending}
-                className="px-8 py-2"
-              >
-                {(isGenerating || generateContentMutation.isPending) ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Đang tạo nội dung...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Tạo nội dung cho tất cả nền tảng
-                  </>
-                )}
-              </Button>
-            </div>
-          )}
+          {/* Generate Button - Always show */}
+          <div className="flex justify-center">
+            <Button
+              onClick={handleGenerateContent}
+              disabled={isGenerating || generateContentMutation.isPending}
+              className="px-8 py-2"
+            >
+              {(isGenerating || generateContentMutation.isPending) ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Đang tạo nội dung...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  {hasGeneratedContent ? "Tạo lại nội dung" : "Tạo nội dung cho tất cả nền tảng"}
+                </>
+              )}
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
