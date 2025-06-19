@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Sparkles, Edit, CheckCircle } from 'lucide-react';
+import { Loader2, Sparkles, Edit, CheckCircle, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface WizardData {
@@ -176,10 +176,30 @@ export function ContentGenerationStep({ data, onDataChange, onNext }: ContentGen
       {hasGeneratedContent && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <span>Nội dung đã tạo</span>
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center space-x-2">
+                <CheckCircle className="w-5 h-5 text-green-600" />
+                <span>Nội dung đã tạo</span>
+              </CardTitle>
+              <Button
+                onClick={handleGenerateContent}
+                disabled={isGenerating || generateContentMutation.isPending}
+                variant="outline"
+                size="sm"
+              >
+                {(isGenerating || generateContentMutation.isPending) ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Đang tạo lại...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Tạo lại nội dung
+                  </>
+                )}
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab}>
