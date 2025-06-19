@@ -239,7 +239,8 @@ export default function CreateSocialContent() {
       
       if (formData.contentSource === 'create-new-seo') {
         payload = {
-          content: `Từ khóa: ${formData.seoKeywords}\nChủ đề: ${formData.seoTopic}`,
+          topic: formData.seoTopic,
+          keyword: formData.seoKeywords,
           url: formData.referenceLink || "",
           extract_content: "false", 
           post_to_linkedin: formData.platforms.includes('linkedin') ? "true" : "false",

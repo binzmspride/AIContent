@@ -1362,6 +1362,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         seoKeywords,
         // Handle direct webhook format
         content,
+        topic,
+        keyword,
         url,
         extract_content,
         post_to_linkedin,
@@ -1373,10 +1375,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } = req.body;
 
       // Handle direct webhook format (from frontend generateSocialContentMutation)
-      if (content && (post_to_linkedin || post_to_facebook || post_to_x || post_to_instagram)) {
+      if ((content || (topic && keyword)) && (post_to_linkedin || post_to_facebook || post_to_x || post_to_instagram)) {
         // Direct webhook format - validate and forward to webhook
         const webhookPayload = {
-          content,
+          topic: topic,
+          keyword: keyword,
           url: url || "",
           extract_content,
           post_to_linkedin,
@@ -1509,7 +1512,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (contentSource === 'create-new-seo') {
         // Special handling for SEO article creation
         webhookPayload = {
-          content: `Từ khóa: ${seoKeywords}\nChủ đề: ${seoTopic}`,
+          topic: seoTopic,
+          keyword: seoKeywords,
           url: referenceLink || "",
           extract_content: "false",
           post_to_linkedin: platforms.includes('linkedin') ? "true" : "false",
