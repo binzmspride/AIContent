@@ -1930,6 +1930,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } = req.body;
 
       console.log('Final content creation request:', req.body);
+      console.log('extractedContent value:', extractedContent);
+      console.log('extractedContent type:', typeof extractedContent);
 
       // Get webhook URL from settings
       const socialContentWebhookUrl = await storage.getSetting('socialContentWebhookUrl');
