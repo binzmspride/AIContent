@@ -115,6 +115,10 @@ export function ContentGenerationStep({ data, onDataChange, onNext }: ContentGen
   const hasGeneratedContent = data.generatedContent && Object.keys(data.generatedContent).length > 0;
   const canProceed = hasGeneratedContent;
 
+  console.log('ContentGenerationStep render - data:', data);
+  console.log('ContentGenerationStep render - platforms:', data.platforms);
+  console.log('ContentGenerationStep render - extractedContent:', data.extractedContent);
+
   return (
     <div className="space-y-6">
       <Card>
@@ -129,7 +133,7 @@ export function ContentGenerationStep({ data, onDataChange, onNext }: ContentGen
               size="sm"
               onClick={handleGenerateContent}
               disabled={isGenerating || generateContentMutation.isPending}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-blue-500 text-white border-blue-500"
               title="Tạo lại nội dung"
             >
               {(isGenerating || generateContentMutation.isPending) ? (
