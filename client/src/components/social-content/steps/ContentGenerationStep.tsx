@@ -119,10 +119,26 @@ export function ContentGenerationStep({ data, onDataChange, onNext }: ContentGen
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Sparkles className="w-5 h-5" />
-            <span>Bước 2: Tạo nội dung cho từng nền tảng</span>
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center space-x-2">
+              <Sparkles className="w-5 h-5" />
+              <span>Bước 2: Tạo nội dung cho từng nền tảng</span>
+            </CardTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleGenerateContent}
+              disabled={isGenerating || generateContentMutation.isPending}
+              className="h-8 w-8 p-0"
+              title="Tạo lại nội dung"
+            >
+              {(isGenerating || generateContentMutation.isPending) ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4" />
+              )}
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Source Content Preview */}
