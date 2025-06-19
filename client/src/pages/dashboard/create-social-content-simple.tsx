@@ -1235,20 +1235,26 @@ export default function CreateSocialContent() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={handleGenerate}
-                  disabled={generateMutation.isPending}
+                  onClick={() => {
+                    if (formData.contentSource === 'create-new-seo') {
+                      generateSocialContentMutation.mutate();
+                    } else {
+                      extractMutation.mutate();
+                    }
+                  }}
+                  disabled={extractMutation.isPending || generateSocialContentMutation.isPending}
                   className="flex items-center gap-2"
-                  title="Tạo lại nội dung"
+                  title="Tạo lại nội dung từ bước 1"
                 >
-                  {generateMutation.isPending ? (
+                  {(extractMutation.isPending || generateSocialContentMutation.isPending) ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span className="text-xs">Đang tạo...</span>
+                      <span className="text-xs">Đang trích xuất...</span>
                     </>
                   ) : (
                     <>
                       <RefreshCw className="w-4 h-4" />
-                      <span className="text-xs">Tạo lại</span>
+                      <span className="text-xs">Trích xuất lại</span>
                     </>
                   )}
                 </Button>
