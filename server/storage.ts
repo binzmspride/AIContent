@@ -344,7 +344,12 @@ class DatabaseStorage implements IStorage {
   
   async getArticleById(id: number): Promise<schema.Article | null> {
     const article = await db.query.articles.findFirst({
-      where: eq(schema.articles.id, id)
+      where: eq(schema.articles.id, id),
+      with: {
+        images: {
+          orderBy: [desc(schema.images.createdAt)]
+        }
+      }
     });
     return article || null;
   }
