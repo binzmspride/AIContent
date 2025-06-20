@@ -25,6 +25,7 @@ interface ScheduledPost {
   scheduledTime: string;
   status: 'pending' | 'published' | 'failed';
   createdAt: string;
+  articleId?: number;
 }
 
 interface Article {
@@ -533,6 +534,63 @@ export default function ScheduledPosts() {
                 <div className="p-3 rounded-lg" style={{ backgroundColor: '#132639' }}>
                   <h3 className="font-medium text-sm text-white">Bài viết gốc:</h3>
                   <p className="text-sm text-gray-300">{editingPost.title}</p>
+                  
+                  {/* Display article images */}
+                  {(() => {
+                    // Find the article data for editing post
+                    if (!editingPost.articleId || !articlesData?.data?.articles) return null;
+                    
+                    const article = articlesData.data.articles.find((a: any) => a.id === editingPost.articleId);
+                    if (!article) return null;
+                    
+                    // Check for images from imageUrls field or images relationship
+                    const imageUrls = article.imageUrls || [];
+                    const relatedImages = article.images || [];
+                    
+                    // Combine both sources
+                    let allImages: string[] = [];
+                    
+                    // Add from imageUrls field
+                    if (Array.isArray(imageUrls)) {
+                      allImages = [...imageUrls];
+                    }
+                    
+                    // Add from related images (for Social Media Content)
+                    relatedImages.forEach((img: any) => {
+                      if (img.imageUrl && !allImages.includes(img.imageUrl)) {
+                        allImages.push(img.imageUrl);
+                      }
+                    });
+                    
+                    if (allImages.length > 0) {
+                      return (
+                        <div className="mt-3">
+                          <p className="text-sm text-gray-400 mb-2">Hình ảnh đã chọn:</p>
+                          <div className="grid grid-cols-2 gap-2">
+                            {allImages.slice(0, 4).map((imageUrl: string, index: number) => (
+                              <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-800">
+                                <img
+                                  src={imageUrl}
+                                  alt={`Hình ảnh ${index + 1}`}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                  }}
+                                />
+                              </div>
+                            ))}
+                            {allImages.length > 4 && (
+                              <div className="aspect-square rounded-lg bg-gray-800 flex items-center justify-center">
+                                <span className="text-sm text-gray-400">+{allImages.length - 4}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
               )}
 
