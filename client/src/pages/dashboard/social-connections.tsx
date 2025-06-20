@@ -222,9 +222,9 @@ export default function SocialConnections() {
     createConnectionMutation.mutate({
       platform,
       accountName,
-      accountId: platform === 'wordpress' ? accountName : accountId, // Use accountName as accountId for WordPress
-      accessToken: platform === 'wordpress' ? '' : accessToken, // Empty for WordPress
-      refreshToken: platform === 'wordpress' ? '' : (refreshToken || undefined),
+      accountId: platform === 'wordpress' ? accountName : accountId,
+      accessToken: platform === 'wordpress' ? '' : accessToken,
+      refreshToken: '',
       settings
     });
   };
@@ -237,9 +237,8 @@ export default function SocialConnections() {
     
     const accountName = formData.get('accountName') as string;
     
-    // Chỉ lấy access token và refresh token cho non-WordPress platforms
+    // Chỉ lấy access token cho non-WordPress platforms
     const accessToken = selectedConnection.platform === 'wordpress' ? '' : (formData.get('accessToken') as string);
-    const refreshToken = selectedConnection.platform === 'wordpress' ? '' : (formData.get('refreshToken') as string);
 
     const settings: any = { ...selectedConnection.settings };
     
@@ -253,8 +252,6 @@ export default function SocialConnections() {
       } else if (settings.authType === 'app-password') {
         settings.appPassword = formData.get('appPassword');
       }
-    } else if (selectedConnection.platform === 'facebook') {
-      settings.pageId = formData.get('pageId');
     }
 
     updateConnectionMutation.mutate({
@@ -262,7 +259,7 @@ export default function SocialConnections() {
       data: {
         accountName,
         accessToken,
-        refreshToken: refreshToken || undefined,
+        refreshToken: '',
         settings
       }
     });
