@@ -5,7 +5,7 @@ import { setupAuth } from "./auth";
 import { registerAdminRoutes } from "./admin-routes";
 import * as schema from "@shared/schema";
 import { db } from "../db";
-import { sql, eq } from "drizzle-orm";
+import { sql, eq, desc } from "drizzle-orm";
 import { ApiResponse, GenerateContentRequest, GenerateContentResponse } from "@shared/types";
 import { systemSettings } from "@shared/schema";
 import { randomBytes, scrypt, timingSafeEqual } from "crypto";
@@ -3891,7 +3891,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ success: false, error: 'Not authenticated' });
       }
 
-      const { platform, content, imageUrls, connectionId } = req.body;
+      const { platform, content, imageUrls, connectionId, articleId } = req.body;
       const userId = req.user.id;
 
       if (!platform || !content || !connectionId) {
@@ -3899,6 +3899,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
           success: false, 
           error: 'Platform, content, and connection ID are required' 
         });
+      }
+
+      // Get images from original article if articleId exists
+      let finalImageUrls = Array.isArray(imageUrls) ? imageUrls : [];
+      
+      if (articleId && finalImageUrls.length === 0) {
+        try {
+          console.log(`Lấy hình ảnh từ bài viết articleId: ${articleId} cho Đăng ngay`);
+          // Get images directly from images table
+          const articleImages = await db.query.images.findMany({
+            where: eq(schema.images.articleId, articleId),
+            orderBy: (images, { desc }) => [desc(images.createdAt)]
+          });
+          
+          if (articleImages && articleImages.length > 0) {
+            finalImageUrls = articleImages.map(img => img.imageUrl);
+            console.log(`Tìm thấy ${finalImageUrls.length} hình ảnh từ bài viết:`, finalImageUrls);
+          }
+        } catch (error) {
+          console.error('Error fetching article images for publish-now:', error);
+        }
       }
 
       // Get the social connection
@@ -3980,7 +4001,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
 
           const userData = await meResponse.json();
-          const images = Array.isArray(imageUrls) ? imageUrls : [];
+          const images = finalImageUrls;
+          console.log(`Facebook publish-now: Sử dụng ${images.length} hình ảnh`, images);
           
           if (images.length > 0) {
             // Upload photo to Facebook
