@@ -22,6 +22,7 @@ interface SocialConnection {
   platform: string;
   accountName: string;
   accountId: string;
+  accessToken?: string;
   isActive: boolean;
   settings: any;
   createdAt: string;
@@ -481,6 +482,22 @@ export default function SocialConnections() {
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                       Token này sẽ được sử dụng để đăng bài lên {platformLabels[selectedPlatform as keyof typeof platformLabels]}
                     </p>
+                    
+                    {selectedPlatform === 'facebook' && (
+                      <div className="mt-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded border border-yellow-200 dark:border-yellow-800">
+                        <h6 className="font-medium text-yellow-800 dark:text-yellow-200 text-sm mb-2">Hướng dẫn lấy Facebook Access Token:</h6>
+                        <ol className="text-xs text-yellow-700 dark:text-yellow-300 space-y-1 list-decimal list-inside">
+                          <li>Truy cập <a href="https://developers.facebook.com/tools/explorer/" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">Facebook Graph API Explorer</a></li>
+                          <li>Chọn ứng dụng Facebook của bạn</li>
+                          <li>Tạo User Token hoặc Page Token tùy theo nhu cầu</li>
+                          <li>Thêm permissions: pages_manage_posts, pages_read_engagement</li>
+                          <li>Copy token và paste vào đây</li>
+                        </ol>
+                        <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2">
+                          Lưu ý: Facebook tokens thường có thời hạn ngắn, cần cập nhật định kỳ.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -688,6 +705,7 @@ export default function SocialConnections() {
                     <Textarea
                       id="edit-accessToken"
                       name="accessToken"
+                      defaultValue={selectedConnection.accessToken || ''}
                       placeholder="Cập nhật access token..."
                       rows={3}
                       required
@@ -696,6 +714,22 @@ export default function SocialConnections() {
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                       Token này sẽ được sử dụng để đăng bài lên {platformLabels[selectedConnection.platform as keyof typeof platformLabels]}
                     </p>
+                    
+                    {selectedConnection.platform === 'facebook' && (
+                      <div className="mt-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded border border-yellow-200 dark:border-yellow-800">
+                        <h6 className="font-medium text-yellow-800 dark:text-yellow-200 text-sm mb-2">Hướng dẫn lấy Facebook Access Token:</h6>
+                        <ol className="text-xs text-yellow-700 dark:text-yellow-300 space-y-1 list-decimal list-inside">
+                          <li>Truy cập <a href="https://developers.facebook.com/tools/explorer/" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">Facebook Graph API Explorer</a></li>
+                          <li>Chọn ứng dụng Facebook của bạn</li>
+                          <li>Tạo User Token hoặc Page Token tùy theo nhu cầu</li>
+                          <li>Thêm permissions: pages_manage_posts, pages_read_engagement</li>
+                          <li>Copy token và paste vào đây</li>
+                        </ol>
+                        <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2">
+                          Lưu ý: Facebook tokens thường có thời hạn ngắn, cần cập nhật định kỳ.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

@@ -3730,9 +3730,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
               };
             } else {
               const errorData = await response.json();
+              let errorMessage = errorData.error?.message || 'Token không hợp lệ';
+              
+              // Check if it's an expired token error
+              if (errorMessage.includes('expired') || errorMessage.includes('Session has expired')) {
+                errorMessage = 'Access Token đã hết hạn. Vui lòng tạo token mới từ Facebook Developer Console và cập nhật kết nối.';
+              }
+              
               testResult = { 
                 success: false, 
-                message: `Lỗi kết nối Facebook: ${errorData.error?.message || 'Token không hợp lệ'}` 
+                message: `Lỗi kết nối Facebook: ${errorMessage}` 
               };
             }
           }

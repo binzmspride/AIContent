@@ -129,6 +129,7 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
+- June 20, 2025: Enhanced social media connection system with comprehensive test functionality and user guidance - implemented Facebook, LinkedIn, Twitter, and Instagram API testing using proper authentication methods. Added detailed Facebook Access Token guidance in both create and edit forms with step-by-step instructions and expiration warnings. Fixed TypeScript interface to include accessToken property. Form now saves actual Access Tokens for posting functionality while maintaining simplified UI.
 - June 20, 2025: Converted social media connection forms to exact n8n workflow interface - implemented complete n8n-style UI with Credential dropdown, Host URL, HTTP Request Method, Graph API Version, Node/Edge fields, SSL/Binary switches, and orange "Test step" button. Removed Account ID and Refresh Token fields to match n8n exactly. WordPress connections unchanged.
 - June 19, 2025: Added refresh icon button in Social Media Content step 2 editing area - small refresh button appears next to each platform tab for easy content regeneration
 - June 19, 2025: Added "Tạo lại nội dung" (Regenerate content) button to Social Media Content step 2 - allows users to regenerate content if not satisfied with current results
