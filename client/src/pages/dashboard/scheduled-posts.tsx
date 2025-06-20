@@ -33,6 +33,7 @@ interface Article {
   content: string;
   metaDescription?: string;
   keywords?: string | string[];
+  imageUrls?: string[];
   createdAt: string;
 }
 
@@ -365,6 +366,42 @@ export default function ScheduledPosts() {
                   <p className="text-sm text-gray-300 line-clamp-3">
                     {selectedArticle.content.substring(0, 200)}...
                   </p>
+                  
+                  {/* Display article images */}
+                  {(() => {
+                    const imageUrls = selectedArticle.imageUrls || [];
+                    const imageList = Array.isArray(imageUrls) ? imageUrls : [];
+                    
+                    if (imageList.length > 0) {
+                      return (
+                        <div className="mt-3">
+                          <p className="text-sm text-gray-400 mb-2">Hình ảnh trong bài viết:</p>
+                          <div className="grid grid-cols-2 gap-2">
+                            {imageList.slice(0, 4).map((imageUrl: string, index: number) => (
+                              <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-800">
+                                <img
+                                  src={imageUrl}
+                                  alt={`Hình ảnh ${index + 1}`}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                  }}
+                                />
+                              </div>
+                            ))}
+                            {imageList.length > 4 && (
+                              <div className="aspect-square rounded-lg bg-gray-800 flex items-center justify-center">
+                                <span className="text-sm text-gray-400">+{imageList.length - 4}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
+                  
                   {selectedArticle.keywords && (
                     <div className="mt-2 flex flex-wrap gap-1">
                       {(() => {
