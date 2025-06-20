@@ -3983,33 +3983,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const images = Array.isArray(imageUrls) ? imageUrls : [];
           
           if (images.length > 0) {
-            // Post with image
-            const postData = {
-              message: content,
-              url: images[0], // Facebook will fetch and display the image
-              access_token: accessToken
-            };
+            // Upload photo to Facebook
+            const imageUrl = images[0];
+            
+            try {
+              // Upload the photo to Facebook
+              const uploadData = new FormData();
+              
+              // Fetch the image and upload it
+              const imageResponse = await fetch(imageUrl);
+              if (!imageResponse.ok) {
+                throw new Error('Failed to fetch image from URL');
+              }
+              
+              const imageBuffer = await imageResponse.arrayBuffer();
+              const imageBlob = new Blob([imageBuffer], { type: 'image/jpeg' });
+              
+              uploadData.append('source', imageBlob);
+              uploadData.append('message', content);
+              uploadData.append('access_token', accessToken);
 
-            const response = await fetch(`https://graph.facebook.com/${userData.id}/feed`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(postData)
-            });
+              const photoResponse = await fetch(`https://graph.facebook.com/${userData.id}/photos`, {
+                method: 'POST',
+                body: uploadData
+              });
 
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(`Facebook post failed: ${errorData.error?.message || 'Unknown error'}`);
+              if (!photoResponse.ok) {
+                const errorData = await photoResponse.json();
+                throw new Error(`Facebook photo upload failed: ${errorData.error?.message || 'Unknown error'}`);
+              }
+
+              const photoResult = await photoResponse.json();
+              publishResult = {
+                success: true,
+                postId: photoResult.id,
+                url: `https://facebook.com/${photoResult.post_id || photoResult.id}`,
+                message: 'Đăng Facebook thành công với hình ảnh'
+              };
+              
+            } catch (photoError: any) {
+              console.error('Photo upload failed, trying link post:', photoError);
+              
+              // Fallback: post with image URL
+              const postData = {
+                message: content,
+                link: imageUrl,
+                access_token: accessToken
+              };
+
+              const response = await fetch(`https://graph.facebook.com/${userData.id}/feed`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(postData)
+              });
+
+              if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Facebook post failed: ${errorData.error?.message || 'Unknown error'}`);
+              }
+
+              const result = await response.json();
+              publishResult = {
+                success: true,
+                postId: result.id,
+                url: `https://facebook.com/${result.id}`,
+                message: 'Đăng Facebook thành công với link hình ảnh'
+              };
             }
-
-            const result = await response.json();
-            publishResult = {
-              success: true,
-              postId: result.id,
-              url: `https://facebook.com/${result.id}`,
-              message: 'Đăng Facebook thành công với hình ảnh'
-            };
             
           } else {
             // Text-only post
@@ -4121,7 +4163,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         connectionId,
         title, 
         content, 
-        scheduledTime 
+        scheduledTime,
+        imageUrls
       } = req.body;
 
       if (!title || !content || !connectionId || !scheduledTime) {

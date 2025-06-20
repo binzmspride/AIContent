@@ -11,6 +11,8 @@ interface ScheduledPostJob {
   platforms: any[];
   scheduledTime: Date;
   status: string;
+  featuredImage?: string;
+  imageUrls?: string[];
 }
 
 export class PostScheduler {
@@ -51,7 +53,16 @@ export class PostScheduler {
 
       // Lấy các bài viết pending đã đến thời gian đăng
       const pendingPosts = await db
-        .select()
+        .select({
+          id: scheduledPosts.id,
+          userId: scheduledPosts.userId,
+          title: scheduledPosts.title,
+          content: scheduledPosts.content,
+          featuredImage: scheduledPosts.featuredImage,
+          platforms: scheduledPosts.platforms,
+          scheduledTime: scheduledPosts.scheduledTime,
+          status: scheduledPosts.status
+        })
         .from(scheduledPosts)
         .where(
           and(
@@ -245,39 +256,93 @@ export class PostScheduler {
       let postContent = post.content;
       
       // If there are images, we need to handle them
-      const images = Array.isArray(post.imageUrls) ? post.imageUrls : [];
+      let images: string[] = [];
+      
+      // Check for images in multiple places
+      if (Array.isArray(post.imageUrls) && post.imageUrls.length > 0) {
+        images = post.imageUrls;
+      } else if (post.featuredImage) {
+        images = [post.featuredImage];
+      } else if (Array.isArray(post.platforms)) {
+        // Check if images are stored in platform config
+        for (const platform of post.platforms) {
+          if (platform.imageUrls && Array.isArray(platform.imageUrls)) {
+            images = platform.imageUrls;
+            break;
+          }
+        }
+      }
       
       if (images.length > 0) {
-        // For posts with images, use the photos endpoint
+        // For posts with images, upload photo to Facebook first
         const imageUrl = images[0]; // Use first image for now
         
-        // Post with image
-        const postData = {
-          message: postContent,
-          url: imageUrl, // Facebook will fetch and display the image
-          access_token: accessToken
-        };
+        try {
+          // First, upload the photo to Facebook
+          const uploadData = new FormData();
+          
+          // Fetch the image and upload it
+          const imageResponse = await fetch(imageUrl);
+          if (!imageResponse.ok) {
+            throw new Error('Failed to fetch image from URL');
+          }
+          
+          const imageBuffer = await imageResponse.arrayBuffer();
+          const imageBlob = new Blob([imageBuffer], { type: 'image/jpeg' });
+          
+          uploadData.append('source', imageBlob);
+          uploadData.append('message', postContent);
+          uploadData.append('access_token', accessToken);
 
-        const response = await fetch(`https://graph.facebook.com/${userData.id}/feed`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(postData)
-        });
+          const photoResponse = await fetch(`https://graph.facebook.com/${userData.id}/photos`, {
+            method: 'POST',
+            body: uploadData
+          });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(`Facebook post failed: ${errorData.error?.message || 'Unknown error'}`);
+          if (!photoResponse.ok) {
+            const errorData = await photoResponse.json();
+            throw new Error(`Facebook photo upload failed: ${errorData.error?.message || 'Unknown error'}`);
+          }
+
+          const photoResult = await photoResponse.json();
+          return {
+            success: true,
+            postId: photoResult.id,
+            url: `https://facebook.com/${photoResult.post_id || photoResult.id}`,
+            message: 'Đăng Facebook thành công với hình ảnh'
+          };
+          
+        } catch (photoError: any) {
+          console.error('Photo upload failed, trying link post:', photoError);
+          
+          // Fallback: post with image URL
+          const postData = {
+            message: postContent,
+            link: imageUrl,
+            access_token: accessToken
+          };
+
+          const response = await fetch(`https://graph.facebook.com/${userData.id}/feed`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(postData)
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Facebook post failed: ${errorData.error?.message || 'Unknown error'}`);
+          }
+
+          const result = await response.json();
+          return {
+            success: true,
+            postId: result.id,
+            url: `https://facebook.com/${result.id}`,
+            message: 'Đăng Facebook thành công với link hình ảnh'
+          };
         }
-
-        const result = await response.json();
-        return {
-          success: true,
-          postId: result.id,
-          url: `https://facebook.com/${result.id}`,
-          message: 'Đăng Facebook thành công với hình ảnh'
-        };
         
       } else {
         // Text-only post
