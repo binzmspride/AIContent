@@ -603,7 +603,8 @@ export default function CreateSocialContent() {
   };
 
   const handlePublishNow = (platform: string) => {
-    if (!generatedContent || !generatedContent[platform]) {
+    // Check if we have extracted content (for simple flow)
+    if (!extractedContent) {
       toast({
         title: "Lỗi",
         description: "Không có nội dung để đăng",
@@ -614,14 +615,15 @@ export default function CreateSocialContent() {
 
     setPublishingStatus(prev => ({ ...prev, [platform]: 'publishing' }));
     
-    const content = generatedContent[platform];
+    // Use extractedContent for simple social media content
+    const content = extractedContent;
     const imageUrls = selectedImage ? [selectedImage.imageUrl || selectedImage.url] : [];
     
     publishNowMutation.mutate({ platform, content, imageUrls });
   };
 
   const handleSchedulePost = (platform: string) => {
-    if (!generatedContent || !generatedContent[platform]) {
+    if (!extractedContent) {
       toast({
         title: "Lỗi",
         description: "Không có nội dung để lên lịch",
@@ -654,7 +656,7 @@ export default function CreateSocialContent() {
       return;
     }
 
-    const content = generatedContent[schedulingPlatform];
+    const content = extractedContent;
     const imageUrls = selectedImage ? [selectedImage.imageUrl || selectedImage.url] : [];
     
     setPublishingStatus(prev => ({ ...prev, [schedulingPlatform]: 'publishing' }));
