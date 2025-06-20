@@ -1,7 +1,8 @@
 import { storage } from './storage';
 import { db } from '../db/index';
 import { scheduledPosts } from '../shared/schema';
-import { eq, and, lte } from 'drizzle-orm';
+import * as schema from '../shared/schema';
+import { eq, and, lte, desc } from 'drizzle-orm';
 
 interface ScheduledPostJob {
   id: number;
@@ -13,6 +14,7 @@ interface ScheduledPostJob {
   status: string;
   featuredImage?: string;
   imageUrls?: string[];
+  articleId?: number;
 }
 
 export class PostScheduler {
@@ -258,35 +260,78 @@ export class PostScheduler {
       // If there are images, we need to handle them
       let images: string[] = [];
       
-      // Check for images in multiple places
-      if (Array.isArray(post.imageUrls) && post.imageUrls.length > 0) {
-        images = post.imageUrls;
-      } else if (post.featuredImage) {
-        images = [post.featuredImage];
-      } else if (Array.isArray(post.platforms)) {
-        // Check if images are stored in platform config
-        for (const platform of post.platforms) {
-          if (platform.imageUrls && Array.isArray(platform.imageUrls)) {
-            images = platform.imageUrls;
-            break;
+      // First check for images from the original article if articleId exists
+      if (post.articleId) {
+        try {
+          console.log(`Tìm hình ảnh cho bài viết articleId: ${post.articleId}`);
+          const article = await db.query.articles.findFirst({
+            where: eq(schema.articles.id, post.articleId),
+            with: {
+              images: {
+                orderBy: [desc(schema.images.createdAt)]
+              }
+            }
+          });
+          
+          if (article) {
+            console.log(`Tìm thấy bài viết: ${article.title}`);
+            console.log(`Số lượng hình ảnh từ images relationship: ${article.images?.length || 0}`);
+            
+            // Get images from images relationship (for Social Media Content)
+            if (article.images && article.images.length > 0) {
+              images = article.images.map(img => img.imageUrl);
+              console.log(`Hình ảnh từ images relationship:`, images);
+            }
+            
+            // Fallback to imageUrls field if no related images
+            if (images.length === 0 && Array.isArray(article.imageUrls)) {
+              images = article.imageUrls as string[];
+              console.log(`Hình ảnh từ imageUrls field:`, images);
+            }
+          } else {
+            console.log(`Không tìm thấy bài viết với articleId: ${post.articleId}`);
+          }
+        } catch (error) {
+          console.error('Error fetching article images:', error);
+        }
+      }
+      
+      // Fallback: Check for images in multiple places
+      if (images.length === 0) {
+        if (Array.isArray(post.imageUrls) && post.imageUrls.length > 0) {
+          images = post.imageUrls;
+        } else if (post.featuredImage) {
+          images = [post.featuredImage];
+        } else if (Array.isArray(post.platforms)) {
+          // Check if images are stored in platform config
+          for (const platform of post.platforms) {
+            if (platform.imageUrls && Array.isArray(platform.imageUrls)) {
+              images = platform.imageUrls;
+              break;
+            }
           }
         }
       }
       
+      console.log(`Tổng số hình ảnh tìm được: ${images.length}`, images);
+      
       if (images.length > 0) {
         // For posts with images, upload photo to Facebook first
         const imageUrl = images[0]; // Use first image for now
+        console.log(`Sử dụng hình ảnh đầu tiên để upload lên Facebook: ${imageUrl}`);
         
         try {
           // First, upload the photo to Facebook
           const uploadData = new FormData();
           
           // Fetch the image and upload it
+          console.log(`Đang tải hình ảnh từ URL: ${imageUrl}`);
           const imageResponse = await fetch(imageUrl);
           if (!imageResponse.ok) {
-            throw new Error('Failed to fetch image from URL');
+            throw new Error(`Failed to fetch image from URL: ${imageResponse.status} ${imageResponse.statusText}`);
           }
           
+          console.log(`Hình ảnh tải thành công, kích thước: ${imageResponse.headers.get('content-length')} bytes`);
           const imageBuffer = await imageResponse.arrayBuffer();
           const imageBlob = new Blob([imageBuffer], { type: 'image/jpeg' });
           
@@ -294,17 +339,21 @@ export class PostScheduler {
           uploadData.append('message', postContent);
           uploadData.append('access_token', accessToken);
 
+          console.log(`Đang upload hình ảnh lên Facebook cho user ID: ${userData.id}`);
           const photoResponse = await fetch(`https://graph.facebook.com/${userData.id}/photos`, {
             method: 'POST',
             body: uploadData
           });
 
+          console.log(`Facebook photo upload response status: ${photoResponse.status}`);
           if (!photoResponse.ok) {
             const errorData = await photoResponse.json();
+            console.error('Facebook photo upload error:', errorData);
             throw new Error(`Facebook photo upload failed: ${errorData.error?.message || 'Unknown error'}`);
           }
 
           const photoResult = await photoResponse.json();
+          console.log('Facebook photo upload success:', photoResult);
           return {
             success: true,
             postId: photoResult.id,
