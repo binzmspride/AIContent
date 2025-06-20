@@ -16,23 +16,6 @@ import { vi } from 'date-fns/locale';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { useLocation } from 'wouter';
 
-// Utility function to convert HTML to plain text
-function htmlToPlainText(html: string): string {
-  if (!html) return '';
-  
-  // Create a temporary div element to parse HTML
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = html;
-  
-  // Get text content and clean up
-  let text = tempDiv.textContent || tempDiv.innerText || '';
-  
-  // Replace multiple spaces and newlines with single spaces
-  text = text.replace(/\s+/g, ' ').trim();
-  
-  return text;
-}
-
 interface ScheduledPost {
   id: number;
   title: string;
@@ -246,7 +229,7 @@ export default function ScheduledPosts() {
 
   const handleEditPost = (post: ScheduledPost) => {
     setEditingPost(post);
-    setCustomContent(htmlToPlainText(post.content));
+    setCustomContent(post.content);
     setScheduledTime(format(parseISO(post.scheduledTime), "yyyy-MM-dd'T'HH:mm"));
     setShowEditDialog(true);
   };
