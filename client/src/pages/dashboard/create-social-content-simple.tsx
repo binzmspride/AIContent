@@ -151,7 +151,8 @@ export default function CreateSocialContent() {
         platform,
         content,
         imageUrls,
-        connectionId: connectionForPlatform.id
+        connectionId: connectionForPlatform.id,
+        articleId: savedArticleId // Include articleId for image lookup
       });
       return await response.json();
     },
