@@ -3964,14 +3964,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
           throw new Error(`WordPress publishing failed: ${error.message}`);
         }
 
+      } else if (platform === 'facebook') {
+        // Facebook publishing
+        try {
+          const accessToken = connection.accessToken;
+          if (!accessToken) {
+            throw new Error('Facebook Access Token không được tìm thấy trong kết nối');
+          }
+
+          // Get Facebook user/page info first
+          const meResponse = await fetch(`https://graph.facebook.com/me?access_token=${accessToken}`);
+          if (!meResponse.ok) {
+            const errorData = await meResponse.json();
+            throw new Error(`Facebook authentication failed: ${errorData.error?.message || 'Invalid token'}`);
+          }
+
+          const userData = await meResponse.json();
+          const images = Array.isArray(imageUrls) ? imageUrls : [];
+          
+          if (images.length > 0) {
+            // Post with image
+            const postData = {
+              message: content,
+              url: images[0], // Facebook will fetch and display the image
+              access_token: accessToken
+            };
+
+            const response = await fetch(`https://graph.facebook.com/${userData.id}/feed`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(postData)
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(`Facebook post failed: ${errorData.error?.message || 'Unknown error'}`);
+            }
+
+            const result = await response.json();
+            publishResult = {
+              success: true,
+              postId: result.id,
+              url: `https://facebook.com/${result.id}`,
+              message: 'Đăng Facebook thành công với hình ảnh'
+            };
+            
+          } else {
+            // Text-only post
+            const postData = {
+              message: content,
+              access_token: accessToken
+            };
+
+            const response = await fetch(`https://graph.facebook.com/${userData.id}/feed`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(postData)
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(`Facebook post failed: ${errorData.error?.message || 'Unknown error'}`);
+            }
+
+            const result = await response.json();
+            publishResult = {
+              success: true,
+              postId: result.id,
+              url: `https://facebook.com/${result.id}`,
+              message: 'Đăng Facebook thành công'
+            };
+          }
+
+        } catch (error: any) {
+          throw new Error(`Lỗi đăng Facebook: ${error.message}`);
+        }
+
       } else {
-        // For other platforms, we would implement their respective APIs
-        // For now, simulate success
-        publishResult = {
-          success: true,
-          message: `Successfully published to ${platform}`,
-          url: `https://${platform}.com/post/simulated`
-        };
+        // For other platforms not yet implemented
+        throw new Error(`Platform ${platform} chưa được hỗ trợ`);
       }
 
       // Log the publishing action

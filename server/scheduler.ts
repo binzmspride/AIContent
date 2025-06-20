@@ -225,12 +225,92 @@ export class PostScheduler {
   }
 
   private async publishToFacebook(post: ScheduledPostJob, connection: any): Promise<any> {
-    // Placeholder cho Facebook API
-    console.log('Facebook publishing chưa được implement');
-    return {
-      success: true,
-      message: 'Facebook publishing sẽ được thêm sau'
-    };
+    try {
+      const accessToken = connection.accessToken;
+      if (!accessToken) {
+        throw new Error('Facebook Access Token không được tìm thấy trong kết nối');
+      }
+
+      // Get Facebook user/page info first
+      const meResponse = await fetch(`https://graph.facebook.com/me?access_token=${accessToken}`);
+      if (!meResponse.ok) {
+        const errorData = await meResponse.json();
+        throw new Error(`Facebook authentication failed: ${errorData.error?.message || 'Invalid token'}`);
+      }
+
+      const userData = await meResponse.json();
+      console.log('Facebook user data:', userData);
+
+      // Prepare post content
+      let postContent = post.content;
+      
+      // If there are images, we need to handle them
+      const images = Array.isArray(post.imageUrls) ? post.imageUrls : [];
+      
+      if (images.length > 0) {
+        // For posts with images, use the photos endpoint
+        const imageUrl = images[0]; // Use first image for now
+        
+        // Post with image
+        const postData = {
+          message: postContent,
+          url: imageUrl, // Facebook will fetch and display the image
+          access_token: accessToken
+        };
+
+        const response = await fetch(`https://graph.facebook.com/${userData.id}/feed`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(postData)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Facebook post failed: ${errorData.error?.message || 'Unknown error'}`);
+        }
+
+        const result = await response.json();
+        return {
+          success: true,
+          postId: result.id,
+          url: `https://facebook.com/${result.id}`,
+          message: 'Đăng Facebook thành công với hình ảnh'
+        };
+        
+      } else {
+        // Text-only post
+        const postData = {
+          message: postContent,
+          access_token: accessToken
+        };
+
+        const response = await fetch(`https://graph.facebook.com/${userData.id}/feed`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(postData)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Facebook post failed: ${errorData.error?.message || 'Unknown error'}`);
+        }
+
+        const result = await response.json();
+        return {
+          success: true,
+          postId: result.id,
+          url: `https://facebook.com/${result.id}`,
+          message: 'Đăng Facebook thành công'
+        };
+      }
+
+    } catch (error: any) {
+      throw new Error(`Lỗi đăng Facebook: ${error.message}`);
+    }
   }
 
   private async publishToTwitter(post: ScheduledPostJob, connection: any): Promise<any> {
