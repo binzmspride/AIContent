@@ -70,7 +70,7 @@ export default function ScheduledPosts() {
   });
 
   const scheduledPosts: ScheduledPost[] = (scheduledPostsData as any)?.data?.posts || [];
-  const articles: Article[] = Array.isArray(articlesData) ? articlesData : [];
+  const articles: Article[] = (articlesData as any)?.data?.articles || [];
   const connections: SocialConnection[] = (connectionsData as any)?.data || [];
 
   // Create scheduled post mutation
@@ -344,22 +344,16 @@ export default function ScheduledPosts() {
                     <SelectValue placeholder="Chọn bài viết từ thư viện của bạn..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {articles && articles.length > 0 ? (
-                      articles.map((article) => (
-                        <SelectItem key={article.id} value={article.id.toString()}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{article.title}</span>
-                            <span className="text-sm text-gray-500">
-                              {format(parseISO(article.createdAt), 'dd/MM/yyyy', { locale: vi })}
-                            </span>
-                          </div>
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <SelectItem value="no-articles" disabled>
-                        {articlesLoading ? 'Đang tải bài viết...' : 'Không có bài viết nào'}
+                    {articles.map((article) => (
+                      <SelectItem key={article.id} value={article.id.toString()}>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{article.title}</span>
+                          <span className="text-sm text-gray-500">
+                            {format(parseISO(article.createdAt), 'dd/MM/yyyy', { locale: vi })}
+                          </span>
+                        </div>
                       </SelectItem>
-                    )}
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
