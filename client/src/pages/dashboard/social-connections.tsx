@@ -217,6 +217,16 @@ export default function SocialConnections() {
       } else if (wordpressAuthType === 'application-password') {
         settings.applicationPassword = formData.get('appPassword');
       }
+    } else {
+      // N8N-style settings for social media platforms
+      settings.credential = formData.get('credential');
+      settings.hostUrl = formData.get('hostUrl');
+      settings.httpMethod = formData.get('httpMethod');
+      settings.apiVersion = formData.get('apiVersion');
+      settings.node = formData.get('node');
+      settings.edge = formData.get('edge');
+      settings.ignoreSSL = formData.get('ignoreSSL') === 'on';
+      settings.sendBinary = formData.get('sendBinary') === 'on';
     }
 
     createConnectionMutation.mutate({
@@ -252,6 +262,13 @@ export default function SocialConnections() {
       } else if (settings.authType === 'app-password') {
         settings.appPassword = formData.get('appPassword');
       }
+    } else {
+      // N8N-style settings for social media platforms
+      settings.credential = formData.get('credential');
+      settings.hostUrl = formData.get('hostUrl');
+      settings.httpMethod = formData.get('httpMethod');
+      settings.node = formData.get('node');
+      settings.edge = formData.get('edge');
     }
 
     updateConnectionMutation.mutate({
@@ -496,33 +513,108 @@ export default function SocialConnections() {
                 </div>
               )}
 
-              {/* Social Media Platform Access Token Field */}
+              {/* Social Media Platform Configuration - N8N Style */}
               {selectedPlatform !== 'wordpress' && (
-                <div className="space-y-4 border-t pt-4">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                    Cài đặt {platformLabels[selectedPlatform as keyof typeof platformLabels]}
-                  </h4>
-                  
-                  <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                      <h5 className="font-medium text-blue-900 dark:text-blue-100">Credential to connect with</h5>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="accessToken">Access Token</Label>
-                      <Textarea
-                        id="accessToken"
-                        name="accessToken"
-                        placeholder={`Nhập Access Token cho ${platformLabels[selectedPlatform as keyof typeof platformLabels]}...`}
-                        rows={3}
-                        required
-                        className="font-mono text-sm"
-                      />
-                      <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
-                        💡 Token này sẽ được sử dụng để xác thực với {platformLabels[selectedPlatform as keyof typeof platformLabels]} API
-                      </p>
-                    </div>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="credential">Credential to connect with</Label>
+                    <Select name="credential" required>
+                      <SelectTrigger className="bg-white">
+                        <SelectValue placeholder={`${platformLabels[selectedPlatform as keyof typeof platformLabels]} account`} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="create-new">+ Tạo credential mới</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="hostUrl">Host URL</Label>
+                    <Select name="hostUrl" defaultValue="default">
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="default">Default</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="httpMethod">HTTP Request Method</Label>
+                    <Select name="httpMethod" defaultValue="POST">
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="GET">GET</SelectItem>
+                        <SelectItem value="POST">POST</SelectItem>
+                        <SelectItem value="PUT">PUT</SelectItem>
+                        <SelectItem value="DELETE">DELETE</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="apiVersion">Graph API Version</Label>
+                    <Select name="apiVersion" defaultValue="v22.0">
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="v22.0">v22.0</SelectItem>
+                        <SelectItem value="v21.0">v21.0</SelectItem>
+                        <SelectItem value="v20.0">v20.0</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="node">Node</Label>
+                    <Input
+                      id="node"
+                      name="node"
+                      defaultValue="me"
+                      placeholder="me"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="edge">Edge</Label>
+                    <Input
+                      id="edge"
+                      name="edge"
+                      defaultValue="posts"
+                      placeholder="posts"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Switch id="ignoreSSL" name="ignoreSSL" />
+                    <Label htmlFor="ignoreSSL">Ignore SSL Issues (Insecure)</Label>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Switch id="sendBinary" name="sendBinary" />
+                    <Label htmlFor="sendBinary">Send Binary File</Label>
+                  </div>
+
+                  {/* Test Connection Button - N8N Style */}
+                  <div className="pt-4 border-t">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="bg-orange-500 text-white hover:bg-orange-600 border-orange-500"
+                      onClick={() => {
+                        // Placeholder for test connection functionality
+                        toast({
+                          title: "Test Connection",
+                          description: "Đang test kết nối...",
+                        });
+                      }}
+                    >
+                      🧪 Test step
+                    </Button>
                   </div>
                 </div>
               )}
@@ -718,27 +810,67 @@ export default function SocialConnections() {
                 />
               </div>
               
-              {/* Access Token chỉ hiển thị cho non-WordPress platforms */}
+              {/* Social Media Configuration - N8N Style */}
               {selectedConnection.platform !== 'wordpress' && (
-                <div className="space-y-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                    <h5 className="font-medium text-blue-900 dark:text-blue-100">Credential to connect with</h5>
-                  </div>
-                  
+                <div className="space-y-4 border-t pt-4">
                   <div>
-                    <Label htmlFor="edit-accessToken">Access Token</Label>
-                    <Textarea
-                      id="edit-accessToken"
-                      name="accessToken"
-                      placeholder="Cập nhật access token..."
-                      rows={3}
-                      required
-                      className="font-mono text-sm"
+                    <Label htmlFor="edit-credential">Credential to connect with</Label>
+                    <Select name="credential" defaultValue="existing">
+                      <SelectTrigger className="bg-white">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="existing">{platformLabels[selectedConnection.platform as keyof typeof platformLabels]} account (existing)</SelectItem>
+                        <SelectItem value="create-new">+ Tạo credential mới</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="edit-hostUrl">Host URL</Label>
+                    <Select name="hostUrl" defaultValue={selectedConnection.settings?.hostUrl || 'default'}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="default">Default</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="edit-httpMethod">HTTP Request Method</Label>
+                    <Select name="httpMethod" defaultValue={selectedConnection.settings?.httpMethod || 'POST'}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="GET">GET</SelectItem>
+                        <SelectItem value="POST">POST</SelectItem>
+                        <SelectItem value="PUT">PUT</SelectItem>
+                        <SelectItem value="DELETE">DELETE</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="edit-node">Node</Label>
+                    <Input
+                      id="edit-node"
+                      name="node"
+                      defaultValue={selectedConnection.settings?.node || 'me'}
+                      placeholder="me"
                     />
-                    <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
-                      💡 Token này sẽ được sử dụng để xác thực với {platformLabels[selectedConnection.platform as keyof typeof platformLabels]} API
-                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="edit-edge">Edge</Label>
+                    <Input
+                      id="edit-edge"
+                      name="edge"
+                      defaultValue={selectedConnection.settings?.edge || 'posts'}
+                      placeholder="posts"
+                    />
                   </div>
                 </div>
               )}
