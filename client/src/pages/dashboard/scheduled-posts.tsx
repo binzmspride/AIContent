@@ -34,6 +34,11 @@ interface Article {
   metaDescription?: string;
   keywords?: string | string[];
   imageUrls?: string[];
+  images?: Array<{
+    id: number;
+    imageUrl: string;
+    title: string;
+  }>;
   createdAt: string;
 }
 
@@ -369,15 +374,31 @@ export default function ScheduledPosts() {
                   
                   {/* Display article images */}
                   {(() => {
+                    // Check for images from imageUrls field or images relationship
                     const imageUrls = selectedArticle.imageUrls || [];
-                    const imageList = Array.isArray(imageUrls) ? imageUrls : [];
+                    const relatedImages = selectedArticle.images || [];
                     
-                    if (imageList.length > 0) {
+                    // Combine both sources
+                    let allImages: string[] = [];
+                    
+                    // Add from imageUrls field
+                    if (Array.isArray(imageUrls)) {
+                      allImages = [...imageUrls];
+                    }
+                    
+                    // Add from related images (for Social Media Content)
+                    relatedImages.forEach(img => {
+                      if (img.imageUrl && !allImages.includes(img.imageUrl)) {
+                        allImages.push(img.imageUrl);
+                      }
+                    });
+                    
+                    if (allImages.length > 0) {
                       return (
                         <div className="mt-3">
-                          <p className="text-sm text-gray-400 mb-2">Hình ảnh trong bài viết:</p>
+                          <p className="text-sm text-gray-400 mb-2">Hình ảnh đã chọn:</p>
                           <div className="grid grid-cols-2 gap-2">
-                            {imageList.slice(0, 4).map((imageUrl: string, index: number) => (
+                            {allImages.slice(0, 4).map((imageUrl: string, index: number) => (
                               <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-800">
                                 <img
                                   src={imageUrl}
@@ -390,9 +411,9 @@ export default function ScheduledPosts() {
                                 />
                               </div>
                             ))}
-                            {imageList.length > 4 && (
+                            {allImages.length > 4 && (
                               <div className="aspect-square rounded-lg bg-gray-800 flex items-center justify-center">
-                                <span className="text-sm text-gray-400">+{imageList.length - 4}</span>
+                                <span className="text-sm text-gray-400">+{allImages.length - 4}</span>
                               </div>
                             )}
                           </div>

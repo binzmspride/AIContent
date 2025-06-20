@@ -130,8 +130,9 @@ export const userPlansRelations = relations(userPlans, ({ one }) => ({
   plan: one(plans, { fields: [userPlans.planId], references: [plans.id] }),
 }));
 
-export const articlesRelations = relations(articles, ({ one }) => ({
+export const articlesRelations = relations(articles, ({ one, many }) => ({
   user: one(users, { fields: [articles.userId], references: [users.id] }),
+  images: many(images),
 }));
 
 export const connectionsRelations = relations(connections, ({ one }) => ({

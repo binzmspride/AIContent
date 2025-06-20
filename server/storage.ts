@@ -293,12 +293,17 @@ class DatabaseStorage implements IStorage {
       whereCondition = ({ userId: userIdCol }) => eq(userIdCol, userId);
     }
     
-    // Lấy bài viết với điều kiện WHERE
+    // Lấy bài viết với điều kiện WHERE và bao gồm hình ảnh liên kết
     const articles = await query.findMany({
       where: whereCondition,
       limit,
       offset,
       orderBy: [desc(schema.articles.createdAt)],
+      with: {
+        images: {
+          orderBy: [desc(schema.images.createdAt)]
+        }
+      }
     });
     
     // Đếm tổng số bài viết
