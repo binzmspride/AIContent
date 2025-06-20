@@ -217,8 +217,6 @@ export default function SocialConnections() {
       } else if (wordpressAuthType === 'application-password') {
         settings.applicationPassword = formData.get('appPassword');
       }
-    } else if (platform === 'facebook') {
-      settings.pageId = formData.get('pageId');
     }
 
     createConnectionMutation.mutate({
@@ -501,102 +499,25 @@ export default function SocialConnections() {
                 </div>
               )}
 
-              {/* Facebook specific fields */}
-              {selectedPlatform === 'facebook' && (
+              {/* Social Media Platform Access Token Field */}
+              {selectedPlatform !== 'wordpress' && (
                 <div className="space-y-4 border-t pt-4">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Cài đặt Facebook</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                    Cài đặt {platformLabels[selectedPlatform as keyof typeof platformLabels]}
+                  </h4>
                   
                   <div>
-                    <Label htmlFor="pageId">Facebook Page ID</Label>
-                    <Input
-                      id="pageId"
-                      name="pageId"
-                      placeholder="ID của Facebook Page..."
+                    <Label htmlFor="accessToken">Access Token</Label>
+                    <Textarea
+                      id="accessToken"
+                      name="accessToken"
+                      placeholder={`Nhập Access Token cho ${platformLabels[selectedPlatform as keyof typeof platformLabels]}...`}
+                      rows={3}
                       required
                     />
-                  </div>
-                </div>
-              )}
-
-              {/* Twitter specific fields */}
-              {selectedPlatform === 'twitter' && (
-                <div className="space-y-4 border-t pt-4">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Cài đặt Twitter</h4>
-                  
-                  <div>
-                    <Label htmlFor="apiKey">API Key</Label>
-                    <Input
-                      id="apiKey"
-                      name="apiKey"
-                      placeholder="Twitter API Key..."
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="apiSecret">API Secret</Label>
-                    <Input
-                      id="apiSecret"
-                      name="apiSecret"
-                      placeholder="Twitter API Secret..."
-                      type="password"
-                      required
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* LinkedIn specific fields */}
-              {selectedPlatform === 'linkedin' && (
-                <div className="space-y-4 border-t pt-4">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Cài đặt LinkedIn</h4>
-                  
-                  <div>
-                    <Label htmlFor="clientId">Client ID</Label>
-                    <Input
-                      id="clientId"
-                      name="clientId"
-                      placeholder="LinkedIn Client ID..."
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="clientSecret">Client Secret</Label>
-                    <Input
-                      id="clientSecret"
-                      name="clientSecret"
-                      placeholder="LinkedIn Client Secret..."
-                      type="password"
-                      required
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Instagram specific fields */}
-              {selectedPlatform === 'instagram' && (
-                <div className="space-y-4 border-t pt-4">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">Cài đặt Instagram</h4>
-                  
-                  <div>
-                    <Label htmlFor="instagramBusinessAccountId">Instagram Business Account ID</Label>
-                    <Input
-                      id="instagramBusinessAccountId"
-                      name="instagramBusinessAccountId"
-                      placeholder="Instagram Business Account ID..."
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="facebookPageId">Connected Facebook Page ID</Label>
-                    <Input
-                      id="facebookPageId"
-                      name="facebookPageId"
-                      placeholder="Facebook Page ID liên kết với Instagram..."
-                      required
-                    />
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                      Nhập token truy cập đã được cấp quyền cho ứng dụng của bạn
+                    </p>
                   </div>
                 </div>
               )}
@@ -794,28 +715,19 @@ export default function SocialConnections() {
               
               {/* Access Token chỉ hiển thị cho non-WordPress platforms */}
               {selectedConnection.platform !== 'wordpress' && (
-                <>
-                  <div>
-                    <Label htmlFor="edit-accessToken">Access Token</Label>
-                    <Textarea
-                      id="edit-accessToken"
-                      name="accessToken"
-                      placeholder="Cập nhật access token..."
-                      rows={3}
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="edit-refreshToken">Refresh Token (tùy chọn)</Label>
-                    <Textarea
-                      id="edit-refreshToken"
-                      name="refreshToken"
-                      placeholder="Cập nhật refresh token..."
-                      rows={2}
-                    />
-                  </div>
-                </>
+                <div>
+                  <Label htmlFor="edit-accessToken">Access Token</Label>
+                  <Textarea
+                    id="edit-accessToken"
+                    name="accessToken"
+                    placeholder="Cập nhật access token..."
+                    rows={3}
+                    required
+                  />
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                    Nhập token truy cập mới cho {platformLabels[selectedConnection.platform as keyof typeof platformLabels]}
+                  </p>
+                </div>
               )}
 
               {/* Platform specific fields */}
