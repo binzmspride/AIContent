@@ -4197,10 +4197,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         articleId: articleId || null,
         title,
         content,
+        featuredImage: imageUrls && imageUrls.length > 0 ? imageUrls[0] : null,
         platforms: [{
           platform: connection.platform,
           connectionId: connectionId,
-          accountName: connection.accountName
+          accountName: connection.accountName,
+          imageUrls: imageUrls || []
         }],
         scheduledTime: scheduledDate,
         status: 'pending'
