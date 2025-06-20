@@ -3708,8 +3708,155 @@ export async function registerRoutes(app: Express): Promise<Server> {
             message: `Lỗi kết nối WordPress: ${error.message}` 
           };
         }
+      } else if (connection.platform === 'facebook') {
+        // Test Facebook connection
+        try {
+          const accessToken = connection.accessToken;
+          if (!accessToken) {
+            testResult = { 
+              success: false, 
+              message: 'Không tìm thấy Access Token cho Facebook' 
+            };
+          } else {
+            // Test Facebook Graph API
+            const testUrl = `https://graph.facebook.com/me?access_token=${accessToken}`;
+            const response = await fetch(testUrl);
+            
+            if (response.ok) {
+              const data = await response.json();
+              testResult = { 
+                success: true, 
+                message: `Kết nối Facebook thành công! Tài khoản: ${data.name || 'Unknown'}` 
+              };
+            } else {
+              const errorData = await response.json();
+              testResult = { 
+                success: false, 
+                message: `Lỗi kết nối Facebook: ${errorData.error?.message || 'Token không hợp lệ'}` 
+              };
+            }
+          }
+        } catch (error: any) {
+          testResult = { 
+            success: false, 
+            message: `Lỗi kết nối Facebook: ${error.message}` 
+          };
+        }
+      } else if (connection.platform === 'linkedin') {
+        // Test LinkedIn connection
+        try {
+          const accessToken = connection.accessToken;
+          if (!accessToken) {
+            testResult = { 
+              success: false, 
+              message: 'Không tìm thấy Access Token cho LinkedIn' 
+            };
+          } else {
+            // Test LinkedIn API
+            const testUrl = 'https://api.linkedin.com/v2/me';
+            const response = await fetch(testUrl, {
+              headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+              }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              const name = `${data.localizedFirstName || ''} ${data.localizedLastName || ''}`.trim();
+              testResult = { 
+                success: true, 
+                message: `Kết nối LinkedIn thành công! Tài khoản: ${name || 'Unknown'}` 
+              };
+            } else {
+              const errorData = await response.json();
+              testResult = { 
+                success: false, 
+                message: `Lỗi kết nối LinkedIn: ${errorData.message || 'Token không hợp lệ'}` 
+              };
+            }
+          }
+        } catch (error: any) {
+          testResult = { 
+            success: false, 
+            message: `Lỗi kết nối LinkedIn: ${error.message}` 
+          };
+        }
+      } else if (connection.platform === 'twitter') {
+        // Test Twitter connection
+        try {
+          const accessToken = connection.accessToken;
+          if (!accessToken) {
+            testResult = { 
+              success: false, 
+              message: 'Không tìm thấy Access Token cho Twitter' 
+            };
+          } else {
+            // Test Twitter API v2
+            const testUrl = 'https://api.twitter.com/2/users/me';
+            const response = await fetch(testUrl, {
+              headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+              }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              testResult = { 
+                success: true, 
+                message: `Kết nối Twitter thành công! Tài khoản: @${data.data?.username || 'Unknown'}` 
+              };
+            } else {
+              const errorData = await response.json();
+              testResult = { 
+                success: false, 
+                message: `Lỗi kết nối Twitter: ${errorData.title || 'Token không hợp lệ'}` 
+              };
+            }
+          }
+        } catch (error: any) {
+          testResult = { 
+            success: false, 
+            message: `Lỗi kết nối Twitter: ${error.message}` 
+          };
+        }
+      } else if (connection.platform === 'instagram') {
+        // Test Instagram connection (via Facebook Graph API)
+        try {
+          const accessToken = connection.accessToken;
+          if (!accessToken) {
+            testResult = { 
+              success: false, 
+              message: 'Không tìm thấy Access Token cho Instagram' 
+            };
+          } else {
+            // Test Instagram Basic Display API
+            const testUrl = `https://graph.instagram.com/me?fields=id,username&access_token=${accessToken}`;
+            const response = await fetch(testUrl);
+            
+            if (response.ok) {
+              const data = await response.json();
+              testResult = { 
+                success: true, 
+                message: `Kết nối Instagram thành công! Tài khoản: @${data.username || 'Unknown'}` 
+              };
+            } else {
+              const errorData = await response.json();
+              testResult = { 
+                success: false, 
+                message: `Lỗi kết nối Instagram: ${errorData.error?.message || 'Token không hợp lệ'}` 
+              };
+            }
+          }
+        } catch (error: any) {
+          testResult = { 
+            success: false, 
+            message: `Lỗi kết nối Instagram: ${error.message}` 
+          };
+        }
       } else {
-        // Test other social media platforms
+        // Unsupported platform
         testResult = { 
           success: false, 
           message: `Test kết nối cho ${connection.platform} chưa được hỗ trợ` 
