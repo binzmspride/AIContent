@@ -360,9 +360,9 @@ export default function ScheduledPosts() {
 
               {/* Selected Article Preview */}
               {selectedArticle && (
-                <div className="p-4 border rounded-lg bg-gray-50">
-                  <h4 className="font-medium mb-2">{selectedArticle.title}</h4>
-                  <p className="text-sm text-gray-600 line-clamp-3">
+                <div className="p-4 border rounded-lg" style={{ backgroundColor: '#132639' }}>
+                  <h4 className="font-medium mb-2 text-white">{selectedArticle.title}</h4>
+                  <p className="text-sm text-gray-300 line-clamp-3">
                     {selectedArticle.content.substring(0, 200)}...
                   </p>
                   {selectedArticle.keywords && (
@@ -472,9 +472,9 @@ export default function ScheduledPosts() {
             </DialogHeader>
             <div className="space-y-4">
               {editingPost && (
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <h3 className="font-medium text-sm text-gray-700">Bài viết gốc:</h3>
-                  <p className="text-sm text-gray-600">{editingPost.title}</p>
+                <div className="p-3 rounded-lg" style={{ backgroundColor: '#132639' }}>
+                  <h3 className="font-medium text-sm text-white">Bài viết gốc:</h3>
+                  <p className="text-sm text-gray-300">{editingPost.title}</p>
                 </div>
               )}
 
