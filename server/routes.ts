@@ -384,7 +384,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const userId = req.user.id;
-      const contentRequest = req.body as GenerateContentRequest;
+      const contentRequest = req.body;
+      
+      console.log('Received content generation request:', JSON.stringify(contentRequest, null, 2));
+      
+      // Add user information to the request
+      contentRequest.userId = userId;
+      contentRequest.username = req.user.username;
+      if (!contentRequest.timestamp) {
+        contentRequest.timestamp = new Date().toISOString();
+      }
       
       // Determine credits needed based on content length
       let creditsNeeded = 1;
@@ -459,15 +468,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create unified payload format for both endpoints
       const webhookPayload = {
-        content: `Từ khóa: ${contentRequest.keywords}\nChủ đề: ${contentRequest.topic || contentRequest.title}`,
-        url: "",
-        extract_content: "false",
-        post_to_linkedin: "false",
-        post_to_facebook: "false", 
-        post_to_x: "false",
-        post_to_instagram: "false",
-        genSEO: "true",
-        approve_extract: "false"
+        keywords: contentRequest.keywords,
+        mainKeyword: contentRequest.mainKeyword,
+        secondaryKeywords: contentRequest.secondaryKeywords,
+        length: contentRequest.length,
+        tone: contentRequest.tone,
+        prompt: contentRequest.prompt,
+        addHeadings: contentRequest.addHeadings,
+        useBold: contentRequest.useBold,
+        useItalic: contentRequest.useItalic,
+        useBullets: contentRequest.useBullets,
+        relatedKeywords: contentRequest.relatedKeywords,
+        language: contentRequest.language,
+        country: contentRequest.country,
+        perspective: contentRequest.perspective,
+        complexity: contentRequest.complexity,
+        useWebResearch: contentRequest.useWebResearch,
+        refSources: contentRequest.refSources,
+        aiModel: contentRequest.aiModel,
+        linkItems: contentRequest.linkItems,
+        imageSize: contentRequest.imageSize,
+        generateImages: contentRequest.generateImages,
+        image_size: contentRequest.image_size,
+        userId: contentRequest.userId,
+        username: contentRequest.username,
+        timestamp: contentRequest.timestamp
       };
       
       // Ghi log yêu cầu gửi đến webhook

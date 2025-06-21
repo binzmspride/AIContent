@@ -388,7 +388,7 @@ export default function CreateContent() {
     };
 
     console.log('Sending content generation request:', requestData);
-    generateContentMutation.mutate(requestData);
+    generateContentMutation.mutate(requestData as any);
   };
 
   // Hàm trả về kích thước hình ảnh theo định dạng width/height dựa trên loại kích thước

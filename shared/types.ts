@@ -7,29 +7,31 @@ export interface ApiResponse<T> {
 
 // Content generation types
 export interface GenerateContentRequest {
-  title?: string; // Không bắt buộc nhập tiêu đề
-  contentType: 'blog' | 'product' | 'news' | 'social';
-  keywords: string; // Giữ lại để tương thích với code cũ
-  mainKeyword?: string; // Từ khóa chính (tách ra từ keywords)
-  secondaryKeywords?: string; // Các từ khóa phụ (tách ra từ keywords)
+  keywords: string; // Main keywords field
+  mainKeyword: string; // Primary keyword
+  secondaryKeywords: string; // Secondary keywords
   length: 'short' | 'medium' | 'long' | 'extra_long';
   tone: 'professional' | 'conversational' | 'informative' | 'persuasive' | 'humorous' | 'neutral';
   prompt: string;
   addHeadings: boolean;
-  relatedKeywords?: string; // Từ khóa liên quan, dạng chuỗi phân tách bởi dấu phẩy
-  language?: 'vietnamese' | 'english';
-  country?: 'vietnam' | 'us' | 'global';
-  perspective?: 'auto' | 'first' | 'second' | 'third';
-  complexity?: 'auto' | 'basic' | 'intermediate' | 'advanced';
-  useWebResearch?: boolean; // Cho phép AI tìm kiếm thông tin trên web
-  refSources?: string; // Nguồn tham khảo cụ thể
-  aiModel?: 'chatgpt' | 'gemini' | 'claude'; // Mô hình AI sử dụng
-  useBold?: boolean; // Sử dụng định dạng in đậm
-  useItalic?: boolean; // Sử dụng định dạng in nghiêng
-  useBullets?: boolean; // Sử dụng định dạng danh sách
-  linkItems?: Array<{ keyword?: string; url?: string }>; // Danh sách liên kết
-  imageSize?: 'small' | 'medium' | 'large'; // Kích thước hình ảnh cũ (
-  generateImages?: boolean; // Tự động tạo hình ảnh cho bài viết
+  useBold: boolean;
+  useItalic: boolean;
+  useBullets: boolean;
+  relatedKeywords: string; // Related keywords, comma-separated string
+  language: 'vietnamese' | 'english';
+  country: 'vietnam' | 'us' | 'global';
+  perspective: 'auto' | 'first' | 'second' | 'third';
+  complexity: 'auto' | 'basic' | 'intermediate' | 'advanced';
+  useWebResearch: boolean; // Allow AI to search web for information
+  refSources: string; // Reference sources
+  aiModel: 'chatgpt' | 'gemini' | 'claude'; // AI model to use
+  linkItems: Array<{ keyword?: string; url?: string }>; // Link items
+  imageSize: 'small' | 'medium' | 'large'; // Image size
+  generateImages: boolean; // Generate images
+  image_size: { width: number; height: number }; // Image dimensions
+  userId?: number; // User ID
+  username?: string; // Username
+  timestamp?: string; // Request timestampự động tạo hình ảnh cho bài viết
   // Các trường được thêm vào từ server
   userId?: number; // ID người dùng gửi yêu cầu
   username?: string; // Tên người dùng gửi yêu cầu
