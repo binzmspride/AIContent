@@ -345,13 +345,11 @@ export default function CreateContent() {
     const mainKeyword = keywordsArray.length > 0 ? keywordsArray[0].trim() : '';
     const secondaryKeywords = keywordsArray.length > 1 ? keywordsArray.slice(1).map(k => k.trim()) : [];
 
-    // Convert form data to GenerateContentRequest format
-    const requestData: GenerateContentRequest = {
-      title: '', // Không dùng tiêu đề từ form nữa
-      contentType: data.contentType || 'blog',
-      keywords: data.keywords, // Giữ nguyên trường keywords để tương thích với code cũ
-      mainKeyword: mainKeyword, // Thêm trường mới cho từ khóa chính
-      secondaryKeywords: secondaryKeywords.join(','), // Thêm trường mới cho từ khóa phụ
+    // Convert form data to match the expected JSON format
+    const requestData = {
+      keywords: data.keywords, // Main keywords field
+      mainKeyword: mainKeyword, // Primary keyword
+      secondaryKeywords: secondaryKeywords.join(','), // Secondary keywords
       length: data.length,
       tone: data.tone,
       prompt: data.prompt || '',
@@ -363,28 +361,30 @@ export default function CreateContent() {
       language: data.language || 'vietnamese',
       country: data.country || 'vietnam',
       perspective: data.perspective || 'auto',
-      complexity: data.complexity || 'intermediate', // Đảm bảo mức độ phức tạp luôn có giá trị
+      complexity: data.complexity || 'auto', // Match expected format
       useWebResearch: data.useWebResearch || false,
       refSources: data.refSources || "",
       aiModel: data.aiModel || 'chatgpt',
       linkItems: filteredLinkItems,
       imageSize: data.imageSize || 'medium',
-      // Image generation parameters
       generateImages: data.generateImages || false,
-      // Thêm cấu trúc image_size mới theo định dạng width/height
       image_size: (() => {
         const size = data.imageSize || 'medium';
         switch(size) {
           case 'small':
-            return { width: 640, height: 480 }; // Nhỏ (640×480)
+            return { width: 640, height: 480 };
           case 'medium':
-            return { width: 1280, height: 720 }; // Trung bình (1280×720)
+            return { width: 1280, height: 720 };
           case 'large':
-            return { width: 1920, height: 1080 }; // Lớn (1920×1080)
+            return { width: 1920, height: 1080 };
           default:
-            return { width: 1280, height: 720 }; // Mặc định là trung bình
+            return { width: 1280, height: 720 };
         }
-      })()
+      })(),
+      // Add additional fields to match expected format
+      userId: user?.id,
+      username: user?.username,
+      timestamp: new Date().toISOString()
     };
 
     console.log('Sending content generation request:', requestData);
