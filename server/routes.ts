@@ -3838,22 +3838,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
               message: 'Không tìm thấy Access Token cho Instagram' 
             };
           } else {
-            // Test Instagram Basic Display API
-            const testUrl = `https://graph.instagram.com/me?fields=id,username&access_token=${accessToken}`;
-            const response = await fetch(testUrl);
+            // First try Facebook Graph API (for Instagram Business)
+            let testUrl = `https://graph.facebook.com/me?access_token=${accessToken}`;
+            let response = await fetch(testUrl);
             
             if (response.ok) {
-              const data = await response.json();
-              testResult = { 
-                success: true, 
-                message: `Kết nối Instagram thành công! Tài khoản: @${data.username || 'Unknown'}` 
-              };
+              const fbData = await response.json();
+              
+              // Try to get Instagram accounts connected to this Facebook account
+              const igAccountsUrl = `https://graph.facebook.com/me/accounts?fields=instagram_business_account{id,username}&access_token=${accessToken}`;
+              const igResponse = await fetch(igAccountsUrl);
+              
+              if (igResponse.ok) {
+                const igData = await igResponse.json();
+                const igAccounts = igData.data?.filter(page => page.instagram_business_account) || [];
+                
+                if (igAccounts.length > 0) {
+                  const igAccount = igAccounts[0].instagram_business_account;
+                  testResult = { 
+                    success: true, 
+                    message: `Kết nối Instagram Business thành công! Tài khoản: @${igAccount.username || 'Unknown'} (qua Facebook: ${fbData.name})` 
+                  };
+                } else {
+                  testResult = { 
+                    success: true, 
+                    message: `Token Facebook hợp lệ nhưng không tìm thấy Instagram Business account được kết nối. Đảm bảo Instagram Business đã được liên kết với Facebook Page.` 
+                  };
+                }
+              } else {
+                testResult = { 
+                  success: true, 
+                  message: `Token Facebook hợp lệ (${fbData.name}) nhưng không thể truy cập Instagram accounts. Kiểm tra quyền instagram_basic.` 
+                };
+              }
             } else {
-              const errorData = await response.json();
-              testResult = { 
-                success: false, 
-                message: `Lỗi kết nối Instagram: ${errorData.error?.message || 'Token không hợp lệ'}` 
-              };
+              // If Facebook API fails, try Instagram Basic Display API
+              testUrl = `https://graph.instagram.com/me?fields=id,username,account_type&access_token=${accessToken}`;
+              response = await fetch(testUrl);
+              
+              if (response.ok) {
+                const data = await response.json();
+                const accountType = data.account_type || 'PERSONAL';
+                testResult = { 
+                  success: true, 
+                  message: `Kết nối Instagram ${accountType} thành công! Tài khoản: @${data.username || 'Unknown'}${accountType === 'PERSONAL' ? ' (Lưu ý: Chỉ Business account mới có thể đăng bài qua API)' : ''}` 
+                };
+              } else {
+                const errorData = await response.json();
+                
+                // Provide specific guidance based on error type
+                let errorMessage = errorData.error?.message || 'Token không hợp lệ';
+                if (errorMessage.includes('OAuth')) {
+                  errorMessage = 'Access Token không hợp lệ. Vui lòng tạo token mới từ Facebook Developer Console với quyền instagram_basic và pages_show_list.';
+                } else if (errorMessage.includes('expired')) {
+                  errorMessage = 'Access Token đã hết hạn. Tokens Instagram thường có thời hạn 60 ngày, vui lòng tạo token mới.';
+                }
+                
+                testResult = { 
+                  success: false, 
+                  message: `Lỗi kết nối Instagram: ${errorMessage}` 
+                };
+              }
             }
           }
         } catch (error: any) {
