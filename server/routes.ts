@@ -4108,6 +4108,95 @@ export async function registerRoutes(app: Express): Promise<Server> {
           throw new Error(`Lỗi đăng Facebook: ${error.message}`);
         }
 
+      } else if (platform === 'instagram') {
+        // Instagram publishing
+        try {
+          const accessToken = connection.accessToken;
+          if (!accessToken) {
+            throw new Error('Instagram Access Token không được tìm thấy trong kết nối');
+          }
+
+          // First get Instagram account info
+          const accountInfoUrl = `https://graph.instagram.com/me?fields=id,username,account_type&access_token=${accessToken}`;
+          const accountResponse = await fetch(accountInfoUrl);
+          
+          if (!accountResponse.ok) {
+            const errorData = await accountResponse.json();
+            throw new Error(`Instagram account verification failed: ${errorData.error?.message || 'Token không hợp lệ'}`);
+          }
+          
+          const accountData = await accountResponse.json();
+          console.log('Instagram account data:', accountData);
+          
+          // Check if we have images to post
+          const images = finalImageUrls;
+          if (images.length === 0) {
+            throw new Error('Instagram yêu cầu ít nhất một hình ảnh để đăng bài');
+          }
+
+          // Check account type
+          if (accountData.account_type !== 'BUSINESS') {
+            throw new Error('Instagram cá nhân không hỗ trợ đăng bài qua API. Vui lòng sử dụng Instagram Business account.');
+          }
+
+          // Instagram Business API flow
+          const imageUrl = images[0]; // Use first image
+          
+          // Step 1: Create media container
+          const containerData = {
+            image_url: imageUrl,
+            caption: content,
+            access_token: accessToken
+          };
+          
+          const containerResponse = await fetch(`https://graph.facebook.com/v18.0/${accountData.id}/media`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(containerData)
+          });
+          
+          if (!containerResponse.ok) {
+            const errorData = await containerResponse.json();
+            throw new Error(`Instagram container creation failed: ${errorData.error?.message || 'Unknown error'}`);
+          }
+          
+          const containerResult = await containerResponse.json();
+          const containerId = containerResult.id;
+          
+          // Step 2: Publish the container
+          const publishData = {
+            creation_id: containerId,
+            access_token: accessToken
+          };
+          
+          const publishResponse = await fetch(`https://graph.facebook.com/v18.0/${accountData.id}/media_publish`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(publishData)
+          });
+          
+          if (!publishResponse.ok) {
+            const errorData = await publishResponse.json();
+            throw new Error(`Instagram publish failed: ${errorData.error?.message || 'Unknown error'}`);
+          }
+          
+          const publishResponseData = await publishResponse.json();
+          
+          publishResult = {
+            success: true,
+            postId: publishResponseData.id,
+            url: `https://instagram.com/p/${publishResponseData.id}`,
+            message: 'Đăng Instagram thành công'
+          };
+
+        } catch (error: any) {
+          throw new Error(`Lỗi đăng Instagram: ${error.message}`);
+        }
+
       } else {
         // For other platforms not yet implemented
         throw new Error(`Platform ${platform} chưa được hỗ trợ`);

@@ -165,6 +165,8 @@ export class PostScheduler {
         return await this.publishToTwitter(post, connection);
       case 'linkedin':
         return await this.publishToLinkedIn(post, connection);
+      case 'instagram':
+        return await this.publishToInstagram(post, connection);
       default:
         throw new Error(`Platform không được hỗ trợ: ${platform}`);
     }
@@ -443,6 +445,130 @@ export class PostScheduler {
       success: true,
       message: 'LinkedIn publishing sẽ được thêm sau'
     };
+  }
+
+  private async publishToInstagram(post: ScheduledPostJob, connection: any): Promise<any> {
+    try {
+      console.log('Instagram publishing - Connection data:', JSON.stringify(connection, null, 2));
+      
+      const settings = connection.settings || connection.connectionData || connection.config || {};
+      const accessToken = connection.accessToken || settings.accessToken;
+      
+      if (!accessToken) {
+        throw new Error('Access Token không được tìm thấy cho Instagram');
+      }
+
+      // Instagram requires images for most posts via Instagram Basic Display API
+      // For business accounts, we need Instagram Business API
+      
+      // First get Instagram account info
+      const accountInfoUrl = `https://graph.instagram.com/me?fields=id,username,account_type&access_token=${accessToken}`;
+      const accountResponse = await fetch(accountInfoUrl);
+      
+      if (!accountResponse.ok) {
+        const errorData = await accountResponse.json();
+        throw new Error(`Instagram account verification failed: ${errorData.error?.message || 'Token không hợp lệ'}`);
+      }
+      
+      const accountData = await accountResponse.json();
+      console.log('Instagram account data:', accountData);
+      
+      // Check if we have images to post
+      const imageUrls = Array.isArray(post.imageUrls) ? post.imageUrls : 
+                       (post.imageUrls ? [post.imageUrls] : []);
+      
+      if (imageUrls.length === 0) {
+        throw new Error('Instagram yêu cầu ít nhất một hình ảnh để đăng bài');
+      }
+
+      // For Instagram Basic Display API, we can only read user's media
+      // For posting, we need Instagram Business API or Instagram Graph API
+      // This requires a Facebook Page connected to Instagram Business account
+      
+      if (accountData.account_type === 'BUSINESS') {
+        // Use Instagram Business API
+        return await this.publishToInstagramBusiness(post, connection, accessToken, accountData);
+      } else {
+        // Personal accounts cannot post via API
+        throw new Error('Instagram cá nhân không hỗ trợ đăng bài qua API. Vui lòng sử dụng Instagram Business account.');
+      }
+      
+    } catch (error: any) {
+      console.error('Instagram publishing error:', error);
+      throw new Error(`Lỗi đăng Instagram: ${error.message}`);
+    }
+  }
+
+  private async publishToInstagramBusiness(post: ScheduledPostJob, connection: any, accessToken: string, accountData: any): Promise<any> {
+    try {
+      const content = post.content || '';
+      const imageUrls = Array.isArray(post.imageUrls) ? post.imageUrls : 
+                       (post.imageUrls ? [post.imageUrls] : []);
+      
+      if (imageUrls.length === 0) {
+        throw new Error('Instagram Business yêu cầu ít nhất một hình ảnh');
+      }
+
+      // Instagram Business API flow:
+      // 1. Create media container
+      // 2. Publish the container
+      
+      const imageUrl = imageUrls[0]; // Use first image
+      
+      // Step 1: Create media container
+      const containerData = {
+        image_url: imageUrl,
+        caption: content,
+        access_token: accessToken
+      };
+      
+      const containerResponse = await fetch(`https://graph.facebook.com/v18.0/${accountData.id}/media`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(containerData)
+      });
+      
+      if (!containerResponse.ok) {
+        const errorData = await containerResponse.json();
+        throw new Error(`Instagram container creation failed: ${errorData.error?.message || 'Unknown error'}`);
+      }
+      
+      const containerResult = await containerResponse.json();
+      const containerId = containerResult.id;
+      
+      // Step 2: Publish the container
+      const publishData = {
+        creation_id: containerId,
+        access_token: accessToken
+      };
+      
+      const publishResponse = await fetch(`https://graph.facebook.com/v18.0/${accountData.id}/media_publish`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(publishData)
+      });
+      
+      if (!publishResponse.ok) {
+        const errorData = await publishResponse.json();
+        throw new Error(`Instagram publish failed: ${errorData.error?.message || 'Unknown error'}`);
+      }
+      
+      const publishResult = await publishResponse.json();
+      
+      return {
+        success: true,
+        postId: publishResult.id,
+        url: `https://instagram.com/p/${publishResult.id}`,
+        message: 'Đăng Instagram thành công'
+      };
+      
+    } catch (error: any) {
+      throw new Error(`Instagram Business posting error: ${error.message}`);
+    }
   }
 }
 
