@@ -22,7 +22,7 @@ export interface MascotHelperProps {
 }
 
 export function MascotHelper({ page, className, onDismiss }: MascotHelperProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [currentTip, setCurrentTip] = useState<MascotTip | null>(null);
   const [dismissed, setDismissed] = useState(false);
   
@@ -34,17 +34,17 @@ export function MascotHelper({ page, className, onDismiss }: MascotHelperProps) 
           {
             title: t("common.mascot.dashboard.welcomeTitle") || "Xin chào!",
             content: t("common.mascot.dashboard.welcomeTip") || "Chào mừng bạn đến với SEO AI Writer! Đây là nơi bạn có thể xem tổng quan về tài khoản của mình.",
-            expression: "happy"
+            expression: "happy" as const
           },
           {
             title: t("common.mascot.dashboard.creditsTitle") || "Tín dụng",
             content: t("common.mascot.dashboard.creditsTip") || "Số tín dụng hiển thị ở bảng điều khiển cho biết bạn có thể tạo bao nhiêu bài viết mới.",
-            expression: "thinking"
+            expression: "thinking" as const
           },
           {
             title: t("common.mascot.dashboard.articlesTitle") || "Bài viết của bạn",
             content: t("common.mascot.dashboard.articlesTip") || "Bạn có thể xem các bài viết gần đây của mình tại đây và nhấp vào để chỉnh sửa hoặc xuất bản.",
-            expression: "idle"
+            expression: "idle" as const
           }
         ];
       case "content-creation":
@@ -52,17 +52,17 @@ export function MascotHelper({ page, className, onDismiss }: MascotHelperProps) 
           {
             title: t("common.mascot.contentCreation.welcomeTitle") || "Bắt đầu tạo nội dung!",
             content: t("common.mascot.contentCreation.welcomeTip") || "Hãy điền đầy đủ thông tin để tạo bài viết SEO chất lượng cao.",
-            expression: "happy"
+            expression: "happy" as const
           },
           {
             title: t("common.mascot.contentCreation.tipsTitle") || "Mẹo tạo nội dung",
             content: t("common.mascot.contentCreation.tipsList") || "Sử dụng từ khóa chính xác, chọn giọng điệu phù hợp với đối tượng, và cung cấp mô tả chi tiết để có kết quả tốt nhất.",
-            expression: "thinking"
+            expression: "thinking" as const
           },
           {
             title: t("common.mascot.contentCreation.creditsTitle") || "Sử dụng tín dụng",
             content: t("common.mascot.contentCreation.creditsTip") || "Mỗi bài viết sẽ sử dụng từ 1-3 tín dụng tùy thuộc vào độ dài bạn chọn.",
-            expression: "idle"
+            expression: "idle" as const
           }
         ];
       case "articles":
@@ -133,18 +133,21 @@ export function MascotHelper({ page, className, onDismiss }: MascotHelperProps) 
     if (dismissed) return;
     
     const tips = getTips();
+    console.log("useEffect tips:", tips);
     if (tips.length === 0) return;
     
     let currentIndex = 0;
+    console.log("Setting initial tip:", tips[0]);
     setCurrentTip(tips[0]);
     
     const interval = setInterval(() => {
       currentIndex = (currentIndex + 1) % tips.length;
+      console.log("Rotating to tip:", tips[currentIndex]);
       setCurrentTip(tips[currentIndex]);
     }, 12000); // Change tip every 12 seconds
     
     return () => clearInterval(interval);
-  }, [page, dismissed]);
+  }, [page, dismissed, language]); // Add language dependency
   
   if (dismissed || !currentTip) return null;
   
