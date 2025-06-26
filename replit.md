@@ -129,6 +129,8 @@ The application follows a modern three-tier architecture:
 
 ## Changelog
 
+- June 26, 2025: Fixed language switcher display logic - changed from showing opposite language to showing current language (VN when Vietnamese active, EN when English active) for better user clarity.
+- June 26, 2025: Fixed credits page localization and balance display - changed page title from "credits" to "Tín dụng", corrected balance showing actual 745 credits instead of 0, updated auth hook to handle nested API response structure properly.
 - June 26, 2025: Enhanced dashboard interface with improved navigation - replaced "Dung lượng sử dụng" section with "Hình ảnh đã tạo" showing total images count, added clickable cards that navigate to "Bài viết của tôi" and "Thư viện hình ảnh" pages, improved user experience with hover effects and direct navigation links.
 - June 26, 2025: Fixed dashboard stats display issue - corrected React Query data access pattern for nested API responses. Dashboard now properly shows user credits (745) and articles count (58) instead of displaying zeros. Updated both stats and articles queries to handle {success, data} response structure correctly.
 - June 21, 2025: Fixed content creation JSON payload structure - updated GenerateContentRequest interface and form submission to match expected webhook format with proper field mapping (keywords, mainKeyword, secondaryKeywords, length, tone, prompt, addHeadings, useBold, useItalic, useBullets, relatedKeywords, language, country, perspective, complexity, useWebResearch, refSources, aiModel, linkItems, imageSize, generateImages, image_size, userId, username, timestamp).

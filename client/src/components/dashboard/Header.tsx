@@ -97,7 +97,7 @@ export function Header() {
             onClick={toggleLanguage}
             className="text-secondary-500 dark:text-secondary-300 hover:text-primary-600 dark:hover:text-primary-400 p-1 rounded-md hidden sm:block"
           >
-            {language === "vi" ? "EN" : "VN"}
+            {language === "vi" ? "VN" : "EN"}
           </button>
           
           <Link href="/dashboard/credits">
