@@ -587,6 +587,7 @@ const translations: TranslationsType = {
           keywords: "Từ khóa",
           outline: "Dàn ý",
           content: "Nội dung",
+          knowledge: "Kiến thức",
           style: "Kiểu thức",
           format: "Định dạng",
           media: "Hình ảnh",

@@ -672,7 +672,7 @@ export default function CreateContent() {
                     </TabsTrigger>
                     <TabsTrigger value="knowledge" className="flex items-center justify-start tab-trigger">
                       <BookOpenText className="h-5 w-5 mr-2" />
-                      <span>Kiến thức</span>
+                      <span>{t("dashboard.create.tabs.knowledge")}</span>
                     </TabsTrigger>
                     <TabsTrigger value="format" className="flex items-center justify-start tab-trigger">
                       <AlignJustify className="h-5 w-5 mr-2" />
