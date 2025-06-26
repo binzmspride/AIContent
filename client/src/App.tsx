@@ -58,6 +58,7 @@ import AdminSettings from "@/pages/admin/settings";
 import AdminPerformance from "@/pages/admin/performance";
 import AdminFeedback from "@/pages/admin/feedback";
 import AdminTranslations from "@/pages/admin/translations";
+import SidebarMenuManagement from "@/pages/admin/sidebar-menu";
 
 function Router() {
   const { user, isLoading } = useAuth();
@@ -126,6 +127,7 @@ function Router() {
       <ProtectedRoute path="/admin/integrations" component={AdminIntegrations} adminOnly={true} />
       <ProtectedRoute path="/admin/feedback" component={AdminFeedback} adminOnly={true} />
       <ProtectedRoute path="/admin/translations" component={AdminTranslations} adminOnly={true} />
+      <ProtectedRoute path="/admin/sidebar-menu" component={SidebarMenuManagement} adminOnly={true} />
       <ProtectedRoute path="/admin/history" component={AdminHistory} adminOnly={true} />
       <ProtectedRoute path="/admin/settings" component={AdminSettings} adminOnly={true} />
       <ProtectedRoute path="/admin/performance" component={AdminPerformance} adminOnly={true} />

@@ -88,114 +88,12 @@ export function Sidebar() {
   console.log("User info in Sidebar:", user);
   console.log("Extracted userData:", userData);
 
-  const links: SidebarLink[] = [
-    {
-      href: "/dashboard",
-      label: t("dashboard.title"),
-      icon: <LayoutDashboard className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/create-content",
-      label: t("dashboard.navigationItems.createContent"),
-      icon: <PenSquare className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/create-image",
-      label: "Tạo hình ảnh",
-      icon: <Image className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/image-library",
-      label: "Thư viện hình ảnh",
-      icon: <Images className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/create-social-content",
-      label: "Tạo Content Social",
-      icon: <Share2 className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/brand-guidelines",
-      label: "Brand Guidelines",
-      icon: <Settings className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/my-articles",
-      label: t("dashboard.navigationItems.myArticles"),
-      icon: <FileText className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/credits",
-      label: t("dashboard.navigationItems.credits"),
-      icon: <Coins className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/plans",
-      label: t("dashboard.navigationItems.plans"),
-      icon: <Package className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/connections",
-      label: t("dashboard.navigationItems.connections"),
-      icon: <Link2 className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/content-separation",
-      label: "Tách riêng Content",
-      icon: <Database className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/analytics",
-      label: "Phân tích & Báo cáo",
-      icon: <BarChart3 className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/seo-tools",
-      label: "Công cụ SEO",
-      icon: <TrendingUp className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/templates",
-      label: "Mẫu nội dung",
-      icon: <FileText className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/translations",
-      label: "Đa ngôn ngữ",
-      icon: <Globe className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/notifications",
-      label: "Thông báo",
-      icon: <Bell className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/scheduler",
-      label: "Lập lịch đăng",
-      icon: <Calendar className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/scheduled-posts",
-      label: "Bài viết đã lên lịch",
-      icon: <Clock className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/social-connections",
-      label: "Kết nối mạng xã hội",
-      icon: <Share2 className="h-5 w-5 mr-3" />,
-    },
-    {
-      href: "/dashboard/feedback",
-      label: "Phản hồi",
-      icon: <MessageSquare className="h-5 w-5 mr-3" />,
-    },
-
-    {
-      href: "/dashboard/settings",
-      label: t("dashboard.navigationItems.settings"),
-      icon: <Settings className="h-5 w-5 mr-3" />,
-    },
-  ];
+  // Convert dynamic menu items to sidebar links
+  const links: SidebarLink[] = menuItems.map(item => ({
+    href: item.path || "#",
+    label: language === "vi" ? item.label : (item.labelEn || item.label),
+    icon: getIconComponent(item.icon)
+  }));
 
   const handleLogout = () => {
     logoutMutation.mutate();
