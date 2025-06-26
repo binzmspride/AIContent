@@ -295,7 +295,7 @@ export default function SidebarMenuManagement() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <code className="text-sm bg-gray-100 px-2 py-1 rounded">
+                        <code className="text-sm px-2 py-1 rounded">
                           {item.key}
                         </code>
                       </TableCell>
@@ -309,14 +309,14 @@ export default function SidebarMenuManagement() {
                       </TableCell>
                       <TableCell>
                         {item.icon && (
-                          <code className="text-sm bg-blue-100 px-2 py-1 rounded">
+                          <code className="text-sm px-2 py-1 rounded">
                             {item.icon}
                           </code>
                         )}
                       </TableCell>
                       <TableCell>
                         {item.path && (
-                          <code className="text-sm bg-green-100 px-2 py-1 rounded">
+                          <code className="text-sm px-2 py-1 rounded">
                             {item.path}
                           </code>
                         )}
