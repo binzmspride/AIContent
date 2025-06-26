@@ -1,4 +1,4 @@
-const { Client } = require('pg');
+import { Client } from 'pg';
 
 async function addDefaultSidebarMenuItems() {
   const client = new Client({
