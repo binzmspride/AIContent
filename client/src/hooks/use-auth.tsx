@@ -41,10 +41,10 @@ export const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   const {
-    data: user,
+    data: userResponse,
     error,
     isLoading,
-  } = useQuery<User | null, Error>({
+  } = useQuery<{success: boolean, data: User} | null, Error>({
     queryKey: ["/api/user"],
     queryFn: getQueryFn({ on401: "returnNull" }),
     retry: (failureCount, error) => {
@@ -59,6 +59,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   });
+
+  const user = userResponse?.data || null;
 
   const loginMutation = useMutation<User, Error, LoginData>({
     mutationFn: async (credentials: LoginData) => {
@@ -87,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (userData: User) => {
       console.log("Login successful, user data:", userData);
-      queryClient.setQueryData(["/api/user"], userData);
+      queryClient.setQueryData(["/api/user"], { success: true, data: userData });
       toast({
         title: "Đăng nhập thành công",
         description: `Chào mừng ${userData.fullName || userData.username}`,

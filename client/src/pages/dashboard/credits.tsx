@@ -121,10 +121,10 @@ export default function Credits() {
   return (
     <>
       <Head>
-        <title>{t("dashboard.credits")} - {t("common.appName")}</title>
+        <title>Tín dụng - {t("common.appName")}</title>
       </Head>
       
-      <DashboardLayout title={t("dashboard.credits")}>
+      <DashboardLayout title="Tín dụng">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card className="col-span-1 md:col-span-2">
             <CardHeader>
