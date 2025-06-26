@@ -807,6 +807,12 @@ const translations: TranslationsType = {
           refund: "Hoàn tiền"
         }
       }
+    },
+    
+    common: {
+      extracting: "Đang trích xuất...",
+      extractedContent: "Nội dung đã trích xuất",
+      editContent: "Chỉnh sửa nội dung (tùy chọn)"
     }
   },
   
