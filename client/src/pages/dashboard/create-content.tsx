@@ -1282,8 +1282,8 @@ export default function CreateContent() {
                       </TabsContent>
                       
                       <TabsContent value="format" className="mt-0 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
-                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">Định dạng cho bài viết</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Hệ thống sẽ định dạng cho bài viết của bạn.</p>
+                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.format.title")}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.format.description")}</p>
                         
                         <div className="space-y-6">
                           
@@ -1295,9 +1295,9 @@ export default function CreateContent() {
                                 <div className="flex items-center space-x-2">
                                   <Bold className="h-5 w-5 text-gray-700 dark:text-gray-300" />
                                   <div className="space-y-0.5">
-                                    <FormLabel className="text-base">In đậm</FormLabel>
+                                    <FormLabel className="text-base">{t("dashboard.create.format.bold")}</FormLabel>
                                     <p className="text-sm text-muted-foreground">
-                                      Chúng tôi sẽ in đậm những từ khóa quan trọng trong bài viết của bạn.
+                                      {t("dashboard.create.format.boldDescription")}
                                     </p>
                                   </div>
                                 </div>
@@ -1319,9 +1319,9 @@ export default function CreateContent() {
                                 <div className="flex items-center space-x-2">
                                   <Italic className="h-5 w-5 text-gray-700 dark:text-gray-300" />
                                   <div className="space-y-0.5">
-                                    <FormLabel className="text-base">In nghiêng</FormLabel>
+                                    <FormLabel className="text-base">{t("dashboard.create.format.italic")}</FormLabel>
                                     <p className="text-sm text-muted-foreground">
-                                      Chúng tôi sẽ sử dụng chữ in nghiêng để nhấn mạnh một cách tinh tế trong bài viết của bạn.
+                                      {t("dashboard.create.format.italicDescription")}
                                     </p>
                                   </div>
                                 </div>
