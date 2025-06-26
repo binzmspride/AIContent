@@ -583,6 +583,25 @@ const translations: TranslationsType = {
       create: {
         title: "Tạo nội dung",
         subtitle: "Tạo bài viết chuẩn SEO với công nghệ AI",
+        socialContent: {
+          step1: {
+            title: "Bước 1: Trích xuất nội dung",
+            contentSource: "Nguồn nội dung",
+            fromArticle: "Từ bài viết có sẵn",
+            manual: "Tự nhập mô tả",
+            selectArticle: "Chọn bài viết",
+            selectArticlePlaceholder: "Chọn một bài viết từ thư viện của bạn",
+            referenceLink: "URL tham khảo (tùy chọn)",
+            referencePlaceholder: "https://example.com/article",
+            description: "Mô tả nội dung",
+            descriptionPlaceholder: "Nhập mô tả ngắn gọn về nội dung bạn muốn tạo...",
+            platforms: "Nền tảng mục tiêu",
+            extractAndContinue: "Trích xuất ý chính",
+            descriptionRequired: "Vui lòng nhập mô tả nội dung",
+            platformRequired: "Vui lòng chọn ít nhất một nền tảng",
+            articleRequired: "Vui lòng chọn một bài viết"
+          }
+        },
         tabs: {
           keywords: "Từ khóa",
           outline: "Dàn ý",
@@ -1356,6 +1375,25 @@ const translations: TranslationsType = {
       create: {
         title: "Create Content",
         subtitle: "Create SEO-optimized content with AI",
+        socialContent: {
+          step1: {
+            title: "Step 1: Content Extraction",
+            contentSource: "Content Source",
+            fromArticle: "From Existing Article",
+            manual: "Manual Input",
+            selectArticle: "Select Article",
+            selectArticlePlaceholder: "Choose an article from your library",
+            referenceLink: "Reference URL (optional)",
+            referencePlaceholder: "https://example.com/article",
+            description: "Content Description",
+            descriptionPlaceholder: "Enter a brief description of the content you want to create...",
+            platforms: "Target Platforms",
+            extractAndContinue: "Extract Content",
+            descriptionRequired: "Please enter content description",
+            platformRequired: "Please select at least one platform",
+            articleRequired: "Please select an article"
+          }
+        },
         tabs: {
           keywords: "Keywords",
           outline: "Outline",
