@@ -736,6 +736,8 @@ const translations: TranslationsType = {
             referencePlaceholder: "https://example.com/article",
             platforms: "Nền tảng mục tiêu *",
             extractAndContinue: "Trích xuất và tiếp tục",
+            selectArticle: "Chọn bài viết",
+            selectArticlePlaceholder: "Chọn bài viết...",
             descriptionRequired: "Vui lòng nhập mô tả ngắn gọn",
             platformRequired: "Vui lòng chọn ít nhất một nền tảng",
             articleRequired: "Vui lòng chọn bài viết"
@@ -1486,6 +1488,8 @@ const translations: TranslationsType = {
             referencePlaceholder: "https://example.com/article",
             platforms: "Target Platforms *",
             extractAndContinue: "Extract and Continue",
+            selectArticle: "Select Article",
+            selectArticlePlaceholder: "Select article...",
             descriptionRequired: "Please enter a brief description",
             platformRequired: "Please select at least one platform",
             articleRequired: "Please select an article"

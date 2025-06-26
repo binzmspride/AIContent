@@ -154,7 +154,7 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
           {/* Article Selection */}
           {data.contentSource === 'existing-article' && (
             <div className="space-y-3">
-              <Label className="text-base font-medium">Chọn bài viết</Label>
+              <Label className="text-base font-medium">{t('dashboard.create.socialContent.step1.selectArticle')}</Label>
               <Select
                 value={data.selectedArticleId?.toString() || ''}
                 onValueChange={(value) => 
@@ -162,7 +162,7 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Chọn bài viết..." />
+                  <SelectValue placeholder={t('dashboard.create.socialContent.step1.selectArticlePlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   {articlesData?.map((article: any) => (
@@ -179,11 +179,11 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
           <div className="space-y-3">
             <Label className="text-base font-medium">
               <Link className="w-4 h-4 inline mr-2" />
-              URL tham khảo (tùy chọn)
+              {t('dashboard.create.socialContent.step1.referenceLink')}
             </Label>
             <Input
               type="url"
-              placeholder="https://example.com/article"
+              placeholder={t('dashboard.create.socialContent.step1.referencePlaceholder')}
               value={data.referenceLink || ''}
               onChange={(e) => onDataChange({ referenceLink: e.target.value })}
             />
@@ -191,9 +191,9 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
 
           {/* Brief Description */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">Mô tả ngắn gọn *</Label>
+            <Label className="text-base font-medium">{t('dashboard.create.socialContent.step1.description')}</Label>
             <Textarea
-              placeholder="Mô tả ngắn gọn về nội dung bạn muốn tạo..."
+              placeholder={t('dashboard.create.socialContent.step1.descriptionPlaceholder')}
               value={data.briefDescription}
               onChange={(e) => onDataChange({ briefDescription: e.target.value })}
               rows={4}
@@ -202,7 +202,7 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
 
           {/* Platform Selection */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">Nền tảng mục tiêu *</Label>
+            <Label className="text-base font-medium">{t('dashboard.create.socialContent.step1.platforms')}</Label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {platformOptions.map((platform) => (
                 <div
@@ -250,12 +250,12 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
               {(isExtracting || extractContentMutation.isPending) ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Đang trích xuất...
+                  {t('common.extracting')}
                 </>
               ) : (
                 <>
                   <FileText className="w-4 h-4 mr-2" />
-                  Trích xuất ý chính
+                  {t('dashboard.create.socialContent.step1.extractAndContinue')}
                 </>
               )}
             </Button>
