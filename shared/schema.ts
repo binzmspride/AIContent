@@ -427,6 +427,22 @@ export const sessionActivity = pgTable('session_activity', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+// Sidebar Menu Items table
+export const sidebarMenuItems = pgTable('sidebar_menu_items', {
+  id: serial('id').primaryKey(),
+  key: varchar('key', { length: 100 }).notNull().unique(), // unique identifier for menu item
+  label: varchar('label', { length: 200 }).notNull(), // display name
+  labelEn: varchar('label_en', { length: 200 }), // English label
+  icon: varchar('icon', { length: 50 }), // icon name
+  path: varchar('path', { length: 200 }), // route path
+  parentKey: varchar('parent_key', { length: 100 }), // for nested menus
+  sortOrder: integer('sort_order').notNull().default(0),
+  isEnabled: boolean('is_enabled').notNull().default(true),
+  requiredRole: roleEnum('required_role').default('user'), // minimum role required
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 // Workspace Relations
 export const workspacesRelations = relations(workspaces, ({ one, many }) => ({
   owner: one(users, { fields: [workspaces.ownerId], references: [users.id] }),
@@ -631,6 +647,14 @@ export const insertPublishingLogsSchema = createInsertSchema(publishingLogs, {
   message: (schema) => schema.min(1, "Message is required"),
   status: (schema) => schema.min(1, "Status is required"),
 });
+
+// Sidebar Menu Items Schema
+export const insertSidebarMenuItemSchema = createInsertSchema(sidebarMenuItems);
+export const selectSidebarMenuItemSchema = createSelectSchema(sidebarMenuItems);
+
+// Sidebar Menu Items Types
+export type SidebarMenuItem = z.infer<typeof selectSidebarMenuItemSchema>;
+export type InsertSidebarMenuItem = z.infer<typeof insertSidebarMenuItemSchema>;
 
 // Social Media Types
 export type SocialConnection = z.infer<typeof selectSocialConnectionSchema>;
