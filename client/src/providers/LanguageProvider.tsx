@@ -735,7 +735,10 @@ const translations: TranslationsType = {
             referenceLink: "URL tham khảo (tùy chọn)",
             referencePlaceholder: "https://example.com/article",
             platforms: "Nền tảng mục tiêu *",
-            extractAndContinue: "Trích xuất và tiếp tục"
+            extractAndContinue: "Trích xuất và tiếp tục",
+            descriptionRequired: "Vui lòng nhập mô tả ngắn gọn",
+            platformRequired: "Vui lòng chọn ít nhất một nền tảng",
+            articleRequired: "Vui lòng chọn bài viết"
           }
         },
         generateContent: "Tạo nội dung",
@@ -1482,7 +1485,10 @@ const translations: TranslationsType = {
             referenceLink: "Reference URL (optional)",
             referencePlaceholder: "https://example.com/article",
             platforms: "Target Platforms *",
-            extractAndContinue: "Extract and Continue"
+            extractAndContinue: "Extract and Continue",
+            descriptionRequired: "Please enter a brief description",
+            platformRequired: "Please select at least one platform",
+            articleRequired: "Please select an article"
           }
         },
         generateContent: "Generate Content",

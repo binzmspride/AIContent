@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Loader2, FileText, Link, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/hooks/use-language';
 
 interface WizardData {
   contentSource: 'manual' | 'existing-article';
@@ -38,6 +39,7 @@ const platformOptions = [
 
 export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExtractionStepProps) {
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [isExtracting, setIsExtracting] = useState(false);
 
   // Fetch existing articles
@@ -89,8 +91,8 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
   const handleExtractContent = () => {
     if (!data.briefDescription.trim()) {
       toast({
-        title: "Thiếu thông tin",
-        description: "Vui lòng nhập mô tả ngắn gọn",
+        title: t("common.missingInfo"),
+        description: t("dashboard.create.socialContent.step1.descriptionRequired"),
         variant: "destructive"
       });
       return;
@@ -98,8 +100,8 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
 
     if (data.platforms.length === 0) {
       toast({
-        title: "Thiếu thông tin", 
-        description: "Vui lòng chọn ít nhất một nền tảng",
+        title: t("common.missingInfo"), 
+        description: t("dashboard.create.socialContent.step1.platformRequired"),
         variant: "destructive"
       });
       return;
@@ -107,8 +109,8 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
 
     if (data.contentSource === 'existing-article' && !data.selectedArticleId) {
       toast({
-        title: "Thiếu thông tin",
-        description: "Vui lòng chọn bài viết",
+        title: t("common.missingInfo"),
+        description: t("dashboard.create.socialContent.step1.articleRequired"),
         variant: "destructive"
       });
       return;
@@ -126,13 +128,13 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <FileText className="w-5 h-5" />
-            <span>Bước 1: Trích xuất nội dung</span>
+            <span>{t('dashboard.create.socialContent.step1.title')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Content Source */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">Nguồn nội dung</Label>
+            <Label className="text-base font-medium">{t('dashboard.create.socialContent.step1.contentSource')}</Label>
             <Select
               value={data.contentSource}
               onValueChange={(value: 'manual' | 'existing-article') => 
@@ -143,8 +145,8 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="existing-article">Từ bài viết có sẵn</SelectItem>
-                <SelectItem value="manual">Tự nhập mô tả</SelectItem>
+                <SelectItem value="existing-article">{t('dashboard.create.socialContent.step1.fromArticle')}</SelectItem>
+                <SelectItem value="manual">{t('dashboard.create.socialContent.step1.manual')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
