@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Circle, ArrowLeft, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/hooks/use-language';
 
 // Import các step components
 import { ContentExtractionStep } from './steps/ContentExtractionStep';
@@ -41,18 +42,21 @@ interface WizardData {
   publishImmediately: boolean;
 }
 
-const steps = [
-  { id: 1, title: 'Trích xuất nội dung', description: 'Lấy ý chính từ bài viết' },
-  { id: 2, title: 'Tạo nội dung', description: 'Tạo post cho từng nền tảng' },
-  { id: 3, title: 'Quản lý hình ảnh', description: 'Chọn hoặc tạo hình ảnh' },
-  { id: 4, title: 'Xem trước', description: 'Preview giao diện social media' },
-  { id: 5, title: 'Lưu & Đăng', description: 'Hoàn tất và xuất bản' }
-];
-
 interface SocialContentWizardProps {
   onComplete: (data: WizardData) => void;
   onCancel: () => void;
 }
+
+export function SocialContentWizard({ onComplete, onCancel }: SocialContentWizardProps) {
+  const { t } = useLanguage();
+  
+  const steps = [
+    { id: 1, title: t('dashboard.create.socialContent.steps.extraction.title'), description: t('dashboard.create.socialContent.steps.extraction.description') },
+    { id: 2, title: t('dashboard.create.socialContent.steps.generation.title'), description: t('dashboard.create.socialContent.steps.generation.description') },
+    { id: 3, title: t('dashboard.create.socialContent.steps.images.title'), description: t('dashboard.create.socialContent.steps.images.description') },
+    { id: 4, title: t('dashboard.create.socialContent.steps.preview.title'), description: t('dashboard.create.socialContent.steps.preview.description') },
+    { id: 5, title: t('dashboard.create.socialContent.steps.publish.title'), description: t('dashboard.create.socialContent.steps.publish.description') }
+  ];
 
 export function SocialContentWizard({ onComplete, onCancel }: SocialContentWizardProps) {
   const [currentStep, setCurrentStep] = useState(1);

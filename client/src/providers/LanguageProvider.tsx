@@ -701,6 +701,43 @@ const translations: TranslationsType = {
           aiModelDescription: "Chọn mô hình AI sẽ sử dụng để tạo nội dung",
           aiModelPlaceholder: "Chọn mô hình AI"
         },
+        socialContent: {
+          title: "Tạo Nội Dung Mạng Xã Hội",
+          steps: {
+            extraction: {
+              title: "Trích xuất nội dung",
+              description: "Lấy ý chính từ bài viết"
+            },
+            generation: {
+              title: "Tạo nội dung", 
+              description: "Tạo post cho từng nền tảng"
+            },
+            images: {
+              title: "Quản lý hình ảnh",
+              description: "Chọn hoặc tạo hình ảnh"
+            },
+            preview: {
+              title: "Xem trước",
+              description: "Preview giao diện social media"
+            },
+            publish: {
+              title: "Lưu & Đăng",
+              description: "Hoàn tất và xuất bản"
+            }
+          },
+          step1: {
+            title: "Bước 1: Trích xuất nội dung",
+            contentSource: "Nguồn nội dung",
+            fromArticle: "Từ bài viết có sẵn",
+            manual: "Tự nhập nội dung",
+            description: "Mô tả nội dung *",
+            descriptionPlaceholder: "Nhập mô tả ngắn gọn về nội dung bạn muốn tạo...",
+            referenceLink: "URL tham khảo (tùy chọn)",
+            referencePlaceholder: "https://example.com/article",
+            platforms: "Nền tảng mục tiêu *",
+            extractAndContinue: "Trích xuất và tiếp tục"
+          }
+        },
         generateContent: "Tạo nội dung",
         form: {
           articleTitle: "Tiêu đề bài viết",
@@ -1410,6 +1447,43 @@ const translations: TranslationsType = {
           aiModel: "AI Model",
           aiModelDescription: "Choose AI model to use for content creation",
           aiModelPlaceholder: "Choose AI model"
+        },
+        socialContent: {
+          title: "Create Social Media Content",
+          steps: {
+            extraction: {
+              title: "Content Extraction",
+              description: "Extract key points from article"
+            },
+            generation: {
+              title: "Content Generation", 
+              description: "Create posts for each platform"
+            },
+            images: {
+              title: "Image Management",
+              description: "Select or create images"
+            },
+            preview: {
+              title: "Preview",
+              description: "Preview social media interface"
+            },
+            publish: {
+              title: "Save & Publish",
+              description: "Complete and publish"
+            }
+          },
+          step1: {
+            title: "Step 1: Content Extraction",
+            contentSource: "Content Source",
+            fromArticle: "From existing article",
+            manual: "Manual input",
+            description: "Content Description *",
+            descriptionPlaceholder: "Enter a brief description of the content you want to create...",
+            referenceLink: "Reference URL (optional)",
+            referencePlaceholder: "https://example.com/article",
+            platforms: "Target Platforms *",
+            extractAndContinue: "Extract and Continue"
+          }
         },
         generateContent: "Generate Content",
         form: {
