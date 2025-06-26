@@ -58,7 +58,6 @@ export function SocialContentWizard({ onComplete, onCancel }: SocialContentWizar
     { id: 5, title: t('dashboard.create.socialContent.steps.publish.title'), description: t('dashboard.create.socialContent.steps.publish.description') }
   ];
 
-export function SocialContentWizard({ onComplete, onCancel }: SocialContentWizardProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [wizardData, setWizardData] = useState<WizardData>({
@@ -138,7 +137,7 @@ export function SocialContentWizard({ onComplete, onCancel }: SocialContentWizar
       {/* Stepper Header */}
       <Card>
         <CardHeader>
-          <CardTitle>Tạo Content Social Media</CardTitle>
+          <CardTitle>{t('dashboard.create.socialContent.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
@@ -194,7 +193,7 @@ export function SocialContentWizard({ onComplete, onCancel }: SocialContentWizar
             className="flex items-center space-x-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>{currentStep === 1 ? 'Hủy' : 'Quay lại'}</span>
+            <span>{currentStep === 1 ? t('common.cancel') : t('common.back')}</span>
           </Button>
 
           <div className="flex items-center space-x-2">

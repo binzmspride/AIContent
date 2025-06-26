@@ -586,6 +586,28 @@ const translations: TranslationsType = {
         socialContent: {
           title: "Tạo Nội Dung Mạng Xã Hội",
           subtitle: "Tạo nội dung tối ưu cho nhiều nền tảng social media",
+          steps: {
+            extraction: {
+              title: "Trích xuất",
+              description: "Lấy ý chính từ bài viết"
+            },
+            generation: {
+              title: "Tạo nội dung",
+              description: "Tạo post cho từng nền tảng"
+            },
+            images: {
+              title: "Hoàn thành",
+              description: "Chọn hoặc tạo hình ảnh"
+            },
+            preview: {
+              title: "Xem trước",
+              description: "Preview giao diện social media"
+            },
+            publish: {
+              title: "Lưu & Đăng",
+              description: "Hoàn tất và xuất bản"
+            }
+          },
           step1: {
             title: "Bước 1: Trích xuất nội dung",
             contentSource: "Nguồn nội dung",
@@ -1317,6 +1339,28 @@ const translations: TranslationsType = {
         socialContent: {
           title: "Create Social Media Content",
           subtitle: "Create optimized content for multiple social media platforms",
+          steps: {
+            extraction: {
+              title: "Extract",
+              description: "Extract key points from article"
+            },
+            generation: {
+              title: "Generate",
+              description: "Create posts for each platform"
+            },
+            images: {
+              title: "Complete",
+              description: "Select or create images"
+            },
+            preview: {
+              title: "Preview",
+              description: "Preview social media interface"
+            },
+            publish: {
+              title: "Save & Publish",
+              description: "Complete and publish"
+            }
+          },
           step1: {
             title: "Step 1: Content Extraction",
             contentSource: "Content Source",
