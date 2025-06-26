@@ -1571,6 +1571,12 @@ const translations: TranslationsType = {
           connected: "Connected"
         }
       }
+    },
+    
+    common: {
+      extracting: "Extracting...",
+      extractedContent: "Extracted Content",
+      editContent: "Edit content (optional)"
     }
   }
 };

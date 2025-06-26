@@ -269,7 +269,7 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-600" />
-              <span>Nội dung đã trích xuất</span>
+              <span>{t('common.extractedContent')}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -287,7 +287,7 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
               />
             </div>
             <div className="mt-4">
-              <Label className="text-base font-medium">Chỉnh sửa nội dung (tùy chọn)</Label>
+              <Label className="text-base font-medium">{t('common.editContent')}</Label>
               <Textarea
                 value={data.extractedContent}
                 onChange={(e) => onDataChange({ extractedContent: e.target.value })}
