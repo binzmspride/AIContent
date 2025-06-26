@@ -1343,9 +1343,9 @@ export default function CreateContent() {
                                 <div className="flex items-center space-x-2">
                                   <ListOrdered className="h-5 w-5 text-gray-700 dark:text-gray-300" />
                                   <div className="space-y-0.5">
-                                    <FormLabel className="text-base">Liệt kê</FormLabel>
+                                    <FormLabel className="text-base">{t("dashboard.create.format.bulletPoints")}</FormLabel>
                                     <p className="text-sm text-muted-foreground">
-                                      Nếu bạn đồng ý, tôi sẽ dùng tạo liệt kê cho bạn
+                                      {t("dashboard.create.format.bulletPointsDescription")}
                                     </p>
                                   </div>
                                 </div>
@@ -1367,9 +1367,9 @@ export default function CreateContent() {
                                 <div className="flex items-center space-x-2">
                                   <Heading2 className="h-5 w-5 text-primary" />
                                   <div className="space-y-0.5">
-                                    <FormLabel className="text-base">{t("dashboard.create.form.addHeadings")}</FormLabel>
+                                    <FormLabel className="text-base">{t("dashboard.create.format.addSectionHeadings")}</FormLabel>
                                     <p className="text-sm text-muted-foreground">
-                                      Tự động thêm các tiêu đề và phụ đề vào bài viết
+                                      {t("dashboard.create.format.addSectionHeadingsDescription")}
                                     </p>
                                   </div>
                                 </div>
@@ -1392,14 +1392,14 @@ export default function CreateContent() {
                       >
                         <div className="flex items-center mb-2 text-gray-800 dark:text-gray-100">
                           <LinkIcon className="h-5 w-5 mr-2" />
-                          <h3 className="text-lg font-medium">Liên kết cho bài viết</h3>
+                          <h3 className="text-lg font-medium">{t("dashboard.create.links.title")}</h3>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Hệ thống sẽ tạo liên kết cho bài viết của bạn.</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.links.description")}</p>
                         
                         <div className="space-y-6">
                           <div>
                             <h4 className="font-medium mb-2">
-                              Danh sách liên kết 
+                              {t("dashboard.create.links.linkList")}
                               <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
                                 ({form.watch("linkItems")?.length || 0}/5)
                               </span>
@@ -1409,10 +1409,10 @@ export default function CreateContent() {
                               {(form.watch("linkItems") || []).map((item, index) => (
                                 <div key={index} className="grid grid-cols-2 gap-4 p-3 border rounded-md relative">
                                   <div>
-                                    <Label htmlFor={`keyword-${index}`} className="mb-1 block">Từ khóa</Label>
+                                    <Label htmlFor={`keyword-${index}`} className="mb-1 block">{t("dashboard.create.links.keyword")}</Label>
                                     <Input 
                                       id={`keyword-${index}`} 
-                                      placeholder="Từ khóa"
+                                      placeholder={t("dashboard.create.links.keyword")}
                                       value={item.keyword || ''}
                                       onChange={(e) => {
                                         const items = [...form.watch("linkItems")];
@@ -1424,10 +1424,10 @@ export default function CreateContent() {
                                     />
                                   </div>
                                   <div>
-                                    <Label htmlFor={`link-${index}`} className="mb-1 block">Liên kết</Label>
+                                    <Label htmlFor={`link-${index}`} className="mb-1 block">{t("dashboard.create.links.link")}</Label>
                                     <Input 
                                       id={`link-${index}`} 
-                                      placeholder="Liên kết"
+                                      placeholder={t("dashboard.create.links.link")}
                                       value={item.url || ''}
                                       onChange={(e) => {
                                         const items = [...form.watch("linkItems")];
@@ -1469,7 +1469,7 @@ export default function CreateContent() {
                                   }}
                                 >
                                   <Plus className="h-4 w-4 mr-1" />
-                                  Thêm liên kết
+                                  {t("dashboard.create.links.addLink")}
                                 </Button>
                               </div>
                             </div>
