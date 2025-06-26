@@ -809,6 +809,21 @@ const translations: TranslationsType = {
       }
     },
     
+    socialContent: {
+      step1: {
+        title: "Bước 1: Trích xuất nội dung",
+        contentSource: "Nguồn nội dung",
+        manualInput: "Tự nhập mô tả",
+        existingArticle: "Từ bài viết có sẵn",
+        description: "Mô tả nội dung",
+        descriptionPlaceholder: "Nhập mô tả ngắn gọn về nội dung bạn muốn tạo...",
+        referenceUrl: "URL tham khảo (tùy chọn)",
+        urlPlaceholder: "https://example.com/article",
+        targetPlatforms: "Nền tảng mục tiêu",
+        extractContent: "Trích xuất ý chính"
+      }
+    },
+    
     common: {
       extracting: "Đang trích xuất...",
       extractedContent: "Nội dung đã trích xuất",
@@ -1570,6 +1585,21 @@ const translations: TranslationsType = {
         social: {
           connected: "Connected"
         }
+      }
+    },
+    
+    socialContent: {
+      step1: {
+        title: "Step 1: Content Extraction",
+        contentSource: "Content Source",
+        manualInput: "Manual Input",
+        existingArticle: "From Existing Article",
+        description: "Content Description",
+        descriptionPlaceholder: "Enter a brief description of the content you want to create...",
+        referenceUrl: "Reference URL (optional)",
+        urlPlaceholder: "https://example.com/article",
+        targetPlatforms: "Target Platforms",
+        extractContent: "Extract Content"
       }
     },
     
