@@ -1615,8 +1615,8 @@ export default function CreateContent() {
                       </TabsContent>
                       
                       <TabsContent value="knowledge" className="mt-0 border border-slate-200 dark:border-slate-700 rounded-lg p-6">
-                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">Kiến thức chuyên môn</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Bổ sung các thông tin chuyên môn để làm giàu nội dung bài viết.</p>
+                        <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-100">{t("dashboard.create.knowledge.title")}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">{t("dashboard.create.knowledge.description")}</p>
                         
                         <div className="space-y-4">
                           <FormField
@@ -1632,9 +1632,9 @@ export default function CreateContent() {
                                   />
                                 </FormControl>
                                 <div className="space-y-1 leading-none">
-                                  <FormLabel className="font-medium">Sử dụng nghiên cứu web</FormLabel>
+                                  <FormLabel className="font-medium">{t("dashboard.create.knowledge.webResearch")}</FormLabel>
                                   <p className="text-sm text-muted-foreground">
-                                    Cho phép AI tìm kiếm thông tin trên web để bổ sung cho bài viết
+                                    {t("dashboard.create.knowledge.webResearchDescription")}
                                   </p>
                                 </div>
                               </FormItem>
@@ -1646,9 +1646,9 @@ export default function CreateContent() {
                             name="refSources"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="font-medium">Nguồn tham khảo</FormLabel>
+                                <FormLabel className="font-medium">{t("dashboard.create.knowledge.refSources")}</FormLabel>
                                 <p className="text-sm text-muted-foreground">
-                                  Liệt kê các nguồn tham khảo sẽ được sử dụng (URL, tài liệu, ...)
+                                  {t("dashboard.create.knowledge.refSourcesDescription")}
                                 </p>
                                 <FormControl>
                                   <Textarea
@@ -1667,9 +1667,9 @@ export default function CreateContent() {
                             name="aiModel"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="font-medium">Mô hình AI</FormLabel>
+                                <FormLabel className="font-medium">{t("dashboard.create.knowledge.aiModel")}</FormLabel>
                                 <p className="text-sm text-muted-foreground">
-                                  Chọn mô hình AI sẽ sử dụng để tạo nội dung
+                                  {t("dashboard.create.knowledge.aiModelDescription")}
                                 </p>
                                 <Select 
                                   onValueChange={field.onChange} 
@@ -1678,7 +1678,7 @@ export default function CreateContent() {
                                 >
                                   <FormControl>
                                     <SelectTrigger>
-                                      <SelectValue placeholder="Chọn mô hình AI" />
+                                      <SelectValue placeholder={t("dashboard.create.knowledge.aiModelPlaceholder")} />
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>

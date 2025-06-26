@@ -669,12 +669,15 @@ const translations: TranslationsType = {
           comingSoon: "Sắp ra mắt"
         },
         knowledge: {
-          title: "Kiến thức",
-          description: "Cài đặt nguồn tham khảo và mô hình AI",
-          webResearch: "Nghiên cứu web",
-          webResearchDescription: "Cho phép AI tìm kiếm và sử dụng thông tin từ internet",
+          title: "Kiến thức chuyên môn",
+          description: "Bổ sung các thông tin chuyên môn để làm giàu nội dung bài viết",
+          webResearch: "Sử dụng nghiên cứu web",
+          webResearchDescription: "Cho phép AI tìm kiếm thông tin trên web để bổ sung cho bài viết",
           refSources: "Nguồn tham khảo",
-          aiModel: "Mô hình AI"
+          refSourcesDescription: "Liệt kê các nguồn tham khảo sẽ được sử dụng (URL, tài liệu, ...)",
+          aiModel: "Mô hình AI",
+          aiModelDescription: "Chọn mô hình AI sẽ sử dụng để tạo nội dung",
+          aiModelPlaceholder: "Chọn mô hình AI"
         },
         generateContent: "Tạo nội dung",
         form: {
@@ -1354,12 +1357,15 @@ const translations: TranslationsType = {
           comingSoon: "Coming Soon"
         },
         knowledge: {
-          title: "Knowledge",
-          description: "Configure reference sources and AI model",
-          webResearch: "Web Research",
-          webResearchDescription: "Allow AI to search and use information from the internet",
+          title: "Professional Knowledge",
+          description: "Add professional information to enrich article content",
+          webResearch: "Use Web Research",
+          webResearchDescription: "Allow AI to search information on the web to supplement the article",
           refSources: "Reference Sources",
-          aiModel: "AI Model"
+          refSourcesDescription: "List reference sources to be used (URL, documents, ...)",
+          aiModel: "AI Model",
+          aiModelDescription: "Choose AI model to use for content creation",
+          aiModelPlaceholder: "Choose AI model"
         },
         generateContent: "Generate Content",
         form: {
