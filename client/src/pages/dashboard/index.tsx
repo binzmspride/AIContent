@@ -13,7 +13,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import {
   Coins,
   FileText,
-  Database,
+  Image,
   ExternalLink,
   Edit,
   ArrowUpRight,
@@ -74,6 +74,13 @@ export default function Dashboard() {
   });
   
   const articlesData = articlesResponse?.data;
+
+  // Fetch recent images
+  const { data: imagesResponse, isLoading: isLoadingImages } = useQuery<{success: boolean, data: { images: any[], total: number }}>({
+    queryKey: ["/api/dashboard/images"],
+  });
+  
+  const imagesData = imagesResponse?.data;
 
   // Define article columns
   const columns: ColumnDef<Article>[] = [
@@ -193,7 +200,7 @@ export default function Dashboard() {
               </Card>
               
               {/* Articles Stats */}
-              <Card>
+              <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => window.location.href = '/dashboard/my-articles'}>
                 <CardContent className="p-6">
                   <div className="flex items-center">
                     <div className="p-3 rounded-full bg-green-100 text-green-600">
@@ -207,44 +214,33 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="mt-4">
-                    {stats?.articlesCreated && stats.articlesCreated.monthlyChange ? (
-                      <div className="text-sm text-secondary-500">
-                        <span className="text-green-600 flex items-center">
-                          <ArrowUpRight className="mr-1 h-3 w-3" />
-                          {(stats.articlesCreated?.monthlyChange * 100).toFixed(0)}%
-                        </span>
-                        {t("common.comparedToPreviousMonth")}
-                      </div>
-                    ) : (
-                      <div className="text-sm text-secondary-500">&nbsp;</div>
-                    )}
+                    <Link href="/dashboard/my-articles" className="text-sm text-green-600 hover:text-green-700 flex items-center">
+                      Xem bài viết của tôi
+                      <ArrowUpRight className="ml-1 h-3 w-3" />
+                    </Link>
                   </div>
                 </CardContent>
               </Card>
               
-              {/* Storage Stats */}
-              <Card>
+              {/* Images Stats */}
+              <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => window.location.href = '/dashboard/image-library'}>
                 <CardContent className="p-6">
                   <div className="flex items-center">
                     <div className="p-3 rounded-full bg-purple-100 text-purple-600">
-                      <Database className="h-6 w-6" />
+                      <Image className="h-6 w-6" />
                     </div>
                     <div className="ml-4">
-                      <h2 className="text-sm font-medium text-white">{t("dashboard.stats.storageUsed")}</h2>
+                      <h2 className="text-sm font-medium text-white">Hình ảnh đã tạo</h2>
                       <p className="text-2xl font-semibold text-white">
-                        {`${formatStorage(stats?.storageUsed?.current || 0)} / ${formatStorage(stats?.storageUsed?.total || 0)}`}
+                        {imagesData?.total || imagesData?.images?.length || 0}
                       </p>
                     </div>
                   </div>
-                  <div className="mt-2">
-                    <div className="relative pt-1">
-                      <div className="overflow-hidden h-2 text-xs flex rounded bg-purple-200">
-                        <div 
-                          style={{ width: `${stats?.storageUsed?.percentage || 0}%` }} 
-                          className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-purple-500"
-                        ></div>
-                      </div>
-                    </div>
+                  <div className="mt-4">
+                    <Link href="/dashboard/image-library" className="text-sm text-purple-600 hover:text-purple-700 flex items-center">
+                      Xem thư viện hình ảnh
+                      <ArrowUpRight className="ml-1 h-3 w-3" />
+                    </Link>
                   </div>
                 </CardContent>
               </Card>
