@@ -239,6 +239,43 @@ const translations: TranslationsType = {
       apiKeys: {
         title: "API Keys",
         description: "Quản lý API Keys"
+      },
+      
+      mascot: {
+        dashboard: {
+          welcomeTitle: "Xin chào!",
+          welcomeTip: "Chào mừng bạn đến với SEO AI Writer! Đây là nơi bạn có thể xem tổng quan về tài khoản của mình.",
+          creditsTitle: "Tín dụng",
+          creditsTip: "Số tín dụng hiển thị ở bảng điều khiển cho biết bạn có thể tạo bao nhiêu bài viết mới.",
+          articlesTitle: "Bài viết của bạn",
+          articlesTip: "Bạn có thể xem các bài viết gần đây của mình tại đây và nhấp vào để chỉnh sửa hoặc xuất bản."
+        },
+        contentCreation: {
+          welcomeTitle: "Bắt đầu tạo nội dung!",
+          welcomeTip: "Hãy điền đầy đủ thông tin để tạo bài viết SEO chất lượng cao.",
+          tipsTitle: "Mẹo tạo nội dung",
+          tipsList: "Sử dụng từ khóa chính xác, chọn giọng điệu phù hợp với đối tượng, và cung cấp mô tả chi tiết để có kết quả tốt nhất.",
+          creditsTitle: "Sử dụng tín dụng",
+          creditsTip: "Mỗi bài viết sẽ sử dụng từ 1-3 tín dụng tùy thuộc vào độ dài bạn chọn."
+        },
+        articles: {
+          welcomeTitle: "Bài viết của bạn",
+          welcomeTip: "Đây là nơi bạn có thể quản lý tất cả bài viết đã tạo.",
+          publishTitle: "Xuất bản bài viết",
+          publishTip: "Bạn có thể xuất bản bài viết lên WordPress hoặc mạng xã hội sau khi đã kết nối tài khoản."
+        },
+        connections: {
+          welcomeTitle: "Kết nối tài khoản",
+          welcomeTip: "Kết nối WordPress và các mạng xã hội để xuất bản bài viết trực tiếp.",
+          wordpressTitle: "WordPress",
+          wordpressTip: "Để kết nối WordPress, bạn cần URL trang web, tên người dùng và Application Password."
+        },
+        credits: {
+          welcomeTitle: "Quản lý tín dụng",
+          welcomeTip: "Mua thêm tín dụng để tiếp tục tạo nội dung chất lượng cao.",
+          usageTitle: "Sử dụng tín dụng",
+          usageTip: "Tín dụng được sử dụng khi tạo nội dung mới và không thể hoàn lại."
+        }
       }
     },
     
@@ -921,6 +958,43 @@ const translations: TranslationsType = {
       apiKeys: {
         title: "API Keys",
         description: "Manage API Keys"
+      },
+      
+      mascot: {
+        dashboard: {
+          welcomeTitle: "Hello!",
+          welcomeTip: "Welcome to SEO AI Writer! This is where you can view an overview of your account.",
+          creditsTitle: "Credits",
+          creditsTip: "The credits displayed on the dashboard show how many new articles you can create.",
+          articlesTitle: "Your Articles",
+          articlesTip: "You can view your recent articles here and click to edit or publish them."
+        },
+        contentCreation: {
+          welcomeTitle: "Start creating content!",
+          welcomeTip: "Fill in all the information to create high-quality SEO articles.",
+          tipsTitle: "Content creation tips",
+          tipsList: "Use exact keywords, choose a tone that suits your audience, and provide detailed descriptions for the best results.",
+          creditsTitle: "Using credits",
+          creditsTip: "Each article will use 1-3 credits depending on the length you choose."
+        },
+        articles: {
+          welcomeTitle: "Your articles",
+          welcomeTip: "This is where you can manage all your created articles.",
+          publishTitle: "Publish articles",
+          publishTip: "You can publish articles to WordPress or social media after connecting your accounts."
+        },
+        connections: {
+          welcomeTitle: "Account connections",
+          welcomeTip: "Connect WordPress and social media to publish articles directly.",
+          wordpressTitle: "WordPress",
+          wordpressTip: "To connect WordPress, you need the website URL, username, and Application Password."
+        },
+        credits: {
+          welcomeTitle: "Manage credits",
+          welcomeTip: "Buy more credits to continue creating high-quality content.",
+          usageTitle: "Using credits",
+          usageTip: "Credits are used when creating new content and cannot be refunded."
+        }
       }
     },
     
@@ -1331,7 +1405,9 @@ const translations: TranslationsType = {
       
       stats: {
         creditsLeft: "Credits Left",
+        credits: "credits",
         articlesCreated: "Articles Created",
+        imagesCreated: "Images Created",
         storageUsed: "Storage Used",
         recentArticles: "Recent Articles",
         connectionsSection: "Connections",
@@ -1341,7 +1417,9 @@ const translations: TranslationsType = {
         status: "Status",
         keywords: "Keywords",
         actions: "Actions",
-        buyMoreCredits: "Buy More Credits"
+        buyMoreCredits: "Buy More Credits",
+        viewMyArticles: "View My Articles",
+        viewImageLibrary: "View Image Library"
       },
       
       connectionTypes: {
