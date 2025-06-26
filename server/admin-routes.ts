@@ -782,4 +782,133 @@ export function registerAdminRoutes(app: Express) {
       });
     }
   });
+
+  // ========== Sidebar Menu Management ==========
+  // Get all sidebar menu items
+  app.get("/api/admin/sidebar-menu", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const menuItems = await db.select().from(schema.sidebarMenuItems).orderBy(schema.sidebarMenuItems.sortOrder);
+
+      return res.status(200).json({
+        success: true,
+        data: menuItems
+      });
+    } catch (error) {
+      console.error("Error getting sidebar menu items:", error);
+      return res.status(500).json({ 
+        success: false, 
+        error: "Failed to get sidebar menu items" 
+      });
+    }
+  });
+
+  // Create new sidebar menu item
+  app.post("/api/admin/sidebar-menu", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const validatedData = schema.insertSidebarMenuItemSchema.parse(req.body);
+      
+      const [newMenuItem] = await db.insert(schema.sidebarMenuItems)
+        .values(validatedData)
+        .returning();
+
+      return res.status(201).json({
+        success: true,
+        data: newMenuItem
+      });
+    } catch (error) {
+      console.error("Error creating sidebar menu item:", error);
+      return res.status(500).json({ 
+        success: false, 
+        error: "Failed to create sidebar menu item" 
+      });
+    }
+  });
+
+  // Update sidebar menu item
+  app.patch("/api/admin/sidebar-menu/:id", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const id = parseInt(req.params.id);
+      const updateData = req.body;
+
+      const [updatedMenuItem] = await db.update(schema.sidebarMenuItems)
+        .set({ ...updateData, updatedAt: new Date() })
+        .where(eq(schema.sidebarMenuItems.id, id))
+        .returning();
+
+      if (!updatedMenuItem) {
+        return res.status(404).json({
+          success: false,
+          error: "Sidebar menu item not found"
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: updatedMenuItem
+      });
+    } catch (error) {
+      console.error("Error updating sidebar menu item:", error);
+      return res.status(500).json({ 
+        success: false, 
+        error: "Failed to update sidebar menu item" 
+      });
+    }
+  });
+
+  // Delete sidebar menu item
+  app.delete("/api/admin/sidebar-menu/:id", async (req: Request, res: Response) => {
+    if (!req.isAuthenticated() || req.user.role !== "admin") {
+      return res.status(403).json({ 
+        success: false, 
+        error: "Unauthorized. Only admin users can perform this action." 
+      });
+    }
+
+    try {
+      const id = parseInt(req.params.id);
+
+      const [deletedMenuItem] = await db.delete(schema.sidebarMenuItems)
+        .where(eq(schema.sidebarMenuItems.id, id))
+        .returning();
+
+      if (!deletedMenuItem) {
+        return res.status(404).json({
+          success: false,
+          error: "Sidebar menu item not found"
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Sidebar menu item deleted successfully"
+      });
+    } catch (error) {
+      console.error("Error deleting sidebar menu item:", error);
+      return res.status(500).json({ 
+        success: false, 
+        error: "Failed to delete sidebar menu item" 
+      });
+    }
+  });
 }

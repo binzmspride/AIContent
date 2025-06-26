@@ -3,10 +3,12 @@ import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
 import { useTheme } from "@/providers/ThemeProvider";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/common/ThemeSwitcher";
 import { ScrollIcon } from "lucide-react";
+import { SidebarMenuItem } from "@shared/schema";
 import {
   LayoutDashboard,
   PenSquare,
@@ -40,11 +42,43 @@ interface SidebarLink {
   icon: React.ReactNode;
 }
 
+// Icon mapping for dynamic menu items
+const getIconComponent = (iconName: string | null) => {
+  const iconMap: { [key: string]: React.ReactNode } = {
+    'LayoutDashboard': <LayoutDashboard className="h-5 w-5 mr-3" />,
+    'PenSquare': <PenSquare className="h-5 w-5 mr-3" />,
+    'PenTool': <PenSquare className="h-5 w-5 mr-3" />,
+    'FileText': <FileText className="h-5 w-5 mr-3" />,
+    'Share2': <Share2 className="h-5 w-5 mr-3" />,
+    'BookOpen': <FileText className="h-5 w-5 mr-3" />,
+    'Image': <Image className="h-5 w-5 mr-3" />,
+    'ImagePlus': <Image className="h-5 w-5 mr-3" />,
+    'Calendar': <Calendar className="h-5 w-5 mr-3" />,
+    'Link': <Link2 className="h-5 w-5 mr-3" />,
+    'Key': <Key className="h-5 w-5 mr-3" />,
+    'Bot': <Settings className="h-5 w-5 mr-3" />,
+    'Palette': <Settings className="h-5 w-5 mr-3" />,
+    'Split': <Database className="h-5 w-5 mr-3" />,
+    'Coins': <Coins className="h-5 w-5 mr-3" />,
+    'Settings': <Settings className="h-5 w-5 mr-3" />,
+  };
+  
+  return iconMap[iconName || ''] || <FileText className="h-5 w-5 mr-3" />;
+};
+
 export function Sidebar() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user, logoutMutation } = useAuth();
   const [aiKeysExpanded, setAiKeysExpanded] = useState(false);
   const [location] = useLocation();
+  
+  // Fetch dynamic menu items from admin configuration
+  const { data: menuItemsResponse, isLoading: isLoadingMenuItems } = useQuery<{success: boolean, data: SidebarMenuItem[]}>({
+    queryKey: ["/api/sidebar-menu"],
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
+  const menuItems = menuItemsResponse?.data || [];
   
   // Lấy thông tin người dùng từ user object
   // Phát hiện nếu user là một đối tượng có data trong nó (từ API response)

@@ -40,6 +40,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register admin routes
   registerAdminRoutes(app);
 
+  // ========== Sidebar Menu API ==========
+  // Get enabled sidebar menu items for users
+  app.get('/api/sidebar-menu', isAuthenticated, async (req, res) => {
+    try {
+      const userRole = req.user.role || 'user';
+      
+      const menuItems = await db.select()
+        .from(schema.sidebarMenuItems)
+        .where(
+          sql`${schema.sidebarMenuItems.isEnabled} = true 
+              AND (${schema.sidebarMenuItems.requiredRole} = 'user' 
+                   OR ${schema.sidebarMenuItems.requiredRole} = ${userRole})`
+        )
+        .orderBy(schema.sidebarMenuItems.sortOrder);
+
+      return res.status(200).json({
+        success: true,
+        data: menuItems
+      });
+    } catch (error) {
+      console.error("Error getting sidebar menu items:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Failed to get sidebar menu items"
+      });
+    }
+  });
+
   // API routes
   const httpServer = createServer(app);
 

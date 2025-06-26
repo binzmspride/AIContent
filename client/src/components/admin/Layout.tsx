@@ -88,6 +88,11 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       icon: <Languages className="h-5 w-5" />,
     },
     {
+      href: "/admin/sidebar-menu",
+      label: "Quản lý Sidebar",
+      icon: <Menu className="h-5 w-5" />,
+    },
+    {
       href: "/admin/history",
       label: t("admin.history"),
       icon: <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
