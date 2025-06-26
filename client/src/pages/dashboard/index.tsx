@@ -62,14 +62,18 @@ export default function Dashboard() {
   const [showMascot, setShowMascot] = useState(true);
 
   // Fetch dashboard stats
-  const { data: stats, isLoading: isLoadingStats } = useQuery<DashboardStats>({
+  const { data: statsResponse, isLoading: isLoadingStats } = useQuery<{success: boolean, data: DashboardStats}>({
     queryKey: ["/api/dashboard/stats"],
   });
+  
+  const stats = statsResponse?.data;
 
   // Fetch recent articles
-  const { data: articlesData, isLoading: isLoadingArticles } = useQuery<{ articles: Article[], pagination: any }>({
+  const { data: articlesResponse, isLoading: isLoadingArticles } = useQuery<{success: boolean, data: { articles: Article[], pagination: any }}>({
     queryKey: ["/api/dashboard/articles", { page: 1, limit: 5 }],
   });
+  
+  const articlesData = articlesResponse?.data;
 
   // Define article columns
   const columns: ColumnDef<Article>[] = [
