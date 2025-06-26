@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
+import { useLanguage } from '@/hooks/use-language';
+import { useToast } from '@/hooks/use-toast';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
 import { DashboardLayout } from '@/components/dashboard/Layout';
 import { SocialContentWizard } from '@/components/social-content/SocialContentWizard';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, FileText, TrendingUp } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+import { Sparkles, FileText, TrendingUp, Loader2, ImageIcon, Check, Copy, Eye, Zap, ChevronsUpDown } from 'lucide-react';
 
 interface SocialContentForm {
   contentSource: string;
@@ -21,6 +33,7 @@ interface SocialContentForm {
 
 export default function CreateSocialContentPage() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -247,7 +260,7 @@ export default function CreateSocialContentPage() {
       <div className="flex-1 overflow-auto p-4 md:p-6">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold">Tạo Content Social Media</h1>
+            <h1 className="text-3xl font-bold">{t('dashboard.create.socialContent.title')}</h1>
             <p className="text-muted-foreground mt-2">
               Tạo nội dung tối ưu cho nhiều nền tảng social media
             </p>

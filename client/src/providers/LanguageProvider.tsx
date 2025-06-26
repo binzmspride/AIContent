@@ -784,13 +784,6 @@ const translations: TranslationsType = {
           refund: "Hoàn tiền"
         }
       }
-    },
-    
-    common: {
-      extracting: "Đang trích xuất...",
-      extractedContent: "Nội dung đã trích xuất",
-      editContent: "Chỉnh sửa nội dung (tùy chọn)",
-      missingInfo: "Thiếu thông tin"
     }
   },
   
@@ -1541,13 +1534,6 @@ const translations: TranslationsType = {
         targetPlatforms: "Target Platforms",
         extractContent: "Extract Content"
       }
-    },
-    
-    common: {
-      extracting: "Extracting...",
-      extractedContent: "Extracted Content",
-      editContent: "Edit content (optional)",
-      missingInfo: "Missing Information"
     }
   }
 };
