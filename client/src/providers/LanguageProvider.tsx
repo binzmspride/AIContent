@@ -504,7 +504,9 @@ const translations: TranslationsType = {
       
       stats: {
         creditsLeft: "Số tín dụng còn lại",
+        credits: "tín dụng",
         articlesCreated: "Bài viết đã tạo",
+        imagesCreated: "Hình ảnh đã tạo",
         storageUsed: "Dung lượng sử dụng",
         recentArticles: "Bài viết gần đây",
         connectionsSection: "Kết nối",
@@ -514,7 +516,9 @@ const translations: TranslationsType = {
         status: "Trạng thái",
         keywords: "Từ khóa",
         actions: "Thao tác",
-        buyMoreCredits: "Mua thêm tín dụng"
+        buyMoreCredits: "Mua thêm tín dụng",
+        viewMyArticles: "Xem bài viết của tôi",
+        viewImageLibrary: "Xem thư viện hình ảnh"
       },
       
       articles: {

@@ -186,7 +186,7 @@ export default function Dashboard() {
                     <div className="ml-4">
                       <h2 className="text-sm font-medium text-white">{t("dashboard.stats.creditsLeft")}</h2>
                       <p className="text-2xl font-semibold text-white">
-                        {stats?.creditBalance ?? 0} tín dụng
+                        {stats?.creditBalance ?? 0} {t("dashboard.stats.credits")}
                       </p>
                     </div>
                   </div>
@@ -215,7 +215,7 @@ export default function Dashboard() {
                   </div>
                   <div className="mt-4">
                     <Link href="/dashboard/my-articles" className="text-sm text-green-600 hover:text-green-700 flex items-center">
-                      Xem bài viết của tôi
+                      {t("dashboard.stats.viewMyArticles")}
                       <ArrowUpRight className="ml-1 h-3 w-3" />
                     </Link>
                   </div>
@@ -230,7 +230,7 @@ export default function Dashboard() {
                       <Image className="h-6 w-6" />
                     </div>
                     <div className="ml-4">
-                      <h2 className="text-sm font-medium text-white">Hình ảnh đã tạo</h2>
+                      <h2 className="text-sm font-medium text-white">{t("dashboard.stats.imagesCreated")}</h2>
                       <p className="text-2xl font-semibold text-white">
                         {imagesData?.total || imagesData?.images?.length || 0}
                       </p>
@@ -238,7 +238,7 @@ export default function Dashboard() {
                   </div>
                   <div className="mt-4">
                     <Link href="/dashboard/image-library" className="text-sm text-purple-600 hover:text-purple-700 flex items-center">
-                      Xem thư viện hình ảnh
+                      {t("dashboard.stats.viewImageLibrary")}
                       <ArrowUpRight className="ml-1 h-3 w-3" />
                     </Link>
                   </div>
