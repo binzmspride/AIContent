@@ -584,6 +584,8 @@ const translations: TranslationsType = {
         title: "Tạo nội dung",
         subtitle: "Tạo bài viết chuẩn SEO với công nghệ AI",
         socialContent: {
+          title: "Tạo Nội Dung Mạng Xã Hội",
+          subtitle: "Tạo nội dung tối ưu cho nhiều nền tảng social media",
           step1: {
             title: "Bước 1: Trích xuất nội dung",
             contentSource: "Nguồn nội dung",
@@ -1313,6 +1315,8 @@ const translations: TranslationsType = {
         title: "Create Content",
         subtitle: "Create SEO-optimized content with AI",
         socialContent: {
+          title: "Create Social Media Content",
+          subtitle: "Create optimized content for multiple social media platforms",
           step1: {
             title: "Step 1: Content Extraction",
             contentSource: "Content Source",

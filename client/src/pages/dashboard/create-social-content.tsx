@@ -262,7 +262,7 @@ export default function CreateSocialContentPage() {
           <div>
             <h1 className="text-3xl font-bold">{t('dashboard.create.socialContent.title')}</h1>
             <p className="text-muted-foreground mt-2">
-              Tạo nội dung tối ưu cho nhiều nền tảng social media
+              {t('dashboard.create.socialContent.subtitle')}
             </p>
           </div>
           <Button onClick={handleSubmit} disabled={generateContentMutation.isPending}>
