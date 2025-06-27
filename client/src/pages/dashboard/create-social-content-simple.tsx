@@ -1209,7 +1209,7 @@ export default function CreateSocialContent() {
                   ) : (
                     <>
                       <FileText className="w-4 h-4 mr-2" />
-                      {formData.contentSource === 'create-new-seo' ? 'Tạo bài viết & Trích xuất' : 'Trích xuất ý chính'}
+                      {formData.contentSource === 'create-new-seo' ? 'Tạo bài viết & Trích xuất' : t('dashboard.create.socialContent.extractAndContinue', 'Trích xuất & Tiếp tục')}
                     </>
                   )}
                 </Button>
