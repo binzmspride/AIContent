@@ -697,7 +697,7 @@ export default function CreateSocialContent() {
 
   if (currentStep === 4) {
     return (
-      <DashboardLayout>
+      <DashboardLayout key={`social-content-publish-${language}`}>
         <div className="max-w-6xl mx-auto p-6 space-y-6">
           <Card>
             <CardHeader>
@@ -956,7 +956,7 @@ export default function CreateSocialContent() {
   }
 
   return (
-    <DashboardLayout>
+    <DashboardLayout key={`social-content-simple-${language}`}>
       <div className="max-w-4xl mx-auto p-6 space-y-6">
         {/* Progress */}
         <Card>
@@ -1002,9 +1002,9 @@ export default function CreateSocialContent() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="existing-article">Từ bài viết có sẵn</SelectItem>
-                    <SelectItem value="manual">Tự nhập mô tả</SelectItem>
-                    <SelectItem value="create-new-seo">Tạo bài SEO mới</SelectItem>
+                    <SelectItem value="existing-article">{t('dashboard.create.socialContent.contentSource.existingArticle', 'Từ bài viết có sẵn')}</SelectItem>
+                    <SelectItem value="manual">{t('dashboard.create.socialContent.contentSource.manual', 'Tự nhập mô tả')}</SelectItem>
+                    <SelectItem value="create-new-seo">{t('dashboard.create.socialContent.contentSource.createNew', 'Tạo bài SEO mới')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
