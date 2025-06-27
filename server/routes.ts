@@ -40,6 +40,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register admin routes
   registerAdminRoutes(app);
 
+  // ========== Public Translations API ==========
+  // Get all translations (public endpoint)
+  app.get('/api/public/translations', async (req, res) => {
+    try {
+      const translations = await db.select().from(schema.translations);
+      res.json({ 
+        success: true, 
+        data: { translations } 
+      });
+    } catch (error) {
+      console.error('Error fetching translations:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to fetch translations' 
+      });
+    }
+  });
+
   // ========== Sidebar Menu API ==========
   // Get enabled sidebar menu items for users
   app.get('/api/sidebar-menu', isAuthenticated, async (req, res) => {

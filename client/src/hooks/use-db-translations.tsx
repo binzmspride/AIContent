@@ -19,18 +19,25 @@ export function useDbTranslations(): UseDbTranslationsResult {
   const language = user?.language || 'vi';
 
   const { data: translations = [], isLoading } = useQuery({
-    queryKey: ['/api/admin/translations'],
-    select: (response: any) => response?.data?.translations || [],
+    queryKey: ['/api/public/translations'],
+    select: (response: any) => {
+      console.log('Translations API response:', response);
+      return response?.data?.translations || [];
+    },
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   const t = (key: string, fallback?: string): string => {
+    console.log('Looking for translation:', key, 'Language:', language, 'Translations length:', translations.length);
     const translation = translations.find((t: Translation) => t.key === key);
     
     if (translation) {
-      return language === 'en' ? translation.en : translation.vi;
+      const result = language === 'en' ? translation.en : translation.vi;
+      console.log('Found translation:', key, '->', result);
+      return result;
     }
     
+    console.log('Translation not found for key:', key, 'using fallback:', fallback);
     // Return fallback or key if translation not found
     return fallback || key;
   };
