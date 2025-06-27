@@ -30,7 +30,7 @@ export function useDbTranslations(): UseDbTranslationsResult {
   }, [language, queryClient]);
 
   const { data: translations = [], isLoading } = useQuery({
-    queryKey: ['/api/admin/translations', language], // Simple query key with language
+    queryKey: ['/api/admin/translations', language, Math.random()], // Force new query every time
     select: (response: any) => {
       const translationData = response?.data?.translations || [];
       console.log(`[useDbTranslations] Loaded ${translationData.length} translations for language: ${language}`);
@@ -40,6 +40,8 @@ export function useDbTranslations(): UseDbTranslationsResult {
     gcTime: 0, // Don't keep in cache (TanStack Query v5)
     enabled: !!user, // Only fetch when user is loaded
     retry: false,
+    refetchOnMount: true, // Always refetch on component mount
+    refetchOnWindowFocus: true, // Refetch when window gains focus
   });
 
   const t = useMemo(() => {
