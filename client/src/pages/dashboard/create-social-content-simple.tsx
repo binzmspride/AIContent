@@ -970,7 +970,9 @@ export default function CreateSocialContent() {
                     {currentStep > step ? <CheckCircle className="w-4 h-4" /> : step}
                   </div>
                   <div className="ml-2 text-sm">
-                    {step === 1 ? 'Trích xuất' : step === 2 ? 'Tạo nội dung' : 'Hoàn thành'}
+                    {step === 1 ? t('dashboard.create.socialContent.stepExtract', 'Trích xuất') : 
+                     step === 2 ? t('dashboard.create.socialContent.stepGenerate', 'Tạo nội dung') : 
+                     t('dashboard.create.socialContent.stepComplete', 'Hoàn thành')}
                   </div>
                   {step < 3 && <ArrowRight className="w-4 h-4 mx-4 text-gray-400" />}
                 </div>

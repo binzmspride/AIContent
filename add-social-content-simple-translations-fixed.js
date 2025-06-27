@@ -81,6 +81,21 @@ async function addSocialContentSimpleTranslations() {
         key: 'dashboard.create.socialContent.urlPlaceholder',
         vi: 'https://example.com/article',
         en: 'https://example.com/article'
+      },
+      {
+        key: 'dashboard.create.socialContent.stepExtract',
+        vi: 'Trích xuất',
+        en: 'Extract'
+      },
+      {
+        key: 'dashboard.create.socialContent.stepGenerate',
+        vi: 'Tạo nội dung',
+        en: 'Generate Content'
+      },
+      {
+        key: 'dashboard.create.socialContent.stepComplete',
+        vi: 'Hoàn thành',
+        en: 'Complete'
       }
     ];
 
