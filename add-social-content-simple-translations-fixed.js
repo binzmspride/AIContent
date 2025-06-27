@@ -116,51 +116,6 @@ async function addSocialContentSimpleTranslations() {
         key: 'dashboard.create.socialContent.searchArticlePlaceholder',
         vi: 'Tìm kiếm bài viết theo tiêu đề hoặc từ khóa...',
         en: 'Search articles by title or keywords...'
-      },
-      {
-        key: 'dashboard.create.socialContent.noSeoArticles',
-        vi: 'Chưa có bài viết SEO nào',
-        en: 'No SEO articles yet'
-      },
-      {
-        key: 'dashboard.create.socialContent.createSeoFirst',
-        vi: 'Hãy tạo bài viết SEO trước trong mục "Tạo nội dung"',
-        en: 'Please create SEO articles first in "Create Content" section'
-      },
-      {
-        key: 'dashboard.create.socialContent.mainTopicRequired',
-        vi: 'Chủ đề chính *',
-        en: 'Main Topic *'
-      },
-      {
-        key: 'dashboard.create.socialContent.topicPlaceholder',
-        vi: 'Ví dụ: Cây cảnh xanh trong nhà',
-        en: 'Example: Indoor green plants'
-      },
-      {
-        key: 'dashboard.create.socialContent.keywordsRequired',
-        vi: 'Từ khóa *',
-        en: 'Keywords *'
-      },
-      {
-        key: 'dashboard.create.socialContent.keywordsPlaceholder',
-        vi: 'Ví dụ: cây cảnh xanh, chăm sóc cây, không gian xanh',
-        en: 'Example: green plants, plant care, green space'
-      },
-      {
-        key: 'dashboard.create.socialContent.targetPlatformsRequired',
-        vi: 'Nền tảng mục tiêu *',
-        en: 'Target Platforms *'
-      },
-      {
-        key: 'dashboard.create.socialContent.createArticleAndExtract',
-        vi: 'Tạo bài viết & Trích xuất',
-        en: 'Create Article & Extract'
-      },
-      {
-        key: 'dashboard.create.socialContent.urlPlaceholder',
-        vi: 'https://example.com/article',
-        en: 'https://example.com/article'
       }
     ];
 

@@ -1062,10 +1062,10 @@ export default function CreateSocialContent() {
                     <div className="text-center py-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
                       <FileText className="w-12 h-12 mx-auto mb-4 text-gray-400" />
                       <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        {t('dashboard.create.socialContent.noSeoArticles', 'Chưa có bài viết SEO nào')}
+                        Chưa có bài viết SEO nào
                       </p>
                       <p className="text-sm text-gray-500">
-                        {t('dashboard.create.socialContent.createSeoFirst', 'Hãy tạo bài viết SEO trước trong mục "Tạo nội dung"')}
+                        Hãy tạo bài viết SEO trước trong mục "Tạo nội dung"
                       </p>
                     </div>
                   )}
@@ -1076,18 +1076,18 @@ export default function CreateSocialContent() {
               {formData.contentSource === 'create-new-seo' && (
                 <div className="space-y-4">
                   <div className="space-y-3">
-                    <Label>{t('dashboard.create.socialContent.mainTopicRequired', 'Chủ đề chính *')}</Label>
+                    <Label>Chủ đề chính *</Label>
                     <Input
-                      placeholder={t('dashboard.create.socialContent.topicPlaceholder', 'Ví dụ: Cây cảnh xanh trong nhà')}
+                      placeholder="Ví dụ: Cây cảnh xanh trong nhà"
                       value={formData.seoTopic || ''}
                       onChange={(e) => setFormData({ ...formData, seoTopic: e.target.value })}
                     />
                   </div>
                   
                   <div className="space-y-3">
-                    <Label>{t('dashboard.create.socialContent.keywordsRequired', 'Từ khóa *')}</Label>
+                    <Label>Từ khóa *</Label>
                     <Input
-                      placeholder={t('dashboard.create.socialContent.keywordsPlaceholder', 'Ví dụ: cây cảnh xanh, chăm sóc cây, không gian xanh')}
+                      placeholder="Ví dụ: cây cảnh xanh, chăm sóc cây, không gian xanh"
                       value={formData.seoKeywords || ''}
                       onChange={(e) => setFormData({ ...formData, seoKeywords: e.target.value })}
                     />
@@ -1211,7 +1211,7 @@ export default function CreateSocialContent() {
                   ) : (
                     <>
                       <FileText className="w-4 h-4 mr-2" />
-                      {formData.contentSource === 'create-new-seo' ? t('dashboard.create.socialContent.createArticleAndExtract', 'Tạo bài viết & Trích xuất') : t('dashboard.create.socialContent.extractAndContinue', 'Trích xuất & Tiếp tục')}
+                      {formData.contentSource === 'create-new-seo' ? 'Tạo bài viết & Trích xuất' : t('dashboard.create.socialContent.extractAndContinue', 'Trích xuất & Tiếp tục')}
                     </>
                   )}
                 </Button>
