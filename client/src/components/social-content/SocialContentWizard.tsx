@@ -51,11 +51,11 @@ export function SocialContentWizard({ onComplete, onCancel }: SocialContentWizar
   const { t } = useDbTranslations();
   
   const steps = [
-    { id: 1, title: dbT('social.steps.extract.title', 'Trích xuất'), description: dbT('social.steps.extract.desc', 'Lấy ý chính từ bài viết') },
-    { id: 2, title: dbT('social.steps.generate.title', 'Tạo nội dung'), description: dbT('social.steps.generate.desc', 'Tạo post cho từng nền tảng') },
-    { id: 3, title: dbT('social.steps.complete.title', 'Hoàn thành'), description: dbT('social.steps.complete.desc', 'Chọn hoặc tạo hình ảnh') },
-    { id: 4, title: 'Xem trước', description: 'Preview giao diện social media' },
-    { id: 5, title: 'Lưu & Đăng', description: 'Hoàn tất và xuất bản' }
+    { id: 1, title: t('social.steps.extract.title', 'Trích xuất'), description: t('social.steps.extract.desc', 'Lấy ý chính từ bài viết') },
+    { id: 2, title: t('social.steps.generate.title', 'Tạo nội dung'), description: t('social.steps.generate.desc', 'Tạo post cho từng nền tảng') },
+    { id: 3, title: t('social.steps.complete.title', 'Hoàn thành'), description: t('social.steps.complete.desc', 'Chọn hoặc tạo hình ảnh') },
+    { id: 4, title: t('social.action.preview', 'Xem trước'), description: t('social.action.previewDesc', 'Preview giao diện social media') },
+    { id: 5, title: t('social.action.publish', 'Lưu & Đăng'), description: t('social.action.publishDesc', 'Hoàn tất và xuất bản') }
   ];
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -137,7 +137,7 @@ export function SocialContentWizard({ onComplete, onCancel }: SocialContentWizar
       {/* Stepper Header */}
       <Card>
         <CardHeader>
-          <CardTitle>{dbT('social.main.title', 'Tạo Nội Dung Mạng Xã Hội')}</CardTitle>
+          <CardTitle>{t('social.main.title', 'Tạo Nội Dung Mạng Xã Hội')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
@@ -193,12 +193,12 @@ export function SocialContentWizard({ onComplete, onCancel }: SocialContentWizar
             className="flex items-center space-x-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>{currentStep === 1 ? t('common.cancel') : t('common.back')}</span>
+            <span>{currentStep === 1 ? t('social.nav.cancel', 'Hủy') : t('social.nav.back', 'Quay lại')}</span>
           </Button>
 
           <div className="flex items-center space-x-2">
             <Badge variant="secondary">
-              Bước {currentStep} / {steps.length}
+              {t('social.nav.step', 'Bước')} {currentStep} / {steps.length}
             </Badge>
           </div>
 
@@ -208,7 +208,7 @@ export function SocialContentWizard({ onComplete, onCancel }: SocialContentWizar
               disabled={!completedSteps.includes(currentStep)}
               className="flex items-center space-x-2"
             >
-              <span>Tiếp theo</span>
+              <span>{t('social.nav.next', 'Tiếp theo')}</span>
               <ArrowRight className="w-4 h-4" />
             </Button>
           )}
