@@ -22,11 +22,11 @@ export function useDbTranslations(): UseDbTranslationsResult {
   const language = currentLanguage;
   const queryClient = useQueryClient();
 
-  // Invalidate translations cache when language changes
+  // Clear all translation cache and refetch on language change or component mount
   useEffect(() => {
-    console.log(`[useDbTranslations] Language changed to: ${language}, refetching translations`);
+    console.log(`[useDbTranslations] Language changed to: ${language}, clearing all cache and refetching translations`);
+    queryClient.removeQueries({ queryKey: ['/api/admin/translations'] });
     queryClient.invalidateQueries({ queryKey: ['/api/admin/translations'] });
-    queryClient.refetchQueries({ queryKey: ['/api/admin/translations'] });
   }, [language, queryClient]);
 
   const { data: translations = [], isLoading } = useQuery({
