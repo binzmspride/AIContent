@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/use-auth';
 import { useLanguage } from '@/hooks/use-language';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 interface Translation {
   key: string;
@@ -30,34 +30,37 @@ export function useDbTranslations(): UseDbTranslationsResult {
   }, [language, queryClient]);
 
   const { data: translations = [], isLoading } = useQuery({
-    queryKey: ['/api/admin/translations', { limit: 1000, language }], // Include language in query key
+    queryKey: ['/api/admin/translations', language], // Simple query key with language
     select: (response: any) => {
       const translationData = response?.data?.translations || [];
       console.log(`[useDbTranslations] Loaded ${translationData.length} translations for language: ${language}`);
       return translationData;
     },
-    staleTime: 1 * 60 * 1000, // Reduce cache time to 1 minute
+    staleTime: 0, // No caching - always fresh data
+    cacheTime: 0, // Don't keep in cache
     enabled: !!user, // Only fetch when user is loaded
     retry: false,
   });
 
-  const t = (key: string, fallback?: string): string => {
-    if (!translations || translations.length === 0) {
-      console.log(`[useDbTranslations] No translations loaded, returning fallback for ${key} (current language: ${language})`);
-      return fallback || key;
-    }
+  const t = useMemo(() => {
+    return (key: string, fallback?: string): string => {
+      if (!translations || translations.length === 0) {
+        console.log(`[useDbTranslations] No translations loaded, returning fallback for ${key} (current language: ${language})`);
+        return fallback || key;
+      }
 
-    const translation = translations.find((t: Translation) => t.key === key);
-    
-    if (translation) {
-      const result = language === 'en' ? translation.en : translation.vi;
-      console.log(`[useDbTranslations] Found translation for ${key}: "${result}" (language: ${language}, en: "${translation.en}", vi: "${translation.vi}")`);
-      return result || fallback || key;
-    }
-    
-    console.log(`[useDbTranslations] No translation found for ${key}, returning fallback (current language: ${language})`);
-    return fallback || key;
-  };
+      const translation = translations.find((t: Translation) => t.key === key);
+      
+      if (translation) {
+        const result = language === 'en' ? translation.en : translation.vi;
+        console.log(`[useDbTranslations] Found translation for ${key}: "${result}" (language: ${language}, en: "${translation.en}", vi: "${translation.vi}")`);
+        return result || fallback || key;
+      }
+      
+      console.log(`[useDbTranslations] No translation found for ${key}, returning fallback (current language: ${language})`);
+      return fallback || key;
+    };
+  }, [translations, language]);
 
   return { t, isLoading, language };
 }
