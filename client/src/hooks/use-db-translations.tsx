@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/use-auth';
 import { useLanguage } from '@/hooks/use-language';
+import { useEffect } from 'react';
 
 interface Translation {
   key: string;
@@ -19,21 +20,30 @@ export function useDbTranslations(): UseDbTranslationsResult {
   const { user } = useAuth();
   const { language: currentLanguage } = useLanguage();
   const language = currentLanguage;
+  const queryClient = useQueryClient();
+
+  // Invalidate translations cache when language changes
+  useEffect(() => {
+    console.log(`[useDbTranslations] Language changed to: ${language}, refetching translations`);
+    queryClient.invalidateQueries({ queryKey: ['/api/admin/translations'] });
+    queryClient.refetchQueries({ queryKey: ['/api/admin/translations'] });
+  }, [language, queryClient]);
 
   const { data: translations = [], isLoading } = useQuery({
-    queryKey: ['/api/admin/translations', { limit: 1000 }], // Get all translations
+    queryKey: ['/api/admin/translations', { limit: 1000, language }], // Include language in query key
     select: (response: any) => {
       const translationData = response?.data?.translations || [];
+      console.log(`[useDbTranslations] Loaded ${translationData.length} translations for language: ${language}`);
       return translationData;
     },
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    staleTime: 1 * 60 * 1000, // Reduce cache time to 1 minute
     enabled: !!user, // Only fetch when user is loaded
     retry: false,
   });
 
   const t = (key: string, fallback?: string): string => {
     if (!translations || translations.length === 0) {
-      console.log(`[useDbTranslations] No translations loaded, returning fallback for ${key}`);
+      console.log(`[useDbTranslations] No translations loaded, returning fallback for ${key} (current language: ${language})`);
       return fallback || key;
     }
 
@@ -41,11 +51,11 @@ export function useDbTranslations(): UseDbTranslationsResult {
     
     if (translation) {
       const result = language === 'en' ? translation.en : translation.vi;
-      console.log(`[useDbTranslations] Found translation for ${key}: ${result} (language: ${language})`);
-      return result;
+      console.log(`[useDbTranslations] Found translation for ${key}: "${result}" (language: ${language}, en: "${translation.en}", vi: "${translation.vi}")`);
+      return result || fallback || key;
     }
     
-    console.log(`[useDbTranslations] No translation found for ${key}, returning fallback`);
+    console.log(`[useDbTranslations] No translation found for ${key}, returning fallback (current language: ${language})`);
     return fallback || key;
   };
 

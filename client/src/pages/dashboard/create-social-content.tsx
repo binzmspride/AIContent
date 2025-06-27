@@ -33,7 +33,7 @@ interface SocialContentForm {
 
 export default function CreateSocialContentPage() {
   const { user } = useAuth();
-  const { t } = useDbTranslations();
+  const { t, language } = useDbTranslations();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -256,7 +256,7 @@ export default function CreateSocialContentPage() {
   };
 
   return (
-    <DashboardLayout>
+    <DashboardLayout key={`social-content-${language}`}>
       <div className="flex-1 overflow-auto p-4 md:p-6">
         <div className="flex justify-between items-center mb-6">
           <div>
