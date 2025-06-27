@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { useLanguage } from '@/hooks/use-language';
+import { useDbTranslations } from '@/hooks/use-db-translations';
 import { useToast } from '@/hooks/use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
@@ -33,7 +33,7 @@ interface SocialContentForm {
 
 export default function CreateSocialContentPage() {
   const { user } = useAuth();
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -912,12 +912,12 @@ export default function CreateSocialContentPage() {
                 {handleSaveToCreatedContent.isPending ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    Đang lưu...
+                    {t('social.action.save', 'Đang lưu...')}
                   </>
                 ) : (
                   <>
                     <Check className="h-4 w-4" />
-                    Hoàn thành
+                    {t('social.nav.finish', 'Hoàn thành')}
                   </>
                 )}
               </Button>
@@ -928,15 +928,15 @@ export default function CreateSocialContentPage() {
                   if (finalSocialContent) {
                     navigator.clipboard.writeText(JSON.stringify(finalSocialContent, null, 2));
                     toast({
-                      title: "Đã sao chép",
-                      description: "Toàn bộ nội dung đã được sao chép vào clipboard",
+                      title: t('social.action.copy', 'Đã sao chép'),
+                      description: t('social.action.copyDesc', 'Toàn bộ nội dung đã được sao chép vào clipboard'),
                     });
                   }
                 }}
                 className="flex items-center gap-2"
               >
                 <Copy className="h-4 w-4" />
-                Copy tất cả
+                {t('social.action.copyAll', 'Copy tất cả')}
               </Button>
             </div>
           </div>

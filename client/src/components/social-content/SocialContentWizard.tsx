@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Circle, ArrowLeft, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useLanguage } from '@/hooks/use-language';
 import { useDbTranslations } from '@/hooks/use-db-translations';
 
 // Import các step components
@@ -49,8 +48,7 @@ interface SocialContentWizardProps {
 }
 
 export function SocialContentWizard({ onComplete, onCancel }: SocialContentWizardProps) {
-  const { t } = useLanguage();
-  const { t: dbT } = useDbTranslations();
+  const { t } = useDbTranslations();
   
   const steps = [
     { id: 1, title: dbT('social.steps.extract.title', 'Trích xuất'), description: dbT('social.steps.extract.desc', 'Lấy ý chính từ bài viết') },
