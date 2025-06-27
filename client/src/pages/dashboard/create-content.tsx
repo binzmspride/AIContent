@@ -1685,7 +1685,6 @@ export default function CreateContent() {
                                   <SelectContent>
                                     <SelectItem value="chatgpt">ChatGPT</SelectItem>
                                     <SelectItem value="gemini">Gemini</SelectItem>
-                                    <SelectItem value="claude">Claude</SelectItem>
                                   </SelectContent>
                                 </Select>
                                 <FormMessage />
