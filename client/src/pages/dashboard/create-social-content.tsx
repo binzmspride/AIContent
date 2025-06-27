@@ -401,16 +401,16 @@ export default function CreateSocialContentPage() {
                 {/* Reference Link for existing article */}
                 {form.contentSource === 'existing-article' && (
                   <div className="space-y-2">
-                    <Label htmlFor="referenceLink">Link tham khảo (tùy chọn)</Label>
+                    <Label htmlFor="referenceLink">{t('dashboard.create.socialContent.step1.referenceLink')}</Label>
                     <Input
                       id="referenceLink"
                       type="url"
-                      placeholder="https://example.com/link-tham-khao"
+                      placeholder={t('dashboard.create.socialContent.step1.referencePlaceholder')}
                       value={form.referenceLink}
                       onChange={(e) => setForm(prev => ({ ...prev, referenceLink: e.target.value }))}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Thêm link tham khảo để cung cấp thêm context cho AI
+                      {t('dashboard.create.socialContent.referenceDescription')}
                     </p>
                   </div>
                 )}
@@ -418,23 +418,23 @@ export default function CreateSocialContentPage() {
                 {/* Reference Link (only when using AI from keywords) */}
                 {form.contentSource === 'ai-keyword' && (
                   <div className="space-y-2">
-                    <Label htmlFor="referenceLink">Link tham khảo (tùy chọn)</Label>
+                    <Label htmlFor="referenceLink">{t('dashboard.create.socialContent.step1.referenceLink')}</Label>
                     <Input
                       id="referenceLink"
                       type="url"
-                      placeholder="https://example.com/bai-viet-tham-khao"
+                      placeholder={t('dashboard.create.socialContent.step1.referencePlaceholder')}
                       value={form.referenceLink}
                       onChange={(e) => setForm(prev => ({ ...prev, referenceLink: e.target.value }))}
                     />
                     <p className="text-xs text-muted-foreground">
-                      Nhập link bài viết để AI tham khảo phong cách và nội dung
+                      {t('dashboard.create.socialContent.referenceHelp')}
                     </p>
                   </div>
                 )}
 
                 {/* Target Platforms */}
                 <div className="space-y-3">
-                  <Label>Nền tảng mục tiêu</Label>
+                  <Label>{t('dashboard.create.socialContent.step1.platforms')}</Label>
                   <div className="grid grid-cols-2 gap-3">
                     {platforms.map((platform) => (
                       <div key={platform.id} className="flex items-center space-x-2">
@@ -862,9 +862,9 @@ export default function CreateSocialContentPage() {
                       </h3>
                       <div className={`p-4 ${config.bgColor} rounded-lg border`}>
                         <div className="space-y-2">
-                          <p className="text-sm font-medium">Nội dung bài viết:</p>
+                          <p className="text-sm font-medium">{t('dashboard.create.socialContent.articleContent')}:</p>
                           <div className="text-sm whitespace-pre-wrap bg-white dark:bg-gray-800 p-3 rounded border">
-                            {content || 'Không có nội dung'}
+                            {content || t('dashboard.create.socialContent.noContent')}
                           </div>
                         </div>
                       </div>
@@ -877,7 +877,7 @@ export default function CreateSocialContentPage() {
             {/* Fallback for non-array response */}
             {finalSocialContent && !Array.isArray(finalSocialContent) && (
               <div className="space-y-3">
-                <h3 className="font-medium text-sm">Nội dung được tạo:</h3>
+                <h3 className="font-medium text-sm">{t('dashboard.create.socialContent.generatedContent')}:</h3>
                 <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
                   <div className="text-sm whitespace-pre-wrap">
                     {finalSocialContent.output || JSON.stringify(finalSocialContent, null, 2)}
@@ -891,7 +891,7 @@ export default function CreateSocialContentPage() {
               <div className="mt-6">
                 <details className="space-y-2">
                   <summary className="cursor-pointer text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Xem response đầy đủ (Debug)
+{t('dashboard.create.socialContent.viewFullResponse')}
                   </summary>
                   <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border max-h-40 overflow-y-auto">
                     <pre className="text-xs">

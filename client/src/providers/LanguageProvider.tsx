@@ -626,7 +626,11 @@ const translations: TranslationsType = {
             descriptionRequired: "Vui lòng nhập mô tả nội dung",
             platformRequired: "Vui lòng chọn ít nhất một nền tảng",
             articleRequired: "Vui lòng chọn một bài viết"
-          }
+          },
+          articleContent: "Nội dung bài viết",
+          noContent: "Không có nội dung",
+          generatedContent: "Nội dung được tạo",
+          viewFullResponse: "Xem response đầy đủ (Debug)"
         },
         tabs: {
           keywords: "Từ khóa",
@@ -1381,7 +1385,11 @@ const translations: TranslationsType = {
             descriptionRequired: "Please enter content description",
             platformRequired: "Please select at least one platform",
             articleRequired: "Please select an article"
-          }
+          },
+          articleContent: "Article Content",
+          noContent: "No content",
+          generatedContent: "Generated Content",
+          viewFullResponse: "View Full Response (Debug)"
         },
         tabs: {
           keywords: "Keywords",
