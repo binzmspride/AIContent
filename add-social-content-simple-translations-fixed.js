@@ -26,6 +26,41 @@ async function addSocialContentSimpleTranslations() {
         key: 'dashboard.create.socialContent.contentSource.createNew',
         vi: 'Tạo bài SEO mới',
         en: 'Create new SEO article'
+      },
+      {
+        key: 'dashboard.create.socialContent.step1.title',
+        vi: 'Bước 1: Trích xuất nội dung',
+        en: 'Step 1: Content Extraction'
+      },
+      {
+        key: 'dashboard.create.socialContent.contentSourceLabel',
+        vi: 'Nguồn nội dung',
+        en: 'Content Source'
+      },
+      {
+        key: 'dashboard.create.socialContent.briefDescription',
+        vi: 'Mô tả nội dung',
+        en: 'Content Description'
+      },
+      {
+        key: 'dashboard.create.socialContent.briefDescriptionPlaceholder',
+        vi: 'Nhập mô tả ngắn gọn về nội dung bạn muốn tạo...',
+        en: 'Enter a brief description of the content you want to create...'
+      },
+      {
+        key: 'dashboard.create.socialContent.referenceUrl',
+        vi: 'URL tham khảo (tùy chọn)',
+        en: 'Reference URL (optional)'
+      },
+      {
+        key: 'dashboard.create.socialContent.targetPlatforms',
+        vi: 'Nền tảng mục tiêu',
+        en: 'Target Platforms'
+      },
+      {
+        key: 'dashboard.create.socialContent.extractAndContinue',
+        vi: 'Trích xuất & Tiếp tục',
+        en: 'Extract & Continue'
       }
     ];
 

@@ -985,13 +985,13 @@ export default function CreateSocialContent() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <FileText className="w-5 h-5" />
-                <span>Bước 1: Trích xuất nội dung</span>
+                <span>{t('dashboard.create.socialContent.step1.title', 'Bước 1: Trích xuất nội dung')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Content Source */}
               <div className="space-y-3">
-                <Label>Nguồn nội dung</Label>
+                <Label>{t('dashboard.create.socialContent.contentSourceLabel', 'Nguồn nội dung')}</Label>
                 <Select
                   value={formData.contentSource}
                   onValueChange={(value: 'manual' | 'existing-article' | 'create-new-seo') => 
