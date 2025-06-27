@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
+import { useDbTranslations } from '@/hooks/use-db-translations';
 import { DashboardLayout } from '@/components/dashboard/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
