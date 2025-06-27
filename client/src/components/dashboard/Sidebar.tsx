@@ -117,8 +117,8 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center py-3 px-4 rounded-md text-sm font-medium transition-colors",
                   location === link.href
-                    ? "bg-sidebar-accent dark:bg-primary-800 text-white font-semibold dark:text-white"
-                    : "text-white font-semibold dark:text-white hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
+                    ? "bg-sidebar-accent dark:bg-primary-800 text-[#084d91] dark:text-white font-semibold"
+                    : "text-[#084d91] dark:text-white font-semibold hover:text-[#084d91] dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
                 )}
               >
                 {link.icon}
@@ -134,8 +134,8 @@ export function Sidebar() {
               className={cn(
                 "flex items-center justify-between w-full py-3 px-4 rounded-md text-sm font-medium transition-colors",
                 location.startsWith("/dashboard/ai-api-keys")
-                  ? "bg-sidebar-accent dark:bg-primary-800 text-white font-semibold dark:text-white"
-                  : "text-white font-semibold dark:text-white hover:text-white dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
+                  ? "bg-sidebar-accent dark:bg-primary-800 text-[#084d91] dark:text-white font-semibold"
+                  : "text-[#084d91] dark:text-white font-semibold hover:text-[#084d91] dark:hover:text-white hover:bg-sidebar-accent/50 dark:hover:bg-primary-900/50"
               )}
             >
               <div className="flex items-center">
@@ -157,8 +157,8 @@ export function Sidebar() {
                     className={cn(
                       "flex items-center py-2 px-4 rounded-md text-sm transition-colors",
                       location === "/dashboard/ai-api-keys"
-                        ? "bg-sidebar-accent dark:bg-primary-800 text-white font-semibold dark:text-white"
-                        : "text-white/80 dark:text-white/80 hover:text-white dark:hover:text-white hover:bg-sidebar-accent/30 dark:hover:bg-primary-900/30"
+                        ? "bg-sidebar-accent dark:bg-primary-800 text-[#084d91] dark:text-white font-semibold"
+                        : "text-[#084d91]/80 dark:text-white/80 hover:text-[#084d91] dark:hover:text-white hover:bg-sidebar-accent/30 dark:hover:bg-primary-900/30"
                     )}
                   >
                     Tất cả API Keys
@@ -170,8 +170,8 @@ export function Sidebar() {
                     className={cn(
                       "flex items-center py-2 px-4 rounded-md text-sm transition-colors",
                       location === "/dashboard/ai-api-keys" && location.includes("openai")
-                        ? "bg-sidebar-accent dark:bg-primary-800 text-white font-semibold dark:text-white"
-                        : "text-white/80 dark:text-white/80 hover:text-white dark:hover:text-white hover:bg-sidebar-accent/30 dark:hover:bg-primary-900/30"
+                        ? "bg-sidebar-accent dark:bg-primary-800 text-[#084d91] dark:text-white font-semibold"
+                        : "text-[#084d91]/80 dark:text-white/80 hover:text-[#084d91] dark:hover:text-white hover:bg-sidebar-accent/30 dark:hover:bg-primary-900/30"
                     )}
                   >
                     OpenAI Keys
@@ -183,8 +183,8 @@ export function Sidebar() {
                     className={cn(
                       "flex items-center py-2 px-4 rounded-md text-sm transition-colors",
                       location === "/dashboard/ai-api-keys" && location.includes("claude")
-                        ? "bg-sidebar-accent dark:bg-primary-800 text-white font-semibold dark:text-white"
-                        : "text-white/80 dark:text-white/80 hover:text-white dark:hover:text-white hover:bg-sidebar-accent/30 dark:hover:bg-primary-900/30"
+                        ? "bg-sidebar-accent dark:bg-primary-800 text-[#084d91] dark:text-white font-semibold"
+                        : "text-[#084d91]/80 dark:text-white/80 hover:text-[#084d91] dark:hover:text-white hover:bg-sidebar-accent/30 dark:hover:bg-primary-900/30"
                     )}
                   >
                     Claude Keys
@@ -196,8 +196,8 @@ export function Sidebar() {
                     className={cn(
                       "flex items-center py-2 px-4 rounded-md text-sm transition-colors",
                       location === "/dashboard/ai-api-keys" && location.includes("gemini")
-                        ? "bg-sidebar-accent dark:bg-primary-800 text-white font-semibold dark:text-white"
-                        : "text-white/80 dark:text-white/80 hover:text-white dark:hover:text-white hover:bg-sidebar-accent/30 dark:hover:bg-primary-900/30"
+                        ? "bg-sidebar-accent dark:bg-primary-800 text-[#084d91] dark:text-white font-semibold"
+                        : "text-[#084d91]/80 dark:text-white/80 hover:text-[#084d91] dark:hover:text-white hover:bg-sidebar-accent/30 dark:hover:bg-primary-900/30"
                     )}
                   >
                     Gemini Keys

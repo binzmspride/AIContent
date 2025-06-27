@@ -101,7 +101,7 @@ export function Header() {
           </button>
           
           <Link href="/dashboard/credits">
-            <div className="text-secondary-500 dark:text-white bg-secondary-100 dark:bg-secondary-800 px-3 py-1 rounded-full text-sm font-medium flex items-center hover:bg-secondary-200 dark:hover:bg-secondary-700 transition-colors cursor-pointer">
+            <div className="text-[#084d91] dark:text-white bg-secondary-100 dark:bg-secondary-800 px-3 py-1 rounded-full text-sm font-medium flex items-center hover:bg-secondary-200 dark:hover:bg-secondary-700 transition-colors cursor-pointer">
               <Coins className="h-4 w-4 mr-1 text-accent-500" />
               <span>{user?.credits || 0} {t("dashboard.stats.credits")}</span>
             </div>
