@@ -96,6 +96,26 @@ async function addSocialContentSimpleTranslations() {
         key: 'dashboard.create.socialContent.stepComplete',
         vi: 'Hoàn thành',
         en: 'Complete'
+      },
+      {
+        key: 'dashboard.create.socialContent.selectSeoArticle',
+        vi: 'Chọn bài viết SEO',
+        en: 'Select SEO Article'
+      },
+      {
+        key: 'dashboard.create.socialContent.foundArticles',
+        vi: 'Tìm thấy {{count}} bài viết SEO trong "Bài viết của tôi"',
+        en: 'Found {{count}} SEO articles in "My Articles"'
+      },
+      {
+        key: 'dashboard.create.socialContent.selectSeoPlaceholder',
+        vi: 'Chọn bài viết SEO...',
+        en: 'Select SEO article...'
+      },
+      {
+        key: 'dashboard.create.socialContent.searchArticlePlaceholder',
+        vi: 'Tìm kiếm bài viết theo tiêu đề hoặc từ khóa...',
+        en: 'Search articles by title or keywords...'
       }
     ];
 

@@ -1014,11 +1014,11 @@ export default function CreateSocialContent() {
               {/* Article Selection */}
               {formData.contentSource === 'existing-article' && (
                 <div className="space-y-3">
-                  <Label>Chọn bài viết SEO</Label>
+                  <Label>{t('dashboard.create.socialContent.selectSeoArticle', 'Chọn bài viết SEO')}</Label>
                   {articlesData && articlesData.length > 0 ? (
                     <>
                       <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                        Tìm thấy {articlesData.length} bài viết SEO trong "Bài viết của tôi"
+                        {t('dashboard.create.socialContent.foundArticles', 'Tìm thấy {{count}} bài viết SEO trong "Bài viết của tôi"').replace('{{count}}', articlesData.length.toString())}
                       </div>
                       
                       {/* Article Selection Dropdown with Search */}
@@ -1029,13 +1029,13 @@ export default function CreateSocialContent() {
                         }
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Chọn bài viết SEO..." />
+                          <SelectValue placeholder={t('dashboard.create.socialContent.selectSeoPlaceholder', 'Chọn bài viết SEO...')} />
                         </SelectTrigger>
                         <SelectContent>
                           {/* Search Input inside dropdown */}
                           <div className="p-2 border-b">
                             <Input
-                              placeholder="Tìm kiếm bài viết theo tiêu đề hoặc từ khóa..."
+                              placeholder={t('dashboard.create.socialContent.searchArticlePlaceholder', 'Tìm kiếm bài viết theo tiêu đề hoặc từ khóa...')}
                               value={searchQuery}
                               onChange={(e) => setSearchQuery(e.target.value)}
                               className="h-8"
