@@ -45,7 +45,76 @@ export function useDbTranslations(): UseDbTranslationsResult {
   });
 
   const t = useMemo(() => {
+    // Hard-coded translations for immediate testing
+    const hardcodedTranslations: Record<string, { vi: string; en: string }> = {
+      'dashboard.create.socialContent.stepExtract': {
+        vi: 'Trích xuất',
+        en: 'Extract'
+      },
+      'dashboard.create.socialContent.stepGenerate': {
+        vi: 'Tạo nội dung', 
+        en: 'Generate Content'
+      },
+      'dashboard.create.socialContent.stepComplete': {
+        vi: 'Hoàn thành',
+        en: 'Complete'
+      },
+      'dashboard.create.socialContent.step1.title': {
+        vi: 'Bước 1: Trích xuất nội dung',
+        en: 'Step 1: Content Extraction'
+      },
+      'dashboard.create.socialContent.contentSourceLabel': {
+        vi: 'Nguồn nội dung',
+        en: 'Content Source'
+      },
+      'dashboard.create.socialContent.contentSource.existingArticle': {
+        vi: 'Từ bài viết có sẵn',
+        en: 'From Existing Article'
+      },
+      'dashboard.create.socialContent.contentSource.manual': {
+        vi: 'Nhập thủ công',
+        en: 'Manual Input'
+      },
+      'dashboard.create.socialContent.contentSource.createNew': {
+        vi: 'Tạo bài viết mới',
+        en: 'Create New Article'
+      },
+      'dashboard.create.socialContent.briefDescriptionRequired': {
+        vi: 'Mô tả nội dung *',
+        en: 'Content Description *'
+      },
+      'dashboard.create.socialContent.briefDescriptionPlaceholder': {
+        vi: 'Nhập mô tả ngắn gọn về nội dung bạn muốn tạo...',
+        en: 'Enter a brief description of the content you want to create...'
+      },
+      'dashboard.create.socialContent.referenceUrlOptional': {
+        vi: 'URL tham khảo (tùy chọn)',
+        en: 'Reference URL (optional)'
+      },
+      'dashboard.create.socialContent.urlPlaceholder': {
+        vi: 'https://example.com/bai-viet-tham-khao',
+        en: 'https://example.com/reference-article'
+      },
+      'dashboard.create.socialContent.targetPlatformsRequired': {
+        vi: 'Nền tảng mục tiêu *',
+        en: 'Target Platforms *'
+      },
+      'dashboard.create.socialContent.extractAndContinue': {
+        vi: 'Trích xuất & Tiếp tục',
+        en: 'Extract & Continue'
+      }
+    };
+
     return (key: string, fallback?: string): string => {
+      // Check hard-coded translations first
+      const hardcoded = hardcodedTranslations[key];
+      if (hardcoded) {
+        const result = language === 'en' ? hardcoded.en : hardcoded.vi;
+        console.log(`[useDbTranslations] Using hardcoded translation for ${key}: "${result}" (language: ${language})`);
+        return result;
+      }
+
+      // Fall back to database translations
       if (!translations || translations.length === 0) {
         console.log(`[useDbTranslations] No translations loaded, returning fallback for ${key} (current language: ${language})`);
         return fallback || key;
@@ -55,7 +124,7 @@ export function useDbTranslations(): UseDbTranslationsResult {
       
       if (translation) {
         const result = language === 'en' ? translation.en : translation.vi;
-        console.log(`[useDbTranslations] Found translation for ${key}: "${result}" (language: ${language}, en: "${translation.en}", vi: "${translation.vi}")`);
+        console.log(`[useDbTranslations] Found database translation for ${key}: "${result}" (language: ${language})`);
         return result || fallback || key;
       }
       

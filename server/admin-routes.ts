@@ -572,6 +572,12 @@ export function registerAdminRoutes(app: Express) {
   // Translations management
   // Get all translations with pagination and filtering
   app.get("/api/admin/translations", async (req: Request, res: Response) => {
+    // Disable HTTP caching completely
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('ETag', Math.random().toString());
+    
     if (!req.isAuthenticated() || req.user.role !== "admin") {
       return res.status(403).json({ 
         success: false, 
