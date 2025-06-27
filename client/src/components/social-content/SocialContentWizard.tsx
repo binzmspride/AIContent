@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Circle, ArrowLeft, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/hooks/use-language';
+import { useDbTranslations } from '@/hooks/use-db-translations';
 
 // Import các step components
 import { ContentExtractionStep } from './steps/ContentExtractionStep';
@@ -49,13 +50,14 @@ interface SocialContentWizardProps {
 
 export function SocialContentWizard({ onComplete, onCancel }: SocialContentWizardProps) {
   const { t } = useLanguage();
+  const { t: dbT } = useDbTranslations();
   
   const steps = [
-    { id: 1, title: t('dashboard.create.socialContent.steps.extraction.title'), description: t('dashboard.create.socialContent.steps.extraction.description') },
-    { id: 2, title: t('dashboard.create.socialContent.steps.generation.title'), description: t('dashboard.create.socialContent.steps.generation.description') },
-    { id: 3, title: t('dashboard.create.socialContent.steps.images.title'), description: t('dashboard.create.socialContent.steps.images.description') },
-    { id: 4, title: t('dashboard.create.socialContent.steps.preview.title'), description: t('dashboard.create.socialContent.steps.preview.description') },
-    { id: 5, title: t('dashboard.create.socialContent.steps.publish.title'), description: t('dashboard.create.socialContent.steps.publish.description') }
+    { id: 1, title: dbT('social.steps.extract.title', 'Trích xuất'), description: dbT('social.steps.extract.desc', 'Lấy ý chính từ bài viết') },
+    { id: 2, title: dbT('social.steps.generate.title', 'Tạo nội dung'), description: dbT('social.steps.generate.desc', 'Tạo post cho từng nền tảng') },
+    { id: 3, title: dbT('social.steps.complete.title', 'Hoàn thành'), description: dbT('social.steps.complete.desc', 'Chọn hoặc tạo hình ảnh') },
+    { id: 4, title: 'Xem trước', description: 'Preview giao diện social media' },
+    { id: 5, title: 'Lưu & Đăng', description: 'Hoàn tất và xuất bản' }
   ];
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -137,7 +139,7 @@ export function SocialContentWizard({ onComplete, onCancel }: SocialContentWizar
       {/* Stepper Header */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('dashboard.create.socialContent.title')}</CardTitle>
+          <CardTitle>{dbT('social.main.title', 'Tạo Nội Dung Mạng Xã Hội')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">

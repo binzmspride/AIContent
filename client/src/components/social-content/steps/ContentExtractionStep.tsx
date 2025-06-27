@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, FileText, Link, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/hooks/use-language';
+import { useDbTranslations } from '@/hooks/use-db-translations';
 
 interface WizardData {
   contentSource: 'manual' | 'existing-article';
@@ -40,6 +41,7 @@ const platformOptions = [
 export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExtractionStepProps) {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { t: dbT } = useDbTranslations();
   const [isExtracting, setIsExtracting] = useState(false);
 
   // Fetch existing articles
@@ -128,13 +130,13 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <FileText className="w-5 h-5" />
-            <span>{t('dashboard.create.socialContent.step1.title')}</span>
+            <span>{dbT('social.step1.title', 'Bước 1: Trích xuất nội dung')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Content Source */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">{t('dashboard.create.socialContent.step1.contentSource')}</Label>
+            <Label className="text-base font-medium">{dbT('social.step1.contentSource', 'Nguồn nội dung')}</Label>
             <Select
               value={data.contentSource}
               onValueChange={(value: 'manual' | 'existing-article') => 
