@@ -138,6 +138,18 @@ export function useDbTranslations(): UseDbTranslationsResult {
       'dashboard.create.socialContent.createAndExtract': {
         vi: 'Tạo bài viết & Trích xuất',
         en: 'Create Article & Extract'
+      },
+      'dashboard.create.socialContent.noSeoArticles': {
+        vi: 'Chưa có bài viết SEO nào',
+        en: 'No SEO articles yet'
+      },
+      'dashboard.create.socialContent.createSeoFirst': {
+        vi: 'Hãy tạo bài viết SEO trước trong mục "Tạo nội dung"',
+        en: 'Please create SEO articles first in the "Create Content" section'
+      },
+      'common.loading': {
+        vi: 'Đang tải...',
+        en: 'Loading...'
       }
     };
 

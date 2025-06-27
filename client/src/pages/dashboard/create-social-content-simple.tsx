@@ -1062,10 +1062,10 @@ export default function CreateSocialContent() {
                     <div className="text-center py-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
                       <FileText className="w-12 h-12 mx-auto mb-4 text-gray-400" />
                       <p className="text-gray-600 dark:text-gray-400 mb-2">
-                        Chưa có bài viết SEO nào
+                        {t('dashboard.create.socialContent.noSeoArticles', 'Chưa có bài viết SEO nào')}
                       </p>
                       <p className="text-sm text-gray-500">
-                        Hãy tạo bài viết SEO trước trong mục "Tạo nội dung"
+                        {t('dashboard.create.socialContent.createSeoFirst', 'Hãy tạo bài viết SEO trước trong mục "Tạo nội dung"')}
                       </p>
                     </div>
                   )}
@@ -1391,11 +1391,11 @@ export default function CreateSocialContent() {
                     {/* Library Selection */}
                     {imageSource === 'library' && (
                       <div className="space-y-3">
-                        <Label>Chọn ảnh từ thư viện</Label>
+                        <Label>{t('dashboard.create.socialContent.selectFromLibrary', 'Chọn ảnh từ thư viện')}</Label>
                         {imagesLoading ? (
                           <div className="text-center py-4">
                             <Loader2 className="w-6 h-6 animate-spin mx-auto" />
-                            <p className="text-sm text-muted-foreground mt-2">Đang tải...</p>
+                            <p className="text-sm text-muted-foreground mt-2">{t('common.loading', 'Đang tải...')}</p>
                           </div>
                         ) : (
                           <div className="grid grid-cols-3 gap-4 max-h-60 overflow-y-auto">
