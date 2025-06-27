@@ -271,7 +271,7 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-600" />
-              <span>{t('common.extractedContent')}</span>
+              <span>{dbT('social.step1.extractedContent', 'Nội dung đã trích xuất')}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
