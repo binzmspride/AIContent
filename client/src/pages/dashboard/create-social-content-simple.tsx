@@ -1076,18 +1076,18 @@ export default function CreateSocialContent() {
               {formData.contentSource === 'create-new-seo' && (
                 <div className="space-y-4">
                   <div className="space-y-3">
-                    <Label>Chủ đề chính *</Label>
+                    <Label>{t('dashboard.create.socialContent.mainTopicRequired', 'Chủ đề chính *')}</Label>
                     <Input
-                      placeholder="Ví dụ: Cây cảnh xanh trong nhà"
+                      placeholder={t('dashboard.create.socialContent.topicPlaceholder', 'Ví dụ: Cây cảnh xanh trong nhà')}
                       value={formData.seoTopic || ''}
                       onChange={(e) => setFormData({ ...formData, seoTopic: e.target.value })}
                     />
                   </div>
                   
                   <div className="space-y-3">
-                    <Label>Từ khóa *</Label>
+                    <Label>{t('dashboard.create.socialContent.keywordsRequired', 'Từ khóa *')}</Label>
                     <Input
-                      placeholder="Ví dụ: cây cảnh xanh, chăm sóc cây, không gian xanh"
+                      placeholder={t('dashboard.create.socialContent.keywordsPlaceholder', 'Ví dụ: cây cảnh xanh, chăm sóc cây, không gian xanh')}
                       value={formData.seoKeywords || ''}
                       onChange={(e) => setFormData({ ...formData, seoKeywords: e.target.value })}
                     />
@@ -1211,7 +1211,7 @@ export default function CreateSocialContent() {
                   ) : (
                     <>
                       <FileText className="w-4 h-4 mr-2" />
-                      {formData.contentSource === 'create-new-seo' ? 'Tạo bài viết & Trích xuất' : t('dashboard.create.socialContent.extractAndContinue', 'Trích xuất & Tiếp tục')}
+                      {formData.contentSource === 'create-new-seo' ? t('dashboard.create.socialContent.createArticleAndExtract', 'Tạo bài viết & Trích xuất') : t('dashboard.create.socialContent.extractAndContinue', 'Trích xuất & Tiếp tục')}
                     </>
                   )}
                 </Button>
