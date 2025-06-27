@@ -38,6 +38,7 @@ export default function CreateSocialContent() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t } = useDbTranslations();
   
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
@@ -984,7 +985,7 @@ export default function CreateSocialContent() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <FileText className="w-5 h-5" />
-                <span>Bước 1: Trích xuất nội dung</span>
+                <span>{t('social.step1.title', 'Bước 1: Trích xuất nội dung')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
