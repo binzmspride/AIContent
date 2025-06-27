@@ -920,7 +920,8 @@ export default function CreateContent() {
                             </div>
                           </div>
                           
-                          <div className="pt-4 border-t mt-4">
+                          {/* Content Type section - Hidden as requested by user */}
+                          {/* <div className="pt-4 border-t mt-4">
                             <FormField
                               control={form.control}
                               name="contentType"
@@ -947,7 +948,7 @@ export default function CreateContent() {
                                 </FormItem>
                               )}
                             />
-                          </div>
+                          </div> */}
                         </div>
                       </TabsContent>
                       
