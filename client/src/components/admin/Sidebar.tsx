@@ -1,6 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { 
   BarChart2, 
   Users, 
@@ -14,7 +13,7 @@ import {
 } from "lucide-react";
 
 export default function AdminSidebar() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const [location] = useLocation();
   
   const isActive = (path: string) => {

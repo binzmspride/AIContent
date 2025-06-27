@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,7 +27,7 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPasswordPage() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const [location, navigate] = useLocation();
   const [status, setStatus] = useState<string>("idle");
   

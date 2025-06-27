@@ -1,5 +1,4 @@
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import {
   Accordion,
   AccordionContent,
@@ -9,7 +8,7 @@ import {
 import { HelpCircle } from "lucide-react";
 
 export function Faq() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   
   // Define static faq items based on the locale files' structure
   const faqItems = [

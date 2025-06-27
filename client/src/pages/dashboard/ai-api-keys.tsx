@@ -48,7 +48,7 @@ const AI_PROVIDERS = [
 ];
 
 export default function AIApiKeysPage() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuth();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { DashboardLayout } from "@/components/dashboard/Layout";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -84,7 +83,7 @@ const wordpressSchema = z.object({
 });
 
 export default function Connections() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [connectionToDelete, setConnectionToDelete] = useState<Connection | null>(null);

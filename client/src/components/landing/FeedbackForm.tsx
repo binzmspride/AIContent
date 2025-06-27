@@ -5,8 +5,7 @@ import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,7 +30,7 @@ const feedbackSchema = z.object({
 type FeedbackFormValues = z.infer<typeof feedbackSchema>;
 
 export function FeedbackForm() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuth();
 

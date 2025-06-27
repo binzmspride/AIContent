@@ -3,15 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { ArrowLeft, Calendar, Tag } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import Head from "@/components/head";
 import { Article as ArticleType } from "@shared/schema";
 
 const Article = () => {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const [_, navigate] = useLocation();
   const params = useParams<{ id: string }>();
   const articleId = params && params.id ? parseInt(params.id) : null;

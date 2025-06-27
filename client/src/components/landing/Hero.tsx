@@ -1,5 +1,4 @@
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { 
@@ -16,7 +15,7 @@ import {
 } from "lucide-react";
 
 export function Hero() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 pt-8 pb-16 lg:pt-16 lg:pb-24">

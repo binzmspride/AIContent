@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import Head from "@/components/head";
 
 export default function VerifyEmailPage() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const { user } = useAuth();
   const [location, navigate] = useLocation();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");

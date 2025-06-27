@@ -24,7 +24,7 @@ const TIME_RANGES = {
 };
 
 export default function PerformanceInsights() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState(CHART_TYPES.TRAFFIC);
   const [timeRange, setTimeRange] = useState<TimeRange>('week');
   

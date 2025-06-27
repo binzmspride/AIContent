@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { DashboardLayout } from "@/components/dashboard/Layout";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -84,8 +83,7 @@ const preferencesSchema = z.object({
 });
 
 export default function Settings() {
-  const { t } = useDbTranslations();
-  const { language, setLanguage } = useLanguageContext();
+  const { t, language, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
   const { user } = useAuth();
   const { toast } = useToast();

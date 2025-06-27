@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { DashboardLayout } from "@/components/dashboard/Layout";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -122,7 +121,7 @@ type OutlineItem = {
 };
 
 export default function CreateContent() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const { user } = useAuth();
   const { toast } = useToast();
   const [generatedContent, setGeneratedContent] = useState<GenerateContentResponse | null>(null);

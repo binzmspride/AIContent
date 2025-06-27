@@ -1,10 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, BarChart3, Cpu, HardDrive } from "lucide-react";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function PerformanceMiniDashboard() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   
   // Use static data instead of fetching to avoid ResizeObserver errors
   const performance = {

@@ -1,6 +1,6 @@
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
-import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguage } from "@/hooks/use-language";
 import { useMobile } from "@/hooks/use-mobile";
 import { FloatingThemeOrb } from "@/components/common/FloatingThemeOrb";
 
@@ -10,7 +10,7 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, title }: DashboardLayoutProps) {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const isMobile = useMobile();
 
   return (

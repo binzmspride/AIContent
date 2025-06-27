@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/dashboard/Layout";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -50,7 +49,7 @@ import { Article } from "@shared/schema";
 import Head from "@/components/head";
 
 export default function MyArticles() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const [articleToDelete, setArticleToDelete] = useState<number | null>(null);

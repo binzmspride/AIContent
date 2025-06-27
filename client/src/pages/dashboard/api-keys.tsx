@@ -65,7 +65,7 @@ function formatDate(date: string | null) {
 }
 
 export default function ApiKeysPage() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuth();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);

@@ -2,8 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Mascot } from "./mascot";
 import { cn } from "@/lib/utils";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 
 export interface ResultStateProps {
   status: "success" | "error" | "empty" | "partial";
@@ -24,7 +23,7 @@ export function ResultState({
   mascotSize = "md",
   actionButton
 }: ResultStateProps) {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   
   const getDefaultTitle = () => {
     switch (status) {

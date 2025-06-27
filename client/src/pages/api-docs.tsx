@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 
 export default function ApiDocsPage() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
 
   return (
     <div className="container py-12">

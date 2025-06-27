@@ -1,5 +1,4 @@
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { 
   Bot, 
   Search, 
@@ -105,8 +104,7 @@ function FeatureCard({ title, description, icon: Icon, iconColor, bgColor, index
 }
 
 export function Features() {
-  const { t } = useDbTranslations();
-  const { language } = useLanguageContext();
+  const { t, language } = useLanguage();
   
   // Debug log to check language value
   console.log("Current language in Features:", language);

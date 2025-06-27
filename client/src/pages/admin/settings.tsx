@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/admin/Layout";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -185,7 +184,7 @@ type TrialPlanSettingsValues = z.infer<typeof trialPlanSettingsSchema>;
 type FirebaseSettingsValues = z.infer<typeof firebaseSettingsSchema>;
 
 export default function AdminSettings() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("general");
 

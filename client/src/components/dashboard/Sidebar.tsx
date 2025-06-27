@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
 import { useTheme } from "@/providers/ThemeProvider";
 import { useQuery } from "@tanstack/react-query";
@@ -68,8 +67,7 @@ const getIconComponent = (iconName: string | null) => {
 };
 
 export function Sidebar() {
-  const { t } = useDbTranslations();
-  const { language } = useLanguageContext();
+  const { t, language } = useLanguage();
   const { user, logoutMutation } = useAuth();
   const [aiKeysExpanded, setAiKeysExpanded] = useState(false);
   const [location] = useLocation();
