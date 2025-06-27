@@ -180,20 +180,63 @@ export default function AdminTranslations() {
   };
 
   const getCategoryBadge = (category: string) => {
+    const categoryLabels: { [key: string]: string } = {
+      common: 'Chung',
+      nav: 'Điều hướng',
+      landing: 'Trang chủ',
+      dashboard: 'Dashboard',
+      admin: 'Admin',
+      auth: 'Đăng nhập',
+      forms: 'Form',
+      social: 'Mạng xã hội',
+      articles: 'Bài viết',
+      credits: 'Tín dụng',
+      plans: 'Gói dịch vụ',
+      connections: 'Kết nối',
+      sidebar: 'Thanh bên',
+      'image-library': 'Thư viện ảnh',
+      'scheduled-posts': 'Lên lịch',
+      translations: 'Bản dịch',
+    };
+    
     const variants: { [key: string]: 'default' | 'secondary' | 'destructive' | 'outline' } = {
       common: 'default',
       nav: 'secondary',
       landing: 'outline',
       dashboard: 'destructive',
       admin: 'secondary',
+      social: 'default',
+      articles: 'outline',
+      credits: 'secondary',
+      plans: 'destructive',
     };
-    return <Badge variant={variants[category] || 'outline'}>{category}</Badge>;
+    
+    return <Badge variant={variants[category] || 'outline'}>
+      {categoryLabels[category] || category}
+    </Badge>;
   };
 
   const translations = translationsData?.data?.translations || [];
   const pagination = translationsData?.data?.pagination || {};
 
-  const categories = ['common', 'nav', 'landing', 'dashboard', 'admin', 'auth', 'forms'];
+  const categories = [
+    'common', 
+    'nav', 
+    'landing', 
+    'dashboard', 
+    'admin', 
+    'auth', 
+    'forms',
+    'social',
+    'articles',
+    'credits',
+    'plans',
+    'connections',
+    'sidebar',
+    'image-library',
+    'scheduled-posts',
+    'translations'
+  ];
 
   return (
     <>
@@ -350,17 +393,28 @@ export default function AdminTranslations() {
             </div>
             
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-[180px] bg-gray-700 border-gray-600 text-white">
+              <SelectTrigger className="w-[200px] bg-gray-700 border-gray-600 text-white">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Lọc theo danh mục" />
+                <SelectValue placeholder="Lọc theo trang" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tất cả danh mục</SelectItem>
-                {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
-                  </SelectItem>
-                ))}
+                <SelectItem value="all">Tất cả trang</SelectItem>
+                <SelectItem value="common">Chung</SelectItem>
+                <SelectItem value="nav">Điều hướng</SelectItem>
+                <SelectItem value="landing">Trang chủ</SelectItem>
+                <SelectItem value="dashboard">Dashboard</SelectItem>
+                <SelectItem value="admin">Admin Panel</SelectItem>
+                <SelectItem value="auth">Đăng nhập/Đăng ký</SelectItem>
+                <SelectItem value="forms">Form</SelectItem>
+                <SelectItem value="social">Nội dung mạng xã hội</SelectItem>
+                <SelectItem value="articles">Bài viết</SelectItem>
+                <SelectItem value="credits">Tín dụng</SelectItem>
+                <SelectItem value="plans">Gói dịch vụ</SelectItem>
+                <SelectItem value="connections">Kết nối</SelectItem>
+                <SelectItem value="sidebar">Thanh bên</SelectItem>
+                <SelectItem value="image-library">Thư viện hình ảnh</SelectItem>
+                <SelectItem value="scheduled-posts">Bài viết lên lịch</SelectItem>
+                <SelectItem value="translations">Quản lý bản dịch</SelectItem>
               </SelectContent>
             </Select>
           </div>
