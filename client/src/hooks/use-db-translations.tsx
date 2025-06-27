@@ -118,6 +118,26 @@ export function useDbTranslations(): UseDbTranslationsResult {
       'dashboard.create.socialContent.searchArticlePlaceholder': {
         vi: 'Tìm kiếm bài viết...',
         en: 'Search articles...'
+      },
+      'dashboard.create.socialContent.mainTopicRequired': {
+        vi: 'Chủ đề chính *',
+        en: 'Main Topic *'
+      },
+      'dashboard.create.socialContent.topicPlaceholder': {
+        vi: 'Ví dụ: Cây cảnh xanh trong nhà',
+        en: 'Example: Indoor green plants'
+      },
+      'dashboard.create.socialContent.keywordsRequired': {
+        vi: 'Từ khóa *',
+        en: 'Keywords *'
+      },
+      'dashboard.create.socialContent.keywordsPlaceholder': {
+        vi: 'Ví dụ: cây cảnh xanh, chăm sóc cây, không gian xanh',
+        en: 'Example: green plants, plant care, green space'
+      },
+      'dashboard.create.socialContent.createAndExtract': {
+        vi: 'Tạo bài viết & Trích xuất',
+        en: 'Create Article & Extract'
       }
     };
 
