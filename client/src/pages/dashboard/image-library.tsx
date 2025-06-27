@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Image, Loader2, Search, Download, Eye, Trash2, Calendar, Filter, Facebook, Instagram, Twitter } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useDbTranslations } from '@/hooks/use-db-translations';
 import confetti from 'canvas-confetti';
 
 interface GeneratedImage {
@@ -31,6 +32,7 @@ export default function ImageLibraryPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t } = useDbTranslations();
   
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -138,14 +140,14 @@ export default function ImageLibraryPage() {
       <div className="flex-1 overflow-auto p-4 md:p-6">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold">Thư viện hình ảnh AI</h1>
+            <h1 className="text-3xl font-bold">{t('dashboard.imageLibrary.title', 'Thư viện hình ảnh AI')}</h1>
             <p className="text-muted-foreground">
-              Quản lý và xem lại tất cả hình ảnh đã tạo bằng AI
+              {t('dashboard.imageLibrary.description', 'Quản lý và xem lại tất cả hình ảnh đã tạo bằng AI')}
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline">
-              {filteredImages.length} hình ảnh
+              {filteredImages.length} {t('dashboard.imageLibrary.imageCount', 'hình ảnh')}
             </Badge>
           </div>
         </div>
@@ -155,7 +157,7 @@ export default function ImageLibraryPage() {
           <CardContent className="pt-6">
             <div className="flex gap-4">
               <div className="flex-1">
-                <Label htmlFor="search">Tìm kiếm</Label>
+                <Label htmlFor="search">{t('common.search', 'Tìm kiếm')}</Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -168,7 +170,7 @@ export default function ImageLibraryPage() {
                 </div>
               </div>
               <div className="w-48">
-                <Label htmlFor="status">Trạng thái</Label>
+                <Label htmlFor="status">{t('common.status', 'Trạng thái')}</Label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger>
                     <SelectValue />
@@ -258,11 +260,11 @@ export default function ImageLibraryPage() {
           <Card>
             <CardContent className="text-center py-12">
               <Image className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">Chưa có hình ảnh nào</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('dashboard.imageLibrary.noImages', 'Chưa có hình ảnh nào')}</h3>
               <p className="text-muted-foreground mb-4">
                 {searchTerm || statusFilter !== 'all' 
-                  ? 'Không tìm thấy hình ảnh nào phù hợp với bộ lọc.'
-                  : 'Bạn chưa tạo hình ảnh nào. Hãy bắt đầu tạo hình ảnh đầu tiên!'
+                  ? t('dashboard.imageLibrary.noImagesFiltered', 'Không tìm thấy hình ảnh nào phù hợp với bộ lọc.')
+                  : t('dashboard.imageLibrary.noImagesYet', 'Bạn chưa tạo hình ảnh nào. Hãy bắt đầu tạo hình ảnh đầu tiên!')
                 }
               </p>
             </CardContent>

@@ -170,6 +170,38 @@ export function useDbTranslations(): UseDbTranslationsResult {
       'common.error': {
         vi: 'Lỗi',
         en: 'Error'
+      },
+      'dashboard.imageLibrary.title': {
+        vi: 'Thư viện hình ảnh AI',
+        en: 'AI Image Library'
+      },
+      'dashboard.imageLibrary.description': {
+        vi: 'Quản lý và xem lại tất cả hình ảnh đã tạo bằng AI',
+        en: 'Manage and review all AI-generated images'
+      },
+      'dashboard.imageLibrary.imageCount': {
+        vi: 'hình ảnh',
+        en: 'images'
+      },
+      'common.search': {
+        vi: 'Tìm kiếm',
+        en: 'Search'
+      },
+      'common.status': {
+        vi: 'Trạng thái',
+        en: 'Status'
+      },
+      'dashboard.imageLibrary.noImages': {
+        vi: 'Chưa có hình ảnh nào',
+        en: 'No images yet'
+      },
+      'dashboard.imageLibrary.noImagesFiltered': {
+        vi: 'Không tìm thấy hình ảnh nào phù hợp với bộ lọc.',
+        en: 'No images found matching the filter criteria.'
+      },
+      'dashboard.imageLibrary.noImagesYet': {
+        vi: 'Bạn chưa tạo hình ảnh nào. Hãy bắt đầu tạo hình ảnh đầu tiên!',
+        en: 'You haven\'t created any images yet. Start creating your first image!'
       }
     };
 
