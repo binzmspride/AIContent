@@ -116,6 +116,16 @@ async function addSocialContentSimpleTranslations() {
         key: 'dashboard.create.socialContent.searchArticlePlaceholder',
         vi: 'Tìm kiếm bài viết theo tiêu đề hoặc từ khóa...',
         en: 'Search articles by title or keywords...'
+      },
+      {
+        key: 'dashboard.create.socialContent.noSeoArticles',
+        vi: 'Chưa có bài viết SEO nào',
+        en: 'No SEO articles yet'
+      },
+      {
+        key: 'dashboard.create.socialContent.createSeoFirst',
+        vi: 'Hãy tạo bài viết SEO trước trong mục "Tạo nội dung"',
+        en: 'Please create SEO articles first in "Create Content" section'
       }
     ];
 
