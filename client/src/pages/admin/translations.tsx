@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguage } from "@/hooks/use-language";
 import { useToast } from "@/hooks/use-toast";
 import { AdminLayout } from "@/components/admin/Layout";
 import { Button } from "@/components/ui/button";
@@ -74,7 +74,7 @@ interface Translation {
 }
 
 export default function AdminTranslations() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [page, setPage] = useState(1);
   const [categoryFilter, setCategoryFilter] = useState("all");

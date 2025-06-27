@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -66,7 +66,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function AuthPage() {
-  const { t } = useDbTranslations();
+  const { t } = useLanguage();
   const { user, loginMutation, registerMutation } = useAuth();
   const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState<string>("login");

@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/use-auth';
-import { useLanguageContext } from '@/providers/LanguageProvider';
+import { useLanguage } from '@/hooks/use-language';
 import { useEffect, useMemo } from 'react';
 
 interface Translation {
@@ -18,7 +18,8 @@ interface UseDbTranslationsResult {
 
 export function useDbTranslations(): UseDbTranslationsResult {
   const { user } = useAuth();
-  const { language } = useLanguageContext();
+  const { language: currentLanguage } = useLanguage();
+  const language = currentLanguage;
   const queryClient = useQueryClient();
 
   // Invalidate translations cache when language changes
@@ -36,7 +37,7 @@ export function useDbTranslations(): UseDbTranslationsResult {
       return translationData;
     },
     staleTime: 0, // No caching - always fresh data
-    gcTime: 0, // Don't keep in cache (cacheTime is now gcTime in v5)
+    cacheTime: 0, // Don't keep in cache
     enabled: !!user, // Only fetch when user is loaded
     retry: false,
   });

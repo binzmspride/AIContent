@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useDbTranslations } from "@/hooks/use-db-translations";
-import { useLanguageContext } from "@/providers/LanguageProvider";
+import { useLanguage } from "@/hooks/use-language";
 import { useAuth } from "@/hooks/use-auth";
 import { useTheme } from "@/providers/ThemeProvider";
 import { Input } from "@/components/ui/input";
@@ -24,8 +23,7 @@ import { Sidebar } from "./Sidebar";
 import { AdaptiveThemeSwitcher } from "@/components/common/AdaptiveThemeSwitcher";
 
 export function Header() {
-  const { t } = useDbTranslations();
-  const { language, setLanguage } = useLanguageContext();
+  const { t, language, setLanguage } = useLanguage();
   const { user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);

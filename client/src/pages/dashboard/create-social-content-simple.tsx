@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { useDbTranslations } from '@/hooks/use-db-translations';
 import { DashboardLayout } from '@/components/dashboard/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -38,7 +37,6 @@ export default function CreateSocialContent() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { t } = useDbTranslations();
   
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
@@ -985,7 +983,7 @@ export default function CreateSocialContent() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <FileText className="w-5 h-5" />
-                <span>{t('social.step1.title', 'Bước 1: Trích xuất nội dung')}</span>
+                <span>Bước 1: Trích xuất nội dung</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
