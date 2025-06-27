@@ -518,8 +518,8 @@ export default function CreateSocialContent() {
       
       setCurrentStep(4);
       toast({
-        title: "Hoàn thành",
-        description: "Nội dung và hình ảnh đã được lưu thành công"
+        title: t('common.completed', 'Hoàn thành'),
+        description: t('dashboard.create.socialContent.saveSuccess', 'Nội dung và hình ảnh đã được lưu thành công')
       });
     },
     onError: (error: any) => {
@@ -608,8 +608,8 @@ export default function CreateSocialContent() {
     // Check if we have extracted content (for simple flow)
     if (!extractedContent) {
       toast({
-        title: "Lỗi",
-        description: "Không có nội dung để đăng",
+        title: t('common.error', 'Lỗi'),
+        description: t('dashboard.create.socialContent.noContentToPost', 'Không có nội dung để đăng'),
         variant: "destructive"
       });
       return;

@@ -150,6 +150,26 @@ export function useDbTranslations(): UseDbTranslationsResult {
       'common.loading': {
         vi: 'Đang tải...',
         en: 'Loading...'
+      },
+      'dashboard.create.socialContent.selectFromLibrary': {
+        vi: 'Chọn ảnh từ thư viện',
+        en: 'Select from library'
+      },
+      'dashboard.create.socialContent.saveSuccess': {
+        vi: 'Nội dung và hình ảnh đã được lưu thành công',
+        en: 'Content and images saved successfully'
+      },
+      'common.completed': {
+        vi: 'Hoàn thành',
+        en: 'Completed'
+      },
+      'dashboard.create.socialContent.noContentToPost': {
+        vi: 'Không có nội dung để đăng',
+        en: 'No content to post'
+      },
+      'common.error': {
+        vi: 'Lỗi',
+        en: 'Error'
       }
     };
 
