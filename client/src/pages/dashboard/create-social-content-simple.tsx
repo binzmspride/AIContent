@@ -1096,9 +1096,9 @@ export default function CreateSocialContent() {
               {/* Manual Content */}
               {formData.contentSource === 'manual' && (
                 <div className="space-y-3">
-                  <Label>Mô tả nội dung *</Label>
+                  <Label>{t('dashboard.create.socialContent.briefDescriptionRequired', 'Mô tả nội dung *')}</Label>
                   <Textarea
-                    placeholder="Nhập mô tả ngắn gọn về nội dung bạn muốn tạo..."
+                    placeholder={t('dashboard.create.socialContent.briefDescriptionPlaceholder', 'Nhập mô tả ngắn gọn về nội dung bạn muốn tạo...')}
                     value={formData.briefDescription}
                     onChange={(e) => setFormData({ ...formData, briefDescription: e.target.value })}
                     rows={4}
@@ -1108,10 +1108,10 @@ export default function CreateSocialContent() {
 
               {/* Reference Link */}
               <div className="space-y-3">
-                <Label>URL tham khảo (tùy chọn)</Label>
+                <Label>{t('dashboard.create.socialContent.referenceUrlOptional', 'URL tham khảo (tùy chọn)')}</Label>
                 <Input
                   type="url"
-                  placeholder="https://example.com/article"
+                  placeholder={t('dashboard.create.socialContent.urlPlaceholder', 'https://example.com/article')}
                   value={formData.referenceLink || ''}
                   onChange={(e) => setFormData({ ...formData, referenceLink: e.target.value })}
                 />
@@ -1121,7 +1121,7 @@ export default function CreateSocialContent() {
 
               {/* Platform Selection */}
               <div className="space-y-4">
-                <Label className="text-base font-semibold">Nền tảng mục tiêu *</Label>
+                <Label className="text-base font-semibold">{t('dashboard.create.socialContent.targetPlatformsRequired', 'Nền tảng mục tiêu *')}</Label>
                 <div className="grid grid-cols-2 gap-4">
                   {platformOptions.map((platform) => {
                     const isSelected = formData.platforms.includes(platform.value);
