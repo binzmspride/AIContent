@@ -19,19 +19,18 @@ export function useDbTranslations(): UseDbTranslationsResult {
   const language = user?.language || 'vi';
 
   const { data: translations = [], isLoading } = useQuery({
-    queryKey: ['/api/admin/translations'],
+    queryKey: ['/api/admin/translations', { limit: 1000 }], // Get all translations
     select: (response: any) => {
       const translationData = response?.data?.translations || [];
-      console.log('DB Translations loaded:', translationData.length, 'items');
       return translationData;
     },
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-    retry: false, // Don't retry if user doesn't have admin access
+    enabled: !!user, // Only fetch when user is loaded
+    retry: false,
   });
 
   const t = (key: string, fallback?: string): string => {
     if (!translations || translations.length === 0) {
-      // If no translations loaded, return fallback
       return fallback || key;
     }
 
@@ -42,7 +41,6 @@ export function useDbTranslations(): UseDbTranslationsResult {
       return result;
     }
     
-    // Return fallback if translation not found
     return fallback || key;
   };
 
