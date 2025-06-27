@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Loader2, FileText, Link, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useLanguage } from '@/hooks/use-language';
 import { useDbTranslations } from '@/hooks/use-db-translations';
 
 interface WizardData {
@@ -40,8 +39,7 @@ const platformOptions = [
 
 export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExtractionStepProps) {
   const { toast } = useToast();
-  const { t } = useLanguage();
-  const { t: dbT } = useDbTranslations();
+  const { t } = useDbTranslations();
   const [isExtracting, setIsExtracting] = useState(false);
 
   // Fetch existing articles
@@ -130,13 +128,13 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <FileText className="w-5 h-5" />
-            <span>{dbT('social.step1.title', 'Bước 1: Trích xuất nội dung')}</span>
+            <span>{t('social.step1.title', 'Bước 1: Trích xuất nội dung')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Content Source */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">{dbT('social.step1.contentSource', 'Nguồn nội dung')}</Label>
+            <Label className="text-base font-medium">{t('social.step1.contentSource', 'Nguồn nội dung')}</Label>
             <Select
               value={data.contentSource}
               onValueChange={(value: 'manual' | 'existing-article') => 
@@ -147,8 +145,8 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="existing-article">{dbT('social.step1.fromArticle', 'Từ bài viết có sẵn')}</SelectItem>
-                <SelectItem value="manual">{dbT('social.step1.manual', 'Nhập thủ công')}</SelectItem>
+                <SelectItem value="existing-article">{t('social.step1.fromArticle', 'Từ bài viết có sẵn')}</SelectItem>
+                <SelectItem value="manual">{t('social.step1.manual', 'Nhập thủ công')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -156,7 +154,7 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
           {/* Article Selection */}
           {data.contentSource === 'existing-article' && (
             <div className="space-y-3">
-              <Label className="text-base font-medium">{dbT('social.step1.selectArticle', 'Chọn bài viết')}</Label>
+              <Label className="text-base font-medium">{t('social.step1.selectArticle', 'Chọn bài viết')}</Label>
               <Select
                 value={data.selectedArticleId?.toString() || ''}
                 onValueChange={(value) => 
@@ -164,7 +162,7 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={dbT('social.step1.selectArticlePlaceholder', 'Chọn bài viết để trích xuất nội dung')} />
+                  <SelectValue placeholder={t('social.step1.selectArticlePlaceholder', 'Chọn bài viết để trích xuất nội dung')} />
                 </SelectTrigger>
                 <SelectContent>
                   {articlesData?.map((article: any) => (
@@ -181,11 +179,11 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
           <div className="space-y-3">
             <Label className="text-base font-medium">
               <Link className="w-4 h-4 inline mr-2" />
-              {dbT('social.step1.referenceLink', 'Liên kết tham khảo')}
+              {t('social.step1.referenceLink', 'Liên kết tham khảo')}
             </Label>
             <Input
               type="url"
-              placeholder={dbT('social.step1.referencePlaceholder', 'https://example.com/bai-viet-tham-khao')}
+              placeholder={t('social.step1.referencePlaceholder', 'https://example.com/bai-viet-tham-khao')}
               value={data.referenceLink || ''}
               onChange={(e) => onDataChange({ referenceLink: e.target.value })}
             />
@@ -193,9 +191,9 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
 
           {/* Brief Description */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">{dbT('social.step1.description', 'Mô tả ngắn gọn')}</Label>
+            <Label className="text-base font-medium">{t('social.step1.description', 'Mô tả ngắn gọn')}</Label>
             <Textarea
-              placeholder={dbT('social.step1.descriptionPlaceholder', 'Mô tả ngắn gọn về nội dung muốn tạo...')}
+              placeholder={t('social.step1.descriptionPlaceholder', 'Mô tả ngắn gọn về nội dung muốn tạo...')}
               value={data.briefDescription}
               onChange={(e) => onDataChange({ briefDescription: e.target.value })}
               rows={4}
@@ -204,7 +202,7 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
 
           {/* Platform Selection */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">{dbT('social.step1.platforms', 'Chọn nền tảng')}</Label>
+            <Label className="text-base font-medium">{t('social.step1.platforms', 'Chọn nền tảng')}</Label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {platformOptions.map((platform) => (
                 <div
@@ -252,12 +250,12 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
               {(isExtracting || extractContentMutation.isPending) ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {dbT('social.step1.extracting', 'Đang trích xuất...')}
+                  {t('social.step1.extracting', 'Đang trích xuất...')}
                 </>
               ) : (
                 <>
                   <FileText className="w-4 h-4 mr-2" />
-                  {dbT('social.step1.extractAndContinue', 'Trích xuất & Tiếp tục')}
+                  {t('social.step1.extractAndContinue', 'Trích xuất & Tiếp tục')}
                 </>
               )}
             </Button>
@@ -271,7 +269,7 @@ export function ContentExtractionStep({ data, onDataChange, onNext }: ContentExt
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-green-600" />
-              <span>{dbT('social.step1.extractedContent', 'Nội dung đã trích xuất')}</span>
+              <span>{t('social.step1.extractedContent', 'Nội dung đã trích xuất')}</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
