@@ -12,16 +12,16 @@ async function addSocialWizardTranslations() {
 
     const translations = [
       // Navigation translations
-      { key: 'social.nav.cancel', vi: 'Hủy', en: 'Cancel', page: 'social' },
-      { key: 'social.nav.back', vi: 'Quay lại', en: 'Back', page: 'social' },
-      { key: 'social.nav.next', vi: 'Tiếp theo', en: 'Next', page: 'social' },
-      { key: 'social.nav.step', vi: 'Bước', en: 'Step', page: 'social' },
+      { key: 'social.nav.cancel', vi: 'Hủy', en: 'Cancel' },
+      { key: 'social.nav.back', vi: 'Quay lại', en: 'Back' },
+      { key: 'social.nav.next', vi: 'Tiếp theo', en: 'Next' },
+      { key: 'social.nav.step', vi: 'Bước', en: 'Step' },
       
       // Action translations
-      { key: 'social.action.preview', vi: 'Xem trước', en: 'Preview', page: 'social' },
-      { key: 'social.action.previewDesc', vi: 'Preview giao diện social media', en: 'Preview social media interface', page: 'social' },
-      { key: 'social.action.publish', vi: 'Lưu & Đăng', en: 'Save & Publish', page: 'social' },
-      { key: 'social.action.publishDesc', vi: 'Hoàn tất và xuất bản', en: 'Complete and publish', page: 'social' },
+      { key: 'social.action.preview', vi: 'Xem trước', en: 'Preview' },
+      { key: 'social.action.previewDesc', vi: 'Preview giao diện social media', en: 'Preview social media interface' },
+      { key: 'social.action.publish', vi: 'Lưu & Đăng', en: 'Save & Publish' },
+      { key: 'social.action.publishDesc', vi: 'Hoàn tất và xuất bản', en: 'Complete and publish' },
     ];
 
     for (const translation of translations) {
@@ -33,8 +33,8 @@ async function addSocialWizardTranslations() {
 
       if (existing.rows.length === 0) {
         await pool.query(
-          'INSERT INTO translations (key, vi, en, page) VALUES ($1, $2, $3, $4)',
-          [translation.key, translation.vi, translation.en, translation.page]
+          'INSERT INTO translations (key, vi, en) VALUES ($1, $2, $3)',
+          [translation.key, translation.vi, translation.en]
         );
         console.log(`Added translation: ${translation.key}`);
       } else {
