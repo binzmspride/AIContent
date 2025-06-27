@@ -3,6 +3,8 @@ import React, { createContext, useState, useEffect, ReactNode } from 'react';
 export type Language = 'vi' | 'en';
 export type TranslationKey = string;
 
+const defaultLanguage: Language = 'vi';
+
 // Define translations type structure
 type TranslationData = {
   [key: string]: string | TranslationData | Array<any>;
@@ -1602,8 +1604,6 @@ const translations: TranslationsType = {
   }
 };
 
-const defaultLanguage: Language = 'vi';
-
 // Create context with default values
 const LanguageContext = createContext<LanguageContextType>({
   language: defaultLanguage,
@@ -1618,6 +1618,7 @@ export { LanguageContext };
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState<Language>(() => {
     const savedLanguage = localStorage.getItem('language') as Language;
+    console.log('[LanguageProvider] Initial language from localStorage:', savedLanguage);
     return savedLanguage && (savedLanguage === 'en' || savedLanguage === 'vi') 
       ? savedLanguage 
       : defaultLanguage;
@@ -1625,9 +1626,15 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
   // Effect to update language preference
   useEffect(() => {
+    console.log('[LanguageProvider] Language changed to:', language);
     localStorage.setItem('language', language);
     document.documentElement.lang = language;
   }, [language]);
+
+  const handleSetLanguage = (lang: Language) => {
+    console.log('[LanguageProvider] setLanguage called with:', lang);
+    setLanguage(lang);
+  };
 
   const t = (key: string): string => {
     try {
@@ -1657,7 +1664,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );

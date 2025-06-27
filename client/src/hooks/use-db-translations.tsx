@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/use-auth';
+import { useLanguage } from '@/hooks/use-language';
 
 interface Translation {
   key: string;
@@ -16,7 +17,8 @@ interface UseDbTranslationsResult {
 
 export function useDbTranslations(): UseDbTranslationsResult {
   const { user } = useAuth();
-  const language = user?.language || 'vi';
+  const { language: currentLanguage } = useLanguage();
+  const language = currentLanguage;
 
   const { data: translations = [], isLoading } = useQuery({
     queryKey: ['/api/admin/translations', { limit: 1000 }], // Get all translations
@@ -31,6 +33,7 @@ export function useDbTranslations(): UseDbTranslationsResult {
 
   const t = (key: string, fallback?: string): string => {
     if (!translations || translations.length === 0) {
+      console.log(`[useDbTranslations] No translations loaded, returning fallback for ${key}`);
       return fallback || key;
     }
 
@@ -38,9 +41,11 @@ export function useDbTranslations(): UseDbTranslationsResult {
     
     if (translation) {
       const result = language === 'en' ? translation.en : translation.vi;
+      console.log(`[useDbTranslations] Found translation for ${key}: ${result} (language: ${language})`);
       return result;
     }
     
+    console.log(`[useDbTranslations] No translation found for ${key}, returning fallback`);
     return fallback || key;
   };
 
