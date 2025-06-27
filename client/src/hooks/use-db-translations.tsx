@@ -37,7 +37,7 @@ export function useDbTranslations(): UseDbTranslationsResult {
       return translationData;
     },
     staleTime: 0, // No caching - always fresh data
-    cacheTime: 0, // Don't keep in cache
+    gcTime: 0, // Don't keep in cache (TanStack Query v5)
     enabled: !!user, // Only fetch when user is loaded
     retry: false,
   });
