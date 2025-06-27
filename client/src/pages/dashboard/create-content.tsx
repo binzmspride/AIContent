@@ -1649,7 +1649,7 @@ export default function CreateContent() {
                               <FormItem>
                                 <FormLabel className="font-medium">{t("dashboard.create.knowledge.refSources")}</FormLabel>
                                 <p className="text-sm text-muted-foreground">
-                                  Liệt kê các nguồn tham khảo sẽ được sử dụng để tạo nội dung (URL, tài liệu, ...)
+                                  Nguồn tham khảo sẽ được sử dụng để tạo nội dung (URL bài viết, tài liệu...)
                                 </p>
                                 <FormControl>
                                   <Input
