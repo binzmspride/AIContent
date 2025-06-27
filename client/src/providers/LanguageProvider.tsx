@@ -630,7 +630,9 @@ const translations: TranslationsType = {
           articleContent: "Nội dung bài viết",
           noContent: "Không có nội dung",
           generatedContent: "Nội dung được tạo",
-          viewFullResponse: "Xem response đầy đủ (Debug)"
+          viewFullResponse: "Xem response đầy đủ (Debug)",
+          referenceDescription: "Thêm link tham khảo để cung cấp thêm context cho AI",
+          referenceHelp: "Nhập link bài viết để AI tham khảo phong cách và nội dung"
         },
         tabs: {
           keywords: "Từ khóa",
@@ -1389,7 +1391,9 @@ const translations: TranslationsType = {
           articleContent: "Article Content",
           noContent: "No content",
           generatedContent: "Generated Content",
-          viewFullResponse: "View Full Response (Debug)"
+          viewFullResponse: "View Full Response (Debug)",
+          referenceDescription: "Add reference link to provide additional context for AI",
+          referenceHelp: "Enter article link for AI to reference style and content"
         },
         tabs: {
           keywords: "Keywords",
