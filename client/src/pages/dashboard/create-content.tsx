@@ -1649,12 +1649,12 @@ export default function CreateContent() {
                               <FormItem>
                                 <FormLabel className="font-medium">{t("dashboard.create.knowledge.refSources")}</FormLabel>
                                 <p className="text-sm text-muted-foreground">
-                                  {t("dashboard.create.knowledge.refSourcesDescription")}
+                                  Liệt kê các nguồn tham khảo sẽ được sử dụng để tạo nội dung (URL, tài liệu, ...)
                                 </p>
                                 <FormControl>
-                                  <Textarea
-                                    placeholder="https://example.com/article1&#10;https://example.com/research&#10;..."
-                                    className="h-24 resize-none"
+                                  <Input
+                                    placeholder="https://example.com/bai-viet-tham-khao"
+                                    type="url"
                                     {...field}
                                   />
                                 </FormControl>
