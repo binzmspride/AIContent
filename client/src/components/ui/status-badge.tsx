@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 
 type StatusType = 
   | "draft" 
@@ -15,7 +16,7 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   
   const getStatusConfig = (status: StatusType) => {
     switch(status) {

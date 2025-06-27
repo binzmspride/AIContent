@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -31,7 +32,8 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ children, title }: AdminLayoutProps) {
-  const { t, language, setLanguage } = useLanguage();
+  const { t } = useDbTranslations();
+  const { language, setLanguage } = useLanguageContext();
   const { user, logoutMutation } = useAuth();
   const [location] = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);

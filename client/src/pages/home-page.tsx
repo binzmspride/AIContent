@@ -1,4 +1,5 @@
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { Navbar } from "@/components/landing/Navbar";
 import { Hero } from "@/components/landing/Hero";
 import { Features } from "@/components/landing/Features";
@@ -9,7 +10,7 @@ import { Footer } from "@/components/landing/Footer";
 import Head from "@/components/head";
 
 export default function HomePage() {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
 
   return (
     <>

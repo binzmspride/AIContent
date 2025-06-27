@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { DashboardLayout } from "@/components/dashboard/Layout";
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -44,7 +45,7 @@ export interface UserPlansResponse {
 }
 
 export default function Plans() {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   const { toast } = useToast();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [isPurchaseDialogOpen, setIsPurchaseDialogOpen] = useState(false);

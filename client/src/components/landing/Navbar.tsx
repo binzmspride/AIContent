@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { useAuth } from "@/hooks/use-auth";
 import {
   Sheet,
@@ -11,7 +12,8 @@ import {
 import { Menu, Globe, ChevronDown } from "lucide-react";
 
 export function Navbar() {
-  const { t, language, setLanguage } = useLanguage();
+  const { t } = useDbTranslations();
+  const { language, setLanguage } = useLanguageContext();
   const { user } = useAuth();
   const [location] = useLocation();
   const [isOpen, setIsOpen] = useState(false);

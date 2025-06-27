@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { DashboardLayout } from "@/components/dashboard/Layout";
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { useAuth } from "@/hooks/use-auth";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
@@ -57,7 +58,7 @@ interface Article {
 }
 
 export default function Dashboard() {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   const { user } = useAuth();
   const [showMascot, setShowMascot] = useState(true);
 

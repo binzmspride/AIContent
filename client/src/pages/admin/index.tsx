@@ -1,5 +1,6 @@
 import { AdminLayout } from "@/components/admin/Layout";
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -22,7 +23,7 @@ interface AdminStats {
 }
 
 export default function AdminDashboard() {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
 
   // Fetch admin dashboard stats
   const { data: stats, isLoading: isLoadingStats } = useQuery<AdminStats>({

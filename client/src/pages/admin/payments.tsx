@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/admin/Layout";
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -95,7 +96,7 @@ interface Transaction {
 }
 
 export default function AdminPayments() {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   const { toast } = useToast();
   
   const [searchQuery, setSearchQuery] = useState("");

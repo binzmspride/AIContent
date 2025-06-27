@@ -1,4 +1,5 @@
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,7 +36,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export function Contact() {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

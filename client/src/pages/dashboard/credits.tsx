@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { DashboardLayout } from "@/components/dashboard/Layout";
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -60,7 +61,7 @@ interface CreditHistoryResponse {
 }
 
 export default function Credits() {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   const { user } = useAuth();
   const { toast } = useToast();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);

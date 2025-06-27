@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Mascot } from "@/components/ui/mascot";
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,7 +23,8 @@ export interface MascotHelperProps {
 }
 
 export function MascotHelper({ page, className, onDismiss }: MascotHelperProps) {
-  const { t, language } = useLanguage();
+  const { t } = useDbTranslations();
+  const { language } = useLanguageContext();
   const [currentTip, setCurrentTip] = useState<MascotTip | null>(null);
   const [dismissed, setDismissed] = useState(false);
   

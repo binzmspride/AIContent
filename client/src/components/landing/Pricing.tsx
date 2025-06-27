@@ -1,4 +1,5 @@
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { Button } from "@/components/ui/button";
 import { Check, CheckCircle, Zap, Server, Crown, Sparkles, Star, Shield, Database, Award, BarChart4 } from "lucide-react";
 import { useState } from "react";
@@ -17,7 +18,7 @@ type PackageInfo = {
 };
 
 export function Pricing() {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   const [activeTab, setActiveTab] = useState<'credit' | 'storage'>('credit');
 
   const creditPackages: PackageInfo[] = [

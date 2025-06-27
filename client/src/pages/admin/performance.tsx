@@ -1,12 +1,13 @@
 import { AdminLayout } from "@/components/admin/Layout";
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import Head from "@/components/head";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Info } from "lucide-react";
 
 export default function PerformancePage() {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   
   return (
     <>

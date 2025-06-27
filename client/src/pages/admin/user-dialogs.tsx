@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { User, Plan } from "@shared/schema";
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -65,7 +66,7 @@ interface AssignPlanDialogProps {
 }
 
 export function AdjustCreditsDialog({ isOpen, onOpenChange, user }: AdjustCreditsDialogProps) {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   const { toast } = useToast();
 
   const adjustCreditsForm = useForm<AdjustCreditsFormValues>({

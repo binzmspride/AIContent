@@ -1,4 +1,5 @@
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { Link } from "wouter";
 import { 
   FacebookIcon, 
@@ -9,7 +10,7 @@ import {
 } from "lucide-react";
 
 export function Footer() {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   
   const productLinks = [
     { label: t("landing.footer.links.createSeoContent"), href: "#" },

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/admin/Layout";
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -64,7 +65,7 @@ interface CreditTransaction {
 }
 
 export default function AdminHistory() {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   const [activeTab, setActiveTab] = useState<"activity" | "transactions">("activity");
   const [activityType, setActivityType] = useState<ActivityType>("all");
   const [searchQuery, setSearchQuery] = useState("");

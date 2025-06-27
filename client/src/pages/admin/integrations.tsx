@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AdminLayout } from "@/components/admin/Layout";
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -80,7 +81,7 @@ const webhookFormSchema = z.object({
 type WebhookFormValues = z.infer<typeof webhookFormSchema>;
 
 export default function AdminIntegrations() {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<WebhookType>("n8n");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);

@@ -1,4 +1,5 @@
-import { useLanguage } from "@/hooks/use-language";
+import { useDbTranslations } from "@/hooks/use-db-translations";
+import { useLanguageContext } from "@/providers/LanguageProvider";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -77,7 +78,7 @@ interface PerformanceData {
 }
 
 export default function PerformanceInsights() {
-  const { t } = useLanguage();
+  const { t } = useDbTranslations();
   const [timeRange, setTimeRange] = useState<string>("24h");
   
   // Fetch performance metrics
