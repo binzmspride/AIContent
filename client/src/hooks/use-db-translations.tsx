@@ -102,6 +102,22 @@ export function useDbTranslations(): UseDbTranslationsResult {
       'dashboard.create.socialContent.extractAndContinue': {
         vi: 'Trích xuất & Tiếp tục',
         en: 'Extract & Continue'
+      },
+      'dashboard.create.socialContent.selectSeoArticle': {
+        vi: 'Chọn bài viết SEO',
+        en: 'Select SEO Article'
+      },
+      'dashboard.create.socialContent.foundArticles': {
+        vi: 'Tìm thấy 23 bài viết SEO trong "Bài viết của tôi"',
+        en: 'Found 23 SEO articles in "My Articles"'
+      },
+      'dashboard.create.socialContent.selectSeoPlaceholder': {
+        vi: 'Chọn bài viết SEO...',
+        en: 'Select SEO article...'
+      },
+      'dashboard.create.socialContent.searchArticlePlaceholder': {
+        vi: 'Tìm kiếm bài viết...',
+        en: 'Search articles...'
       }
     };
 
