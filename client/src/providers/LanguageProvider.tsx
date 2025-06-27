@@ -3,8 +3,6 @@ import React, { createContext, useState, useEffect, ReactNode } from 'react';
 export type Language = 'vi' | 'en';
 export type TranslationKey = string;
 
-const defaultLanguage: Language = 'vi';
-
 // Define translations type structure
 type TranslationData = {
   [key: string]: string | TranslationData | Array<any>;
@@ -1606,7 +1604,7 @@ const translations: TranslationsType = {
 
 // Create context with default values
 const LanguageContext = createContext<LanguageContextType>({
-  language: defaultLanguage,
+  language: 'vi' as Language,
   setLanguage: () => {},
   t: (key: string) => key
 });
@@ -1621,7 +1619,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     console.log('[LanguageProvider] Initial language from localStorage:', savedLanguage);
     return savedLanguage && (savedLanguage === 'en' || savedLanguage === 'vi') 
       ? savedLanguage 
-      : defaultLanguage;
+      : 'vi';
   });
 
   // Effect to update language preference
