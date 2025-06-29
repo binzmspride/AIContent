@@ -499,11 +499,16 @@ const translations: TranslationsType = {
         },
         buyNow: "Mua ngay",
         guarantee: "Cam kết hoàn tiền trong 30 ngày",
-        contactUs: "Liên hệ với chúng tôi"
+        contactUs: "Liên hệ với chúng tôi",
+        badge: "Bảng giá linh hoạt",
+        mostPopular: "Phổ biến nhất",
+        viewPlans: "Xem các gói dịch vụ",
+        oneTimePayment: "Thanh toán một lần"
       },
       faq: {
         title: "Câu hỏi thường gặp",
         subtitle: "Những câu hỏi được hỏi nhiều nhất",
+        badge: "Câu hỏi thường gặp",
         questions: [
           {
             question: "SEO AI Writer giúp tạo nội dung như thế nào?",
@@ -560,6 +565,33 @@ const translations: TranslationsType = {
           privacy: "Chính sách bảo mật",
           contact: "Liên hệ"
         }
+      },
+      feedback: {
+        title: "Góp ý & Phản hồi",
+        subtitle: "Ý kiến của bạn rất quan trọng với chúng tôi. Hãy chia sẻ trải nghiệm, đề xuất cải tiến hoặc báo cáo lỗi để giúp chúng tôi phát triển tốt hơn.",
+        form: {
+          name: "Họ và tên",
+          namePlaceholder: "Nhập họ và tên của bạn",
+          subject: "Chủ đề",
+          subjectPlaceholder: "Tóm tắt nội dung bạn muốn chia sẻ",
+          message: "Nội dung",
+          messagePlaceholder: "Mô tả chi tiết ý kiến, đề xuất hoặc vấn đề bạn gặp phải...",
+          submit: "Gửi phản hồi"
+        },
+        validation: {
+          nameMin: "Tên phải có ít nhất 2 ký tự",
+          emailInvalid: "Vui lòng nhập email hợp lệ",
+          subjectMin: "Chủ đề phải có ít nhất 5 ký tự",
+          messageMin: "Tin nhắn phải có ít nhất 10 ký tự"
+        },
+        success: {
+          title: "Cảm ơn bạn!",
+          description: "Feedback của bạn đã được gửi thành công. Chúng tôi sẽ phản hồi sớm nhất có thể."
+        },
+        error: {
+          description: "Có lỗi xảy ra khi gửi feedback. Vui lòng thử lại."
+        },
+        contact: "Bạn cũng có thể liên hệ trực tiếp qua email: support@seoaiwriter.com"
       }
     },
     
@@ -1346,7 +1378,11 @@ const translations: TranslationsType = {
         },
         buyNow: "Buy Now",
         guarantee: "30-day money-back guarantee",
-        contactUs: "Contact Us"
+        contactUs: "Contact Us",
+        badge: "Flexible Pricing",
+        mostPopular: "Most Popular",
+        viewPlans: "View Plans",
+        oneTimePayment: "One-time Payment"
       },
       faq: {
         title: "Frequently Asked Questions",
