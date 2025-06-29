@@ -369,6 +369,23 @@ const translations: TranslationsType = {
       features: {
         title: "Tính năng nổi bật",
         subtitle: "Khám phá những công cụ mạnh mẽ giúp tạo nội dung SEO hiệu quả",
+        powerfulFeatures: "Tính năng mạnh mẽ",
+        benefits: "Lợi ích nổi bật",
+        aiContent: {
+          benefit1: "Tiết kiệm thời gian soạn thảo",
+          benefit2: "Tăng chất lượng nội dung",
+          benefit3: "Tự động đề xuất cải thiện"
+        },
+        seoOptimization: {
+          benefit1: "Cải thiện thứ hạng trên Google",
+          benefit2: "Phân tích đối thủ cạnh tranh",
+          benefit3: "Đề xuất từ khóa tối ưu"
+        },
+        platformIntegration: {
+          benefit1: "Xuất bản với 1 click",
+          benefit2: "Quản lý nội dung tập trung",
+          benefit3: "Phân tích hiệu suất đăng bài"
+        },
         ai: {
           title: "Nội dung AI",
           description: "Tạo nội dung SEO tự động với AI tiên tiến đội ngũ AI tiên tiến"
@@ -1198,6 +1215,23 @@ const translations: TranslationsType = {
       features: {
         title: "Key Features",
         subtitle: "Discover powerful tools to create effective SEO content",
+        powerfulFeatures: "Powerful Features",
+        benefits: "Key Benefits",
+        aiContent: {
+          benefit1: "Save writing time",
+          benefit2: "Improve content quality",
+          benefit3: "Auto improvement suggestions"
+        },
+        seoOptimization: {
+          benefit1: "Improve Google rankings",
+          benefit2: "Analyze competitors",
+          benefit3: "Optimize keyword suggestions"
+        },
+        platformIntegration: {
+          benefit1: "Publish with 1 click",
+          benefit2: "Centralized content management",
+          benefit3: "Post performance analytics"
+        },
         ai: {
           title: "AI Content",
           description: "Advanced AI system automatically analyzes and creates high-quality content with appropriate tone for every industry"

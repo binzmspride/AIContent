@@ -32,9 +32,10 @@ interface FeatureCardProps {
   iconColor: string;
   bgColor: string;
   index: number;
+  t: (key: string) => string;
 }
 
-function FeatureCard({ title, description, icon: Icon, iconColor, bgColor, index }: FeatureCardProps) {
+function FeatureCard({ title, description, icon: Icon, iconColor, bgColor, index, t }: FeatureCardProps) {
   return (
     <div className={cn(
       "rounded-xl p-8 h-full group cursor-pointer",
@@ -69,7 +70,7 @@ function FeatureCard({ title, description, icon: Icon, iconColor, bgColor, index
         </p>
         <div className="border-t border-gray-100 dark:border-gray-700 pt-4 transition-all duration-300 group-hover:border-gray-200 dark:group-hover:border-gray-600">
           <div className="flex items-start text-sm text-gray-600 dark:text-gray-300">
-            <span className="font-medium">Lợi ích nổi bật:</span>
+            <span className="font-medium">{t("landing.features.benefits")}:</span>
           </div>
           <ul className="mt-2 space-y-2">
             {[1, 2, 3].map(i => (
@@ -78,19 +79,19 @@ function FeatureCard({ title, description, icon: Icon, iconColor, bgColor, index
                 <span className="text-gray-600 dark:text-gray-300 transition-colors duration-300">
                   {
                     index === 0 ? [
-                      "Tiết kiệm thời gian soạn thảo",
-                      "Tăng chất lượng nội dung",
-                      "Tự động đề xuất cải thiện"
+                      t("landing.features.aiContent.benefit1"),
+                      t("landing.features.aiContent.benefit2"),
+                      t("landing.features.aiContent.benefit3")
                     ][i-1] :
                     index === 1 ? [
-                      "Cải thiện thứ hạng trên Google",
-                      "Phân tích đối thủ cạnh tranh",
-                      "Đề xuất từ khóa tối ưu"
+                      t("landing.features.seoOptimization.benefit1"),
+                      t("landing.features.seoOptimization.benefit2"),
+                      t("landing.features.seoOptimization.benefit3")
                     ][i-1] :
                     [
-                      "Xuất bản với 1 click",
-                      "Quản lý nội dung tập trung",
-                      "Phân tích hiệu suất đăng bài"
+                      t("landing.features.platformIntegration.benefit1"),
+                      t("landing.features.platformIntegration.benefit2"),
+                      t("landing.features.platformIntegration.benefit3")
                     ][i-1]
                   }
                 </span>
@@ -238,6 +239,7 @@ export function Features() {
               iconColor={feature.iconColor}
               bgColor={feature.bgColor}
               index={index}
+              t={t}
             />
           ))}
         </div>
@@ -246,7 +248,7 @@ export function Features() {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
           <div className="p-8 md:p-10">
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">
-              Tất cả những gì bạn cần để tạo nội dung tuyệt vời
+              {t("landing.features.powerfulFeatures")}
             </h3>
             <p className="text-gray-500 dark:text-gray-400 text-center mb-12 max-w-2xl mx-auto">
               Công cụ toàn diện giúp bạn tạo, tối ưu và xuất bản nội dung chất lượng cao trên mọi nền tảng
