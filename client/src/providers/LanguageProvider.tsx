@@ -22,6 +22,18 @@ interface LanguageContextType {
 // Hardcoded translations for essential UI elements
 const translations: TranslationsType = {
   vi: {
+    common: {
+      loading: "Đang gửi...",
+      error: "Lỗi",
+      success: "Thành công",
+      cancel: "Hủy",
+      save: "Lưu",
+      edit: "Chỉnh sửa",
+      delete: "Xóa",
+      view: "Xem",
+      create: "Tạo mới",
+      update: "Cập nhật"
+    },
 
     admin: {
       adminPanel: "Quản trị viên",
@@ -167,11 +179,7 @@ const translations: TranslationsType = {
       }
     },
     
-    common: {
-      loading: "Đang tải...",
-      error: "Đã xảy ra lỗi",
-      appName: "SEO AI Writer",
-      notConnected: "Chưa kết nối",
+    landing: {
       loadingData: "Đang tải dữ liệu...",
       viewAll: "Xem tất cả",
       comparedToPreviousMonth: "so với tháng trước",

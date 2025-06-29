@@ -152,12 +152,12 @@ export function FeedbackForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-slate-200 flex items-center">
-                        <span>Chủ đề</span>
+                        <span>{t("landing.feedback.form.subject")}</span>
                         <span className="text-red-400 ml-1">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="Tóm tắt nội dung bạn muốn chia sẻ"
+                          placeholder={t("landing.feedback.form.subjectPlaceholder")}
                           className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
                           {...field} 
                         />
@@ -173,12 +173,12 @@ export function FeedbackForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-slate-200 flex items-center">
-                        <span>Nội dung chi tiết</span>
+                        <span>{t("landing.feedback.form.message")}</span>
                         <span className="text-red-400 ml-1">*</span>
                       </FormLabel>
                       <FormControl>
                         <Textarea 
-                          placeholder="Mô tả chi tiết ý kiến, đề xuất hoặc vấn đề bạn gặp phải..."
+                          placeholder={t("landing.feedback.form.messagePlaceholder")}
                           className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 min-h-[120px]"
                           {...field} 
                         />
@@ -197,12 +197,12 @@ export function FeedbackForm() {
                     {submitFeedbackMutation.isPending ? (
                       <div className="flex items-center">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Đang gửi...
+{t("common.loading") || "Sending..."}
                       </div>
                     ) : (
                       <div className="flex items-center">
                         <Send className="h-4 w-4 mr-2" />
-                        Gửi phản hồi
+{t("landing.feedback.form.submit")}
                       </div>
                     )}
                   </Button>
@@ -213,13 +213,7 @@ export function FeedbackForm() {
             {/* Contact info */}
             <div className="mt-8 pt-6 border-t border-slate-700/50">
               <p className="text-slate-400 text-sm text-center">
-                Bạn cũng có thể liên hệ trực tiếp qua email:{" "}
-                <a 
-                  href="mailto:support@seoaiwriter.com" 
-                  className="text-primary hover:text-primary/80 transition-colors"
-                >
-                  support@seoaiwriter.com
-                </a>
+                {t("landing.feedback.contact")}
               </p>
             </div>
           </div>
