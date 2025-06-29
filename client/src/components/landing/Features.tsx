@@ -251,7 +251,7 @@ export function Features() {
               {t("landing.features.powerfulFeatures")}
             </h3>
             <p className="text-gray-500 dark:text-gray-400 text-center mb-12 max-w-2xl mx-auto">
-              Công cụ toàn diện giúp bạn tạo, tối ưu và xuất bản nội dung chất lượng cao trên mọi nền tảng
+              {t("landing.features.description")}
             </p>
             
             <div className="space-y-16">

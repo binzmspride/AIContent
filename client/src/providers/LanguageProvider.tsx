@@ -371,6 +371,7 @@ const translations: TranslationsType = {
         subtitle: "Khám phá những công cụ mạnh mẽ giúp tạo nội dung SEO hiệu quả",
         powerfulFeatures: "Tính năng mạnh mẽ",
         benefits: "Lợi ích nổi bật",
+        description: "Công cụ toàn diện giúp bạn tạo, tối ưu và xuất bản nội dung chất lượng cao trên mọi nền tảng",
         aiContent: {
           benefit1: "Tiết kiệm thời gian soạn thảo",
           benefit2: "Tăng chất lượng nội dung",
@@ -1217,6 +1218,7 @@ const translations: TranslationsType = {
         subtitle: "Discover powerful tools to create effective SEO content",
         powerfulFeatures: "Powerful Features",
         benefits: "Key Benefits",
+        description: "Comprehensive tools to help you create, optimize and publish high-quality content across all platforms",
         aiContent: {
           benefit1: "Save writing time",
           benefit2: "Improve content quality",
