@@ -50,8 +50,8 @@ export function FeedbackForm() {
       apiRequest('/api/feedback', 'POST', data),
     onSuccess: () => {
       toast({
-        title: "Cảm ơn bạn!",
-        description: "Feedback của bạn đã được gửi thành công. Chúng tôi sẽ phản hồi sớm nhất có thể.",
+        title: t("landing.feedback.success.title"),
+        description: t("landing.feedback.success.description"),
       });
       form.reset({
         name: user?.fullName || "",
@@ -62,8 +62,8 @@ export function FeedbackForm() {
     },
     onError: (error: any) => {
       toast({
-        title: "Lỗi",
-        description: error.message || "Có lỗi xảy ra khi gửi feedback. Vui lòng thử lại.",
+        title: t("common.error"),
+        description: error.message || t("landing.feedback.error.description"),
         variant: "destructive",
       });
     },
@@ -88,12 +88,11 @@ export function FeedbackForm() {
             <div className="flex items-center justify-center mb-4">
               <MessageSquare className="h-8 w-8 text-primary mr-3" />
               <h2 className="text-3xl font-bold text-white">
-                Góp ý & Phản hồi
+                {t("landing.feedback.title")}
               </h2>
             </div>
             <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-              Ý kiến của bạn rất quan trọng với chúng tôi. Hãy chia sẻ trải nghiệm, 
-              đề xuất cải tiến hoặc báo cáo lỗi để giúp chúng tôi phát triển tốt hơn.
+              {t("landing.feedback.subtitle")}
             </p>
           </div>
 
@@ -108,12 +107,12 @@ export function FeedbackForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-slate-200 flex items-center">
-                          <span>Họ và tên</span>
+                          <span>{t("landing.feedback.form.name")}</span>
                           <span className="text-red-400 ml-1">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="Nhập họ và tên của bạn"
+                            placeholder={t("landing.feedback.form.namePlaceholder")}
                             className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
                             {...field} 
                           />
