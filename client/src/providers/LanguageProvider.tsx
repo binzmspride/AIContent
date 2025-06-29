@@ -1387,6 +1387,7 @@ const translations: TranslationsType = {
       faq: {
         title: "Frequently Asked Questions",
         subtitle: "Most commonly asked questions",
+        badge: "Frequently Asked Questions",
         questions: [
           {
             question: "How does SEO AI Writer help create content?",
@@ -1443,6 +1444,33 @@ const translations: TranslationsType = {
           privacy: "Privacy Policy",
           contact: "Contact"
         }
+      },
+      feedback: {
+        title: "Feedback & Comments",
+        subtitle: "Your opinion is very important to us. Share your experience, suggest improvements or report bugs to help us develop better.",
+        form: {
+          name: "Full Name",
+          namePlaceholder: "Enter your full name",
+          subject: "Subject",
+          subjectPlaceholder: "Brief summary of what you want to share",
+          message: "Message",
+          messagePlaceholder: "Detailed description of your opinion, suggestions or issues you encountered...",
+          submit: "Send Feedback"
+        },
+        validation: {
+          nameMin: "Name must be at least 2 characters",
+          emailInvalid: "Please enter a valid email",
+          subjectMin: "Subject must be at least 5 characters",
+          messageMin: "Message must be at least 10 characters"
+        },
+        success: {
+          title: "Thank you!",
+          description: "Your feedback has been sent successfully. We will respond as soon as possible."
+        },
+        error: {
+          description: "An error occurred while sending feedback. Please try again."
+        },
+        contact: "You can also contact us directly via email: support@seoaiwriter.com"
       }
     },
     
