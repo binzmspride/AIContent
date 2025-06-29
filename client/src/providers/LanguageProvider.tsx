@@ -331,7 +331,40 @@ const translations: TranslationsType = {
         title: "Tạo bài viết SEO chất lượng cao tức thì",
         subtitle: "Sử dụng trí tuệ nhân tạo để tạo ra nội dung hấp dẫn, tối ưu cho SEO một cách nhanh chóng và hiệu quả.",
         tryFree: "Dùng thử miễn phí",
-        viewDemo: "Xem demo"
+        viewDemo: "Xem demo",
+        features: {
+          aiContent: {
+            title: "Nội dung AI",
+            description: "Tạo nội dung SEO tự động với AI tiên tiến"
+          },
+          multilingual: {
+            title: "Đa ngôn ngữ",
+            description: "Hỗ trợ tiếng Việt và nhiều ngôn ngữ"
+          },
+          integration: {
+            title: "Tích hợp",
+            description: "Kết nối WordPress, Facebook, TikTok"
+          },
+          analytics: {
+            title: "Phân tích",
+            description: "Theo dõi hiệu suất và tối ưu nội dung"
+          }
+        },
+        reviews: {
+          from: "từ",
+          customers: "khách hàng",
+          verified: "Đã xác minh"
+        },
+        callouts: {
+          seoOptimization: {
+            title: "AI tự động tối ưu SEO",
+            description: "Phân tích từ khóa và tối ưu nội dung"
+          },
+          vietnameseSupport: {
+            title: "Hỗ trợ tiếng Việt",
+            description: "Nội dung chất lượng cao bằng tiếng Việt"
+          }
+        }
       },
       features: {
         title: "Tính năng nổi bật",
@@ -1127,7 +1160,40 @@ const translations: TranslationsType = {
         title: "Create High-Quality SEO Content Instantly",
         subtitle: "Use artificial intelligence to create engaging, SEO-optimized content quickly and efficiently.",
         tryFree: "Try for Free",
-        viewDemo: "View Demo"
+        viewDemo: "View Demo",
+        features: {
+          aiContent: {
+            title: "AI Content",
+            description: "Automatically create SEO content with advanced AI"
+          },
+          multilingual: {
+            title: "Multilingual",
+            description: "Support Vietnamese and multiple languages"
+          },
+          integration: {
+            title: "Integration",
+            description: "Connect WordPress, Facebook, TikTok"
+          },
+          analytics: {
+            title: "Analytics",
+            description: "Track performance and optimize content"
+          }
+        },
+        reviews: {
+          from: "from",
+          customers: "customers",
+          verified: "Verified"
+        },
+        callouts: {
+          seoOptimization: {
+            title: "AI Auto SEO Optimization",
+            description: "Keyword analysis and content optimization"
+          },
+          vietnameseSupport: {
+            title: "Vietnamese Support",
+            description: "High-quality content in Vietnamese"
+          }
+        }
       },
       features: {
         title: "Key Features",

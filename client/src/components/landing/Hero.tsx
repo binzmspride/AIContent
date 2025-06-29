@@ -51,10 +51,10 @@ export function Hero() {
             {/* Features */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {[
-                { icon: Zap, title: "Nội dung AI", text: "Tạo nội dung SEO tự động với AI tiên tiến", color: "text-blue-500" },
-                { icon: Globe2, title: "Đa ngôn ngữ", text: "Hỗ trợ tiếng Việt và nhiều ngôn ngữ", color: "text-amber-500" },
-                { icon: Share, title: "Tích hợp", text: "Kết nối WordPress, Facebook, TikTok", color: "text-emerald-500" },
-                { icon: TrendingUp, title: "Phân tích", text: "Theo dõi hiệu suất và tối ưu nội dung", color: "text-purple-500" }
+                { icon: Zap, title: t("landing.hero.features.aiContent.title"), text: t("landing.hero.features.aiContent.description"), color: "text-blue-500" },
+                { icon: Globe2, title: t("landing.hero.features.multilingual.title"), text: t("landing.hero.features.multilingual.description"), color: "text-amber-500" },
+                { icon: Share, title: t("landing.hero.features.integration.title"), text: t("landing.hero.features.integration.description"), color: "text-emerald-500" },
+                { icon: TrendingUp, title: t("landing.hero.features.analytics.title"), text: t("landing.hero.features.analytics.description"), color: "text-purple-500" }
               ].map((feature, i) => (
                 <div key={i} className="flex flex-col p-6 bg-white dark:bg-gray-800/50 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                   <div className={`rounded-full w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-800 mb-4 ${feature.color}`}>
@@ -105,13 +105,13 @@ export function Hero() {
                     ))}
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-300">
-                    <span className="font-semibold">4.9/5</span> từ <span className="font-semibold">1,000+</span> khách hàng
+                    <span className="font-semibold">4.9/5</span> {t("landing.hero.reviews.from")} <span className="font-semibold">1,000+</span> {t("landing.hero.reviews.customers")}
                   </p>
                 </div>
               </div>
               <div className="hidden md:block">
                 <span className="inline-flex items-center rounded-md bg-green-50 dark:bg-green-900/30 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-400 ring-1 ring-inset ring-green-600/20 dark:ring-green-500/30">
-                  Đã xác minh
+                  {t("landing.hero.reviews.verified")}
                 </span>
               </div>
             </div>
@@ -154,8 +154,8 @@ export function Hero() {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-gray-900 dark:text-white">AI tự động tối ưu SEO</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Phân tích từ khóa và tối ưu nội dung</p>
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t("landing.hero.callouts.seoOptimization.title")}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{t("landing.hero.callouts.seoOptimization.description")}</p>
                   </div>
                 </div>
               </div>
@@ -168,8 +168,8 @@ export function Hero() {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-gray-900 dark:text-white">Hỗ trợ tiếng Việt</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Nội dung chất lượng cao bằng tiếng Việt</p>
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t("landing.hero.callouts.vietnameseSupport.title")}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{t("landing.hero.callouts.vietnameseSupport.description")}</p>
                   </div>
                 </div>
               </div>
