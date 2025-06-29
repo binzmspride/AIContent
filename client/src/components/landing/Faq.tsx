@@ -46,7 +46,7 @@ export function Faq() {
         <div className="text-center mb-12">
           <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary dark:bg-primary-900/30 dark:text-primary-400 text-sm font-medium mb-4 border border-primary/20 dark:border-primary-800/50">
             <HelpCircle className="w-4 h-4 mr-2" />
-            Câu hỏi thường gặp
+            {t("landing.faq.badge")}
           </div>
           
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white font-heading mb-4">

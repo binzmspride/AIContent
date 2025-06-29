@@ -20,19 +20,20 @@ import {
 } from "@/components/ui/form";
 import { Send, Mail, MessageSquare } from "lucide-react";
 
-const feedbackSchema = z.object({
-  name: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
-  email: z.string().email("Vui lòng nhập email hợp lệ"),
-  subject: z.string().min(5, "Chủ đề phải có ít nhất 5 ký tự"),
-  message: z.string().min(10, "Tin nhắn phải có ít nhất 10 ký tự"),
+const createFeedbackSchema = (t: (key: string) => string) => z.object({
+  name: z.string().min(2, t("landing.feedback.validation.nameMin")),
+  email: z.string().email(t("landing.feedback.validation.emailInvalid")),
+  subject: z.string().min(5, t("landing.feedback.validation.subjectMin")),
+  message: z.string().min(10, t("landing.feedback.validation.messageMin")),
 });
-
-type FeedbackFormValues = z.infer<typeof feedbackSchema>;
 
 export function FeedbackForm() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuth();
+
+  const feedbackSchema = createFeedbackSchema(t);
+  type FeedbackFormValues = z.infer<typeof feedbackSchema>;
 
   const form = useForm<FeedbackFormValues>({
     resolver: zodResolver(feedbackSchema),

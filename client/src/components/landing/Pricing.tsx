@@ -84,7 +84,7 @@ export function Pricing() {
       price: 500000,
       period: "month",
       icon: <BarChart4 className="h-7 w-7 text-white" />,
-      badge: "Phổ biến nhất",
+      badge: t("landing.pricing.mostPopular"),
       features: [
         `200 ${t("landing.pricing.features.maxArticles")}`,
         `20GB ${t("landing.pricing.features.storage")}`,
@@ -133,7 +133,7 @@ export function Pricing() {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-gradient-to-r from-indigo-50 to-cyan-50 dark:from-indigo-900/30 dark:to-cyan-900/30 text-indigo-600 dark:text-indigo-400 text-sm font-medium mb-6 border border-indigo-200/40 dark:border-indigo-800/50 shadow-sm">
             <Star className="w-4 h-4 mr-2" />
-            Bảng giá linh hoạt
+            {t("landing.pricing.badge")}
           </div>
           
           <h2 className="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-600 dark:from-indigo-300 dark:to-cyan-400 font-heading mb-6">
